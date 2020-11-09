@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+if [[ ! `command -v pacman` ]] && echo "This script can only run on arch-based distros." && exit 1
+
+cd $HOME/Downloads
+pacmanlist="$(pacman -Qqe | grep -v '`pacman -Qq base`' | grep -v '`pacman -Qqm`')"
+aurlist="$(pacman -Qqm)"
+
+echo "$pacmanlist" > pacmanlist.txt
+echo "$aurlist" > aurlist.txt
+cat pacmanlist.txt aurlist.txt > allpkgs.txt
+
+echo "Created lists in ${HOME}/Downloads!"

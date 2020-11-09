@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+[[ ! `command -v youtube-dl` ]] && echo "youtube-dl is not installed" && exit 1
+
+DOWNDIR=$HOME/Downloads/Music
+[ ! -d $DOWNDIR ] && mkdir $DOWNDIR
+cd $DOWNDIR
+
+youtube-dl --prefer-ffmpeg --add-metadata --output '%(title)s.%(ext)s' --extract-audio --audio-format mp3 $@

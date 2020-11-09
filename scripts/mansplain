@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+[[ ! `command -v dmenu` ]] && echo "dmenu is not installed" && exit 1
+[[ ! `command -v zathura` ]] && echo "zathura is not installed" && exit 1
+
+man -k . | dmenu -l 10 | awk '{print $1}' | xargs -r man -Tpdf | zathura -

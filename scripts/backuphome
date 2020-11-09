@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+
+RSYNCDIR()
+{
+    rsync -avhpru --delete $@
+}
+
+RSYNCFILE()
+{
+    rsync -avhpu --delete $@
+}
+
+declare -- HOMEFILES
+declare -- CONFIGFILES
+declare -- TARGET
+declare -- BACKUPDIR
+declare -- F
+declare -- FILE
+
+[ -z "${BACKUPDISK}" ] && TARGET="${1}"
+[ -n "${BACKUPDISK}" ] && TARGET="${BACKUPDISK}"
+[ -z "${TARGET}" ] && echo "You must specify a target directory!" && exit 1
+[ ! -d "${TARGET}" ] && echo "That directory does not exist!" && exit 1
+
+BACKUPDIR="${TARGET}/${(date +"%Y-%m-%d_%H-%M-%S")}"
+
+[ -e "${BACKUPDIR}" ] && rm -rf "${BACKUPDIR}"
+mkdir "${BACKUPDIR}"
+
+# Specify which directories to include in the backup.
+HOMEFILES=( 
+'Bin' 'Desktop' 'Documents' 'Downloads' 'Music' 'Pictures'
+'Templates' 'Videos' '.powerlevel10k'  '.p10k.zsh'
+'.minecraft' '.zsh' '.zshrc'
+)
+
+# HOME
+for F in ${HOMEFILES[@]}
+do
+	file="${HOME}/${F}"
+	
+	if [ -e "${file}" ];
+	then
+		[ -d "${file}" ] && RSYNCDIR "${file}" "${BACKUPDIR}"
+		[[ -f "${file}" ]] && [[ ! -h "${file}" ]] && RSYNCFILE "${file}" "${BACKUPDIR}"
+	else
+		echo "File ${file} does not exist. Skipping..."
+	fi
+done
+
+unset HOMEFILES
+unset CONFIGFILES
+unset TARGET
+unset F
+unset FILE
+unset CONFIGDIR
+unset CONFIGTARGET
+
+exit 0

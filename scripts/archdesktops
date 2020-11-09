@@ -1,0 +1,128 @@
+#!/usr/bin/env bash
+
+[[ ! `command -v pacman` ]] && echo "This script can only be run on Arch-based distros." && exit 1
+
+DIALOG() {
+  dialog --title "Arch Desktop Manager" "$@"
+}
+
+AUTH() {
+  if [[ `command -v pkexec` ]]
+  then
+    pkexec "$@"
+  else
+    local password=`DIALOG --stdout --passwordbox "Authentication Required. Enter your sudo password." 10 30` && clear
+    echo "${password}" | sudo -S "$@" | dialog --programbox 30 50 && clear
+  fi
+}
+
+# Requirements to run the script
+if [ -z `pacman -Qqe | grep dialog` ]
+then
+  read -p "I need to install dialog to continue. Install y/n? " yn
+  if [ "$yn" = "Y" ] || [ "$yn" = "y" ]
+  then
+    AUTH pacman -Sy dialog
+  else
+   echo -e "I cannot run without dialog. Exiting..."
+    exit 1
+  fi
+fi
+
+# No Warranty notice
+DIALOG --msgbox "\nGreetings! Please note that this software comes with no warranty." 10 30 && clear
+
+desktopID=`DIALOG --stdout \
+  --menu "Select a DE to manage" 25 30 10 \
+  1 GNOME \
+  2 "KDE Plasma" \
+  3 XFCE \
+  4 MATE \
+  5 LXQt \
+  6 Budgie \
+  7 Cinnamon \
+  8 Deepin` && clear
+
+# Manages the given desktop based on the $desktop output
+case $desktopID in
+  1 ) 
+    pkgs="gnome gnome-extra"
+    name="GNOME"
+    ;;
+  2 )
+    pkgs="plasma plasma-wayland-session kde-applications"
+    name="KDE Plasma"
+    ;;
+  3 )
+    pkgs="xfce4 xfce4-goodies"
+    name="XFCE"
+    ;;
+  4 )
+    pkgs="mate mate-extra mate-applet-dock mate-media mate-power-manager"
+    name="MATE"
+    ;;
+  5 )
+    pkgs="lxqt breeze-icons" 
+    name="LXQt"
+    ;;
+  6 )
+    pkgs="budgie-desktop gnome"
+    name="Budgie"
+    ;;
+  7 )
+    pkgs="cinnamon"
+    name="Cinnamon"
+    ;;
+  8 )
+    pkgs="deepin deepin-extra networkmanager"
+    name="Deepin"
+    ;;
+  * )
+    DIALOG --msgbox \
+      "You have cancelled management of a DE. Press 'OK' to exit this script." 10 50 && clear && exit 0
+    ;;
+esac
+
+actionID=`DIALOG --stdout \
+  --menu "Select an option" 30 30 15 \
+  1 Install \
+  2 Remove \
+  3 Cancel`
+clear
+
+if [ ! "$actionID" = "1" ] && [ ! "$actionID" = "2" ]
+then
+  DIALOG --msgbox \
+    "You have cancelled management of the $name desktop. Press 'OK' to exit this script." 10 50 && clear && exit 0
+fi
+
+yn=`DIALOG --stdout \
+  --menu "Are you sure you want to do this?" 10 30 5 \
+  1 Yes \
+  2 No`
+clear
+
+if [ "$yn" = "1" ]
+then
+  # Selects the option based on the $choice output
+  case $actionID in
+    1 )
+      AUTH pacman -S --needed $pkgs
+      AUTH pacman -S --needed blueman network-manager-applet system-config-printer
+      DIALOG --msgbox \
+        "Installed the $name desktop!" 10 30 && clear && exit 0
+      ;;
+    2 )
+      AUTH pacman -Rns $pkgs
+      DIALOG --msgbox \
+        "Uninstalled the $name desktop!" 10 30 && clear && exit 0
+      ;;
+    * )
+      DIALOG --msgbox \
+        "You have cancelled the management of the $name desktop. Press 'OK' to exit this script." 10 50 && clear && exit 0
+      ;;
+  esac
+else
+  DIALOG --msgbox \
+    "You have cancelled management of the $name desktop. Press 'OK' to exit this script." 10 50 && clear && exit 0
+fi

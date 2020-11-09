@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+if [ -f "$1" ]
+then
+	cat "$1" | nc termbin.com 9999
+else
+	echo "That file does not exist."
+fi

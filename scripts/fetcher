@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+OS="`grep '^NAME=' /etc/os-release | sed 's/NAME=//;s/"//g'` `uname -s` `uname -m`"
+HOST="`uname -n`"
+KERNEL="`uname -r`"
+UPTIME=`uptime --pretty | sed 's|^up\s||'`
+PKGCOUNT=""
+
+# Package count
+[[ `command -v pacman` ]] && PKGCOUNT="$PKGCOUNT`pacman -Qq | wc -l` (pacman), "
+[[ `command -v apt` ]] && PKGCOUNT="$PKGCOUNT`apt list --installed 2>/dev/null | wc -l` (apt), "
+[[ `command -v flatpak` ]] && PKGCOUNT="$PKGCOUNT`flatpak list | wc -l` (flatpak), "
+[[ `command -v snap` ]] && snapCount=$(( $(snap list | wc -l) - 1 )) && PKGCOUNT="$PKGCOUNT$snapCount (snap), "
+
+# Processor
+CORES=`cat /proc/cpuinfo | grep processor | wc -l`
+CPUNAME=`grep '^model name' /proc/cpuinfo -m 1 | sed -E 's|^model\sname\s*:\s||g'`
+
+# Memory
+MEMTOTAL="`grep 'MemTotal' /proc/meminfo | sed 's|MemTotal:\s*||g'`"
+MEMFREE="`grep 'MemFree' /proc/meminfo | sed 's|MemFree:\s*||g'`"
+MEMORY="$MEMFREE / $MEMTOTAL"
+
+# Lines
+LINES="--------------------------------"
+
+echo -e "$LINES" 
+echo -e "| ${USER}@${HOST}"
+echo -e "$LINES"
+echo -e "| OS:\t\t${OS}"
+echo -e "| Kernel:\t${KERNEL}"
+echo -e "| Uptime:\t${UPTIME}"
+echo -e "| Packages:\t${PKGCOUNT}"
+echo -e "| Shell:\t${SHELL}"
+echo -e "| Processor:\t${CPUNAME}"
+echo -e "| Cores:\t${CORES}"
+echo -e "| Memory:\t${MEMORY}"
+echo -e "$LINES"
+
