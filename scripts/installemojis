@@ -29,11 +29,6 @@ for file in "${LINKS[@]}"; do
 	wget $file
 done
 
-# Remove old config files if they exist
-for name in "${NAMES[@]}"; do
-	rm -f $CONFDIR/$name
-done
-
 # Download Noto Color Emoji
 mkdir -p $TEMP
 cd $TEMP
