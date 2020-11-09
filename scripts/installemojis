@@ -1,1 +1,46 @@
 #!/usr/bin/env bash
+
+# Variables
+CONFDIR=$HOME/.config/fontconfig/conf.d
+TEMP=$HOME/Downloads/temp
+FONTS=$HOME/.fonts
+FILE=$HOME/.fonts/NotoColorEmoji.ttf
+
+NOTOLINK="https://noto-website-2.storage.googleapis.com/pkgs/NotoColorEmoji-unhinted.zip"
+
+LINKS=(
+"https://raw.githubusercontent.com/garman1001/dotfiles/master/configs/fontconfig/conf.d/01-dejavu.conf"
+"https://raw.githubusercontent.com/garman1001/dotfiles/master/configs/fontconfig/conf.d/02-mozilla.conf"
+"https://raw.githubusercontent.com/garman1001/dotfiles/master/configs/fontconfig/conf.d/03-emoji.conf"
+)
+
+NAMES=()
+
+# Make the config directory and move to it
+mkdir -p $CONFDIR
+mkdir -p $FONTS
+rm -rf $FILE
+cd $CONFDIR
+
+# Download the files specified in LINKS
+for file in "${LINKS[@]}"; do
+	name=$(basename $file)
+	rm -f $name
+	wget $file
+done
+
+# Remove old config files if they exist
+for name in "${NAMES[@]}"; do
+	rm -f $CONFDIR/$name
+done
+
+# Download Noto Color Emoji
+mkdir -p $TEMP
+cd $TEMP
+wget $NOTOLINK
+
+# Install emojis
+unzip NotoColorEmoji-unhinted.zip
+mv NotoColorEmoji.ttf $FONTS
+fc-cache -fv
+rm -rf $TEMP
