@@ -1,0 +1,156 @@
+#!/usr/bin/env bash
+# Author: Nidia Achrys
+# Project: tardis
+# Version: 2.0
+# Description:
+#	This utility manages backups
+#
+# Usage: tardis [OPTION] [FLAGS]
+
+CMDNAME=$(basename $0)
+VERSIONNUM="1.0"
+
+# Specify which directories to include in the backup.
+HOMEFILES=(
+'Bin' 'Desktop' 'Documents' 'Downloads' 'Music' 'Pictures'
+'Templates' 'Videos' '.powerlevel10k'  '.p10k.zsh'
+'.minecraft' '.zsh' '.zshrc'
+)
+
+RSYNCDIR()
+{
+    rsync -avhpru --delete $@
+}
+
+RSYNCFILE()
+{
+    rsync -avhpu --delete $@
+}
+
+GETDIR()
+{
+	[ -z "${BACKUPDISK}" ] && TARGET="${1}"
+	[ -n "${BACKUPDISK}" ] && TARGET="${BACKUPDISK}"
+	[ -z "${TARGET}" ] && echo "You must specify a target directory!" && exit 1
+	[ ! -d "${TARGET}" ] && echo "That directory does not exist!" && exit 1
+
+	MANIFEST=${TARGET}/tardis-manifest.conf
+}
+
+BACKUP()
+{
+	GETDIR $1
+	BACKUPDIR="${TARGET}/${(date +"%Y-%m-%d_%H-%M-%S")}"
+
+	[ -e "${BACKUPDIR}" ] && rm -rf "${BACKUPDIR}"
+	mkdir "${BACKUPDIR}"
+  touch "${MANIFEST}"
+
+	# HOME
+	for F in ${HOMEFILES[@]}
+	do
+		file="${HOME}/${F}"
+
+		if [ -e "${file}" ];
+		then
+			[ -d "${file}" ] && RSYNCDIR "${file}" "${BACKUPDIR}"
+			[[ -f "${file}" ]] && [[ ! -h "${file}" ]] && RSYNCFILE "${file}" "${BACKUPDIR}"
+		else
+			echo "File ${file} does not exist. Skipping..."
+		fi
+	done
+
+  echo "Finished backup!"
+  exit 0
+}
+
+RESTORE()
+{
+	GETDIR $1
+  BACKUPDIR="${TARGET}/${2}"
+
+  [ ! -d "${BACKUPDIR}" ] && echo "That backup does not exist!" && exit 1
+
+  for F in "${BACKUPDIR}/*"
+  do
+    file="${BACKUPDIR}/${F}"
+
+    [ -d "${file}" ] && RSYNCDIR "${file}" "${HOME}"
+    [ ! -d "${file}" ] && RSYNCFILE "${file}" "${HOME}"
+  done
+
+  for F in "${BACKUPDIR}/{.,}*"
+  do
+    file="${BACKUPDIR}/${F}"
+
+    [ -d "${file}" ] && RSYNCDIR "${file}" "${HOME}"
+    [ ! -d "${file}" ] && RSYNCFILE "${file}" "${HOME}"
+  done
+
+  echo "Finished restore!"
+  exit 0
+}
+
+LIST()
+{
+	GETDIR $1
+	FILES=${TARGET}/*
+
+	[ ! ${#FILES[@]} -gt 0 ] && echo "There are no backups!" && exit 1
+	[ ! -e ${MANIFEST} ] && echo "There are no backups!" && exit 1
+
+	ls --color=auto -alvhF --group-directories-first ${TARGET}
+}
+
+VERSION()
+{
+  echo "${CMDNAME} ${VERSIONNUM}"
+  echo
+  echo "Copyright (C)  Nidia Achrys"
+  echo "License GPLv3+: GNU GPL version 3 or later https://gnu.org/licenses/gpl.html."
+  echo "This is free software: you are free to change and redistribute it."
+  echo "There is NO WARRANTY, to the extent permitted by law."
+  echo
+  echo "Written by Nidia Achrys."
+  exit 0
+}
+
+HELP()
+{
+ echo -e "Usage: ${CMDNAME} [command]"
+ echo
+ echo -e "Create, restore, and list backups."
+ echo
+ echo "Commands:"
+ echo -e "\t-B, --backup\n\t\tCreate a backup"
+ echo -e "\t-R, --restore\n\t\tRestore a backup"
+ echo -e "\t-L, --empty\n\t\tList all backups"
+ echo
+ echo "Miscellaneous"
+ echo -e "\t-v, --version\n\t\tPrint the version of this script"
+ echo -e "\t-h, --help\n\t\tShow this prompt"
+ exit 0
+}
+
+case "${1}" in
+  -B | --backup )
+    BACKUP $2
+    ;;
+  -R | --restore)
+    RESTORE $2 $3
+    ;;
+  -L | --list )
+    LIST $2
+    ;;
+  -v | --version )
+    VERSION
+    ;;
+  \? | -h | --help )
+    HELP
+    ;;
+  * )
+    echo -e "Invalid command."
+    echo -e "See '${CMDNAME} --help' for a full list of commands."
+    exit 1
+    ;;
+esac

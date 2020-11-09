@@ -1,4 +1,11 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# Author: Nidia Achrys
+# Project: trash
+# Version: 2.0
+# Description:
+#	This utility manages your trash bin.
+#
+# Usage: trash [OPTION] [FLAGS]
 
 declare -- VERSION
 declare -- CMDNAME
@@ -84,6 +91,14 @@ restore()
   fi
 }
 
+empty()
+{
+  find $TRASH -type f -name ".*" -delete
+  find $TRASHINFO -type f -name ".*" -delete
+  echo -e "Emptied the trash!"
+  exit 0
+}
+
 info()
 {
   checkFile "$1"
@@ -141,7 +156,7 @@ case "${1}" in
     empty
     ;;
   -L | --list )
-    /usr/bin/ls --color=auto -alvhF --group-directories-first $TRASH 
+    ls --color=auto -alvhF --group-directories-first $TRASH 
     exit 0
     ;;
   -I | --info )

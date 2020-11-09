@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Author: Nidia Achrys
-# Project: autostartctl
+# Project: scriptctl
 # Version: 2.0
 # Description:
 #	This utility provides tools to create, edit, list,
