@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-
-[[ `command -v yay` ]] && yay -Syyu && exit 0 || sudo pacman -Syyu && exit 0
-[[ `command -v apt` ]] && sudo apt update && sudo apt upgrade && exit 0

@@ -1,0 +1,99 @@
+#!/usr/bin/env bash
+
+declare -- INSTALL
+declare -- UNINSTALL
+declare -- SEARCH
+declare -- UPDATE
+declare -- ARGS
+
+CMDNAME=$(basename $0)
+VERSION="1.0"
+
+PMS="apt, pacman, yay"
+
+if [[ `command -v pacman` ]];
+then
+    INSTALL="pacman -Sy"
+    UNINSTALL="pacman -Rns"
+    SEARCH="pacman -Ss"
+    UPDATE="pacman -Syyyu"
+elif [[ `command -v yay` ]];
+then
+    INSTALL="yay -Sy"
+    UNINSTALL="yay -Rns"
+    SEARCH="yay -Ss"
+    UPDATE="yay -Syyyu"
+elif [[ `command -v apt` ]];
+then
+    INSTALL="sudo apt install"
+    UNINSTALL="sudo apt remove"
+    SEARCH="sudo apt search"
+    UPDATE="sudo apt update && sudo apt upgrade"
+else
+    echo "Your distro is not currently supported!"
+    exit 1
+fi
+
+ARGS=("$@")
+
+unset ARGS[0]
+unset ARGS[1]
+
+HELP()
+{
+  echo -e "Usage: ${CMDNAME} [command]"
+  echo
+  echo -e "Install, remove, search, and update software. Cross Platform."
+  echo -e "Note: Only supports the following package managers: ${PMS}"
+  echo
+  echo "Commands"
+  echo -e "\t-i, --install\n\t\tInstall Software"
+  echo -e "\t-un, --uninstall\n\t\tUninstall Software"
+  echo -e "\t-s, --search\n\t\tSearch for software"
+  echo -e "\t-up, --update\n\t\tUpdate your software"
+  echo 
+  echo "Miscellaneous"
+  echo -e "\t-v, --version\n\t\tPrint the version of this script"
+  echo -e "\t-h, --help\n\t\tShow this prompt"
+  exit 0
+}
+
+VERSION_PROMPT()
+{
+  echo "${CMDNAME} ${VERSION}"
+  echo
+  echo "Copyright (C)  Nidia Achrys"
+  echo "License GPLv3+: GNU GPL version 3 or later https://gnu.org/licenses/gpl.html."
+  echo "This is free software: you are free to change and redistribute it."
+  echo "There is NO WARRANTY, to the extent permitted by law."
+  echo
+  echo "Written by Nidia Achrys."
+  exit 0
+}
+
+case "${1}" in
+
+    -i | --install )
+        eval "${INSTALL} ${ARGS[@]}"
+        exit 0
+        ;;
+    -un | --uninstall )
+        eval "${UNINSTALL} ${ARGS[@]}"
+        exit 0
+        ;;
+    -s | --search )
+        eval "${SEARCH} ${ARGS[@]}"
+        exit 0
+        ;;
+    -up | --update )
+        eval "${UPDATE} ${ARGS[@]}"
+        exit 0
+        ;;
+    \? | -h | --help )
+        HELP
+        ;;
+    -v | --version )
+        VERSION_PROMPT
+        ;;
+
+esac

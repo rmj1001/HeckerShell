@@ -10,28 +10,23 @@
 CMDNAME=$(basename $0)
 VERSIONNUM="1.0"
 
-# Specify which directories to include in the backup.
-HOMEFILES=(
-'Bin' 'Desktop' 'Documents' 'Downloads' 'Music' 'Pictures'
-'Templates' 'Videos' '.powerlevel10k'  '.p10k.zsh'
-'.minecraft' '.zsh' '.zshrc'
-)
-
-RSYNCDIR()
-{
-    rsync -avhpru --delete $@
-}
-
-RSYNCFILE()
-{
-    rsync -avhpu --delete $@
-}
+# Config
+CONFDIR="${HOME}/.config/tardisrsync"
+EXCLUSION_FILE="${CONFDIR}/exclusions.conf"
+CONFIG="${CONFDIR}/default-disk.conf"
 
 GETDIR()
 {
-	[ -z "${BACKUPDISK}" ] && TARGET="${1}"
-	[ -n "${BACKUPDISK}" ] && TARGET="${BACKUPDISK}"
-	[ -z "${TARGET}" ] && echo "You must specify a target directory!" && exit 1
+  [ -f "${CONFIG}" ] && BACKUPDISK=$(cat "${CONFIG}" | grep "DEFAULT_DISK=" | sed -e 's|DEFAULT_DISK=||')
+
+  if [ -n "${1}" ];
+  then
+    TARGET="${1}"
+  else
+    [ -z "${BACKUPDISK}" ] && echo "You must specify a directory to back up or set a default!" && exit 1
+    TARGET="${BACKUPDISK}"
+  fi
+
 	[ ! -d "${TARGET}" ] && echo "That directory does not exist!" && exit 1
 
 	MANIFEST=${TARGET}/tardis-manifest.conf
@@ -40,27 +35,18 @@ GETDIR()
 BACKUP()
 {
 	GETDIR $1
-	BACKUPDIR="${TARGET}/${(date +"%Y-%m-%d_%H-%M-%S")}"
+  BACKUPNAME=$(date +"%Y-%m-%d_%H-%M-%S")
 
-	[ -e "${BACKUPDIR}" ] && rm -rf "${BACKUPDIR}"
-	mkdir "${BACKUPDIR}"
   touch "${MANIFEST}"
 
 	# HOME
-	for F in ${HOMEFILES[@]}
-	do
-		file="${HOME}/${F}"
+	[ -e "${EXCLUSION_FILE}" ] && rsync -avhpru --exclude-from="${EXCLUSION_FILE}" --delete ${HOME} ${TARGET}
+  [ ! -e "${EXCLUSION_FILE}" ] && rsync -avhpru --delete ${HOME} ${TARGET}
 
-		if [ -e "${file}" ];
-		then
-			[ -d "${file}" ] && RSYNCDIR "${file}" "${BACKUPDIR}"
-			[[ -f "${file}" ]] && [[ ! -h "${file}" ]] && RSYNCFILE "${file}" "${BACKUPDIR}"
-		else
-			echo "File ${file} does not exist. Skipping..."
-		fi
-	done
+  mv ${TARGET}/${USER} ${TARGET}/${BACKUPNAME}
 
   echo "Finished backup!"
+  echo "[SUCCESSFUL] ${BACKUPNAME}" | tee -a ${MANIFEST}
   exit 0
 }
 
@@ -99,7 +85,33 @@ LIST()
 	[ ! ${#FILES[@]} -gt 0 ] && echo "There are no backups!" && exit 1
 	[ ! -e ${MANIFEST} ] && echo "There are no backups!" && exit 1
 
-	ls --color=auto -alvhF --group-directories-first ${TARGET}
+	ls -ld ${TARGET}/*/
+}
+
+DEFAULT_TARGET()
+{
+  [ ! -d ${CONFDIR} ] && mkdir -p ${CONFDIR} && echo "Created config file!"
+  [ -z "${1}" ] && echo "You must specify a directory to set as the default!" && exit 1
+  [ ! -d "${1}" ] && echo "That is not a valid directory!" && exit 1
+
+  cat ${CONFIG} | grep -iv "DEFAULT_DISK=" > ${CONFIG}
+  echo "DEFAULT_DISK=${1}" >> ${CONFIG}
+  echo "Set a default target!"
+  exit 0
+}
+
+EXCLUSIONS()
+{
+  [ ! -d ${CONFDIR} ] && mkdir -p ${CONFDIR} && echo "Created exclusions file!"
+  [ -z "${EDITOR}" ] && nano ${EXCLUSION_FILE} && echo "Exclusions edited!" && exit 0
+  [ -n "${EDITOR}" ] && ${EDITOR} ${EXCLUSION_FILE} && echo "Exclusions edited!" && exit 0
+}
+
+PRINT_EXCLUSIONS()
+{
+  [ ! -e "${EXCLUSION_FILE}" ] && echo "Exclusions have not been specified." && exit 0
+  cat ${EXCLUSION_FILE}
+  exit 0
 }
 
 VERSION()
@@ -121,11 +133,16 @@ HELP()
  echo
  echo -e "Create, restore, and list backups."
  echo
- echo "Commands:"
+ echo "Commands"
  echo -e "\t-B, --backup\n\t\tCreate a backup"
  echo -e "\t-R, --restore\n\t\tRestore a backup"
- echo -e "\t-L, --empty\n\t\tList all backups"
+ echo -e "\t-L, --list\n\t\tList all backups"
  echo
+ echo "Settings"
+ echo -e "\t-D, --default-target\n\t\tSet a default target for future backups"
+ echo -e "\t-E, --exclusions\n\t\tCreate or edit the exclusions file"
+ echo -e "\t-P, --print-exclusions\n\t\tPrint out every excluded file/directory name"
+ echo 
  echo "Miscellaneous"
  echo -e "\t-v, --version\n\t\tPrint the version of this script"
  echo -e "\t-h, --help\n\t\tShow this prompt"
@@ -141,6 +158,15 @@ case "${1}" in
     ;;
   -L | --list )
     LIST $2
+    ;;
+  -D | --default-target )
+    DEFAULT_TARGET $2
+    ;;
+  -E | --exclusions )
+    EXCLUSIONS
+    ;;
+  -P | --print-exclusions)
+    PRINT_EXCLUSIONS
     ;;
   -v | --version )
     VERSION
