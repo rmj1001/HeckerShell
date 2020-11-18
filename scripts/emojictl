@@ -1,0 +1,248 @@
+#!/usr/bin/env bash
+
+# Script Version
+version="1.0"
+
+# Shell command
+cmd=""
+
+# Noto Emoji package link
+EMOJIPKG="https://noto-website-2.storage.googleapis.com/pkgs/NotoColorEmoji-unhinted.zip"
+
+# Fontconfig file links
+FONTCONFIGS=(
+"https://raw.githubusercontent.com/garman1001/dotfiles/master/configs/fontconfig/conf.d/01-dejavu.conf"
+"https://raw.githubusercontent.com/garman1001/dotfiles/master/configs/fontconfig/conf.d/02-mozilla.conf"
+"https://raw.githubusercontent.com/garman1001/dotfiles/master/configs/fontconfig/conf.d/03-emoji.conf"
+)
+
+# Directories
+CONFDIR=$HOME/.config/fontconfig/conf.d
+NOTOPKG="$HOME/Downloads/$(basename ${EMOJIPKG})"
+TEMP=$HOME/Downloads/temp
+FONTS=$HOME/.fonts
+FILE=$HOME/.fonts/NotoColorEmoji.ttf
+
+function SCRIPTNAME()
+{
+	echo "$(basename ${0})"
+}
+
+function PRINT()
+{
+	if [ -z "${1}" ]; then
+		printf "\n"
+	else
+		printf "%b\n" "${1}"
+	fi
+}
+
+function pause()
+{
+	read -p "Press ENTER to continue..." cmd
+}
+
+function lowercase()
+{
+	printf "$1" | tr '[:upper:]' '[:lower:]'
+}
+
+function invalid()
+{
+	PRINT 
+	PRINT "Invalid command '${1}'. See \'`SCRIPTNAME` help\'."
+	PRINT 
+}
+
+function emptycmd()
+{
+	PRINT 
+	PRINT "You must specify a subcommand. See \'`SCRIPTNAME` help\'."
+	PRINT 
+}
+
+function preparedirs()
+{
+	# Make the config directory and move to it
+	[ ! -d $CONFDIR ] && mkdir -p $CONFDIR
+	[ ! -d $FONTS ] && mkdir -p $FONTS
+	[ -d $TEMP ] && rm -rf $TEMP
+	[ -f $FILE ] && rm -rf $FILE
+	[ -f $NOTOPKG ] && rm -f $NOTOPKG
+}
+
+function installer()
+{
+	clear
+
+	# Make the config directory and move to it
+	preparedirs
+	cd $CONFDIR
+
+	# Download the fontconfig files
+	for file in "${FONTCONFIGS[@]}"; do
+		name=$(basename $file)
+		rm -f $name
+		wget $file
+	done
+
+	# Download noto emoji font
+	cd $TEMP
+	wget $EMOJIPKG
+
+	# Install emojis
+	unzip NotoColorEmoji-unhinted.zip
+	mv NotoColorEmoji.ttf $FONTS
+	fc-cache -fv
+	rm -rf $TEMP
+	
+	# Post
+	PRINT 
+	PRINT 
+	PRINT "Install finished."
+	PRINT 
+	pause
+}
+
+function uninstaller()
+{
+	clear
+	preparedirs
+
+	# Remove the font file
+	rm -f ${FONTS}/NotoColorEmoji.ttf
+
+	# Remove the config files
+	for file in "${FONTCONFIGS[@]}"; do
+		name=$(basename ${file})
+		rm -f ${CONFDIR}/${name}
+	done
+
+	# Reload the font cache
+	fc-cache -fv
+	
+	# Post
+	PRINT 
+	PRINT 
+	PRINT "Uninstall finished."
+	PRINT 
+	pause
+}
+
+function help_prompt()
+{
+	PRINT 
+	PRINT "Manage emoji installation on your Linux system"
+	PRINT 
+	PRINT "Usage: `SCRIPTNAME` [command] [args]"
+	PRINT "Example: `SCRIPTNAME` install"
+	PRINT
+	PRINT "Commands:"
+	PRINT "(i) install\tInstall Noto Color Emoji"
+	PRINT "(u) uninstall\tUninstall Noto Color Emoji"
+	PRINT "(s) shell\tUse the interactive shell to work with `SCRIPTNAME`"
+	PRINT "(e) exit\t(Shell only) exit the shell"
+	PRINT 
+	PRINT "Miscellaneous:"
+	PRINT "(h) help\tShow this help menu"
+	PRINT "(v) version\tShow this script's version"
+	PRINT 
+}
+
+function version()
+{
+	PRINT 
+	PRINT "`SCRIPTNAME` v${version}"
+	PRINT
+	PRINT "Copyright (C) `date +"%Y"` Nidia Achrys"
+	PRINT "License GPLv3+: GNU GPL version 3 or later https://gnu.org/licenses/gpl.html."
+	PRINT "This is free software: you are free to change and redistribute it."
+	PRINT "There is NO WARRANTY, to the extent permitted by law."
+	PRINT
+	PRINT "Written by Nidia Achrys."
+	PRINT 
+}
+
+function shell()
+{
+	while [ "${cmd}" != "exit" ]
+	do
+		clear
+		PRINT "Emoji Manager"
+		PRINT 
+		PRINT "Enter a command, or 'help' for a list of commands."
+		PRINT 
+		read -p "> " cmd
+
+		og_cmd="$cmd"
+
+		# Convert the command string to lower case
+		cmd=`lowercase "${cmd}"`
+
+		case "$cmd" in
+			i | install )
+				installer
+				;;
+			u | uninstall )
+				uninstaller
+				;;
+			\? | h | help )
+				help_prompt
+				pause
+				;;
+			v | version )
+				version
+				pause
+				;;
+			e | exit )
+				clear
+				exit 0
+				;;
+			* )
+				if [ -z "${cmd}" ];
+				then
+					emptycmd
+					pause
+				else
+					invalid "${cmd}"
+					pause
+				fi
+				;;
+		esac
+	done
+}
+
+cmd=`lowercase "${1}"`
+
+case "${cmd}" in
+
+	install | i )
+		installer
+		exit 0
+		;;
+	uninstall | u )
+		uninstaller
+		exit 0
+		;;
+	help | h | \? )
+		help_prompt
+		exit 0
+		;;
+	version | v )
+		version
+		exit 0
+		;;
+	shell | s )
+		shell
+		;;
+	* )
+		if [ -z "${cmd}" ];
+		then
+			emptycmd
+		else
+			invalid "${cmd}"
+		fi
+		exit 0
+		;;
+
+esac

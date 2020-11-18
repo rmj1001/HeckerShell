@@ -17,17 +17,62 @@ scriptshell="bash"
 [[ -z "${EDITOR}" ]] && EDITOR=nano
 
 # Functions
+
+function SCRIPTNAME()
+{
+	echo "$(basename ${0})"
+}
+
+function PRINT()
+{
+	if [ -z "${1}" ]; then
+		printf "\n"
+	else
+		printf "%b\n" "${1}"
+	fi
+}
+
+function pause()
+{
+	read -p "Press ENTER to continue..." cmd
+}
+
+function lowercase()
+{
+	printf "$1" | tr '[:upper:]' '[:lower:]'
+}
+
+function invalid()
+{
+	PRINT 
+	PRINT "Invalid command '${1}'. See \'`SCRIPTNAME` help\'."
+	PRINT 
+}
+
+function emptycmd()
+{
+	PRINT 
+	PRINT "You must specify a subcommand. See \'`SCRIPTNAME` help\'."
+	PRINT 
+}
+
 getName()
 {
-    if [[ -z "${scriptname}" ]]
+    if [[ -z "${1}" ]]
     then
         read -p "Enter the name of the script: " scriptname
+	else
+		scriptname="${1}"
     fi
     script="${SCRIPTS}/${scriptname}"
 }
 
 createScript()
 {
+	getName "${1}"
+
+	scriptshell="${2}"
+
     if [[ ! -e "${script}" ]]
     then
     	touch ${script}
@@ -44,6 +89,8 @@ createScript()
 
 editScript()
 {
+	getName "${1}"
+
 	if [[ -e "${script}" ]]
 	then
 		${EDITOR} ${script}
@@ -59,6 +106,8 @@ editScript()
 
 removeScript()
 {
+	getName "${1}"
+
 	if [[ -e "${script}" ]]
 	then
 		rm -f ${script}
@@ -72,6 +121,8 @@ removeScript()
 
 printScript()
 {
+	getName "${1}"
+
 	if [[ -e "${script}" ]]
 	then
 		cat ${script}
@@ -90,97 +141,69 @@ listScripts()
 
 version()
 {
-  echo "$CMDNAME $VERSION"
-  echo "Copyright (C) $YEAR Nidia Achrys"
-  echo "License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>."
-  echo "This is free software: you are free to change and redistribute it."
-  echo "There is NO WARRANTY, to the extent permitted by law."
-  echo
-  echo "Written by Nidia Achrys."
+  PRINT "`SCRIPTNAME` v$VERSION"
+  PRINT "Copyright (C) `date +"%Y"` Nidia Achrys"
+  PRINT "License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>."
+  PRINT "This is free software: you are free to change and redistribute it."
+  PRINT "There is NO WARRANTY, to the extent permitted by law."
+  PRINT
+  PRINT "Written by Nidia Achrys."
   exit 0
 }
 
 helpPrompt()
 {
-	echo -e "Usage: $CMDNAME [OPTIONS] [command]"
-	echo -e "Create, edit, remove, or print scripts."
-	echo -e "Example: $CMDNAME -C -n torrentctl -s '/usr/bin/env zsh'"
-  	echo -e "NOTE: If a flag has an asterisk (*) next to it, it's required to create an entry."
-	echo
-	echo -e "Commands:"
-	echo -e "\t-C, --create\t\tCreate a new script"
-	echo -e "\t-E, --edit\t\tEdit an existing script"
-	echo -e "\t-R, --remove\t\tDelete an existing script"
-	echo -e "\t-P, --print\t\tPrint a script to STDOUT"
-	echo -e "\t-L, --list\t\tList all scripts"
-	echo
-	echo -e "Flags:"
-	echo -e "\t-n, --name*\t\tName of the script to manage"
-	echo -e "\t-s, --shell\t\tShell to specify in script's shebang"
-	echo
-	echo -e "Miscellaneous:"
-	echo -e "\t-v, --version\t\toutput version information and exit"
-	echo -e "\t-h, --help\t\tdisplay this help and exit"
+	PRINT "Create, edit, remove, or print scripts."
+	PRINT 
+	PRINT "Usage: `SCRIPTNAME` [command] [args]"
+	PRINT "Example: `SCRIPTNAME` create torrentctl '/usr/bin/env zsh'"
+	PRINT 
+	PRINT "Commands:"
+	PRINT "(c) create\t\tCreate a new script"
+	PRINT "(e) edit\t\tEdit an existing script"
+	PRINT "(r) remove\t\tDelete an existing script"
+	PRINT "(p) print\t\tPrint a script to STDOUT"
+	PRINT "(l) list\t\tList all scripts"
+	PRINT 
+	PRINT "Miscellaneous:"
+	PRINT "(v) version\t\toutput version information and exit"
+	PRINT "(h) help\t\tdisplay this help and exit"
 	exit 0
 }
 
 # Create the scripts directory if it does not already exist.
 [[ ! -d "${SCRIPTS}" ]] && mkdir ${SCRIPTS}
 
-ARGS=( "$@" )
+cmd=`lowercase ${1}`
 
-for (( i=0 ; i < ${#ARGS[@]} ; i++ ))
-do
-	j=$(( i + 1 ))
-	value="${ARGS[$i]}"
-	key="${ARGS[$j]}"
-	case "$value" in
-		-n | --name )
-			scriptname="${key}"
-			unset ARGS[$i]
-			unset ARGS[$i+1]
-			;;
-		-s | --shell )
-			scriptshell="${key}"
-			unset ARGS[$i]
-			unset ARGS[$i+1]
-			;;
-	esac
-done
-
-for (( i=0 ; i < ${#ARGS[@]} ; i++ ))
-do
-	value="${ARGS[$i]}"
-
-	case "$value" in
-		-C | --create )
-			getName
-			createScript
-			;;
-		-E | --edit )
-			getName
-			editScript
-			;;
-		-R | --remove )
-			getName
-			removeScript
-			;;
-		-P | --print )
-			getName
-			printScript
-			;;
-		-L | --list )
-			listScripts
-			;;
-		-v | --version )
-			version
-			;;
-		-h | --help | \? )
-			helpPrompt
-			;;
-		* )
-      		echo "$CMDNAME: Invalid subcommand '${value}'."
-			echo "$CMDNAME: See '$CMDNAME ?' for information."
-			;;
-	esac
-done
+case "${cmd}" in
+	c | create )
+		createScript "${2}" "${3}"
+		;;
+	e | edit )
+		editScript "${2}"
+		;;
+	r | remove )
+		removeScript "${2}"
+		;;
+	p | print )
+		printScript "${2}"
+		;;
+	l | list )
+		listScripts
+		;;
+	v | version )
+		version
+		;;
+	\? | h | help )
+		helpPrompt
+		;;
+	* )
+		if [ -z "${cmd}" ];
+		then
+			emptycmd
+		else
+			invalid "${1}"
+		fi
+		;;
+esac

@@ -1,15 +1,90 @@
 #!/usr/bin/env bash
-
+# Author: Nidia Achrys
+# Project: pkg
+# Version: 1.0
+# Description:
+#	This utility manages software across distributions
+#
+# Usage: pkg [OPTION]
 declare -- INSTALL
 declare -- UNINSTALL
 declare -- SEARCH
 declare -- UPDATE
 declare -- ARGS
 
-CMDNAME=$(basename $0)
-VERSION="1.0"
+version="1.0"
+package_managers="apt, pacman, yay"
 
-PMS="apt, pacman, yay"
+function SCRIPTNAME()
+{
+	PRINT "$(basename ${0})"
+}
+
+function PRINT()
+{
+	if [ -z "${1}" ]; then
+		printf "\n"
+	else
+		printf "%b\n" "${1}"
+	fi
+}
+
+function pause()
+{
+	read -p "Press ENTER to continue..." cmd
+}
+
+function lowercase()
+{
+	printf "$1" | tr '[:upper:]' '[:lower:]'
+}
+
+function invalid()
+{
+	PRINT 
+	PRINT "Invalid command '${1}'. See \'`SCRIPTNAME` help\'."
+	PRINT 
+}
+
+function emptycmd()
+{
+	PRINT 
+	PRINT "You must specify a subcommand. See \'`SCRIPTNAME` help\'."
+	PRINT 
+}
+
+help_prompt()
+{
+    PRINT 
+    PRINT "Install, remove, search, and update software. Cross Platform."
+    PRINT
+    PRINT "Usage: `SCRIPTNAME` [command] [args]"
+    PRINT "Example: `SCRIPTNAME` search <package>"
+    PRINT
+    PRINT "Note: Only supports the following package managers: ${package_managers}"
+    PRINT
+    PRINT "Commands"
+    PRINT "(i) install\t\tInstall Software"
+    PRINT "(r) remove\t\tUninstall Software"
+    PRINT "(s) search\t\tSearch for software"
+    PRINT "(u) update\t\tUpdate your software"
+    PRINT 
+    PRINT "Miscellaneous"
+    PRINT "(h) help\t\tShow this prompt"
+    PRINT "(v) version\t\tPrint the version of this script"
+}
+
+version()
+{
+    PRINT "`SCRIPTNAME` v${version}"
+    PRINT
+    PRINT "Copyright (C) `date +"%Y"` Nidia Achrys"
+    PRINT "License GPLv3+: GNU GPL version 3 or later https://gnu.org/licenses/gpl.html."
+    PRINT "This is free software: you are free to change and redistribute it."
+    PRINT "There is NO WARRANTY, to the extent permitted by law."
+    PRINT
+    PRINT "Written by Nidia Achrys."
+}
 
 if [[ `command -v pacman` ]];
 then
@@ -30,7 +105,7 @@ then
     SEARCH="sudo apt search"
     UPDATE="sudo apt update && sudo apt upgrade"
 else
-    echo "Your distro is not currently supported!"
+    PRINT "Your distro is not currently supported!"
     exit 1
 fi
 
@@ -39,61 +114,42 @@ ARGS=("$@")
 unset ARGS[0]
 unset ARGS[1]
 
-HELP()
-{
-  echo -e "Usage: ${CMDNAME} [command]"
-  echo
-  echo -e "Install, remove, search, and update software. Cross Platform."
-  echo -e "Note: Only supports the following package managers: ${PMS}"
-  echo
-  echo "Commands"
-  echo -e "\t-i, --install\n\t\tInstall Software"
-  echo -e "\t-un, --uninstall\n\t\tUninstall Software"
-  echo -e "\t-s, --search\n\t\tSearch for software"
-  echo -e "\t-up, --update\n\t\tUpdate your software"
-  echo 
-  echo "Miscellaneous"
-  echo -e "\t-v, --version\n\t\tPrint the version of this script"
-  echo -e "\t-h, --help\n\t\tShow this prompt"
-  exit 0
-}
+cmd=`lowercase ${1}`
 
-VERSION_PROMPT()
-{
-  echo "${CMDNAME} ${VERSION}"
-  echo
-  echo "Copyright (C)  Nidia Achrys"
-  echo "License GPLv3+: GNU GPL version 3 or later https://gnu.org/licenses/gpl.html."
-  echo "This is free software: you are free to change and redistribute it."
-  echo "There is NO WARRANTY, to the extent permitted by law."
-  echo
-  echo "Written by Nidia Achrys."
-  exit 0
-}
+case "${cmd}" in
 
-case "${1}" in
-
-    -i | --install )
+    i | install )
         eval "${INSTALL} ${ARGS[@]}"
         exit 0
         ;;
-    -un | --uninstall )
+    r | remove )
         eval "${UNINSTALL} ${ARGS[@]}"
         exit 0
         ;;
-    -s | --search )
+    s | search )
         eval "${SEARCH} ${ARGS[@]}"
         exit 0
         ;;
-    -up | --update )
+    u | update )
         eval "${UPDATE} ${ARGS[@]}"
         exit 0
         ;;
-    \? | -h | --help )
-        HELP
+    \? | h | help )
+        help_prompt
+        exit 0
         ;;
-    -v | --version )
-        VERSION_PROMPT
+    v | version )
+        version
+        exit 0
         ;;
+    * )
+		if [ -z "${cmd}" ];
+		then
+			emptycmd
+		else
+			invalid "${1}"
+		fi
+		exit 0
+		;;
 
 esac

@@ -7,14 +7,52 @@
 #
 # Usage: tardis [OPTION] [FLAGS]
 
-CMDNAME=$(basename $0)
-VERSIONNUM="1.0"
+version="1.0"
 
 # Config
 CONFDIR="${HOME}/.config/tardisrsync"
 EXCLUSION_FILE="${CONFDIR}/exclusions.conf"
 CONFIG="${CONFDIR}/default-disk.conf"
 
+function SCRIPTNAME()
+{
+	PRINT "$(basename ${0})"
+}
+
+function PRINT()
+{
+	if [ -z "${1}" ]; then
+		printf "\n"
+	else
+		printf "%b\n" "${1}"
+	fi
+}
+
+function pause()
+{
+	read -p "Press ENTER to continue..." cmd
+}
+
+function lowercase()
+{
+	printf "$1" | tr '[:upper:]' '[:lower:]'
+}
+
+function invalid()
+{
+	PRINT 
+	PRINT "Invalid command '${1}'. See \'`SCRIPTNAME` help\'."
+	PRINT 
+}
+
+function emptycmd()
+{
+	PRINT 
+	PRINT "You must specify a subcommand. See \'`SCRIPTNAME` help\'."
+	PRINT 
+}
+
+# Get the target directory and manifest file
 GETDIR()
 {
   [ -f "${CONFIG}" ] && BACKUPDISK=$(cat "${CONFIG}" | grep "DEFAULT_DISK=" | sed -e 's|DEFAULT_DISK=||')
@@ -23,15 +61,16 @@ GETDIR()
   then
     TARGET="${1}"
   else
-    [ -z "${BACKUPDISK}" ] && echo "You must specify a directory to back up or set a default!" && exit 1
+    [ -z "${BACKUPDISK}" ] && PRINT "You must specify a directory to back up or set a default!" && exit 1
     TARGET="${BACKUPDISK}"
   fi
 
-	[ ! -d "${TARGET}" ] && echo "That directory does not exist!" && exit 1
+	[ ! -d "${TARGET}" ] && PRINT "That directory does not exist!" && exit 1
 
 	MANIFEST=${TARGET}/tardis-manifest.conf
 }
 
+# Create a backup in the target
 BACKUP()
 {
 	GETDIR $1
@@ -45,138 +84,162 @@ BACKUP()
 
   mv ${TARGET}/${USER} ${TARGET}/${BACKUPNAME}
 
-  echo "Finished backup!"
-  echo "[SUCCESSFUL] ${BACKUPNAME}" | tee -a ${MANIFEST}
+  PRINT "Finished backup!"
+  PRINT "[SUCCESSFUL] ${BACKUPNAME}" | tee -a ${MANIFEST}
   exit 0
 }
 
+# Restore a backup from the target
 RESTORE()
 {
 	GETDIR $1
   BACKUPDIR="${TARGET}/${2}"
 
-  [ ! -d "${BACKUPDIR}" ] && echo "That backup does not exist!" && exit 1
+  [ ! -d "${BACKUPDIR}" ] && PRINT "That backup does not exist!" && exit 1
 
   for F in "${BACKUPDIR}/*"
   do
     file="${BACKUPDIR}/${F}"
 
-    [ -d "${file}" ] && RSYNCDIR "${file}" "${HOME}"
-    [ ! -d "${file}" ] && RSYNCFILE "${file}" "${HOME}"
+    [ -d "${file}" ] && rsync -avhpru --delete "${file}" "${HOME}"
+    [ ! -d "${file}" ] && rsync -avhpu --delete "${file}" "${HOME}"
   done
 
   for F in "${BACKUPDIR}/{.,}*"
   do
     file="${BACKUPDIR}/${F}"
 
-    [ -d "${file}" ] && RSYNCDIR "${file}" "${HOME}"
-    [ ! -d "${file}" ] && RSYNCFILE "${file}" "${HOME}"
+    [ -d "${file}" ] && rsync -avhpru --delete "${file}" "${HOME}"
+    [ ! -d "${file}" ] && rsync -avhpu --delete "${file}" "${HOME}"
   done
 
-  echo "Finished restore!"
+  PRINT "Finished restore!"
   exit 0
 }
 
+# List all the previous backups in the target
 LIST()
 {
 	GETDIR $1
-	FILES=${TARGET}/*
+	FILES=${TARGET}/*/
 
-	[ ! ${#FILES[@]} -gt 0 ] && echo "There are no backups!" && exit 1
-	[ ! -e ${MANIFEST} ] && echo "There are no backups!" && exit 1
+	[ ! ${#FILES[@]} -gt 0 ] && PRINT "There are no backups!" && exit 1
+	[ ! -e ${MANIFEST} ] && PRINT "There are no backups!" && exit 1
 
-	ls -ld ${TARGET}/*/
+	ls -F ${TARGET} | grep /\$
 }
 
+# Set the default disk to look for when not specified on the command line
 DEFAULT_TARGET()
 {
-  [ ! -d ${CONFDIR} ] && mkdir -p ${CONFDIR} && echo "Created config file!"
-  [ -z "${1}" ] && echo "You must specify a directory to set as the default!" && exit 1
-  [ ! -d "${1}" ] && echo "That is not a valid directory!" && exit 1
+  [ ! -d ${CONFDIR} ] && mkdir -p ${CONFDIR} && PRINT "Created config file!"
+  [ -z "${1}" ] && PRINT "You must specify a directory to set as the default!" && exit 1
+  [ ! -d "${1}" ] && PRINT "That is not a valid directory!" && exit 1
 
   cat ${CONFIG} | grep -iv "DEFAULT_DISK=" > ${CONFIG}
-  echo "DEFAULT_DISK=${1}" >> ${CONFIG}
-  echo "Set a default target!"
+  PRINT "DEFAULT_DISK=${1}" >> ${CONFIG}
+  PRINT "Set a default target!"
   exit 0
 }
 
+# Edit the list of exclusions in $HOME/.config/tardisrsync/exclusions.conf
 EXCLUSIONS()
 {
-  [ ! -d ${CONFDIR} ] && mkdir -p ${CONFDIR} && echo "Created exclusions file!"
-  [ -z "${EDITOR}" ] && nano ${EXCLUSION_FILE} && echo "Exclusions edited!" && exit 0
-  [ -n "${EDITOR}" ] && ${EDITOR} ${EXCLUSION_FILE} && echo "Exclusions edited!" && exit 0
+  [ ! -d ${CONFDIR} ] && mkdir -p ${CONFDIR} && PRINT "Created exclusions file!"
+  [ -z "${EDITOR}" ] && nano ${EXCLUSION_FILE} && PRINT "Exclusions edited!" && exit 0
+  [ -n "${EDITOR}" ] && ${EDITOR} ${EXCLUSION_FILE} && PRINT "Exclusions edited!" && exit 0
 }
 
+# Print the list of exclusions listed in $HOME/.config/tardisrsync/exclusions.conf
 PRINT_EXCLUSIONS()
 {
-  [ ! -e "${EXCLUSION_FILE}" ] && echo "Exclusions have not been specified." && exit 0
+  [ ! -e "${EXCLUSION_FILE}" ] && PRINT "Exclusions have not been specified." && exit 0
   cat ${EXCLUSION_FILE}
-  exit 0
 }
 
-VERSION()
+# Version Prompt
+version()
 {
-  echo "${CMDNAME} ${VERSIONNUM}"
-  echo
-  echo "Copyright (C)  Nidia Achrys"
-  echo "License GPLv3+: GNU GPL version 3 or later https://gnu.org/licenses/gpl.html."
-  echo "This is free software: you are free to change and redistribute it."
-  echo "There is NO WARRANTY, to the extent permitted by law."
-  echo
-  echo "Written by Nidia Achrys."
-  exit 0
+  PRINT "`SCRIPTNAME` v${version}"
+  PRINT
+  PRINT "Copyright (C) `date +"%Y"` Nidia Achrys"
+  PRINT "License GPLv3+: GNU GPL version 3 or later https://gnu.org/licenses/gpl.html."
+  PRINT "This is free software: you are free to change and redistribute it."
+  PRINT "There is NO WARRANTY, to the extent permitted by law."
+  PRINT
+  PRINT "Written by Nidia Achrys."
 }
 
-HELP()
+# Help Prompt
+help_prompt()
 {
- echo -e "Usage: ${CMDNAME} [command]"
- echo
- echo -e "Create, restore, and list backups."
- echo
- echo "Commands"
- echo -e "\t-B, --backup\n\t\tCreate a backup"
- echo -e "\t-R, --restore\n\t\tRestore a backup"
- echo -e "\t-L, --list\n\t\tList all backups"
- echo
- echo "Settings"
- echo -e "\t-D, --default-target\n\t\tSet a default target for future backups"
- echo -e "\t-E, --exclusions\n\t\tCreate or edit the exclusions file"
- echo -e "\t-P, --print-exclusions\n\t\tPrint out every excluded file/directory name"
- echo 
- echo "Miscellaneous"
- echo -e "\t-v, --version\n\t\tPrint the version of this script"
- echo -e "\t-h, --help\n\t\tShow this prompt"
- exit 0
+ PRINT
+ PRINT "Create, restore, and list backups."
+ PRINT 
+ PRINT "Usage: `SCRIPTNAME` [command] [args]"
+ PRINT "Example: `SCRIPTNAME` backup <disk path>"
+ PRINT 
+ PRINT "Commands"
+ PRINT "(b) backup\t\tCreate a backup"
+ PRINT "(r) restore\t\tRestore a backup"
+ PRINT "(l) list\t\tList all backups"
+ PRINT
+ PRINT "Settings"
+ PRINT "(d) default-target\tSet a default target for future backups"
+ PRINT "(e) exclusions\t\tCreate or edit the exclusions file"
+ PRINT "(p) print-exclusions\tPrint out every excluded file/directory name"
+ PRINT 
+ PRINT "Miscellaneous"
+ PRINT "(h) help\t\tShow this prompt"
+ PRINT "(v) version\t\tPrint the version of this script"
 }
 
-case "${1}" in
-  -B | --backup )
+# Exit if rsync is not installed
+[[ ! `command -v rsync` ]] && PRINT "rsync must be installed to use tardis." && exit 1
+
+cmd=`lowercase ${1}`
+
+# Command line options
+case "${cmd}" in
+  b | backup )
     BACKUP $2
+    exit 0
     ;;
-  -R | --restore)
+  r | restore)
     RESTORE $2 $3
+    exit 0
     ;;
-  -L | --list )
+  l | list )
     LIST $2
+    exit 0
     ;;
-  -D | --default-target )
+  d | default-target )
     DEFAULT_TARGET $2
+    exit 0
     ;;
-  -E | --exclusions )
+  e | exclusions )
     EXCLUSIONS
+    exit 0
     ;;
-  -P | --print-exclusions)
+  p | print-exclusions)
     PRINT_EXCLUSIONS
+    exit 0
     ;;
-  -v | --version )
-    VERSION
+  v | version )
+    version
+    exit 0
     ;;
-  \? | -h | --help )
-    HELP
+  \? | h | help )
+    help_prompt
+    exit 0
     ;;
   * )
-    echo -e "Invalid command."
-    echo -e "See '${CMDNAME} --help' for a full list of commands."
-    exit 1
-    ;;
+		if [ -z "${cmd}" ];
+		then
+			emptycmd
+		else
+			invalid "${1}"
+		fi
+		exit 0
+		;;
 esac

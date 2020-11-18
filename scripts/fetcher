@@ -1,5 +1,19 @@
 #!/usr/bin/env bash
 
+function PRINT()
+{
+	if [ -z "${1}" ]; then
+		printf "\n"
+	else
+		printf "%b\n" "${1}"
+	fi
+}
+
+function LINE()
+{
+	PRINT "--------------------------------"
+}
+
 OS="`grep '^NAME=' /etc/os-release | sed 's/NAME=//;s/"//g'` `uname -s` `uname -m`"
 HOST="`uname -n`"
 KERNEL="`uname -r`"
@@ -21,19 +35,16 @@ MEMTOTAL="`grep 'MemTotal' /proc/meminfo | sed 's|MemTotal:\s*||g'`"
 MEMFREE="`grep 'MemFree' /proc/meminfo | sed 's|MemFree:\s*||g'`"
 MEMORY="$MEMFREE / $MEMTOTAL"
 
-# Lines
-LINES="--------------------------------"
-
-echo -e "$LINES" 
-echo -e "| ${USER}@${HOST}"
-echo -e "$LINES"
-echo -e "| OS:\t\t${OS}"
-echo -e "| Kernel:\t${KERNEL}"
-echo -e "| Uptime:\t${UPTIME}"
-echo -e "| Packages:\t${PKGCOUNT}"
-echo -e "| Shell:\t${SHELL}"
-echo -e "| Processor:\t${CPUNAME}"
-echo -e "| Cores:\t${CORES}"
-echo -e "| Memory:\t${MEMORY}"
-echo -e "$LINES"
+LINE
+PRINT "| ${USER}@${HOST}"
+LINE
+PRINT "| OS: \t\t${OS}"
+PRINT "| Kernel: \t${KERNEL}"
+PRINT "| Uptime: \t${UPTIME}"
+PRINT "| Packages: \t${PKGCOUNT}"
+PRINT "| Shell: \t${SHELL}"
+PRINT "| Processor: \t${CPUNAME}"
+PRINT "| Cores: \t${CORES}"
+PRINT "| Memory: \t${MEMORY}"
+LINE
 
