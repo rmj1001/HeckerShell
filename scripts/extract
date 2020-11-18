@@ -1,6 +1,73 @@
 #!/usr/bin/env bash
 
-SCRIPTNAME=$(basename $0)
+##############################################
+#	Author: Nidia Achrys
+#	Project: extract
+#	Version: 1.0
+#	Description:
+#		Extract any archive file
+#
+#	Usage: extract [command] [args]
+##############################################
+
+version='1.0'
+author='Nidia Achrys'
+
+#######################################################################
+#							Helper Functions						  #
+#######################################################################
+function SCRIPTNAME()
+{
+	echo "${0##*/}"
+}
+
+function PRINT()
+{
+	if [ -z "${1}" ]; then
+		printf "\n"
+	else
+		printf "%b\n" "${1}"
+	fi
+}
+
+function pause()
+{
+	read -p "Press ENTER to continue..." cmd
+}
+
+function lowercase()
+{
+	printf "${1}" | tr "[:upper:]" "[:lower:]"
+}
+
+function invalid()
+{
+	PRINT 
+	PRINT "Invalid command \"${1}\". See \"`SCRIPTNAME` help\"."
+	PRINT 
+}
+
+function emptycmd()
+{
+	PRINT 
+	PRINT "You must specify a subcommand. See \"`SCRIPTNAME` help\"."
+	PRINT 
+}
+
+function version()
+{
+	PRINT "`SCRIPTNAME` v${version}"
+	PRINT "Copyright (C) `date +"%Y"` ${author}"
+	PRINT "License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>."
+	PRINT "This is free software: you are free to change and redistribute it."
+	PRINT "There is NO WARRANTY, to the extent permitted by law."
+	PRINT
+	PRINT "Written by ${author}."
+}
+
+#######################################################################
+#								Core Code							  #
+#######################################################################
 
 if [ -f "$1" ]
 then

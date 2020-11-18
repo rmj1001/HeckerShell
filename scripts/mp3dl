@@ -1,5 +1,75 @@
 #!/usr/bin/env bash
 
+##############################################
+#	Author: Nidia Achrys
+#	Project: mp3dl
+#	Version: 1.0
+#	Description:
+#		Download youtube videos and convert
+#		them to mp3 files
+#
+#	Usage: mp3dl [command] [args]
+##############################################
+
+version='1.0'
+author='Nidia Achrys'
+
+#######################################################################
+#							Helper Functions						  #
+#######################################################################
+function SCRIPTNAME()
+{
+	echo "${0##*/}"
+}
+
+function PRINT()
+{
+	if [ -z "${1}" ]; then
+		printf "\n"
+	else
+		printf "%b\n" "${1}"
+	fi
+}
+
+function pause()
+{
+	read -p "Press ENTER to continue..." cmd
+}
+
+function lowercase()
+{
+	printf "${1}" | tr "[:upper:]" "[:lower:]"
+}
+
+function invalid()
+{
+	PRINT 
+	PRINT "Invalid command \"${1}\". See \"`SCRIPTNAME` help\"."
+	PRINT 
+}
+
+function emptycmd()
+{
+	PRINT 
+	PRINT "You must specify a subcommand. See \"`SCRIPTNAME` help\"."
+	PRINT 
+}
+
+function version()
+{
+	PRINT "`SCRIPTNAME` v${version}"
+	PRINT "Copyright (C) `date +"%Y"` ${author}"
+	PRINT "License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>."
+	PRINT "This is free software: you are free to change and redistribute it."
+	PRINT "There is NO WARRANTY, to the extent permitted by law."
+	PRINT
+	PRINT "Written by ${author}."
+}
+
+#######################################################################
+#								Core Code							  #
+#######################################################################
+
 [[ ! `command -v youtube-dl` ]] && echo "youtube-dl is not installed" && exit 1
 
 DOWNDIR=$HOME/Downloads/Music

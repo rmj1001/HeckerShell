@@ -2,13 +2,12 @@
 
 ##############################################
 #	Author: Nidia Achrys
-#	Project: pkglists
+#	Project: pacmirrors
 #	Version: 1.0
 #	Description:
-#		Make lists of packages installed in
-#		pacman (arch distros only)
+#		Refresh pacman mirrors (Arch distros only)
 #
-#	Usage: pkglists [command] [args]
+#	Usage: pacmirrors [command] [args]
 ##############################################
 
 version='1.0'
@@ -70,14 +69,22 @@ function version()
 #								Core Code							  #
 #######################################################################
 
-[[ ! `command -v pacman` ]] && echo "This script can only run on arch-based distros." && exit 1
+refresh()
+{
+  mirrorlist=/etc/pacman.d/mirrorlist
+  backupfile=/etc/pacman.d/mirrorlist.backup
+  
+  [[ -f $backupfile ]] && sudo rm -f $backupfile
+  sudo cp $mirrorlist $backupfile
+  sudo reflector --sort rate --protocol https --latest 30 --verbose --save $mirrorlist
+}
 
-cd $HOME/Downloads
-pacmanlist="$(pacman -Qqe | grep -v '`pacman -Qq base`' | grep -v '`pacman -Qqm`')"
-aurlist="$(pacman -Qqm)"
+[[ ! `command -v pacman` ]] && echo "This script can only be run on Arch-based distros." && exit 1
 
-echo "$pacmanlist" > pacmanlist.txt
-echo "$aurlist" > aurlist.txt
-cat pacmanlist.txt aurlist.txt > allpkgs.txt
-
-echo "Created lists in ${HOME}/Downloads!"
+if [[ `command -v reflector` ]]
+then
+  refresh
+else
+  pacman -S reflector
+  refresh
+fi
