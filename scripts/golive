@@ -1,19 +1,26 @@
 #!/usr/bin/env bash
-set -e
 
-MIC_SOURCE=   # number from 'pactl list short sources'
-OUTPUT_SINK=  # number from 'pactl list short sinks'
-MIX_SOURCE=   # number for sink monitor of all mixed audio (without mic)
-MIX_LOOPBACK= # number for mix loopback module (MIX_SOURCE -> OUTPUT_SINK)
+##############################################
+#	Author: Nidia Achrys
+#	Project: golive
+#	Version: 1.0
+#	Description:
+#		Force pulseaudio to use settings that allows
+#		linux users to share audio via Discord's
+#		golive feature
+#
+#	Usage: golive [command] [args]
+##############################################
 
-cmd= 
+version='1.0'
+author='Nidia Achrys'
 
-# version
-version="1.0"
-
+#######################################################################
+#							Helper Functions						  #
+#######################################################################
 function SCRIPTNAME()
 {
-	echo "$(basename ${0})"
+	echo "${0##*/}"
 }
 
 function PRINT()
@@ -32,22 +39,38 @@ function pause()
 
 function lowercase()
 {
-	printf "$1" | tr '[:upper:]' '[:lower:]'
+	printf "${1}" | tr "[:upper:]" "[:lower:]"
 }
 
 function invalid()
 {
 	PRINT 
-	PRINT "Invalid command '${1}'. See '`SCRIPTNAME` help'."
+	PRINT "Invalid command \"${1}\". See \"`SCRIPTNAME` help\"."
 	PRINT 
 }
 
 function emptycmd()
 {
 	PRINT 
-	PRINT "You must specify a subcommand. See '`SCRIPTNAME` help'."
+	PRINT "You must specify a subcommand. See \"`SCRIPTNAME` help\"."
 	PRINT 
 }
+
+function version()
+{
+	PRINT "`SCRIPTNAME` v${version}"
+	PRINT "Copyright (C) `date +"%Y"` ${author}"
+	PRINT "License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>."
+	PRINT "This is free software: you are free to change and redistribute it."
+	PRINT "There is NO WARRANTY, to the extent permitted by law."
+	PRINT
+	PRINT "Written by ${author}."
+}
+
+#######################################################################
+#								Core Code							  #
+#######################################################################
+
 
 function setup() {
 	pactl list short modules | grep -q 'Virtual_Sink' && return
@@ -118,26 +141,12 @@ function help_prompt()
 	PRINT 
 }
 
-function version()
-{
-	PRINT 
-	PRINT "`SCRIPTNAME` v${version}"
-	PRINT 
-	PRINT "Copyright (C) `date +"%Y"` Nidia Achrys"
-	PRINT "License GPLv3+: GNU GPL version 3 or later https://gnu.org/licenses/gpl.html."
-	PRINT "This is free software: you are free to change and redistribute it."
-	PRINT "There is NO WARRANTY, to the extent permitted by law."
-	PRINT 
-	PRINT "Written by Nidia Achrys."
-	PRINT 
-}
-
 function shell()
 {
 	while [ "${cmd}" != "exit" ];
 	do
 		clear
-		PRINT "Discord Sound Sharing Console"
+		PRINT "`SCRIPTNAME` Control Center"
 		PRINT 
 		PRINT "Enter a command or 'help' for a list of commands."
 		PRINT 
@@ -180,7 +189,6 @@ function shell()
 		esac
 	done
 }
-
 
 cmd=`lowercase "${1}"`
 

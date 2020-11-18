@@ -1,30 +1,24 @@
 #!/usr/bin/env bash
-# Author: Nidia Achrys
-# Project: trash
-# Version: 2.0
-# Description:
-#	This utility manages your trash bin.
+
+##############################################
+#	Author: Nidia Achrys
+#	Project: trash
+#	Version: 1.0
+#	Description:
+#		This utility manages your trash bin.
 #
-# Usage: trash [OPTION] [FLAGS]
+#	Usage: trash [command] [args]
+##############################################
 
-declare -- version
-declare -- TRASHINFO
-declare -- FILENAME
-declare -- FILEINFO
-declare -- DELPATH
-declare -- DELDATE
-declare -- FILEPATH
-declare -- FILEINFO
-declare -- RESTOREPATH
+version='1.0'
+author='Nidia Achrys'
 
-version="1.0"
-TRASHDIRS=$HOME/.local/share/Trash
-[ -z "$TRASH" ] && TRASH=$TRASHDIRS/files
-TRASHINFO=$TRASHDIRS/info
-
+#######################################################################
+#							Helper Functions						  #
+#######################################################################
 function SCRIPTNAME()
 {
-	PRINT "$(basename ${0})"
+	echo "${0##*/}"
 }
 
 function PRINT()
@@ -43,22 +37,53 @@ function pause()
 
 function lowercase()
 {
-	printf "$1" | tr '[:upper:]' '[:lower:]'
+	printf "${1}" | tr "[:upper:]" "[:lower:]"
 }
 
 function invalid()
 {
 	PRINT 
-	PRINT "Invalid command '${1}'. See '`SCRIPTNAME` help'."
+	PRINT "Invalid command \"${1}\". See \"`SCRIPTNAME` help\"."
 	PRINT 
 }
 
 function emptycmd()
 {
 	PRINT 
-	PRINT "You must specify a subcommand. See '`SCRIPTNAME` help'."
+	PRINT "You must specify a subcommand. See \"`SCRIPTNAME` help\"."
 	PRINT 
 }
+
+function version()
+{
+	PRINT "`SCRIPTNAME` v${version}"
+	PRINT "Copyright (C) `date +"%Y"` ${author}"
+	PRINT "License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>."
+	PRINT "This is free software: you are free to change and redistribute it."
+	PRINT "There is NO WARRANTY, to the extent permitted by law."
+	PRINT
+	PRINT "Written by ${author}."
+}
+
+#######################################################################
+#								Core Code							  #
+#######################################################################
+
+# This is where you put your script's functions, variables, logic, etc.
+
+declare -- version
+declare -- TRASHINFO
+declare -- FILENAME
+declare -- FILEINFO
+declare -- DELPATH
+declare -- DELDATE
+declare -- FILEPATH
+declare -- FILEINFO
+declare -- RESTOREPATH
+
+TRASHDIRS=$HOME/.local/share/Trash
+TRASHINFO=$TRASHDIRS/info
+[ -z "$TRASH" ] && TRASH=$TRASHDIRS/files
 
 checkFile()
 {
@@ -153,18 +178,6 @@ info()
   fi
 }
 
-version()
-{
-  PRINT "`SCRIPTNAME` v${version}"
-  PRINT
-  PRINT "Copyright (C) `date +"%Y"` Nidia Achrys"
-  PRINT "License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>."
-  PRINT "This is free software: you are free to change and redistribute it."
-  PRINT "There is NO WARRANTY, to the extent permitted by law."
-  PRINT
-  PRINT "Written by Nidia Achrys."
-}
-
 helpPrompt()
 {
   PRINT 
@@ -221,13 +234,3 @@ case "${cmd}" in
 		fi
     ;;
 esac
-
-unset version
-unset TRASHINFO
-unset FILENAME
-unset FILEINFO
-unset DELPATH
-unset DELDATE
-unset FILEPATH
-unset FILEINFO
-unset RESTOREPATH

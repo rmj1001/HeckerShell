@@ -1,23 +1,24 @@
 #!/usr/bin/env bash
-# Author: Nidia Achrys
-# Project: pkg
-# Version: 1.0
-# Description:
-#	This utility manages software across distributions
+
+##############################################
+#	Author: Nidia Achrys
+#	Project: pkg
+#	Version: 1.0
+#	Description:
+#		This utility manages software across distributions
 #
-# Usage: pkg [OPTION]
-declare -- INSTALL
-declare -- UNINSTALL
-declare -- SEARCH
-declare -- UPDATE
-declare -- ARGS
+#	Usage: pkg [command] [args]
+##############################################
 
-version="1.0"
-package_managers="apt, pacman, yay"
+version='1.0'
+author='Nidia Achrys'
 
+#######################################################################
+#							Helper Functions						  #
+#######################################################################
 function SCRIPTNAME()
 {
-	PRINT "$(basename ${0})"
+	echo "${0##*/}"
 }
 
 function PRINT()
@@ -36,22 +37,46 @@ function pause()
 
 function lowercase()
 {
-	printf "$1" | tr '[:upper:]' '[:lower:]'
+	printf "${1}" | tr "[:upper:]" "[:lower:]"
 }
 
 function invalid()
 {
 	PRINT 
-	PRINT "Invalid command '${1}'. See '`SCRIPTNAME` help'."
+	PRINT "Invalid command \"${1}\". See \"`SCRIPTNAME` help\"."
 	PRINT 
 }
 
 function emptycmd()
 {
 	PRINT 
-	PRINT "You must specify a subcommand. See '`SCRIPTNAME` help'."
+	PRINT "You must specify a subcommand. See \"`SCRIPTNAME` help\"."
 	PRINT 
 }
+
+function version()
+{
+	PRINT "`SCRIPTNAME` v${version}"
+	PRINT "Copyright (C) `date +"%Y"` ${author}"
+	PRINT "License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>."
+	PRINT "This is free software: you are free to change and redistribute it."
+	PRINT "There is NO WARRANTY, to the extent permitted by law."
+	PRINT
+	PRINT "Written by ${author}."
+}
+
+#######################################################################
+#								Core Code							  #
+#######################################################################
+
+SEARCH=""
+UPDATE=""
+INSTALL=""
+UNINSTALL=""
+
+ARGS=()
+
+package_managers="apt, pacman, yay"
 
 help_prompt()
 {
@@ -72,18 +97,6 @@ help_prompt()
     PRINT "Miscellaneous"
     PRINT "(h) help\t\tShow this prompt"
     PRINT "(v) version\t\tPrint the version of this script"
-}
-
-version()
-{
-    PRINT "`SCRIPTNAME` v${version}"
-    PRINT
-    PRINT "Copyright (C) `date +"%Y"` Nidia Achrys"
-    PRINT "License GPLv3+: GNU GPL version 3 or later https://gnu.org/licenses/gpl.html."
-    PRINT "This is free software: you are free to change and redistribute it."
-    PRINT "There is NO WARRANTY, to the extent permitted by law."
-    PRINT
-    PRINT "Written by Nidia Achrys."
 }
 
 if [[ `command -v pacman` ]];

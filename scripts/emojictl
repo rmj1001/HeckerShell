@@ -1,31 +1,24 @@
 #!/usr/bin/env bash
 
-# Script Version
-version="1.0"
+##############################################
+#	Author: Nidia Achrys
+#	Project: emojictl
+#	Version: 1.0
+#	Description:
+#		Install/uninstall Noto Color Emoji on Linux
+#
+#	Usage: emojictl [command] [args]
+##############################################
 
-# Shell command
-cmd=""
+version='1.0'
+author='Nidia Achrys'
 
-# Noto Emoji package link
-EMOJIPKG="https://noto-website-2.storage.googleapis.com/pkgs/NotoColorEmoji-unhinted.zip"
-
-# Fontconfig file links
-FONTCONFIGS=(
-"https://raw.githubusercontent.com/garman1001/dotfiles/master/configs/fontconfig/conf.d/01-dejavu.conf"
-"https://raw.githubusercontent.com/garman1001/dotfiles/master/configs/fontconfig/conf.d/02-mozilla.conf"
-"https://raw.githubusercontent.com/garman1001/dotfiles/master/configs/fontconfig/conf.d/03-emoji.conf"
-)
-
-# Directories
-CONFDIR=$HOME/.config/fontconfig/conf.d
-NOTOPKG="$HOME/Downloads/$(basename ${EMOJIPKG})"
-TEMP=$HOME/Downloads/temp
-FONTS=$HOME/.fonts
-FILE=$HOME/.fonts/NotoColorEmoji.ttf
-
+#######################################################################
+#							Helper Functions						  #
+#######################################################################
 function SCRIPTNAME()
 {
-	echo "$(basename ${0})"
+	echo "${0##*/}"
 }
 
 function PRINT()
@@ -44,22 +37,57 @@ function pause()
 
 function lowercase()
 {
-	printf "$1" | tr '[:upper:]' '[:lower:]'
+	printf "${1}" | tr "[:upper:]" "[:lower:]"
 }
 
 function invalid()
 {
 	PRINT 
-	PRINT "Invalid command '${1}'. See '`SCRIPTNAME` help'."
+	PRINT "Invalid command \"${1}\". See \"`SCRIPTNAME` help\"."
 	PRINT 
 }
 
 function emptycmd()
 {
 	PRINT 
-	PRINT "You must specify a subcommand. See '`SCRIPTNAME` help'."
+	PRINT "You must specify a subcommand. See \"`SCRIPTNAME` help\"."
 	PRINT 
 }
+
+function version()
+{
+	PRINT "`SCRIPTNAME` v${version}"
+	PRINT "Copyright (C) `date +"%Y"` ${author}"
+	PRINT "License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>."
+	PRINT "This is free software: you are free to change and redistribute it."
+	PRINT "There is NO WARRANTY, to the extent permitted by law."
+	PRINT
+	PRINT "Written by ${author}."
+}
+
+#######################################################################
+#								Core Code							  #
+#######################################################################
+
+# Noto Emoji package link
+EMOJIPKG="https://noto-website-2.storage.googleapis.com/pkgs/NotoColorEmoji-unhinted.zip"
+
+# Fontconfig file links
+FONTCONFIGS=(
+"https://raw.githubusercontent.com/garman1001/dotfiles/master/configs/fontconfig/conf.d/01-dejavu.conf"
+"https://raw.githubusercontent.com/garman1001/dotfiles/master/configs/fontconfig/conf.d/02-mozilla.conf"
+"https://raw.githubusercontent.com/garman1001/dotfiles/master/configs/fontconfig/conf.d/03-emoji.conf"
+)
+
+# Directories
+CONFDIR=$HOME/.config/fontconfig/conf.d
+NOTOPKG="$HOME/Downloads/$(basename ${EMOJIPKG})"
+TEMP=$HOME/Downloads/temp
+FONTS=$HOME/.fonts
+FILE=$HOME/.fonts/NotoColorEmoji.ttf
+
+# cmd
+cmd=""
 
 function preparedirs()
 {
@@ -146,20 +174,6 @@ function help_prompt()
 	PRINT "Miscellaneous:"
 	PRINT "(h) help\tShow this help menu"
 	PRINT "(v) version\tShow this script's version"
-	PRINT 
-}
-
-function version()
-{
-	PRINT 
-	PRINT "`SCRIPTNAME` v${version}"
-	PRINT
-	PRINT "Copyright (C) `date +"%Y"` Nidia Achrys"
-	PRINT "License GPLv3+: GNU GPL version 3 or later https://gnu.org/licenses/gpl.html."
-	PRINT "This is free software: you are free to change and redistribute it."
-	PRINT "There is NO WARRANTY, to the extent permitted by law."
-	PRINT
-	PRINT "Written by Nidia Achrys."
 	PRINT 
 }
 

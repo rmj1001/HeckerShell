@@ -1,22 +1,24 @@
 #!/usr/bin/env bash
-# Author: Nidia Achrys
-# Project: tardis
-# Version: 2.0
-# Description:
-#	This utility manages backups
+
+##############################################
+#	Author: Nidia Achrys
+#	Project: tardis
+#	Version: 1.0
+#	Description:
+#		This utility manages backups
 #
-# Usage: tardis [OPTION] [FLAGS]
+#	Usage: tardis [command] [args]
+##############################################
 
-version="1.0"
+version='1.0'
+author='Nidia Achrys'
 
-# Config
-CONFDIR="${HOME}/.config/tardisrsync"
-EXCLUSION_FILE="${CONFDIR}/exclusions.conf"
-CONFIG="${CONFDIR}/default-disk.conf"
-
+#######################################################################
+#							Helper Functions						  #
+#######################################################################
 function SCRIPTNAME()
 {
-	PRINT "$(basename ${0})"
+	echo "${0##*/}"
 }
 
 function PRINT()
@@ -35,22 +37,42 @@ function pause()
 
 function lowercase()
 {
-	printf "$1" | tr '[:upper:]' '[:lower:]'
+	printf "${1}" | tr "[:upper:]" "[:lower:]"
 }
 
 function invalid()
 {
 	PRINT 
-	PRINT "Invalid command '${1}'. See '`SCRIPTNAME` help'."
+	PRINT "Invalid command \"${1}\". See \"`SCRIPTNAME` help\"."
 	PRINT 
 }
 
 function emptycmd()
 {
 	PRINT 
-	PRINT "You must specify a subcommand. See '`SCRIPTNAME` help'."
+	PRINT "You must specify a subcommand. See \"`SCRIPTNAME` help\"."
 	PRINT 
 }
+
+function version()
+{
+	PRINT "`SCRIPTNAME` v${version}"
+	PRINT "Copyright (C) `date +"%Y"` ${author}"
+	PRINT "License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>."
+	PRINT "This is free software: you are free to change and redistribute it."
+	PRINT "There is NO WARRANTY, to the extent permitted by law."
+	PRINT
+	PRINT "Written by ${author}."
+}
+
+#######################################################################
+#								Core Code							  #
+#######################################################################
+
+# Config
+CONFDIR="${HOME}/.config/tardisrsync"
+EXCLUSION_FILE="${CONFDIR}/exclusions.conf"
+CONFIG="${CONFDIR}/default-disk.conf"
 
 # Get the target directory and manifest file
 GETDIR()
@@ -132,66 +154,53 @@ LIST()
 # Set the default disk to look for when not specified on the command line
 DEFAULT_TARGET()
 {
-  [ ! -d ${CONFDIR} ] && mkdir -p ${CONFDIR} && PRINT "Created config file!"
-  [ -z "${1}" ] && PRINT "You must specify a directory to set as the default!" && exit 1
-  [ ! -d "${1}" ] && PRINT "That is not a valid directory!" && exit 1
+	[ ! -d ${CONFDIR} ] && mkdir -p ${CONFDIR} && PRINT "Created config file!"
+	[ -z "${1}" ] && PRINT "You must specify a directory to set as the default!" && exit 1
+	[ ! -d "${1}" ] && PRINT "That is not a valid directory!" && exit 1
 
-  cat ${CONFIG} | grep -iv "DEFAULT_DISK=" > ${CONFIG}
-  PRINT "DEFAULT_DISK=${1}" >> ${CONFIG}
-  PRINT "Set a default target!"
+	cat ${CONFIG} | grep -iv "DEFAULT_DISK=" > ${CONFIG}
+	PRINT "DEFAULT_DISK=${1}" >> ${CONFIG}
+	PRINT "Set a default target!"
   exit 0
 }
 
 # Edit the list of exclusions in $HOME/.config/tardisrsync/exclusions.conf
 EXCLUSIONS()
 {
-  [ ! -d ${CONFDIR} ] && mkdir -p ${CONFDIR} && PRINT "Created exclusions file!"
-  [ -z "${EDITOR}" ] && nano ${EXCLUSION_FILE} && PRINT "Exclusions edited!" && exit 0
-  [ -n "${EDITOR}" ] && ${EDITOR} ${EXCLUSION_FILE} && PRINT "Exclusions edited!" && exit 0
+	[ ! -d ${CONFDIR} ] && mkdir -p ${CONFDIR} && PRINT "Created exclusions file!"
+	[ -z "${EDITOR}" ] && nano ${EXCLUSION_FILE} && PRINT "Exclusions edited!" && exit 0
+	[ -n "${EDITOR}" ] && ${EDITOR} ${EXCLUSION_FILE} && PRINT "Exclusions edited!" && exit 0
 }
 
 # Print the list of exclusions listed in $HOME/.config/tardisrsync/exclusions.conf
 PRINT_EXCLUSIONS()
 {
-  [ ! -e "${EXCLUSION_FILE}" ] && PRINT "Exclusions have not been specified." && exit 0
-  cat ${EXCLUSION_FILE}
-}
-
-# Version Prompt
-version()
-{
-  PRINT "`SCRIPTNAME` v${version}"
-  PRINT
-  PRINT "Copyright (C) `date +"%Y"` Nidia Achrys"
-  PRINT "License GPLv3+: GNU GPL version 3 or later https://gnu.org/licenses/gpl.html."
-  PRINT "This is free software: you are free to change and redistribute it."
-  PRINT "There is NO WARRANTY, to the extent permitted by law."
-  PRINT
-  PRINT "Written by Nidia Achrys."
+	[ ! -e "${EXCLUSION_FILE}" ] && PRINT "Exclusions have not been specified." && exit 0
+	cat ${EXCLUSION_FILE}
 }
 
 # Help Prompt
 help_prompt()
 {
- PRINT
- PRINT "Create, restore, and list backups."
- PRINT 
- PRINT "Usage: `SCRIPTNAME` [command] [args]"
- PRINT "Example: `SCRIPTNAME` backup <disk path>"
- PRINT 
- PRINT "Commands"
- PRINT "(b) backup\t\tCreate a backup"
- PRINT "(r) restore\t\tRestore a backup"
- PRINT "(l) list\t\tList all backups"
- PRINT
- PRINT "Settings"
- PRINT "(d) default-target\tSet a default target for future backups"
- PRINT "(e) exclusions\t\tCreate or edit the exclusions file"
- PRINT "(p) print-exclusions\tPrint out every excluded file/directory name"
- PRINT 
- PRINT "Miscellaneous"
- PRINT "(h) help\t\tShow this prompt"
- PRINT "(v) version\t\tPrint the version of this script"
+	PRINT
+	PRINT "Create, restore, and list backups."
+	PRINT 
+	PRINT "Usage: `SCRIPTNAME` [command] [args]"
+	PRINT "Example: `SCRIPTNAME` backup <disk path>"
+	PRINT 
+	PRINT "Commands"
+	PRINT "(b) backup\t\tCreate a backup"
+	PRINT "(r) restore\t\tRestore a backup"
+	PRINT "(l) list\t\tList all backups"
+	PRINT
+	PRINT "Settings"
+	PRINT "(d) default-target\tSet a default target for future backups"
+	PRINT "(e) exclusions\t\tCreate or edit the exclusions file"
+	PRINT "(p) print-exclusions\tPrint out every excluded file/directory name"
+	PRINT 
+	PRINT "Miscellaneous"
+	PRINT "(h) help\t\tShow this prompt"
+	PRINT "(v) version\t\tPrint the version of this script"
 }
 
 # Exit if rsync is not installed
