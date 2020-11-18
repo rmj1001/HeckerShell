@@ -38,14 +38,14 @@ function lowercase()
 function invalid()
 {
 	PRINT 
-	PRINT "Invalid command '${1}'. See \'`SCRIPTNAME` help\'."
+	PRINT "Invalid command '${1}'. See '`SCRIPTNAME` help'."
 	PRINT 
 }
 
 function emptycmd()
 {
 	PRINT 
-	PRINT "You must specify a subcommand. See \'`SCRIPTNAME` help\'."
+	PRINT "You must specify a subcommand. See '`SCRIPTNAME` help'."
 	PRINT 
 }
 
