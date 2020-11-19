@@ -4,10 +4,11 @@
 #	Author: Nidia Achrys
 #	Project: pacmirrors
 #	Version: 1.0
-#	Description:
-#		Refresh pacman mirrors (Arch distros only)
 #
 #	Usage: pacmirrors [command] [args]
+#
+#	Description:
+#		Refresh pacman mirrors (Arch distros only)
 ##############################################
 
 version='1.0'

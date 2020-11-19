@@ -4,11 +4,12 @@
 #	Author: Nidia Achrys
 #	Project: pkglists
 #	Version: 1.0
+#
+#	Usage: pkglists [command] [args]
+#
 #	Description:
 #		Make lists of packages installed in
 #		pacman (arch distros only)
-#
-#	Usage: pkglists [command] [args]
 ##############################################
 
 version='1.0'

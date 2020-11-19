@@ -4,10 +4,11 @@
 #	Author: Nidia Achrys
 #	Project: emojictl
 #	Version: 1.0
+# 
+#	Usage: emojictl [command] [args]
+# 
 #	Description:
 #		Install/uninstall Noto Color Emoji on Linux
-#
-#	Usage: emojictl [command] [args]
 ##############################################
 
 version='1.0'

@@ -4,10 +4,11 @@
 #	Author: Nidia Achrys
 #	Project: pkg
 #	Version: 1.0
-#	Description:
-#		This utility manages software across distributions
 #
 #	Usage: pkg [command] [args]
+#
+#	Description:
+#		This utility manages software across distributions
 ##############################################
 
 version='1.0'

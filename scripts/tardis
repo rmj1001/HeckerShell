@@ -4,10 +4,11 @@
 #	Author: Nidia Achrys
 #	Project: tardis
 #	Version: 1.0
-#	Description:
-#		This utility manages backups
 #
 #	Usage: tardis [command] [args]
+#
+#	Description:
+#		This utility manages backups
 ##############################################
 
 version='1.0'

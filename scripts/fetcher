@@ -4,10 +4,11 @@
 #	Author: Nidia Achrys
 #	Project: fetcher
 #	Version: 1.0
-#	Description:
-#		Retrieve system information for use in screenshots
 #
 #	Usage: fetcher
+#
+#	Description:
+#		Retrieve system information for use in screenshots
 ##############################################
 
 version='1.0'

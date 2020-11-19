@@ -4,10 +4,11 @@
 #	Author: Nidia Achrys
 #	Project: trash
 #	Version: 1.0
-#	Description:
-#		This utility manages your trash bin.
 #
 #	Usage: trash [command] [args]
+#
+#	Description:
+#		This utility manages your trash bin.
 ##############################################
 
 version='1.0'

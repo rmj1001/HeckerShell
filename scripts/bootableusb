@@ -4,11 +4,12 @@
 #	Author: Nidia Achrys
 #	Project: bootableusb
 #	Version: 1.0
+# 
+#	Usage: bootableusb <iso> /path/to/drive
+# 
 #	Description:
 #		Create a bootable USB drive from an
 #		ISO file 
-#
-#	Usage: bootableusb <iso> /path/to/drive
 ##############################################
 
 version='1.0'

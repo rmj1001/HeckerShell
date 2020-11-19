@@ -1,17 +1,77 @@
 #!/usr/bin/env bash
-# Author: Nidia Achrys
-# Project: autostartctl
-# Version: 1.0
+
+##############################################
+#	Author: Nidia Achrys
+#	Project: autostartctl
+#	Version: 1.0
+#
+#	Usage: autostartctl [command] [args]
+# 
 # Description:
 #   This utility provides tools to create, edit, list, and print
 #   XDG Autostart desktop entries.
-#
-# Usage: autostartctl [OPTION] [FLAGS]
+##############################################
+
+version='1.0'
+author='Nidia Achrys'
+
+#######################################################################
+#							                Helper Functions						            #
+#######################################################################
+function SCRIPTNAME()
+{
+	PRINT "${0##*/}"
+}
+
+function PRINT()
+{
+	if [ -z "${1}" ]; then
+		printf "\n"
+	else
+		printf "%b\n" "${1}"
+	fi
+}
+
+function pause()
+{
+	read -p "Press ENTER to continue..." cmd
+}
+
+function lowercase()
+{
+	printf "${1}" | tr "[:upper:]" "[:lower:]"
+}
+
+function invalid()
+{
+	PRINT 
+	PRINT "Invalid command \"${1}\". See \"`SCRIPTNAME` help\"."
+	PRINT 
+}
+
+function emptycmd()
+{
+	PRINT 
+	PRINT "You must specify a subcommand. See \"`SCRIPTNAME` help\"."
+	PRINT 
+}
+
+function version()
+{
+	PRINT "`SCRIPTNAME` v${version}"
+	PRINT "Copyright (C) `date +"%Y"` ${author}"
+	PRINT "License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>."
+	PRINT "This is free software: you are free to change and redistribute it."
+	PRINT "There is NO WARRANTY, to the extent permitted by law."
+	PRINT
+	PRINT "Written by ${author}."
+}
+
+#######################################################################
+#								              Core Code							                  #
+#######################################################################
 
 # Variables
-CMDNAME=`basename $0`
-VERSION='1.0'
-YEAR=$(date +"%Y")
 XDG_AUTOSTART="${HOME}/.config/autostart"
 [[ -z "${EDITOR}" ]] && EDITOR=nano
 
@@ -31,10 +91,36 @@ append() {
 }
 
 err() {
-  echo "[$(date +'%Y-%m-%dT%H:%M:%S%z')]: ${@}"
+  PRINT "[$(date +'%Y-%m-%dT%H:%M:%S%z')]: ${@}"
+}
+
+function TEMPLATE()
+{
+_template="
+[Desktop Entry]
+Name=${name}
+Exec=${binary}
+Type=${apptype}
+Categories=${categories}
+Hidden=true
+"
+
+[ -n "${generic}" ] && _template="${_template}\nGenericName=${generic}"
+[ -n "${icon}" ] && _template="${_template}\nIcon=${icon}"
+[ -n "${path}" ] && _template="${_template}\nPath=${path}"
 }
 
 makeEntry() {
+
+  filename="${1}"
+  name="${2}"
+  binary="${3}"
+  categories="${4}"
+  icon="${5}"
+  generic="${6}"
+  path="${7}"
+  apptype="${8}"
+
   [[ -z "${filename}" ]] && read -p "New Entry Name: " filename
   [[ -z "${name}" ]] && read -p "App Name: " name
   [[ -z "${binary}" ]] && read -p "Executable Path: " binary
@@ -46,27 +132,22 @@ makeEntry() {
   if [[ ! -e "${file}" ]]
   then
     touch ${file}
+    TEMPLATE
 
     # Add entry information to the file
-    echo "[Desktop Entry]" | tee ${file}
-    echo "Name=${name}" | append
-    [[ -n "${generic}" ]] && echo "GenericName=${generic}" | append
-    echo "Exec=${binary}" | append
-    [[ -n "${icon}" ]] && echo "Icon=${icon}" | append
-    echo "Type=${apptype}" | append
-    echo "Categories=${categories}" | append
-    echo "Path=${path}" | append
-    echo "Hidden=true" | append
+    PRINT ${_template} > ${file}
 
-    echo "$CMDNAME: Created ${filename}!"
+    PRINT "`SCRIPTNAME`: Created ${filename}!"
     exit 0
   else
-    err "$CMDNAME: ${filename} already exists!"
+    err "`SCRIPTNAME`: ${filename} already exists!"
     exit 1
   fi
 }
 
 editEntry() {
+  filename="${1}"
+
   [[ -z "${filename}" ]] && read -p "Name of Entry: " filename
 
   file="${XDG_AUTOSTART}/${filename}.desktop"
@@ -74,15 +155,17 @@ editEntry() {
   if [[ -e "${file}" ]]
   then
     ${EDITOR} ${file}
-    echo "$CMDNAME: Edited ${filename}!"
+    PRINT "`SCRIPTNAME`: Edited ${filename}!"
     exit 0
   else
-    err "$CMDNAME: Entry ${filename} does not exist!"
+    err "`SCRIPTNAME`: Entry ${filename} does not exist!"
     exit 1
   fi
 }
 
 removeEntry() {
+  filename="${1}"
+
   [[ -z "${filename}" ]] && read -p "Name of Entry: " filename
 
   file="${XDG_AUTOSTART}/${filename}.desktop"
@@ -90,10 +173,10 @@ removeEntry() {
   if [[ -e "${file}" ]]
   then
     rm -rf ${file}
-    echo "$CMDNAME: Removed ${filename}!"
+    PRINT "`SCRIPTNAME`: Removed ${filename}!"
     exit 0
   else
-    err "$CMDNAME: Entry ${filename} does not exist!"
+    err "`SCRIPTNAME`: Entry ${filename} does not exist!"
     exit 1
   fi
 }
@@ -104,147 +187,86 @@ listEntries() {
 }
 
 printEntry() {
+  filename="${1}"
+
   [[ -z "${filename}" ]] && read -p "Name of Entry: " filename
 
   file="${XDG_AUTOSTART}/${filename}.desktop"
 
   if [[ -e "${file}" ]]
   then
+    PRINT 
+    PRINT 
     cat ${file}
     exit 0
   else
-    err "$CMDNAME: ${filename} does not exist!"
+    err "`SCRIPTNAME`: ${filename} does not exist!"
     exit 1
   fi
 }
 
-version()
-{
-  echo "$CMDNAME $VERSION"
-  echo "Copyright (C) $YEAR Nidia Achrys"
-  echo "License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>."
-  echo "This is free software: you are free to change and redistribute it."
-  echo "There is NO WARRANTY, to the extent permitted by law."
-  echo
-  echo "Written by Nidia Achrys."
-  exit 0
-}
-
 helpPrompt() {
-  echo -e "Usage: $CMDNAME [FLAGS]... [OPTION]"
-  echo -e "Manage XDG Autostart desktop entries."
-  echo -e "Example: $CMDNAME -C -f fetchcord -n fetchcord -b /usr/bin/fetchcord"
-  echo -e "NOTE: If a flag has an asterisk (*) next to it, it's required to create an entry."
-  echo -e
-  echo -e "Options: "
-  echo -e "\t-C, --create\t\tCreate an autostart entry and exit"
-  echo -e "\t-E, --edit\t\tEdit an autostart entry and exit"
-  echo -e "\t-R, --remove\t\tRemove an autostart entry and exit"
-  echo -e "\t-L, --list\t\tList all entries and exit"
-  echo -e "\t-P, --print\t\tDisplay an entry's contents and exit"
-  echo
-  echo -e "Flags:"
-  echo -e "\t-f, --filename*\t\tThe file to work with (don't include .desktop)"
-  echo -e "\t-n, --name*\t\tThe name of the app"
-  echo -e "\t-b, --binary*\t\tThe executable that runs the app"
-  echo -e "\t-g, --generic\t\tThe generic name of the app"
-  echo -e "\t-i, --icon\t\tThe icon for the app"
-  echo -e "\t-t, --type\t\tThe type of app, don't specify unless you know what you're doing"
-  echo -e "\t-c, --categories\tThe categories the app is in, seperated by semicolon"
-  echo -e "\t-p, --path\t\tThe path where the binary is housed, don't specify unless you know what you're doing"
-  echo
-  echo -e "Miscellaneous:"
-  echo -e "\t-v, --version\t\tDisplay this script's version and exit"
-  echo -e "\t-h, ?, --help\t\tDisplay this help and exit"
+  PRINT 
+  PRINT "Manage XDG Autostart desktop entries."
+  PRINT
+  PRINT "Usage: `SCRIPTNAME` [command] [FLAGS]... [VALUES]..." 
+  PRINT "Example: `SCRIPTNAME` c discord Discord /usr/bin/discord Internet"
+  PRINT
+  PRINT "Options: "
+  PRINT "(c) create\t\tCreate an autostart entry and exit"
+  PRINT "(e) edit\t\tEdit an autostart entry and exit"
+  PRINT "(r) remove\t\tRemove an autostart entry and exit"
+  PRINT "(l) list\t\tList all entries and exit"
+  PRINT "(p) print\t\tDisplay an entry's contents and exit"
+  PRINT
+  PRINT "Create Arguments (in order)"
+  PRINT "1. filename*\t\tThe file to work with (don't include .desktop)"
+  PRINT "2. name*\t\tThe name of the app"
+  PRINT "3. binary*\t\tThe executable that runs the app"
+  PRINT "4. categories\t\tThe categories the app is in, seperated by semicolon"
+  PRINT "5. icon\t\t\tThe icon for the app"
+  PRINT "6. generic\t\tThe generic name of the app"
+  PRINT "7. path\t\t\tThe path where the binary is housed, don't specify unless you know what you're doing"
+  PRINT "8. type\t\t\tThe type of app, don't specify unless you know what you're doing"
+  PRINT
+  PRINT "Miscellaneous:"
+  PRINT "(h) help\t\tDisplay this help and exit"
+  PRINT "(v) version\t\tDisplay this script's version and exit"
   exit 0
 }
 
 # Creates the autostart directory if it does not already exist.
 [[ ! -d "${XDG_AUTOSTART}" ]] && mkdir ${XDG_AUTOSTART}
 
-ARGS=( "$@" )
+cmd=`lowercase ${1}`
 
-# Evaluates option flags
-for (( i=0 ; i < ${#ARGS[@]} ; i++ ))
-do
-    j=$(( i + 1 ))
-    value="${ARGS[$i]}"
-    key="${ARGS[$j]}"
-
-    case "${value}" in
-        -f | --filename )
-            filename="${key}"
-            unset ARGS[$i]
-            unset ARGS[$j]
-            ;;
-        -n | --name )
-            name="${key}"
-            unset ARGS[$i]
-            unset ARGS[$j]
-            ;;
-        -g | --generic )
-            generic="${key}"
-            unset ARGS[$i]
-            unset ARGS[$j]
-            ;;
-        -b | --binary )
-            binary="${key}"
-            unset ARGS[$i]
-            unset ARGS[$j]
-            ;;
-        -i | --icon )
-            icon="${key}"
-            unset ARGS[$i]
-            unset ARGS[$j]
-            ;;
-        -t | --type )
-            apptype="${key}"
-            unset ARGS[$i]
-            unset ARGS[$j]
-            ;;
-        -c | --categories )
-            categories="${key}"
-            unset ARGS[$i]
-            unset ARGS[$j]
-            ;;
-        -p | --path )
-            path="${key}"
-            unset ARGS[$i]
-            unset ARGS[$j]
-            ;;
-    esac
-done
-
-# Evaluates the command, and exits after evaluated.
-for (( i=0 ; i < ${#ARGS[@]} ; i++ ))
-do
-  value="${ARGS[$i]}"
-
-  case "${value}" in
-    -C | --create )
-      makeEntry
-      ;;
-    -E | --edit )
-      editEntry
-      ;;
-    -R | --remove )
-      removeEntry
-      ;;
-    -L | --list )
-      listEntries
-      ;;
-    -P | --print )
-      printEntry
-      ;;
-    -v | --version )
-      version
-      ;;
-    -h | \? | --help )
-      helpPrompt
-      ;;
-    * )
-      echo "$CMDNAME: Invalid subcommand '${value}'."
-      echo "$CMDNAME: See '$CMDNAME ?' for information."
-      ;;
-   esac
-done
+case "${cmd}" in
+  c | create )
+    makeEntry "${ARGS[@]}"
+    ;;
+  e | edit )
+    editEntry "${2}"
+    ;;
+  r | remove )
+    removeEntry "${2}"
+    ;;
+  l | list )
+    listEntries
+    ;;
+  p | print )
+    printEntry "${2}"
+    ;;
+  v | version )
+    version
+    ;;
+  \? | h | help )
+    helpPrompt
+    ;;
+  * )
+    if [ -z "${cmd}" ]; then
+      emptycmd
+    else
+      invalid "${1}"
+    fi
+    ;;
+esac

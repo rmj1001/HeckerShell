@@ -4,10 +4,11 @@
 #	Author: Nidia Achrys
 #	Project: dice
 #	Version: 1.0
-#	Description:
-#		Roll some dice!
 #
 #	Usage: dice [command] [args]
+# 
+#	Description:
+#		Roll some dice!
 ##############################################
 
 version='1.0'

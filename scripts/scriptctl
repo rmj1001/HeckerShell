@@ -4,11 +4,12 @@
 #	Author: Nidia Achrys
 #	Project: scriptctl
 #	Version: 1.0
+#
+#	Usage: scriptctl [command] [args]
+#
 #	Description:
 #		This utility provides tools to create, edit, list,
 #		and print shell scripts.
-#
-#	Usage: scriptctl [command] [args]
 ##############################################
 
 version='1.0'
@@ -87,10 +88,11 @@ _template="#!/usr/bin/env ${default_shell}
 #	Author: <your name here>
 #	Project: ${scriptname}
 #	Version: 1.0
-#	Description:
-#		Change this
 #
 #	Usage: ${scriptname} [command] [args]
+#
+#	Description:
+#		Change this
 ##############################################
 
 version='1.0'
@@ -223,6 +225,37 @@ function removeScript()
 	fi
 }
 
+function renameScript()
+{
+	getName "${1}"
+	
+	newName="${2}"
+	newPath="${SCRIPTS}/${newName}"
+
+	if [ -f "${script}" ] && [ ! -z "${newName}" ]
+	then
+
+		mv "${script}" "${SCRIPTS}/${newName}"
+
+		PRINT "`SCRIPTNAME`: Renamed '${script##*/}' to '${newName}'."
+	
+	elif [ -z "${newName}" ]
+	then
+	
+		read -p "What do you want the script to be called?" newName
+		mv "${script}" "${SCRIPTS}/${newName}"
+
+		PRINT "`SCRIPTNAME`: Renamed '${script##*/}' to '${newName}'."
+	
+	elif [ ! -f "${script}" ]
+	then
+	
+		PRINT "Script '${script##*/}' does not exist!"
+		exit 1
+	
+	fi
+}
+
 function printScript()
 {
 	getName "${1}"
@@ -253,7 +286,8 @@ function helpPrompt()
 	PRINT "Commands:"
 	PRINT "(c) create\t\tCreate a new script"
 	PRINT "(e) edit\t\tEdit an existing script"
-	PRINT "(r) remove\t\tDelete an existing script"
+	PRINT "(r) rename\t\tRename an existing script"
+	PRINT "(d) delete\t\tDelete an existing script"
 	PRINT "(p) print\t\tPrint a script to STDOUT"
 	PRINT "(l) list\t\tList all scripts"
 	PRINT 
@@ -275,7 +309,10 @@ case "${cmd}" in
 	e | edit )
 		editScript "${2}"
 		;;
-	r | remove )
+	r | rename )
+		renameScript "${2}" "${3}"
+		;;
+	d | delete )
 		removeScript "${2}"
 		;;
 	p | print )

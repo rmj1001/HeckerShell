@@ -4,10 +4,11 @@
 #	Author: Nidia Achrys
 #	Project: mansplain
 #	Version: 1.0
-#	Description:
-#		Use dmenu to view manpages in PDF format
 #
 #	Usage: mansplain [command] [args]
+#
+#	Description:
+#		Use dmenu to view manpages in PDF format
 ##############################################
 
 version='1.0'

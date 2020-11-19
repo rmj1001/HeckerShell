@@ -4,11 +4,12 @@
 #	Author: Nidia Achrys
 #	Project: mp3dl
 #	Version: 1.0
+#
+#	Usage: mp3dl [command] [args]
+#
 #	Description:
 #		Download youtube videos and convert
 #		them to mp3 files
-#
-#	Usage: mp3dl [command] [args]
 ##############################################
 
 version='1.0'

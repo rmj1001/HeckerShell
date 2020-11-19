@@ -4,11 +4,12 @@
 #	Author: Nidia Achrys
 #	Project: winepurge
 #	Version: 1.0
+#
+#	Usage: winepurge [command] [args]
+#
 #	Description:
 #		Remove WINE and WINE applications from
 #		your system
-#
-#	Usage: winepurge [command] [args]
 ##############################################
 
 version='1.0'

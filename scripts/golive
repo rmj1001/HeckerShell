@@ -4,12 +4,13 @@
 #	Author: Nidia Achrys
 #	Project: golive
 #	Version: 1.0
+#
+#	Usage: golive [command] [args]
+#
 #	Description:
 #		Force pulseaudio to use settings that allows
 #		linux users to share audio via Discord's
 #		golive feature
-#
-#	Usage: golive [command] [args]
 ##############################################
 
 version='1.0'

@@ -4,10 +4,11 @@
 #	Author: Nidia Achrys
 #	Project: extract
 #	Version: 1.0
-#	Description:
-#		Extract any archive file
 #
 #	Usage: extract [command] [args]
+#
+#	Description:
+#		Extract any archive file
 ##############################################
 
 version='1.0'
