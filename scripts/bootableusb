@@ -16,8 +16,10 @@ version='1.0'
 author='Nidia Achrys'
 
 #######################################################################
-#							Helper Functions						  #
+#							                Helper Functions						            #
 #######################################################################
+
+# Replacement for 'echo'
 function PRINT()
 {
 	if [ -z "${1}" ]; then
@@ -27,21 +29,25 @@ function PRINT()
 	fi
 }
 
+# Retrieve the name of the script file
 function SCRIPTNAME()
 {
 	PRINT "${0##*/}"
 }
 
+# Pauses script execution until the user presses ENTER
 function pause()
 {
 	read -p "Press ENTER to continue..." cmd
 }
 
+# Converts a string to all lowercase characters
 function lowercase()
 {
 	printf "${1}" | tr "[:upper:]" "[:lower:]"
 }
 
+# Error message for when an invalid command is used
 function invalid()
 {
 	PRINT 
@@ -49,6 +55,7 @@ function invalid()
 	PRINT 
 }
 
+# Error message for when no command is used
 function emptycmd()
 {
 	PRINT 
@@ -56,11 +63,14 @@ function emptycmd()
 	PRINT 
 }
 
+# Checks for a filename in $PATH (commands), if not found then exit with an error
 function dependency()
 {
 	[[ ! `command -v ${1}` ]] && PRINT "'${1}' is required to run this program." && exit 1
 }
 
+# Prints the script name and version, as well as copyright, license notice, and 
+# author name
 function version()
 {
 	PRINT "`SCRIPTNAME` v${version}"
@@ -73,7 +83,7 @@ function version()
 }
 
 #######################################################################
-#								Core Code							  #
+#								              Core Code							                  #
 #######################################################################
 
 dependency "dd"
