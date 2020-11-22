@@ -17,11 +17,6 @@ author='Nidia Achrys'
 #######################################################################
 #							Helper Functions						  #
 #######################################################################
-function SCRIPTNAME()
-{
-	echo "${0##*/}"
-}
-
 function PRINT()
 {
 	if [ -z "${1}" ]; then
@@ -29,6 +24,11 @@ function PRINT()
 	else
 		printf "%b\n" "${1}"
 	fi
+}
+
+function SCRIPTNAME()
+{
+	PRINT "${0##*/}"
 }
 
 function pause()
@@ -55,6 +55,11 @@ function emptycmd()
 	PRINT 
 }
 
+function dependency()
+{
+	[[ ! `command -v ${1}` ]] && PRINT "'${1}' is required to run this program." && exit 1
+}
+
 function version()
 {
 	PRINT "`SCRIPTNAME` v${version}"
@@ -70,6 +75,8 @@ function version()
 #								Core Code							  #
 #######################################################################
 
+dependency "pacman"
+
 refresh()
 {
   mirrorlist=/etc/pacman.d/mirrorlist
@@ -79,8 +86,6 @@ refresh()
   sudo cp $mirrorlist $backupfile
   sudo reflector --sort rate --protocol https --latest 30 --verbose --save $mirrorlist
 }
-
-[[ ! `command -v pacman` ]] && echo "This script can only be run on Arch-based distros." && exit 1
 
 if [[ `command -v reflector` ]]
 then

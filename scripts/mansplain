@@ -17,11 +17,6 @@ author='Nidia Achrys'
 #######################################################################
 #							Helper Functions						  #
 #######################################################################
-function SCRIPTNAME()
-{
-	echo "${0##*/}"
-}
-
 function PRINT()
 {
 	if [ -z "${1}" ]; then
@@ -29,6 +24,11 @@ function PRINT()
 	else
 		printf "%b\n" "${1}"
 	fi
+}
+
+function SCRIPTNAME()
+{
+	PRINT "${0##*/}"
 }
 
 function pause()
@@ -55,6 +55,11 @@ function emptycmd()
 	PRINT 
 }
 
+function dependency()
+{
+	[[ ! `command -v ${1}` ]] && PRINT "'${1}' is required to run this program." && exit 1
+}
+
 function version()
 {
 	PRINT "`SCRIPTNAME` v${version}"
@@ -70,7 +75,7 @@ function version()
 #								Core Code							  #
 #######################################################################
 
-[[ ! `command -v dmenu` ]] && echo "dmenu is not installed" && exit 1
-[[ ! `command -v zathura` ]] && echo "zathura is not installed" && exit 1
+dependency "dmenu"
+dependency "zathura"
 
 man -k . | dmenu -l 10 | awk '{print $1}' | xargs -r man -Tpdf | zathura -

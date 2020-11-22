@@ -17,11 +17,6 @@ author='Nidia Achrys'
 #######################################################################
 #							Helper Functions						  #
 #######################################################################
-function SCRIPTNAME()
-{
-	echo "${0##*/}"
-}
-
 function PRINT()
 {
 	if [ -z "${1}" ]; then
@@ -29,6 +24,11 @@ function PRINT()
 	else
 		printf "%b\n" "${1}"
 	fi
+}
+
+function SCRIPTNAME()
+{
+	PRINT "${0##*/}"
 }
 
 function pause()
@@ -55,6 +55,11 @@ function emptycmd()
 	PRINT 
 }
 
+function dependency()
+{
+	[[ ! `command -v ${1}` ]] && PRINT "'${1}' is required to run this program." && exit 1
+}
+
 function version()
 {
 	PRINT "`SCRIPTNAME` v${version}"
@@ -69,6 +74,11 @@ function version()
 #######################################################################
 #								Core Code							  #
 #######################################################################
+
+# Dependencies
+dependency "wget"
+dependency "unzip"
+dependency "fc-cache"
 
 # Noto Emoji package link
 EMOJIPKG="https://noto-website-2.storage.googleapis.com/pkgs/NotoColorEmoji-unhinted.zip"

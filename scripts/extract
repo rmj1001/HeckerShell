@@ -17,11 +17,6 @@ author='Nidia Achrys'
 #######################################################################
 #							Helper Functions						  #
 #######################################################################
-function SCRIPTNAME()
-{
-	echo "${0##*/}"
-}
-
 function PRINT()
 {
 	if [ -z "${1}" ]; then
@@ -29,6 +24,11 @@ function PRINT()
 	else
 		printf "%b\n" "${1}"
 	fi
+}
+
+function SCRIPTNAME()
+{
+	PRINT "${0##*/}"
 }
 
 function pause()
@@ -55,6 +55,11 @@ function emptycmd()
 	PRINT 
 }
 
+function dependency()
+{
+	[[ ! `command -v ${1}` ]] && PRINT "'${1}' is required to run this program." && exit 1
+}
+
 function version()
 {
 	PRINT "`SCRIPTNAME` v${version}"
@@ -69,6 +74,16 @@ function version()
 #######################################################################
 #								Core Code							  #
 #######################################################################
+
+dependency "tar"
+dependency "bunzip"
+dependency "unrar"
+dependency "gunzip"
+dependency "unzip"
+dependency "uncompress"
+dependency "7z"
+dependency "ar"
+dependency "unzstd"
 
 if [ -f "$1" ]
 then
@@ -87,17 +102,17 @@ then
         	*.deb)        ar x $1       ;;
         	*.tar.xz)     tar xf $1     ;;
         	*.tar.zst)    unzstd $1     ;;
-        	*)            echo "'$1' cannot be extracted via $SCRIPTNAME" ;;
+        	*)            PRINT "'${1}' cannot be extracted via ${SCRIPTNAME}" ;;
 	esac
-elif [ "$1" = "--help" ]
+elif [ "${1}" = "--help" ]
 then
-	echo "usage: $SCRIPTNAME <file>\n"
-	echo "supported file types:"
-	echo "tar.bz2, tar.gz, bz2, rar, gz, tar, tbz2, tgz"
-	echo "zip, Z, 7z, deb, tar.xz, tar.zst"
-elif [ -z "$1" ]
+	PRINT "usage: ${SCRIPTNAME} <file>\n"
+	PRINT "supported file types:"
+	PRINT "tar.bz2, tar.gz, bz2, rar, gz, tar, tbz2, tgz"
+	PRINT "zip, Z, 7z, deb, tar.xz, tar.zst"
+elif [ -z "${1}" ]
 then
-	echo "You need to specify an archive to extract."
+	PRINT "You need to specify an archive to extract."
 else
-	echo "'$1' is not a valid archive."
+	PRINT "'${1}' is not a valid archive."
 fi

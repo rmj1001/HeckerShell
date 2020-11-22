@@ -18,11 +18,6 @@ author='Nidia Achrys'
 #######################################################################
 #							Helper Functions						  #
 #######################################################################
-function SCRIPTNAME()
-{
-	echo "${0##*/}"
-}
-
 function PRINT()
 {
 	if [ -z "${1}" ]; then
@@ -30,6 +25,11 @@ function PRINT()
 	else
 		printf "%b\n" "${1}"
 	fi
+}
+
+function SCRIPTNAME()
+{
+	PRINT "${0##*/}"
 }
 
 function pause()
@@ -56,6 +56,11 @@ function emptycmd()
 	PRINT 
 }
 
+function dependency()
+{
+	[[ ! `command -v ${1}` ]] && PRINT "'${1}' is required to run this program." && exit 1
+}
+
 function version()
 {
 	PRINT "`SCRIPTNAME` v${version}"
@@ -71,14 +76,14 @@ function version()
 #								Core Code							  #
 #######################################################################
 
-[[ ! `command -v pacman` ]] && echo "This script can only run on arch-based distros." && exit 1
+dependency "pacman"
 
 cd $HOME/Downloads
 pacmanlist="$(pacman -Qqe | grep -v '`pacman -Qq base`' | grep -v '`pacman -Qqm`')"
 aurlist="$(pacman -Qqm)"
 
-echo "$pacmanlist" > pacmanlist.txt
-echo "$aurlist" > aurlist.txt
+PRINT "$pacmanlist" > pacmanlist.txt
+PRINT "$aurlist" > aurlist.txt
 cat pacmanlist.txt aurlist.txt > allpkgs.txt
 
-echo "Created lists in ${HOME}/Downloads!"
+PRINT "Created lists in ${HOME}/Downloads!"

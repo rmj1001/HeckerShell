@@ -17,11 +17,6 @@ author='Nidia Achrys'
 #######################################################################
 #							Helper Functions						  #
 #######################################################################
-function SCRIPTNAME()
-{
-	echo "${0##*/}"
-}
-
 function PRINT()
 {
 	if [ -z "${1}" ]; then
@@ -29,6 +24,11 @@ function PRINT()
 	else
 		printf "%b\n" "${1}"
 	fi
+}
+
+function SCRIPTNAME()
+{
+	PRINT "${0##*/}"
 }
 
 function pause()
@@ -55,6 +55,11 @@ function emptycmd()
 	PRINT 
 }
 
+function dependency()
+{
+	[[ ! `command -v ${1}` ]] && PRINT "'${1}' is required to run this program." && exit 1
+}
+
 function version()
 {
 	PRINT "`SCRIPTNAME` v${version}"
@@ -69,6 +74,10 @@ function version()
 #######################################################################
 #								Core Code							  #
 #######################################################################
+
+# Dependencies
+dependency "nano"
+dependency "rsync"
 
 # Config
 CONFDIR="${HOME}/.config/tardisrsync"
@@ -203,9 +212,6 @@ help_prompt()
 	PRINT "(h) help\t\tShow this prompt"
 	PRINT "(v) version\t\tPrint the version of this script"
 }
-
-# Exit if rsync is not installed
-[[ ! `command -v rsync` ]] && PRINT "rsync must be installed to use tardis." && exit 1
 
 cmd=`lowercase ${1}`
 
