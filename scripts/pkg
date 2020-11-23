@@ -138,6 +138,17 @@ else
     exit 1
 fi
 
+# Snap and Flatpak updates
+if [[ `command -v flatpak` ]]
+then
+    UPDATE="${UPDATE}; flatpak update"
+fi
+
+if [[ `command -v snap` ]]
+then
+    UPDATE="${UPDATE}; sudo snap refresh"
+fi
+
 ARGS=("$@")
 
 unset ARGS[0]
