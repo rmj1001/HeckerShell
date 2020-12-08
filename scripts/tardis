@@ -26,24 +26,29 @@ function PRINT()
 	else
 		printf "%b\n" "${1}"
 	fi
+
+	return 0
 }
 
 # Retrieve the name of the script file
 function SCRIPTNAME()
 {
 	PRINT "${0##*/}"
+	return 0
 }
 
 # Pauses script execution until the user presses ENTER
 function pause()
 {
 	read -p "Press ENTER to continue..." cmd
+	return 0
 }
 
 # Converts a string to all lowercase characters
 function lowercase()
 {
 	printf "${1}" | tr "[:upper:]" "[:lower:]"
+	return 0
 }
 
 # Error message for when an invalid command is used
@@ -52,6 +57,7 @@ function invalid()
 	PRINT 
 	PRINT "Invalid command \"${1}\". See \"`SCRIPTNAME` help\"."
 	PRINT 
+	return 1
 }
 
 # Error message for when no command is used
@@ -60,6 +66,7 @@ function emptycmd()
 	PRINT 
 	PRINT "You must specify a subcommand. See \"`SCRIPTNAME` help\"."
 	PRINT 
+	return 1
 }
 
 # Checks for a filename in $PATH (commands), if not found then exit with an error
@@ -79,6 +86,7 @@ function version()
 	PRINT "There is NO WARRANTY, to the extent permitted by law."
 	PRINT
 	PRINT "Written by ${author}."
+	return 0
 }
 
 #######################################################################
@@ -97,66 +105,74 @@ CONFIG="${CONFDIR}/default-disk.conf"
 # Get the target directory and manifest file
 GETDIR()
 {
-  [ -f "${CONFIG}" ] && BACKUPDISK=$(cat "${CONFIG}" | grep "DEFAULT_DISK=" | sed -e 's|DEFAULT_DISK=||')
+  	[ -f "${CONFIG}" ] && BACKUPDISK=$(cat "${CONFIG}" | grep "DEFAULT_DISK=" | sed -e 's|DEFAULT_DISK=||')
 
-  if [ -n "${1}" ];
-  then
-    TARGET="${1}"
-  else
-    [ -z "${BACKUPDISK}" ] && PRINT "You must specify a directory to back up or set a default!" && exit 1
-    TARGET="${BACKUPDISK}"
-  fi
+  	if [ -n "${1}" ]; then
+		TARGET="${1}"
+	else
+		[ -z "${BACKUPDISK}" ] && PRINT "You must specify a directory to back up or set a default!" && exit 1
+		TARGET="${BACKUPDISK}"
+	fi
 
 	[ ! -d "${TARGET}" ] && PRINT "That directory does not exist!" && exit 1
 
 	MANIFEST=${TARGET}/tardis-manifest.conf
+	return 0
 }
 
 # Create a backup in the target
 BACKUP()
 {
 	GETDIR $1
-  BACKUPNAME=$(date +"%Y-%m-%d_%H-%M-%S")
+  	BACKUPNAME=$(date +"%Y-%m-%d_%H-%M-%S")
 
-  touch "${MANIFEST}"
+  	touch "${MANIFEST}"
 
 	# HOME
-	[ -e "${EXCLUSION_FILE}" ] && rsync -avhpru --exclude-from="${EXCLUSION_FILE}" --delete ${HOME} ${TARGET}
-  [ ! -e "${EXCLUSION_FILE}" ] && rsync -avhpru --delete ${HOME} ${TARGET}
+	[ -f "${EXCLUSION_FILE}" ] && rsync -avhpru --exclude-from="${EXCLUSION_FILE}" --delete ${HOME} ${TARGET}
+	[ ! -f "${EXCLUSION_FILE}" ] && rsync -avhpru --delete ${HOME} ${TARGET}
 
-  mv ${TARGET}/${USER} ${TARGET}/${BACKUPNAME}
+ 	mv ${TARGET}/${USER} ${TARGET}/${BACKUPNAME}
 
-  PRINT "Finished backup!"
-  PRINT "[SUCCESSFUL] ${BACKUPNAME}" | tee -a ${MANIFEST}
-  exit 0
+	PRINT "Finished backup!"
+	PRINT "[SUCCESSFUL] ${BACKUPNAME}" | tee -a ${MANIFEST}
+	return 0
 }
 
 # Restore a backup from the target
 RESTORE()
 {
 	GETDIR $1
-  BACKUPDIR="${TARGET}/${2}"
+	BACKUPDIR="${TARGET}/${2}"
 
-  [ ! -d "${BACKUPDIR}" ] && PRINT "That backup does not exist!" && exit 1
+	[ ! -d "${BACKUPDIR}" ] && PRINT "That backup does not exist!" && return 1
 
-  for F in "${BACKUPDIR}/*"
-  do
-    file="${BACKUPDIR}/${F}"
+	for file in ${BACKUPDIR}/{.,}*
+	do
+		[ -d "${file}" ] && rsync --avhpru --delete "${file}" "${HOME}"
+		[ -f "${file}" ] && rsync --avhpu --delete "${file}" "${HOME}"
+	done
 
-    [ -d "${file}" ] && rsync -avhpru --delete "${file}" "${HOME}"
-    [ ! -d "${file}" ] && rsync -avhpu --delete "${file}" "${HOME}"
-  done
+	PRINT "[SUCCESSFUL] '${BACKUPDIR}' restored."
+	return 0
+}
 
-  for F in "${BACKUPDIR}/{.,}*"
-  do
-    file="${BACKUPDIR}/${F}"
+# Remove a backup
+REMOVE()
+{
+	GETDIR
+	BACKUPDIR="${TARGET}/${1}"
 
-    [ -d "${file}" ] && rsync -avhpru --delete "${file}" "${HOME}"
-    [ ! -d "${file}" ] && rsync -avhpu --delete "${file}" "${HOME}"
-  done
+	[ ! -d "${BACKUPDIR}" ] && PRINT "That backup does not exist!" && exit 1
 
-  PRINT "Finished restore!"
-  exit 0
+	read -p "Are you sure you want to remove this backup? (y/N) " confirmation
+	confirmation=`lowercase "${confirmation}"`
+
+	[ "${confirmation}" == "y" ] && rm -rf "${BACKUPDIR}" && return 0
+	[ "${confirmation}" == "yes" ] && rm -rf "${BACKUPDIR}" && return 0
+
+	PRINT "Cancelling..."
+	return 0
 }
 
 # List all the previous backups in the target
@@ -165,37 +181,41 @@ LIST()
 	GETDIR $1
 	FILES=${TARGET}/*/
 
-	[ ! ${#FILES[@]} -gt 0 ] && PRINT "There are no backups!" && exit 1
-	[ ! -e ${MANIFEST} ] && PRINT "There are no backups!" && exit 1
+	[ ! ${#FILES[@]} -gt 0 ] && PRINT "There are no backups!" && return 1
+	[ ! -f ${MANIFEST} ] && PRINT "There are no backups!" && return 1
 
 	ls -F ${TARGET} | grep /\$
+	return 0
 }
 
 # Set the default disk to look for when not specified on the command line
 DEFAULT_TARGET()
 {
 	[ ! -d ${CONFDIR} ] && mkdir -p ${CONFDIR} && PRINT "Created config file!"
-	[ -z "${1}" ] && PRINT "You must specify a directory to set as the default!" && exit 1
-	[ ! -d "${1}" ] && PRINT "That is not a valid directory!" && exit 1
+	[ -z "${1}" ] && PRINT "You must specify a directory to set as the default!" && return 1
+	[ ! -d "${1}" ] && PRINT "That is not a valid directory!" && return 1
 
 	cat ${CONFIG} | grep -iv "DEFAULT_DISK=" > ${CONFIG}
 	PRINT "DEFAULT_DISK=${1}" >> ${CONFIG}
 	PRINT "Set a default target!"
-  exit 0
+	return 0
 }
 
 # Edit the list of exclusions in $HOME/.config/tardisrsync/exclusions.conf
 EXCLUSIONS()
 {
-	[ ! -d ${CONFDIR} ] && mkdir -p ${CONFDIR} && PRINT "Created exclusions file!"
-	[ -z "${EDITOR}" ] && nano ${EXCLUSION_FILE} && PRINT "Exclusions edited!" && exit 0
-	[ -n "${EDITOR}" ] && ${EDITOR} ${EXCLUSION_FILE} && PRINT "Exclusions edited!" && exit 0
+	[ ! -d ${CONFDIR} ] && mkdir -p ${CONFDIR}
+	[ ! -f ${EXCLUSION_FILE} ] && touch ${EXCLUSION_FILE} && PRINT "Created exclusions file!"
+
+	[ -z "${EDITOR}" ] && nano ${EXCLUSION_FILE} || ${EDITOR} ${EXCLUSION_FILE}
+
+	PRINT "Exclusions edited!" && return 0
 }
 
 # Print the list of exclusions listed in $HOME/.config/tardisrsync/exclusions.conf
 PRINT_EXCLUSIONS()
 {
-	[ ! -e "${EXCLUSION_FILE}" ] && PRINT "Exclusions have not been specified." && exit 0
+	[ ! -e "${EXCLUSION_FILE}" ] && PRINT "Exclusions have not been specified." && return 1
 	cat ${EXCLUSION_FILE}
 }
 
@@ -211,61 +231,55 @@ help_prompt()
 	PRINT "Commands"
 	PRINT "(b) backup\t\tCreate a backup"
 	PRINT "(r) restore\t\tRestore a backup"
+	PRINT "(d) delete\t\tDelete a backup"
 	PRINT "(l) list\t\tList all backups"
 	PRINT
 	PRINT "Settings"
-	PRINT "(d) default-target\tSet a default target for future backups"
+	PRINT "(t) default-target\tSet a default target for future backups"
 	PRINT "(e) exclusions\t\tCreate or edit the exclusions file"
 	PRINT "(p) print-exclusions\tPrint out every excluded file/directory name"
 	PRINT 
 	PRINT "Miscellaneous"
 	PRINT "(h) help\t\tShow this prompt"
 	PRINT "(v) version\t\tPrint the version of this script"
+	return 0
 }
 
 cmd=`lowercase ${1}`
 
 # Command line options
 case "${cmd}" in
-  b | backup )
-    BACKUP $2
-    exit 0
-    ;;
-  r | restore)
-    RESTORE $2 $3
-    exit 0
-    ;;
-  l | list )
-    LIST $2
-    exit 0
-    ;;
-  d | default-target )
-    DEFAULT_TARGET $2
-    exit 0
-    ;;
-  e | exclusions )
-    EXCLUSIONS
-    exit 0
-    ;;
-  p | print-exclusions)
-    PRINT_EXCLUSIONS
-    exit 0
-    ;;
-  v | version )
-    version
-    exit 0
-    ;;
-  \? | h | help )
-    help_prompt
-    exit 0
-    ;;
-  * )
-		if [ -z "${cmd}" ];
-		then
-			emptycmd
-		else
-			invalid "${1}"
-		fi
-		exit 0
+	b | backup )
+		BACKUP $2
+    	;;
+	r | restore)
+		RESTORE $2 $3
+		;;
+	d | delete )
+		REMOVE $2
+		;;
+	l | list )
+		LIST $2
+		;;
+	t | default-target )
+		DEFAULT_TARGET $2
+		;;
+	e | exclusions )
+		EXCLUSIONS
+		;;
+	p | print-exclusions)
+		PRINT_EXCLUSIONS
+		;;
+	v | version )
+		version
+		;;
+	\? | h | help )
+		help_prompt
+		;;
+	* )
+		[ -z "${cmd}" ] && help_prompt || invalid "${cmd}"
 		;;
 esac
+
+# Exit the script with the last returned status code
+exit $?

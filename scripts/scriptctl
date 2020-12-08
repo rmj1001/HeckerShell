@@ -27,24 +27,29 @@ function PRINT()
 	else
 		printf "%b\n" "${1}"
 	fi
+
+	return 0
 }
 
 # Retrieve the name of the script file
 function SCRIPTNAME()
 {
 	PRINT "${0##*/}"
+	return 0
 }
 
 # Pauses script execution until the user presses ENTER
 function pause()
 {
 	read -p "Press ENTER to continue..." cmd
+	return 0
 }
 
 # Converts a string to all lowercase characters
 function lowercase()
 {
 	printf "${1}" | tr "[:upper:]" "[:lower:]"
+	return 0
 }
 
 # Error message for when an invalid command is used
@@ -53,6 +58,7 @@ function invalid()
 	PRINT 
 	PRINT "Invalid command \"${1}\". See \"`SCRIPTNAME` help\"."
 	PRINT 
+	return 1
 }
 
 # Error message for when no command is used
@@ -61,6 +67,7 @@ function emptycmd()
 	PRINT 
 	PRINT "You must specify a subcommand. See \"`SCRIPTNAME` help\"."
 	PRINT 
+	return 1
 }
 
 # Checks for a filename in $PATH (commands), if not found then exit with an error
@@ -80,6 +87,7 @@ function version()
 	PRINT "There is NO WARRANTY, to the extent permitted by law."
 	PRINT
 	PRINT "Written by ${author}."
+	return 0
 }
 
 #######################################################################
@@ -125,24 +133,28 @@ function PRINT()
 	else
 		printf \"%b\\\n\" \"\${1}\"
 	fi
+	return 0
 }
 
 # Retrieve the name of the script file
 function SCRIPTNAME()
 {
 	PRINT \"\${0##*/}\"
+	return 0
 }
 
 # Pauses script execution until the user presses ENTER
 function pause()
 {
 	read -p \"Press ENTER to continue...\" cmd
+	return 0
 }
 
 # Converts a string to all lowercase characters
 function lowercase()
 {
 	printf \"\${1}\" | tr \"[:upper:]\" \"[:lower:]\"
+	return 0
 }
 
 # Error message for when an invalid command is used
@@ -151,6 +163,7 @@ function invalid()
 	PRINT 
 	PRINT \"Invalid command \\\"\${1}\\\". See \\\"\`SCRIPTNAME\` help\\\".\"
 	PRINT 
+	return 1
 }
 
 # Error message for when no command is used
@@ -159,6 +172,7 @@ function emptycmd()
 	PRINT 
 	PRINT \"You must specify a subcommand. See \\\"\`SCRIPTNAME\` help\\\".\"
 	PRINT 
+	return 1
 }
 
 # Checks for a filename in \$PATH (commands), if not found then exit with an error
@@ -178,6 +192,7 @@ function version()
 	PRINT \"There is NO WARRANTY, to the extent permitted by law.\"
 	PRINT
 	PRINT \"Written by \${author}.\"
+	return 0
 }
 
 #######################################################################
@@ -196,6 +211,7 @@ function getName()
 		scriptname="${1}"
     fi
     script="${SCRIPTS}/${scriptname}"
+    return 0
 }
 
 function createScript()
@@ -214,10 +230,10 @@ function createScript()
     	chmod +x ${script}
     	
 		PRINT "`SCRIPTNAME`: ${scriptname} created!"
-    	exit 0
+    	return 0
     else
     	PRINT "`SCRIPTNAME`: ${scriptname} already exists!"
-    	exit 1
+    	return 1
     fi
 }
 
@@ -230,13 +246,13 @@ function editScript()
 		${EDITOR} ${script}
 		PRINT "`SCRIPTNAME`: ${scriptname} edited!"
 		
-		exit 0
+		return 0
 	else
 		PRINT "`SCRIPTNAME`: ${scriptname} does not exist!"
 		read -p "Create script? Y\n: " answer
 
 		answer=`lowercase "${answer}"`
-		[ "${answer}" = "y" ] && createScript || exit 1
+		[ "${answer}" = "y" ] && createScript || return 1
 	fi
 }
 
@@ -248,17 +264,17 @@ function removeScript()
 	then
 		rm -f ${script}
 		PRINT "`SCRIPTNAME`: ${scriptname} removed!"
-		exit 0
+		return 0
 	else
 		PRINT "`SCRIPTNAME`: ${scriptname} does not exist!"
-		exit 1
+		return 1
 	fi
 }
 
 function renameScript()
 {
 	getName "${1}"
-	
+
 	newName="${2}"
 	newPath="${SCRIPTS}/${newName}"
 
@@ -268,21 +284,23 @@ function renameScript()
 		mv "${script}" "${SCRIPTS}/${newName}"
 
 		PRINT "`SCRIPTNAME`: Renamed '${script##*/}' to '${newName}'."
-	
+		return 0
+
 	elif [ -z "${newName}" ]
 	then
-	
+
 		read -p "What do you want the script to be called?" newName
 		mv "${script}" "${SCRIPTS}/${newName}"
 
 		PRINT "`SCRIPTNAME`: Renamed '${script##*/}' to '${newName}'."
-	
+		return 0
+
 	elif [ ! -f "${script}" ]
 	then
-	
+
 		PRINT "Script '${script##*/}' does not exist!"
-		exit 1
-	
+		return 1
+
 	fi
 }
 
@@ -293,17 +311,17 @@ function printScript()
 	if [[ -e "${script}" ]]
 	then
 		cat ${script}
-		exit 0
+		return 0
 	else
 		PRINT "`SCRIPTNAME`: ${scriptname} does not exist!"
-		exit 1
+		return 1
 	fi
 }
 
 function listScripts()
 {
 	ls -1 --color=auto $SCRIPTS
-	exit 0
+	return 0
 }
 
 function helpPrompt()
@@ -324,7 +342,7 @@ function helpPrompt()
 	PRINT "Miscellaneous:"
 	PRINT "(h) help\t\tdisplay this help and exit"
 	PRINT "(v) version\t\toutput version information and exit"
-	exit 0
+	return 0
 }
 
 # Create the scripts directory if it does not already exist.
@@ -358,13 +376,9 @@ case "${cmd}" in
 		helpPrompt
 		;;
 	* )
-		if [ -z "${cmd}" ];
-		then
-			emptycmd
-			exit 1
-		else
-			invalid "${1}"
-			exit 1
-		fi
+		[ -z "${cmd}" ] && helpPrompt || invalid "${cmd}"
 		;;
 esac
+
+# Exit the script with the last returned status code
+exit $?

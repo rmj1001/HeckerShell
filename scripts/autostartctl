@@ -27,24 +27,29 @@ function PRINT()
 	else
 		printf "%b\n" "${1}"
 	fi
+
+	return 0
 }
 
 # Retrieve the name of the script file
 function SCRIPTNAME()
 {
 	PRINT "${0##*/}"
+	return 0
 }
 
 # Pauses script execution until the user presses ENTER
 function pause()
 {
 	read -p "Press ENTER to continue..." cmd
+	return 0
 }
 
 # Converts a string to all lowercase characters
 function lowercase()
 {
 	printf "${1}" | tr "[:upper:]" "[:lower:]"
+	return 0
 }
 
 # Error message for when an invalid command is used
@@ -53,6 +58,7 @@ function invalid()
 	PRINT 
 	PRINT "Invalid command \"${1}\". See \"`SCRIPTNAME` help\"."
 	PRINT 
+	return 1
 }
 
 # Error message for when no command is used
@@ -61,6 +67,7 @@ function emptycmd()
 	PRINT 
 	PRINT "You must specify a subcommand. See \"`SCRIPTNAME` help\"."
 	PRINT 
+	return 1
 }
 
 # Checks for a filename in $PATH (commands), if not found then exit with an error
@@ -80,6 +87,7 @@ function version()
 	PRINT "There is NO WARRANTY, to the extent permitted by law."
 	PRINT
 	PRINT "Written by ${author}."
+	return 0
 }
 
 #######################################################################
@@ -106,7 +114,7 @@ append() {
 }
 
 err() {
-  PRINT "[$(date +'%Y-%m-%dT%H:%M:%S%z')]: ${@}"
+  PRINT "[$(date +'%Y-%m-%d %H:%M:%S%z')]: ${@}"
 }
 
 function TEMPLATE()
@@ -127,47 +135,41 @@ Hidden=true
 
 makeEntry() {
 
-  filename="${1}"
-  name="${2}"
-  binary="${3}"
-  categories="${4}"
-  icon="${5}"
-  generic="${6}"
-  path="${7}"
-  apptype="${8}"
+    filename="${1}"
+    [[ -z "${filename}" ]] && read -p "Entry Name: " filename
 
-  [[ -z "${filename}" ]] && read -p "New Entry Name: " filename
-  [[ -z "${name}" ]] && read -p "App Name: " name
-  [[ -z "${binary}" ]] && read -p "Executable Path: " binary
-  [[ -z "${apptype}" ]] && apptype="Application"
-  [[ -z "${categories}" ]] && categories="Utility;"
+    file="${XDG_AUTOSTART}/${filename}.desktop"
 
-  file="${XDG_AUTOSTART}/${filename}.desktop"
+    [[ -f "${file}" ]] && err "`SCRIPTNAME`: ${filename} already exists!" && exit 1
 
-  if [[ ! -e "${file}" ]]
-  then
     touch ${file}
-    TEMPLATE
+
+    read -p "App Name: " name
+    read -p "Executable Path: " binary
+    read -p "Categories (semicolon separated): " categories
+    read -p "Icon Path: " icon
+    read -p "Generic Name: " generic
+
+    apptype="Application"
+    [[ -z "${categories}" ]] && categories="Utility;"
 
     # Add entry information to the file
+    TEMPLATE
     PRINT ${_template} > ${file}
 
     PRINT "`SCRIPTNAME`: Created ${filename}!"
     exit 0
-  else
-    err "`SCRIPTNAME`: ${filename} already exists!"
-    exit 1
-  fi
+
 }
 
 editEntry() {
-  filename="${1}"
 
+  filename="${1}"
   [[ -z "${filename}" ]] && read -p "Name of Entry: " filename
 
   file="${XDG_AUTOSTART}/${filename}.desktop"
 
-  if [[ -e "${file}" ]]
+  if [[ -f "${file}" ]]
   then
     ${EDITOR} ${file}
     PRINT "`SCRIPTNAME`: Edited ${filename}!"
@@ -225,7 +227,8 @@ helpPrompt() {
   PRINT "Manage XDG Autostart desktop entries."
   PRINT
   PRINT "Usage: `SCRIPTNAME` [command] [FLAGS]... [VALUES]..." 
-  PRINT "Example: `SCRIPTNAME` c discord Discord /usr/bin/discord Internet"
+  PRINT "Example: `SCRIPTNAME` c discord"
+  PRINT "Example: `SCRIPTNAME` l"
   PRINT
   PRINT "Options: "
   PRINT "(c) create\t\tCreate an autostart entry and exit"
@@ -233,16 +236,6 @@ helpPrompt() {
   PRINT "(r) remove\t\tRemove an autostart entry and exit"
   PRINT "(l) list\t\tList all entries and exit"
   PRINT "(p) print\t\tDisplay an entry's contents and exit"
-  PRINT
-  PRINT "Create Arguments (in order)"
-  PRINT "1. filename*\t\tThe file to work with (don't include .desktop)"
-  PRINT "2. name*\t\tThe name of the app"
-  PRINT "3. binary*\t\tThe executable that runs the app"
-  PRINT "4. categories\t\tThe categories the app is in, seperated by semicolon"
-  PRINT "5. icon\t\t\tThe icon for the app"
-  PRINT "6. generic\t\tThe generic name of the app"
-  PRINT "7. path\t\t\tThe path where the binary is housed, don't specify unless you know what you're doing"
-  PRINT "8. type\t\t\tThe type of app, don't specify unless you know what you're doing"
   PRINT
   PRINT "Miscellaneous:"
   PRINT "(h) help\t\tDisplay this help and exit"
@@ -257,7 +250,7 @@ cmd=`lowercase ${1}`
 
 case "${cmd}" in
   c | create )
-    makeEntry "${ARGS[@]}"
+    makeEntry "${2}"
     ;;
   e | edit )
     editEntry "${2}"
@@ -278,10 +271,6 @@ case "${cmd}" in
     helpPrompt
     ;;
   * )
-    if [ -z "${cmd}" ]; then
-      emptycmd
-    else
-      invalid "${1}"
-    fi
+    [ -z "${cmd}" ] && helpPrompt || invalid "${cmd}" && exit 1
     ;;
 esac

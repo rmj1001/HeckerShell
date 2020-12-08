@@ -2,20 +2,20 @@
 
 ##############################################
 #	Author: Nidia Achrys
-#	Project: fetcher
+#	Project: toaster
 #	Version: 1.0
 #
-#	Usage: fetcher
+#	Usage: toaster [command] [args]
 #
 #	Description:
-#		Retrieve system information for use in screenshots
+#		Toaster simulator
 ##############################################
 
 version='1.0'
 author='Nidia Achrys'
 
 #######################################################################
-#							                Helper Functions						            #
+#							Helper Functions						  #
 #######################################################################
 
 # Replacement for 'echo'
@@ -26,7 +26,6 @@ function PRINT()
 	else
 		printf "%b\n" "${1}"
 	fi
-
 	return 0
 }
 
@@ -90,46 +89,117 @@ function version()
 }
 
 #######################################################################
-#								              Core Code							                  #
+#								Core Code							  #
 #######################################################################
 
-# Dependencies
-dependency "grep"
-dependency "sed"
-dependency "uname"
-dependency "cat"
+# This is where you put your script's functions, variables, logic, etc.
 
-# Fetcher
-OS="`grep '^NAME=' /etc/os-release | sed 's/NAME=//;s/"//g'`"
-OS="${OS} `grep '^VERSION=' /etc/os-release | sed 's/VERSION=//;s/"//g'`"
+broken="false"
 
-HOST="`uname -n`"
-KERNEL="`uname -r`"
-UPTIME=`uptime --pretty | sed 's|^up\s||'`
-PKGCOUNT=""
+random()
+{
+	echo $(( ${RANDOM} % ${1} ))
+}
 
-# Package count
-[[ `command -v pacman` ]] && PKGCOUNT="$PKGCOUNT`pacman -Qq | wc -l` (pacman), "
-[[ `command -v apt` ]] && PKGCOUNT="$PKGCOUNT`apt list --installed 2>/dev/null | wc -l` (apt), "
-[[ `command -v flatpak` ]] && PKGCOUNT="$PKGCOUNT`flatpak list | wc -l` (flatpak), "
-[[ `command -v snap` ]] && snapCount=$(( $(snap list | wc -l) - 1 )) && PKGCOUNT="$PKGCOUNT$snapCount (snap), "
+makeToast()
+{
+	read -p "Pieces > " pieces
 
-# Processor
-CORES=`cat /proc/cpuinfo | grep processor | wc -l`
-CPUNAME=`grep '^model name' /proc/cpuinfo -m 1 | sed -E 's|^model\sname\s*:\s||g'`
+	PRINT 
+	[[ ! ${pieces} =~ [0-9]+ ]] && PRINT "You must specify a number!" && return 1
 
-# Memory
-MEMTOTAL="`grep 'MemTotal' /proc/meminfo | sed 's|MemTotal:\s*||g'`"
-MEMFREE="`grep 'MemFree' /proc/meminfo | sed 's|MemFree:\s*||g'`"
-MEMORY="$MEMFREE / $MEMTOTAL"
+	PRINT "Making ${pieces} piece(s) of toast..."
+	sleep 3
+	PRINT "Made ${pieces} piece(s) of toast."
 
-PRINT "|- Name: \t${USER}@${HOST}"
-PRINT "|- OS: \t\t${OS}"
-PRINT "|- Kernel: \t${KERNEL}"
-PRINT "|- Uptime: \t${UPTIME}"
-PRINT "|- Packages: \t${PKGCOUNT}"
-PRINT "|- Shell: \t${SHELL}"
-PRINT "|- Processor: \t${CPUNAME}"
-PRINT "|- Cores: \t${CORES}"
-PRINT "|- Memory: \t${MEMORY}"
+	PRINT 
+	pause
+	return 0
+}
 
+commitBath()
+{
+	PRINT 
+	PRINT "Committing toaster bath..."
+	sleep 3
+
+	successful="`random 2`"
+
+	if [ ! "${broken}" == "false" ]; then
+		PRINT "The toaster was previously broken. Find a new toaster?"
+		broken="true"
+		return 1
+	fi
+
+	if [ "${successful}" == "0" ]; then
+		PRINT "The toaster wasn't plugged in, and has been damaged by the water."
+	else
+		PRINT "You have died. Have a nice afterlife!"
+	fi
+
+	broken="true"
+	sleep 3
+
+	PRINT 
+	pause
+	return 0
+}
+
+throwToaster()
+{
+	read -p "Target > " target
+
+	PRINT 
+	PRINT "You have thrown a toaster at ${target}."
+	sleep 3
+
+	successful="`random 2`"
+
+	if [ "${successful}" == "0" ]; then
+		PRINT "You didn't aim properly, and the toaster hit the wall."
+	else
+		PRINT "Your aim was perfect and you hit ${target} in the head."
+	fi
+
+	broken="true"
+
+	PRINT 
+	pause
+	return 0
+}
+
+cmd=""
+
+while [[ "${cmd}" != "4" ]]; do
+	clear
+	PRINT "Toaster Menu"
+	PRINT 
+	PRINT 
+	PRINT "1. Make Toast"
+	PRINT "2. Commit Toaster Bath"
+	PRINT "3. Throw Toaster"
+	PRINT "4. Exit"
+	PRINT
+	read -p "Choice > " cmd
+
+	case "${cmd}" in
+
+		1 )
+			makeToast
+			;;
+		2 )
+			commitBath
+			;;
+		3 )
+			throwToaster
+			;;
+		4 )
+			clear
+			exit 0
+			;;
+		* )
+			PRINT "Invalid option. Use the number!"
+			;;
+
+	esac
+done

@@ -1,0 +1,281 @@
+#!/usr/bin/env bash
+
+##############################################
+#	Author: Nidia Achrys
+#	Project: sideload
+#	Version: 1.0
+#
+#	Usage: sideload [command] [args]
+# 
+# Description:
+#   This utility manages AppImages
+##############################################
+
+version='1.0'
+author='Nidia Achrys'
+
+#######################################################################
+#							                Helper Functions						            #
+#######################################################################
+
+# Replacement for 'echo'
+function PRINT()
+{
+	if [ -z "${1}" ]; then
+		printf "\n"
+	else
+		printf "%b\n" "${1}"
+	fi
+
+	return 0
+}
+
+# Retrieve the name of the script file
+function SCRIPTNAME()
+{
+	PRINT "${0##*/}"
+	return 0
+}
+
+# Pauses script execution until the user presses ENTER
+function pause()
+{
+	read -p "Press ENTER to continue..." cmd
+	return 0
+}
+
+# Converts a string to all lowercase characters
+function lowercase()
+{
+	printf "${1}" | tr "[:upper:]" "[:lower:]"
+	return 0
+}
+
+# Error message for when an invalid command is used
+function invalid()
+{
+	PRINT 
+	PRINT "Invalid command \"${1}\". See \"`SCRIPTNAME` help\"."
+	PRINT 
+	return 1
+}
+
+# Error message for when no command is used
+function emptycmd()
+{
+	PRINT 
+	PRINT "You must specify a subcommand. See \"`SCRIPTNAME` help\"."
+	PRINT 
+	return 1
+}
+
+# Checks for a filename in $PATH (commands), if not found then exit with an error
+function dependency()
+{
+	[[ ! `command -v ${1}` ]] && PRINT "'${1}' is required to run this program." && exit 1
+}
+
+# Prints the script name and version, as well as copyright, license notice, and 
+# author name
+function version()
+{
+	PRINT "`SCRIPTNAME` v${version}"
+	PRINT "Copyright (C) `date +"%Y"` ${author}"
+	PRINT "License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>."
+	PRINT "This is free software: you are free to change and redistribute it."
+	PRINT "There is NO WARRANTY, to the extent permitted by law."
+	PRINT
+	PRINT "Written by ${author}."
+	return 0
+}
+
+#######################################################################
+#								              Core Code							                  #
+#######################################################################
+
+function init_prompt ()
+{
+
+	# If .sideloadrc exists, then ask if they want to reset all the configs.
+	if [ -e ".sideloadrc" ]; then
+
+		PRINT "You already have sideload installed. Do you want to reset all configs?"
+		read -p "Y\N >> " answer
+		if [ "$answer" = "y" ] || [ "$answer" = "Y" ]; then
+
+			# Sideload Initialization
+			initsd
+
+		else
+
+			return 0
+
+		fi
+
+	else
+
+		initsd
+
+	fi
+
+}
+
+# Help Menu
+function help_menu ()
+{
+
+	PRINT 
+	PRINT "Install/uninstall Appimages"
+	PRINT 
+	PRINT "Usage: `SCRIPTNAME` [command] [args]"
+	PRINT "Example: `SCRIPTNAME` install ./app.appimage"
+	PRINT 
+	PRINT "Commands:"
+	PRINT "init [shellrc] \t\t\t Initialize Sideload"
+	PRINT "(i) install [file] \t\t Install an appimage"
+	PRINT "(u) uninstall [name] \t\t Uninstall an appimage"
+	PRINT "(l) list \t\t\t List all appimages"
+	PRINT 
+	PRINT "Miscellaneous"
+	PRINT "(h) help \t\t\t Show this prompt"
+	PRINT "(v) version \t\t\t Print the version of this script"
+	return 0
+}
+
+# Sideload Initialization
+function initsd ()
+{
+
+	if [ -e "$HOME/.sideloadrc" ] && [ -d "$HOME/.Sideload" ]; then
+
+		PRINT "Sideload is already initialized!"
+		exit 1
+
+	else
+
+		# Initialize SIDELOAD Folders
+		mkdir $HOME/.Sideload | cd -
+		mkdir $HOME/.Sideload/Apps
+		mkdir $HOME/.Sideload/Configs
+
+		# Initialize, create, and load sideloadrc file
+		touch $HOME/.sideloadrc
+		read -t 60 -p "Enter the path to your shellrc file. ex. bashrc or zshrc > " rcpath
+		if [ -e "$rcpath" ]; then
+			PRINT "if [ -e \".sideloadrc\" ]; then\n	. \$HOME/.sideloadrc" >> $rcpath
+			PRINT "	export \$SIDELOAD_ROOT=\$HOME/.Sideload" >> $rcpath
+			PRINT "	export \$SIDELOADRC=\$HOME/.sideloadrc" >> $rcpath
+			PRINT "	export \$SIDELOAD_APPS=\$HOME/.Sideload/Apps" >> $rcpath
+			PRINT "	export \$SIDELOAD_CONFIGS=\$HOME/.Sideload/Configs" >> $rcpath
+			PRINT "	export \$SIDELOAD_APPLIST=\$SIDELOAD_CONFIGS/applist.txt\nfi" >> $rcpath
+			PRINT "\n\n# Path\nexport \$PATH=\$PATH:\$SIDELOAD_APPS" >> $rcpath
+			source $rcpath
+
+			# Initialize applist
+			touch $SIDELOAD_APPLIST
+
+			PRINT "Sideload Initialized."
+
+			return 0
+
+		else
+
+			PRINT "$rcpath does not exist!"
+			return 0
+
+		fi
+
+	fi
+
+}
+
+function install_app ()
+{
+
+	local file="$1"
+
+	# Install Program
+	mv $file $SIDELOAD_APPS
+	chmod $file a+x
+	PRINT "$file" >> $SIDELOAD_APPLIST
+
+	# Prompt to ask if the user wants to run the program
+	read -p "Do you wish to run the program now? Y/N >> " answer
+	if [ "$answer" = "Y" ] || [ "$answer" = "y" ]; then
+
+		./$file
+
+	else
+
+		return 0
+
+	fi
+
+}
+
+function uninstall_app ()
+{
+
+	local file="$1"
+
+	cd $SIDELOAD_APPS
+	rm -f $file
+	rm -f $SIDELOAD_APPLIST
+	touch $SIDELOAD_APPLIST
+	for OUTPUT in $(ls $SIDELOAD_APPS)
+	do
+
+		PRINT "$OUTPUT" >> $SIDELOAD_APPLIST
+	done
+
+	return 0
+
+}
+
+function list_apps ()
+{
+
+	cat $SIDELOAD_APPLIST
+	return 0
+
+}
+
+function checkInit ()
+{
+	[ ! -f "${HOME}/.sideloadrc" ] && PRINT "You must initialize sideload!" && exit 1
+}
+
+command="${1}"
+program="${2}"
+
+case "${command}" in
+	i | install )
+		checkInit
+		install_app $program
+		;;
+
+	u | uninstall )
+		checkInit
+		uninstall_app $program
+		;;
+
+	l | list-apps )
+		checkInit
+		list_apps
+		;;
+
+	\? | h | help )
+		help_menu
+		;;
+
+	v | version )
+		version
+		;;
+
+	*)
+		[ -z "${command}" ] && help_menu || invalid "${command}"
+		return 1
+		;;
+esac
+
+exit $?

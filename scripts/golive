@@ -28,24 +28,29 @@ function PRINT()
 	else
 		printf "%b\n" "${1}"
 	fi
+
+	return 0
 }
 
 # Retrieve the name of the script file
 function SCRIPTNAME()
 {
 	PRINT "${0##*/}"
+	return 0
 }
 
 # Pauses script execution until the user presses ENTER
 function pause()
 {
 	read -p "Press ENTER to continue..." cmd
+	return 0
 }
 
 # Converts a string to all lowercase characters
 function lowercase()
 {
 	printf "${1}" | tr "[:upper:]" "[:lower:]"
+	return 0
 }
 
 # Error message for when an invalid command is used
@@ -54,6 +59,7 @@ function invalid()
 	PRINT 
 	PRINT "Invalid command \"${1}\". See \"`SCRIPTNAME` help\"."
 	PRINT 
+	return 1
 }
 
 # Error message for when no command is used
@@ -62,6 +68,7 @@ function emptycmd()
 	PRINT 
 	PRINT "You must specify a subcommand. See \"`SCRIPTNAME` help\"."
 	PRINT 
+	return 1
 }
 
 # Checks for a filename in $PATH (commands), if not found then exit with an error
@@ -81,6 +88,7 @@ function version()
 	PRINT "There is NO WARRANTY, to the extent permitted by law."
 	PRINT
 	PRINT "Written by ${author}."
+	return 0
 }
 
 #######################################################################
@@ -148,7 +156,6 @@ function help_prompt()
 	PRINT
 	PRINT "Commands:"
 	PRINT "(s) start\tStart the sound sharing"
-	PRINT "(p) stop\tStop the sound sharing"
 	PRINT "(i) shell\tUse the interactive shell to work with `SCRIPTNAME`"
 	PRINT "(e) exit\t(Shell only) Exit the script"
 	PRINT
@@ -175,10 +182,6 @@ function shell()
 		case "$cmd" in
 			s | start )
 				run
-				pause
-				;;
-			p | stop )
-				systemctl --user restart pulseaudio
 				pause
 				;;
 			\? | h | help )
@@ -212,9 +215,6 @@ cmd=`lowercase "${1}"`
 case "${cmd}" in
 	s | start )
 		run
-		;;
-	p | stop )
-		systemctl --user restart pulseaudio
 		;;
 	\? | h | help )
 		help_prompt
