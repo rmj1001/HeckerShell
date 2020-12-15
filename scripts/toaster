@@ -74,6 +74,16 @@ function dependency()
 	[[ ! `command -v ${1}` ]] && PRINT "'${1}' is required to run this program." && exit 1
 }
 
+# Checks to see if the script is being run as root, and if not then exit.
+function requireRoot()
+{
+	if [[ $EUID -ne 0 ]]
+	then
+		PRINT "This script must be run as root" 1>&2
+		exit 1
+	fi
+}
+
 # Prints the script name and version, as well as copyright, license notice, and 
 # author name
 function version()

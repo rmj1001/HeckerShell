@@ -76,6 +76,16 @@ function dependency()
 	[[ ! `command -v ${1}` ]] && PRINT "'${1}' is required to run this program." && exit 1
 }
 
+# Checks to see if the script is being run as root, and if not then exit.
+function requireRoot()
+{
+	if [[ $EUID -ne 0 ]]
+	then
+		PRINT "This script must be run as root" 1>&2
+		exit 1
+	fi
+}
+
 # Prints the script name and version, as well as copyright, license notice, and 
 # author name
 function version()
@@ -99,7 +109,10 @@ dependency "nano"
 default_shell="bash"
 
 [[ -z "${SCRIPTS}" ]] && SCRIPTS="$HOME/.local/bin"
+
+# If EDITOR is empty, or the EDITOR does not exist, use nano
 [[ -z "${EDITOR}" ]] && EDITOR=nano
+[[ `command -v ${EDITOR}` ]] || EDITOR=nano
 
 # Functions
 
@@ -181,6 +194,16 @@ function dependency()
 	[[ ! \`command -v \${1}\` ]] && PRINT \"'\${1}' is required to run this program.\" && exit 1
 }
 
+# Checks to see if the script is being run as root, and if not then exit.
+function requireRoot()
+{
+	if [[ \$EUID -ne 0 ]]
+	then
+		PRINT \"This script must be run as root\" 1>&2
+		exit 1
+	fi
+}
+
 # Prints the script name and version, as well as copyright, license notice, and 
 # author name
 function version()
@@ -199,7 +222,9 @@ function version()
 #								Core Code							  #
 #######################################################################
 
-# This is where you put your script's functions, variables, logic, etc."
+# This is where you put your script's functions, variables, logic, etc.
+
+"
 }
 
 function getName()

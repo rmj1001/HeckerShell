@@ -2,20 +2,20 @@
 
 ##############################################
 #	Author: Nidia Achrys
-#	Project: pacmirrors
+#	Project: gitupdate
 #	Version: 1.0
 #
-#	Usage: pacmirrors [command] [args]
+#	Usage: gitupdate [command] [args]
 #
 #	Description:
-#		Refresh pacman mirrors (Arch distros only)
+#		Change this
 ##############################################
 
 version='1.0'
 author='Nidia Achrys'
 
 #######################################################################
-#							                Helper Functions						            #
+#							Helper Functions						  #
 #######################################################################
 
 # Replacement for 'echo'
@@ -26,7 +26,6 @@ function PRINT()
 	else
 		printf "%b\n" "${1}"
 	fi
-
 	return 0
 }
 
@@ -100,25 +99,21 @@ function version()
 }
 
 #######################################################################
-#								              Core Code							                  #
+#								Core Code							  #
 #######################################################################
 
-dependency "pacman"
+# This is where you put your script's functions, variables, logic, etc.
 
-refresh()
-{
-  mirrorlist=/etc/pacman.d/mirrorlist
-  backupfile=/etc/pacman.d/mirrorlist.backup
-  
-  [[ -f $backupfile ]] && sudo rm -f $backupfile
-  sudo cp $mirrorlist $backupfile
-  sudo reflector --sort rate --protocol https --latest 30 --verbose --save $mirrorlist
-}
+for dir in `find . -name .git | xargs -i dirname {}`
+do
+	cd ${dir}
+	
+	# Print the directory name
+	pwd
 
-if [[ `command -v reflector` ]]
-then
-  refresh
-else
-  pacman -S reflector
-  refresh
-fi
+	# Update the repository
+	git pull
+
+	# Change back to home directory
+	cd -
+done
