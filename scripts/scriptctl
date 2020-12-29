@@ -39,14 +39,14 @@ function TEMPLATE()
 _template="#!/usr/bin/env ${default_shell}
 
 ##############################################
-#	Author: <your name here>
+#	Author: ${author_name}
 #	Project: ${scriptname}
 #	Version: 1.0
 #
 #	Usage: ${scriptname} [command] [args]
 #
 #	Description:
-#		Change this
+#		${description}
 ##############################################
 
 version='1.0'
@@ -80,7 +80,11 @@ function createScript()
 {
 	getName "${1}"
 
-	[ -n "${2}" ] && default_shell="${2}"
+	# Prompt for script information
+	read -p "Shell Name > " default_shell
+	read -p "Author Name > " author_name
+	read -p "Description > " description
+
 	TEMPLATE
 
     if [[ ! -e "${script}" ]]
