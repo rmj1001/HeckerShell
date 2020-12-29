@@ -30,7 +30,7 @@ random()
 
 makeToast()
 {
-	read -p "Pieces > " pieces
+	read -p "Pieces: " pieces
 
 	PRINT 
 	[[ ! ${pieces} =~ [0-9]+ ]] && PRINT "You must specify a number!" && return 1
@@ -52,29 +52,27 @@ commitBath()
 
 	successful="`random 2`"
 
-	if [ ! "${broken}" == "false" ]; then
-		PRINT "The toaster was previously broken. Find a new toaster?"
+	if [ "${broken}" != "false" ]; then
+		PRINT "The toaster was previously broken. Find a new toaster?"; sleep 3; PAUSE
 		broken="true"
 		return 1
 	fi
 
 	if [ "${successful}" == "0" ]; then
-		PRINT "The toaster wasn't plugged in, and has been damaged by the water."
+		PRINT "The toaster wasn't plugged in, and has been damaged by the water."; sleep 3; PAUSE
 	else
-		PRINT "You have died. Have a nice afterlife!"
+		PRINT "You have died. Have a nice afterlife!"; sleep 3; PAUSE
 	fi
 
 	broken="true"
-	sleep 3
 
 	PRINT 
-	PAUSE
 	return 0
 }
 
 throwToaster()
 {
-	read -p "Target > " target
+	read -p "Target: " target
 
 	PRINT 
 	PRINT "You have thrown a toaster at ${target}."
@@ -83,15 +81,13 @@ throwToaster()
 	successful="`random 2`"
 
 	if [ "${successful}" == "0" ]; then
-		PRINT "You didn't aim properly, and the toaster hit the wall."
+		PRINT "You didn't aim properly, and the toaster hit the wall."; PAUSE
 	else
-		PRINT "Your aim was perfect and you hit ${target} in the head."
+		PRINT "Your aim was perfect and you hit ${target} in the head."; PAUSE
 	fi
 
 	broken="true"
-
 	PRINT 
-	PAUSE
 	return 0
 }
 
@@ -107,25 +103,28 @@ while [[ "${cmd}" != "4" ]]; do
 	PRINT "3. Throw Toaster"
 	PRINT "4. Exit"
 	PRINT
-	read -p "Choice > " cmd
+	read -p "> " cmd
+
+	cmd=`LOWERCASE "${cmd}"`
 
 	case "${cmd}" in
 
-		1 )
+		1 | 'make toast' )
 			makeToast
 			;;
-		2 )
+		2 | 'commit toaster bath' )
 			commitBath
 			;;
-		3 )
+		3 | 'throw toaster' )
 			throwToaster
 			;;
-		4 )
+		4 | 'exit' )
 			clear
 			exit 0
 			;;
 		* )
-			PRINT "Invalid option. Use the number!"
+			PRINT "\nInvalid option!\n"
+			PAUSE
 			;;
 
 	esac
