@@ -24,11 +24,10 @@ source $SCRIPTS/01-api.sh
 
 DEPENDENCY "nano"
 
-default_shell="bash"
-
+# Set the scripts directory to $HOME/.local/bin if not already set
 [[ -z "${SCRIPTS}" ]] && SCRIPTS="$HOME/.local/bin"
 
-# If EDITOR is empty, or the EDITOR does not exist, use nano
+# If EDITOR is empty, or the specified EDITOR does not exist, use nano
 [[ -z "${EDITOR}" ]] && EDITOR=nano
 [[ `command -v ${EDITOR}` ]] || EDITOR=nano
 
