@@ -16,13 +16,13 @@ version='1.0'
 author='Nidia Achrys'
 
 # Source common script functions
-source $SCRIPTS/01-commons.sh
+source $SCRIPTS/01-api.sh
 
 #############
 # Core Code #
 #############
 
-dependency "nano"
+DEPENDENCY "nano"
 
 default_shell="bash"
 
@@ -53,7 +53,7 @@ version='1.0'
 author=''
 
 # Source common script functions
-source \$SCRIPTS/01-commons.sh
+source \$SCRIPTS/01-api.sh
 
 #############
 # Core Code #
@@ -113,7 +113,7 @@ function editScript()
 		PRINT "`SCRIPTNAME`: ${scriptname} does not exist!"
 		read -p "Create script? Y\n: " answer
 
-		answer=`lowercase "${answer}"`
+		answer=`LOWERCASE "${answer}"`
 		[ "${answer}" = "y" ] && createScript || return 1
 	fi
 }
@@ -210,7 +210,7 @@ function helpPrompt()
 # Create the scripts directory if it does not already exist.
 [[ ! -d "${SCRIPTS}" ]] && mkdir ${SCRIPTS}
 
-cmd=`lowercase ${1}`
+cmd=`LOWERCASE ${1}`
 
 case "${cmd}" in
 	c | create )
@@ -232,13 +232,13 @@ case "${cmd}" in
 		listScripts
 		;;
 	v | version )
-		version
+		VERSION
 		;;
 	\? | h | help )
 		helpPrompt
 		;;
 	* )
-		[ -z "${cmd}" ] && helpPrompt || invalid "${cmd}"
+		[ -z "${cmd}" ] && helpPrompt || INVALID "${cmd}"
 		;;
 esac
 

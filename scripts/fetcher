@@ -15,17 +15,17 @@ version='1.0'
 author='Nidia Achrys'
 
 # Source common script functions
-source $SCRIPTS/01-commons.sh
+source $SCRIPTS/01-api.sh
 
 #############
 # Core Code #
 #############
 
 # Dependencies
-dependency "grep"
-dependency "sed"
-dependency "uname"
-dependency "cat"
+DEPENDENCY "grep"
+DEPENDENCY "sed"
+DEPENDENCY "uname"
+DEPENDENCY "cat"
 
 # Fetcher
 OS="`grep '^NAME=' /etc/os-release | sed 's/NAME=//;s/"//g'`"

@@ -15,21 +15,21 @@ version='1.0'
 author='Nidia Achrys'
 
 # Source common script functions
-source $SCRIPTS/01-commons.sh
+source $SCRIPTS/01-api.sh
 
 #############
 # Core Code #
 #############
 
-dependency "tar"
-dependency "bunzip"
-dependency "unrar"
-dependency "gunzip"
-dependency "unzip"
-dependency "uncompress"
-dependency "7z"
-dependency "ar"
-dependency "unzstd"
+DEPENDENCY "tar"
+DEPENDENCY "bunzip"
+DEPENDENCY "unrar"
+DEPENDENCY "gunzip"
+DEPENDENCY "unzip"
+DEPENDENCY "uncompress"
+DEPENDENCY "7z"
+DEPENDENCY "ar"
+DEPENDENCY "unzstd"
 
 if [ -f "$1" ]
 then

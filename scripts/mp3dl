@@ -16,13 +16,13 @@ version='1.0'
 author='Nidia Achrys'
 
 # Source common script functions
-source $SCRIPTS/01-commons.sh
+source $SCRIPTS/01-api.sh
 
 #############
 # Core Code #
 #############
 
-dependency "youtube-dl"
+DEPENDENCY "youtube-dl"
 
 DOWNDIR=$HOME/Downloads/Music
 [ ! -d $DOWNDIR ] && mkdir $DOWNDIR

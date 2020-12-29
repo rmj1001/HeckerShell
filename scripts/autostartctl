@@ -16,7 +16,7 @@ version='1.0'
 author='Nidia Achrys'
 
 # Source common script functions
-source $SCRIPTS/01-commons.sh
+source $SCRIPTS/01-api.sh
 
 #############
 # Core Code #
@@ -174,7 +174,7 @@ helpPrompt() {
 # Creates the autostart directory if it does not already exist.
 [[ ! -d "${XDG_AUTOSTART}" ]] && mkdir ${XDG_AUTOSTART}
 
-cmd=`lowercase ${1}`
+cmd=`LOWERCASE ${1}`
 
 case "${cmd}" in
   c | create )
@@ -193,12 +193,12 @@ case "${cmd}" in
     printEntry "${2}"
     ;;
   v | version )
-    version
+    VERSION
     ;;
   \? | h | help )
     helpPrompt
     ;;
   * )
-    [ -z "${cmd}" ] && helpPrompt || invalid "${cmd}" && exit 1
+    [ -z "${cmd}" ] && helpPrompt || INVALID "${cmd}" && exit 1
     ;;
 esac

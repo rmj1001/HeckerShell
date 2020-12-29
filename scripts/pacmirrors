@@ -21,7 +21,7 @@ source $SCRIPTS/01-commons.sh
 # Core Code #
 #############
 
-dependency "pacman"
+DEPENDENCY "pacman"
 
 refresh()
 {

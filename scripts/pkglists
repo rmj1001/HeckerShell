@@ -16,13 +16,13 @@ version='1.0'
 author='Nidia Achrys'
 
 # Source common script functions
-source $SCRIPTS/01-commons.sh
+source $SCRIPTS/01-api.sh
 
 #############
 # Core Code #
 #############
 
-dependency "pacman"
+DEPENDENCY "pacman"
 
 cd $HOME/Downloads
 pacmanlist="$(pacman -Qqe | grep -v '`pacman -Qq base`' | grep -v '`pacman -Qqm`')"

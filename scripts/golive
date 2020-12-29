@@ -17,13 +17,13 @@ version='1.0'
 author='Nidia Achrys'
 
 # Source common script functions
-source $SCRIPTS/01-commons.sh
+source $SCRIPTS/01-api.sh
 
 #############
 # Core Code #
 #############
 
-dependency "pactl"
+DEPENDENCY "pactl"
 
 function setup() {
 	pactl list short modules | grep -q 'Virtual_Sink' && return
@@ -105,20 +105,20 @@ function shell()
 		read -p "> " cmd
 
 		og_cmd="${cmd}"
-		cmd=`lowercase "${cmd}"`
+		cmd=`LOWERCASE "${cmd}"`
 
 		case "$cmd" in
 			s | start )
 				run
-				pause
+				PAUSE
 				;;
 			\? | h | help )
 				help_prompt
-				pause
+				PAUSE
 				;;
 			v | version )
 				version
-				pause
+				PAUSE
 				;;
 			e | exit )
 				clear
@@ -127,18 +127,18 @@ function shell()
 			* )
 				if [ -z "${cmd}" ];
 				then
-					emptycmd
-					pause
+					EMPTYCMD
+					PAUSE
 				else
-					invalid "${cmd}"
-					pause
+					INVALID "${cmd}"
+					PAUSE
 				fi
 				;;
 		esac
 	done
 }
 
-cmd=`lowercase "${1}"`
+cmd=`LOWERCASE "${1}"`
 
 case "${cmd}" in
 	s | start )
@@ -148,7 +148,7 @@ case "${cmd}" in
 		help_prompt
 		;;
 	v | version )
-		version
+		VERSION
 		;;
 	i | shell )
 		shell
@@ -156,9 +156,9 @@ case "${cmd}" in
 	* )
 		if [ -z "${cmd}" ];
 		then
-			emptycmd
+			EMPTYCMD
 		else
-			invalid "${cmd}"
+			INVALID "${cmd}"
 		fi
 		;;
 esac

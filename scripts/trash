@@ -15,7 +15,7 @@ version='1.0'
 author='Nidia Achrys'
 
 # Source common script functions
-source $SCRIPTS/01-commons.sh
+source $SCRIPTS/01-api.sh
 
 #############
 # Core Code #
@@ -150,7 +150,7 @@ helpPrompt()
   PRINT "(v) version\t\tPrint the version of this script"
 }
 
-cmd=`lowercase "${1}"`
+cmd=`LOWERCASE "${1}"`
 
 case "${cmd}" in
   a | add )
@@ -170,13 +170,13 @@ case "${cmd}" in
     info "${2}"
     ;;
   v | version )
-    version
+    VERSION
     ;;
   \? | h | help )
     helpPrompt
     ;;
   * )
-  	[ -z "${cmd}" ] && helpPrompt || invalid "${1}" && exit 1
+  	[ -z "${cmd}" ] && helpPrompt || INVALID "${1}" && exit 1
     ;;
 esac
 

@@ -15,7 +15,7 @@ version='1.0'
 author='Nidia Achrys'
 
 # Source common script functions
-source $SCRIPTS/01-commons.sh
+source $SCRIPTS/01-api.sh
 
 #############
 # Core Code #
@@ -197,11 +197,11 @@ case "${command}" in
 		;;
 
 	v | version )
-		version
+		VERSION
 		;;
 
 	*)
-		[ -z "${command}" ] && help_menu || invalid "${command}"
+		[ -z "${command}" ] && help_menu || INVALID "${command}"
 		return 1
 		;;
 esac

@@ -15,15 +15,15 @@ version='1.0'
 author='Nidia Achrys'
 
 # Source common script functions
-source $SCRIPTS/01-commons.sh
+source $SCRIPTS/01-api.sh
 
 #############
 # Core Code #
 #############
 
 # Dependencies
-dependency "nano"
-dependency "rsync"
+DEPENDENCY "nano"
+DEPENDENCY "rsync"
 
 # Config
 CONFDIR="${HOME}/.config/tardisrsync"
@@ -91,7 +91,7 @@ REMOVE()
 	[ ! -d "${BACKUPDIR}" ] && PRINT "Tardis: That backup does not exist!" && exit 1
 
 	read -p "Tardis: Are you sure you want to remove this backup? (y/N) " confirmation
-	confirmation=`lowercase "${confirmation}"`
+	confirmation=`LOWERCASE "${confirmation}"`
 
 	[ "${confirmation}" == "y" ] && rm -rf "${BACKUPDIR}" && return 0
 	[ "${confirmation}" == "yes" ] && rm -rf "${BACKUPDIR}" && return 0
@@ -228,7 +228,7 @@ help_prompt()
 	return 0
 }
 
-cmd=`lowercase ${1}`
+cmd=`LOWERCASE ${1}`
 
 # Command line options
 case "${cmd}" in
@@ -262,13 +262,13 @@ case "${cmd}" in
 		PRINT_EXCLUSIONS
 		;;
 	v | version )
-		version
+		VERSION
 		;;
 	\? | h | help )
 		help_prompt
 		;;
 	* )
-		[ -z "${cmd}" ] && help_prompt || invalid "${cmd}"
+		[ -z "${cmd}" ] && help_prompt || INVALID "${cmd}"
 		;;
 esac
 

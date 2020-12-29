@@ -15,16 +15,16 @@ version='1.0'
 author='Nidia Achrys'
 
 # Source common script functions
-source $SCRIPTS/01-commons.sh
+source $SCRIPTS/01-api.sh
 
 #############
 # Core Code #
 #############
 
 # Dependencies
-dependency "wget"
-dependency "unzip"
-dependency "fc-cache"
+DEPENDENCY "wget"
+DEPENDENCY "unzip"
+DEPENDENCY "fc-cache"
 
 # Noto Emoji package link
 EMOJIPKG="https://noto-website-2.storage.googleapis.com/pkgs/NotoColorEmoji-unhinted.zip"
@@ -86,7 +86,7 @@ function installer()
 	PRINT 
 	PRINT "Install finished."
 	PRINT 
-	pause
+	PAUSE
 }
 
 function uninstaller()
@@ -111,7 +111,7 @@ function uninstaller()
 	PRINT 
 	PRINT "Uninstall finished."
 	PRINT 
-	pause
+	PAUSE
 }
 
 function help_prompt()
@@ -148,7 +148,7 @@ function shell()
 		og_cmd="$cmd"
 
 		# Convert the command string to lower case
-		cmd=`lowercase "${cmd}"`
+		cmd=`LOWERCASE "${cmd}"`
 
 		case "$cmd" in
 			i | install )
@@ -159,11 +159,11 @@ function shell()
 				;;
 			\? | h | help )
 				help_prompt
-				pause
+				PAUSE
 				;;
 			v | version )
 				version
-				pause
+				PAUSE
 				;;
 			e | exit )
 				clear
@@ -172,18 +172,18 @@ function shell()
 			* )
 				if [ -z "${cmd}" ];
 				then
-					emptycmd
-					pause
+					EMPTYCMD
+					PAUSE
 				else
-					invalid "${cmd}"
-					pause
+					INVALID "${cmd}"
+					PAUSE
 				fi
 				;;
 		esac
 	done
 }
 
-cmd=`lowercase "${1}"`
+cmd=`LOWERCASE "${1}"`
 
 case "${cmd}" in
 
@@ -200,14 +200,14 @@ case "${cmd}" in
 		exit 0
 		;;
 	version | v )
-		version
+		VERSION
 		exit 0
 		;;
 	shell | s )
 		shell
 		;;
 	* )
-		[ -z "${cmd}" ] && help_prompt || invalid && exit 1
+		[ -z "${cmd}" ] && help_prompt || INVALID && exit 1
 		;;
 
 esac

@@ -15,13 +15,13 @@ version='1.0'
 author='Nidia Achrys'
 
 # Source common script functions
-source $SCRIPTS/01-commons.sh
+source $SCRIPTS/01-api.sh
 
 #############
 # Core Code #
 #############
 
-dependency 'apt'
+DEPENDENCY 'apt'
 
 name="${1}"
 name="${name##*/}"
