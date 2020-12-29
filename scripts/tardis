@@ -14,94 +14,12 @@
 version='1.0'
 author='Nidia Achrys'
 
-#######################################################################
-#							                Helper Functions						            #
-#######################################################################
+# Source common script functions
+source $SCRIPTS/01-commons.sh
 
-# Replacement for 'echo'
-function PRINT()
-{
-	if [ -z "${1}" ]; then
-		printf "\n"
-	else
-		printf "%b\n" "${1}"
-	fi
-
-	return 0
-}
-
-# Retrieve the name of the script file
-function SCRIPTNAME()
-{
-	PRINT "${0##*/}"
-	return 0
-}
-
-# Pauses script execution until the user presses ENTER
-function pause()
-{
-	read -p "Press ENTER to continue..." cmd
-	return 0
-}
-
-# Converts a string to all lowercase characters
-function lowercase()
-{
-	printf "${1}" | tr "[:upper:]" "[:lower:]"
-	return 0
-}
-
-# Error message for when an invalid command is used
-function invalid()
-{
-	PRINT 
-	PRINT "Invalid command \"${1}\". See \"`SCRIPTNAME` help\"."
-	PRINT 
-	return 1
-}
-
-# Error message for when no command is used
-function emptycmd()
-{
-	PRINT 
-	PRINT "You must specify a subcommand. See \"`SCRIPTNAME` help\"."
-	PRINT 
-	return 1
-}
-
-# Checks for a filename in $PATH (commands), if not found then exit with an error
-function dependency()
-{
-	[[ ! `command -v ${1}` ]] && PRINT "'${1}' is required to run this program." && exit 1
-}
-
-# Checks to see if the script is being run as root, and if not then exit.
-function requireRoot()
-{
-	if [[ $EUID -ne 0 ]]
-	then
-		PRINT "This script must be run as root" 1>&2
-		exit 1
-	fi
-}
-
-# Prints the script name and version, as well as copyright, license notice, and 
-# author name
-function version()
-{
-	PRINT "`SCRIPTNAME` v${version}"
-	PRINT "Copyright (C) `date +"%Y"` ${author}"
-	PRINT "License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>."
-	PRINT "This is free software: you are free to change and redistribute it."
-	PRINT "There is NO WARRANTY, to the extent permitted by law."
-	PRINT
-	PRINT "Written by ${author}."
-	return 0
-}
-
-#######################################################################
-#								              Core Code							                  #
-#######################################################################
+#############
+# Core Code #
+#############
 
 # Dependencies
 dependency "nano"
@@ -120,11 +38,11 @@ GETDIR()
   	if [ -n "${1}" ]; then
 		TARGET="${1}"
 	else
-		[ -z "${BACKUPDISK}" ] && PRINT "You must specify a directory to back up or set a default!" && exit 1
+		[ -z "${BACKUPDISK}" ] && PRINT "Tardis: You must specify a directory to back up or set a default!" && exit 1
 		TARGET="${BACKUPDISK}"
 	fi
 
-	[ ! -d "${TARGET}" ] && PRINT "That directory does not exist!" && exit 1
+	[ ! -d "${TARGET}" ] && PRINT "Tardis: That directory does not exist!" && exit 1
 
 	MANIFEST=${TARGET}/tardis-manifest.conf
 	return 0
@@ -133,7 +51,6 @@ GETDIR()
 # Create a backup in the target
 BACKUP()
 {
-	GETDIR $1
   	BACKUPNAME=$(date +"%Y-%m-%d_%H-%M-%S")
 
   	touch "${MANIFEST}"
@@ -144,18 +61,17 @@ BACKUP()
 
  	mv ${TARGET}/${USER} ${TARGET}/${BACKUPNAME}
 
-	PRINT "Finished backup!"
-	PRINT "[SUCCESSFUL] ${BACKUPNAME}" | tee -a ${MANIFEST}
+	PRINT "Tardis: Finished backup!"
+	PRINT "Tardis:  ${BACKUPNAME}" | tee -a ${MANIFEST}
 	return 0
 }
 
 # Restore a backup from the target
 RESTORE()
 {
-	GETDIR $1
-	BACKUPDIR="${TARGET}/${2}"
+	BACKUPDIR="${TARGET}/${1}"
 
-	[ ! -d "${BACKUPDIR}" ] && PRINT "That backup does not exist!" && return 1
+	[ ! -d "${BACKUPDIR}" ] && PRINT "Tardis: That backup does not exist!" && return 1
 
 	for file in ${BACKUPDIR}/{.,}*
 	do
@@ -163,51 +79,107 @@ RESTORE()
 		[ -f "${file}" ] && rsync --avhpu --delete "${file}" "${HOME}"
 	done
 
-	PRINT "[SUCCESSFUL] '${BACKUPDIR}' restored."
+	PRINT "Tardis: '${BACKUPDIR}' restored."
 	return 0
 }
 
 # Remove a backup
 REMOVE()
 {
-	GETDIR
 	BACKUPDIR="${TARGET}/${1}"
 
-	[ ! -d "${BACKUPDIR}" ] && PRINT "That backup does not exist!" && exit 1
+	[ ! -d "${BACKUPDIR}" ] && PRINT "Tardis: That backup does not exist!" && exit 1
 
-	read -p "Are you sure you want to remove this backup? (y/N) " confirmation
+	read -p "Tardis: Are you sure you want to remove this backup? (y/N) " confirmation
 	confirmation=`lowercase "${confirmation}"`
 
 	[ "${confirmation}" == "y" ] && rm -rf "${BACKUPDIR}" && return 0
 	[ "${confirmation}" == "yes" ] && rm -rf "${BACKUPDIR}" && return 0
 
-	PRINT "Cancelling..."
+	PRINT "Tardis: Cancelling..."
 	return 0
 }
 
 # List all the previous backups in the target
 LIST()
 {
-	GETDIR $1
 	FILES=${TARGET}/*/
 
-	[ ! ${#FILES[@]} -gt 0 ] && PRINT "There are no backups!" && return 1
-	[ ! -f ${MANIFEST} ] && PRINT "There are no backups!" && return 1
+	[ ! ${#FILES[@]} -gt 0 ] && PRINT "Tardis: There are no backups!" && return 1
+	[ ! -f ${MANIFEST} ] && PRINT "Tardis: There are no backups!" && return 1
 
 	ls -F ${TARGET} | grep /\$
 	return 0
 }
 
+
+
+# Enable cron
+ENABLE_CRON()
+{
+	# Allow file and tab file
+	local allow="/etc/cron.allow"
+	local tab="/var/spool/cron/crontabs/${USER}"
+	local lock="${TARGET}/.cron"
+	
+	# Create cron.allow, tab file, and lock file
+	[ ! -f "${allow}" ] && sudo touch "${allow}"
+	[ ! -f "${tab}" ] && sudo touch "${tab}"
+	[ ! -f "${lock}" ] && touch "${lock}"
+
+	# Check if the name of the user is in cron.allow, then add if it isn't
+	local name="`cat ${allow} | grep ${USER}`"
+	[ "${name}" != "${USER}" ] && PRINT "${USER}" | sudo tee -a "${allow}"
+
+	# Add entry to tab & lock file
+	local entry="@daily ${HOME}/.local/bin/tardis backup"
+	PRINT "${entry}" | sudo tee -a "${tab}" >/dev/null 2>&1
+	PRINT "${entry}" | tee -a "${lock}" >/dev/null 2>&1
+
+	return 0
+}
+
+# Disable Cron
+DISABLE_CRON()
+{
+	# Get the entry text and remove the cron lock
+	local entry="`cat ${TARGET}/.cron`"
+	rm -f "${TARGET}/.cron"
+
+	# Tab file
+	local tab="/var/spool/cron/crontabs/${USER}"
+
+	# Remove the entry
+	sudo sed -i "#${entry}#d" ${tab}
+	# sudo cat ${tab} | sed "s|${entry}\n||g" | sudo tee ${tab}
+	return 0
+}
+
+# Toggle Cron
+TOGGLE_CRON()
+{
+	if [ ! -f "${TARGET}/.cron" ]
+	then
+		ENABLE_CRON
+		PRINT "\nTardis: Automatic Backups Enabled\n"
+	else
+		DISABLE_CRON
+		PRINT "\nTardis: Automatic Backups Disabled\n"
+	fi
+
+	return $?
+}
+
 # Set the default disk to look for when not specified on the command line
 DEFAULT_TARGET()
 {
-	[ ! -d ${CONFDIR} ] && mkdir -p ${CONFDIR} && PRINT "Created config file!"
-	[ -z "${1}" ] && PRINT "You must specify a directory to set as the default!" && return 1
-	[ ! -d "${1}" ] && PRINT "That is not a valid directory!" && return 1
+	[ ! -d ${CONFDIR} ] && mkdir -p ${CONFDIR} && PRINT "Tardis: Created config file!"
+	[ -z "${1}" ] && PRINT "Tardis: You must specify a directory to set as the default!" && return 1
+	[ ! -d "${1}" ] && PRINT "Tardis: That is not a valid directory!" && return 1
 
 	cat ${CONFIG} | grep -iv "DEFAULT_DISK=" > ${CONFIG}
 	PRINT "DEFAULT_DISK=${1}" >> ${CONFIG}
-	PRINT "Set a default target!"
+	PRINT "Tardis: Set a default target!"
 	return 0
 }
 
@@ -215,17 +187,17 @@ DEFAULT_TARGET()
 EXCLUSIONS()
 {
 	[ ! -d ${CONFDIR} ] && mkdir -p ${CONFDIR}
-	[ ! -f ${EXCLUSION_FILE} ] && touch ${EXCLUSION_FILE} && PRINT "Created exclusions file!"
+	[ ! -f ${EXCLUSION_FILE} ] && touch ${EXCLUSION_FILE} && PRINT "Tardis: Created exclusions file!"
 
 	[ -z "${EDITOR}" ] && nano ${EXCLUSION_FILE} || ${EDITOR} ${EXCLUSION_FILE}
 
-	PRINT "Exclusions edited!" && return 0
+	PRINT "Tardis: Exclusions edited!" && return 0
 }
 
 # Print the list of exclusions listed in $HOME/.config/tardisrsync/exclusions.conf
 PRINT_EXCLUSIONS()
 {
-	[ ! -e "${EXCLUSION_FILE}" ] && PRINT "Exclusions have not been specified." && return 1
+	[ ! -e "${EXCLUSION_FILE}" ] && PRINT "Tardis: Exclusions have not been specified." && return 1
 	cat ${EXCLUSION_FILE}
 }
 
@@ -245,6 +217,7 @@ help_prompt()
 	PRINT "(l) list\t\tList all backups"
 	PRINT
 	PRINT "Settings"
+	PRINT "(a) toggle-automatic\tToggle automatic backups"
 	PRINT "(t) default-target\tSet a default target for future backups"
 	PRINT "(e) exclusions\t\tCreate or edit the exclusions file"
 	PRINT "(p) print-exclusions\tPrint out every excluded file/directory name"
@@ -260,16 +233,24 @@ cmd=`lowercase ${1}`
 # Command line options
 case "${cmd}" in
 	b | backup )
-		BACKUP $2
+		GETDIR $2
+		BACKUP
     	;;
 	r | restore)
-		RESTORE $2 $3
+		GETDIR $2
+		RESTORE $3
 		;;
 	d | delete )
-		REMOVE $2
+		GETDIR $2
+		REMOVE
 		;;
 	l | list )
-		LIST $2
+		GETDIR $2
+		LIST
+		;;
+	a | toggle-automatic )
+		GETDIR $2
+		TOGGLE_CRON
 		;;
 	t | default-target )
 		DEFAULT_TARGET $2
