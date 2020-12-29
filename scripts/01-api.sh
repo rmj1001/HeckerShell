@@ -18,6 +18,8 @@
 # 2. Functions should have comments above them declaring their purpose and usage
 # 3. Variables in functions should be declared as local
 # 4. No global variables should be available in the API
+# 5. If functions assume global variables exist, make sure to include a default
+#    value if it doesn't. i.e. ${version:=1.0}, where 1.0 is the default
 # ---------------------------------------------------------------------------------
 
 
@@ -110,12 +112,12 @@ function ROOT()
 # Usage: VERSION
 function VERSION()
 {
-	PRINT "`SCRIPTNAME` v${version}"
-	PRINT "Copyright (C) `date +"%Y"` ${author}"
+	PRINT "`SCRIPTNAME` v${version:=1.0}"
+	PRINT "Copyright (C) `date +"%Y"` ${author:=Some Random Scripter}"
 	PRINT "License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>."
 	PRINT "This is free software: you are free to change and redistribute it."
 	PRINT "There is NO WARRANTY, to the extent permitted by law."
 	PRINT
-	PRINT "Written by ${author}."
+	PRINT "Written by ${author:=Some Random Scripter}."
 	return 0
 }
