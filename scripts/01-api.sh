@@ -23,19 +23,7 @@
 # ---------------------------------------------------------------------------------
 
 
-# Description: Replacement for 'echo'
-#
-# Usage: PRINT "text"
-function PRINT()
-{
-	if [ -z "${1}" ]; then
-		printf "\n"
-	else
-		printf "%b\n" "${1}"
-	fi
-
-	return 0
-}
+###################### SCRIPT INFORMATION ######################
 
 # Description: Retrieve the name of the script file
 #
@@ -59,6 +47,38 @@ function SCRIPTDIR()
 	return 0
 }
 
+# Description: Prints the script name and version, as well as copyright, 
+# license notice, and author name
+#
+# Usage: VERSION
+function VERSION()
+{
+	PRINT "`SCRIPTNAME` v${version:=1.0}"
+	PRINT "Copyright (C) `date +"%Y"` ${author:=Some Random Scripter}"
+	PRINT "License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>."
+	PRINT "This is free software: you are free to change and redistribute it."
+	PRINT "There is NO WARRANTY, to the extent permitted by law."
+	PRINT
+	PRINT "Written by ${author:=Some Random Scripter}."
+	return 0
+}
+
+###################### INTERACTIVITY ######################
+
+# Description: Replacement for 'echo'
+#
+# Usage: PRINT "text"
+function PRINT()
+{
+	if [ -z "${1}" ]; then
+		printf "\n"
+	else
+		printf "%b\n" "${1}"
+	fi
+
+	return 0
+}
+
 # Description: Pauses script execution until the user presses ENTER
 #
 # Usage: PAUSE
@@ -68,6 +88,8 @@ function PAUSE()
 	return 0
 }
 
+###################### STRING MANIPULATION ######################
+
 # Description: Converts a string to all LOWERCASE characters
 #
 # Usage: name=`LOWERCASE $name`
@@ -76,6 +98,8 @@ function LOWERCASE()
 	printf "${1}" | tr "[:upper:]" "[:lower:]"
 	return 0
 }
+
+###################### SCRIPT PREPROCCESSORS & PERMISSION CHECKING ######################
 
 # Description: Error message for when an invalid command is used
 #
@@ -119,18 +143,3 @@ function ROOT()
 	fi
 }
 
-# Description: Prints the script name and version, as well as copyright, 
-# license notice, and author name
-#
-# Usage: VERSION
-function VERSION()
-{
-	PRINT "`SCRIPTNAME` v${version:=1.0}"
-	PRINT "Copyright (C) `date +"%Y"` ${author:=Some Random Scripter}"
-	PRINT "License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>."
-	PRINT "This is free software: you are free to change and redistribute it."
-	PRINT "There is NO WARRANTY, to the extent permitted by law."
-	PRINT
-	PRINT "Written by ${author:=Some Random Scripter}."
-	return 0
-}
