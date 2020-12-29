@@ -42,7 +42,20 @@ function PRINT()
 # Usage: name=`SCRIPTNAME`
 function SCRIPTNAME()
 {
-	PRINT "${0##*/}"
+	local absolute="`readlink -f ${0}`"
+	
+	PRINT "${absolute##*/}"
+	return 0
+}
+
+# Description: Retrieve the name of the directory the script file is run in
+#
+# Usage: parent=`SCRIPTDIR`
+function SCRIPTDIR()
+{
+	local absolute="`readlink -f ${0}`"
+
+	PRINT "$( dirname ${absolute} )"
 	return 0
 }
 

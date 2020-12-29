@@ -51,13 +51,19 @@ MEMTOTAL="`grep 'MemTotal' /proc/meminfo | sed 's|MemTotal:\s*||g'`"
 MEMFREE="`grep 'MemFree' /proc/meminfo | sed 's|MemFree:\s*||g'`"
 MEMORY="$MEMFREE / $MEMTOTAL"
 
-PRINT "|- Name: \t${USER}@${HOST}"
-PRINT "|- OS: \t\t${OS}"
-PRINT "|- Kernel: \t${KERNEL}"
-PRINT "|- Uptime: \t${UPTIME}"
-PRINT "|- Packages: \t${PKGCOUNT}"
-PRINT "|- Shell: \t${SHELL}"
-PRINT "|- Processor: \t${CPUNAME}"
-PRINT "|- Cores: \t${CORES}"
-PRINT "|- Memory: \t${MEMORY}"
+# Print out the information gathered
+info()
+{
+    PRINT "Category|Information"
+    PRINT "  - Name|${USER}@${HOST}"
+    PRINT "  - OS|${OS}"
+    PRINT "  - Kernel|${KERNEL}"
+    PRINT "  - Uptime|${UPTIME}"
+    PRINT "  - Packages|${PKGCOUNT}"
+    PRINT "  - Shell|${SHELL}"
+    PRINT "  - Processor|${CPUNAME}"
+    PRINT "  - Cores|${CORES}"
+    PRINT "  - Memory|${MEMORY}"
+}
 
+info | column -t -s "|"

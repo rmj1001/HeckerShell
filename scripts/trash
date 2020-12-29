@@ -179,4 +179,3 @@ case "${cmd}" in
   	[ -z "${cmd}" ] && helpPrompt || INVALID "${1}" && exit 1
     ;;
 esac
-
