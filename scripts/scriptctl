@@ -91,11 +91,10 @@ function createScript()
 		${EDITOR} ${script}
     	chmod +x ${script}
     	
-		PRINT "`SCRIPTNAME`: ${scriptname} created!"
+		LOG "${scriptname} created!"
     	return 0
     else
-    	PRINT "`SCRIPTNAME`: ${scriptname} already exists!"
-    	return 1
+    	FAIL "${scriptname} already exists!"
     fi
 }
 
@@ -106,11 +105,11 @@ function editScript()
 	if [[ -e "${script}" ]]
 	then
 		${EDITOR} ${script}
-		PRINT "`SCRIPTNAME`: ${scriptname} edited!"
+		LOG "${scriptname} edited!"
 		
 		return 0
 	else
-		PRINT "`SCRIPTNAME`: ${scriptname} does not exist!"
+		LOG "${scriptname} does not exist!"
 		read -p "Create script? Y\n: " answer
 
 		answer=`LOWERCASE "${answer}"`
@@ -125,10 +124,10 @@ function removeScript()
 	if [[ -e "${script}" ]]
 	then
 		rm -f ${script}
-		PRINT "`SCRIPTNAME`: ${scriptname} removed!"
+		LOG "${scriptname} removed!"
 		return 0
 	else
-		PRINT "`SCRIPTNAME`: ${scriptname} does not exist!"
+		FAIL "${scriptname} does not exist!"
 		return 1
 	fi
 }
@@ -145,7 +144,7 @@ function renameScript()
 
 		mv "${script}" "${SCRIPTS}/${newName}"
 
-		PRINT "`SCRIPTNAME`: Renamed '${script##*/}' to '${newName}'."
+		LOG "Renamed '${script##*/}' to '${newName}'."
 		return 0
 
 	elif [ -z "${newName}" ]
@@ -154,13 +153,13 @@ function renameScript()
 		read -p "What do you want the script to be called?" newName
 		mv "${script}" "${SCRIPTS}/${newName}"
 
-		PRINT "`SCRIPTNAME`: Renamed '${script##*/}' to '${newName}'."
+		LOG "Renamed '${script##*/}' to '${newName}'."
 		return 0
 
 	elif [ ! -f "${script}" ]
 	then
 
-		PRINT "Script '${script##*/}' does not exist!"
+		FAIL "Script '${script##*/}' does not exist!"
 		return 1
 
 	fi
@@ -175,7 +174,7 @@ function printScript()
 		cat ${script}
 		return 0
 	else
-		PRINT "`SCRIPTNAME`: ${scriptname} does not exist!"
+		FAIL "${scriptname} does not exist!"
 		return 1
 	fi
 }

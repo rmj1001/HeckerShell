@@ -23,7 +23,7 @@ source $SCRIPTS/01-api.sh
 
 # This is where you put your script's functions, variables, logic, etc.
 
-for dir in `find . -name .git | xargs -i dirname {}`
+for dir in `find . -name '.git' | xargs -i dirname {}`
 do
 	cd ${dir}
 	

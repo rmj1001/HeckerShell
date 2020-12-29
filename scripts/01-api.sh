@@ -88,6 +88,30 @@ function PAUSE()
 	return 0
 }
 
+# Description: Send a log message to the terminal
+#
+# Usage: LOG "This is awesome!"
+function LOG()
+{
+	PRINT "`SCRIPTNAME`: ${@}"
+}
+
+# Description: Send an error message and give a return code of 1
+#
+# Usage: ERROR "This broke!"
+function ERROR()
+{
+	LOG "${@}" && return 1
+}
+
+# Description: Send an error message, exit, and give a return code of 1
+#
+# Usage: FAIL "This script broke!"
+function FAIL()
+{
+	LOG "${@}" && exit 1
+}
+
 ###################### STRING MANIPULATION ######################
 
 # Description: Converts a string to all LOWERCASE characters
@@ -99,6 +123,28 @@ function LOWERCASE()
 	return 0
 }
 
+# Description: Converts a string to all UPPERCASE characters
+#
+# Usage: name=`UPPERCASE $name`
+function UPPERCASE()
+{
+	printf "${1}" | tr "[:lower:]" "[:upper:]"
+	return 0
+}
+
+# Description: Trim all leading/trailing whitespace from a string
+#
+# Usage: TRIM "   this      "
+function TRIM()
+{
+    local var="$*"
+    # remove leading whitespace characters
+    var="${var#"${var%%[![:space:]]*}"}"
+    # remove trailing whitespace characters
+    var="${var%"${var##*[![:space:]]}"}"   
+    printf '%s' "$var"
+}
+
 ###################### SCRIPT PREPROCCESSORS & PERMISSION CHECKING ######################
 
 # Description: Error message for when an invalid command is used
@@ -106,21 +152,15 @@ function LOWERCASE()
 # Usage: INVALID "hlep"
 function INVALID()
 {
-	PRINT 
-	PRINT "Invalid command \"${1}\". See \"`SCRIPTNAME` help\"."
-	PRINT 
-	return 1
+	FAIL "Invalid command \"${1}\". See \"`SCRIPTNAME` help\"."
 }
 
 # Description: Error message for when no command is used
 #
 # Usage: EMPTYCMD
 function EMPTYCMD()
-{
-	PRINT 
-	PRINT "You must specify a subcommand. See \"`SCRIPTNAME` help\"."
-	PRINT 
-	return 1
+{ 
+	FAIL "You must specify a subcommand. See \"`SCRIPTNAME` help\"."
 }
 
 # Description: Checks for a filename in $PATH (commands), if not found then exit with an error
@@ -128,7 +168,7 @@ function EMPTYCMD()
 # Usage: DEPENDENCY "7z"
 function DEPENDENCY()
 {
-	[[ ! `command -v ${1}` ]] && PRINT "'${1}' is required to run this program." && exit 1
+	[[ ! `command -v ${1}` ]] && FAIL "'${1}' is required to run this program."
 }
 
 # Description: Checks to see if the script is being run as root, and if not then exit.
@@ -138,8 +178,6 @@ function ROOT()
 {
 	if [[ $EUID -ne 0 ]]
 	then
-		PRINT "This script must be run as root" 1>&2
-		exit 1
+		FAIL "This script must be run as root"
 	fi
 }
-

@@ -109,7 +109,7 @@ while [[ "${cmd}" != "4" ]]; do
 
 	case "${cmd}" in
 
-		1 | 'make toast' )
+		1 | 'make toast' | 'make me a sammich bitch' )
 			makeToast
 			;;
 		2 | 'commit toaster bath' )
@@ -123,7 +123,7 @@ while [[ "${cmd}" != "4" ]]; do
 			exit 0
 			;;
 		* )
-			PRINT "\nInvalid option!\n"
+			ERROR "\nInvalid option!\n"
 			PAUSE
 			;;
 

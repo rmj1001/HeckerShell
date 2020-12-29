@@ -28,18 +28,15 @@ name="${name##*/}"
 
 if [[ ! "${name##*.}" == "deb" ]]; then
 
-	PRINT "That is not a valid deb file!"
-	exit 1
+	FAIL "That is not a valid deb file!"
 
 fi
 
 PRINT 
 PRINT 
-PRINT "Installing '${name}'..."
+LOG "Installing '${name}'..."
 sudo apt install ${1} > /dev/null 2>&1
 
 code=$?
 
-[[ $code -eq 0 ]] && PRINT "Installed '${name}'.\n" || PRINT "Install failed.\n"
-
-exit ${code}
+[[ $code -eq 0 ]] && LOG "Installed '${name}'.\n" || FAIL "Install failed.\n"

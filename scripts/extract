@@ -33,11 +33,9 @@ then
 	exit 0
 elif [ ! -f "${1}" ]
 then
-	PRINT "`SCRIPTNAME`: '${1}' is not a file."
-	exit 1
+	FAIL "'${1}' is not a file."
 else
-	PRINT "`SCRIPTNAME`: Unknown error"
-	exit 1
+	FAIL "Unknown error"
 fi
 
 case "${1}" in
@@ -98,6 +96,6 @@ case "${1}" in
 		unzstd ${1}
 		;;
 	*)
-		PRINT "`SCRIPTNAME`: '${1}' cannot be extracted via ${SCRIPTNAME}"
+		FAIL "'${1}' cannot be extracted via ${SCRIPTNAME}"
 		;;
 esac

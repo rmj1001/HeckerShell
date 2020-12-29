@@ -31,91 +31,118 @@ EXCLUSION_FILE="${CONFDIR}/exclusions.conf"
 CONFIG="${CONFDIR}/default-disk.conf"
 
 # Get the target directory and manifest file
-GETDIR()
+getTarget()
 {
-  	[ -f "${CONFIG}" ] && BACKUPDISK=$(cat "${CONFIG}" | grep "DEFAULT_DISK=" | sed -e 's|DEFAULT_DISK=||')
+	if [ -f "${CONFIG}" ]; then
 
-  	if [ -n "${1}" ]; then
+		# If the config file exists, get the directory specified from it and set it as the target.
+		local text="$(cat ${CONFIG})"
+		TARGET="`TRIM ${text}`"
+
+	elif [ -n "${1}" ]; then
+	
+		# If the config file doesn't exist and the target is specified as an argument, use the argument.
 		TARGET="${1}"
-	else
-		[ -z "${BACKUPDISK}" ] && PRINT "Tardis: You must specify a directory to back up or set a default!" && exit 1
-		TARGET="${BACKUPDISK}"
+	
 	fi
 
-	[ ! -d "${TARGET}" ] && PRINT "Tardis: That directory does not exist!" && exit 1
+	# If the target directory exists, exit the script with an error message.
+	[ ! -d "${TARGET}" ] && FAIL "That directory does not exist!"
 
+	# Set the target to its absolute path
+	TARGET="`readlink -f ${TARGET}`"
+
+	# Set the manifest file path
 	MANIFEST=${TARGET}/tardis-manifest.conf
 	return 0
 }
 
 # Create a backup in the target
-BACKUP()
+backupFiles()
 {
+	# Generate the backup name based on the date/time
   	BACKUPNAME=$(date +"%Y-%m-%d_%H-%M-%S")
 
+	# Create the manifest file if it doesn't exist
   	touch "${MANIFEST}"
 
-	# HOME
+	# Backup files not specified in the exclusion file, if it exists
 	[ -f "${EXCLUSION_FILE}" ] && rsync -avhpru --exclude-from="${EXCLUSION_FILE}" --delete ${HOME} ${TARGET}
+	
+	# If the exclusions file doesn't exist, then backup all files in $HOME to the target directory.
 	[ ! -f "${EXCLUSION_FILE}" ] && rsync -avhpru --delete ${HOME} ${TARGET}
 
+	# Rename the backup directory to the timestamp
  	mv ${TARGET}/${USER} ${TARGET}/${BACKUPNAME}
 
+	# Confirm the backup has finished
 	PRINT "Tardis: Finished backup!"
+
+	# Print the backupname to the manifest file
 	PRINT "Tardis:  ${BACKUPNAME}" | tee -a ${MANIFEST}
 	return 0
 }
 
 # Restore a backup from the target
-RESTORE()
+restoreFiles()
 {
 	BACKUPDIR="${TARGET}/${1}"
 
-	[ ! -d "${BACKUPDIR}" ] && PRINT "Tardis: That backup does not exist!" && return 1
+	# Check if the backup directory exists
+	[ ! -d "${BACKUPDIR}" ] && FAIL "That backup does not exist!"
 
+	# Restore all files/directories in the backup directory to $HOME
 	for file in ${BACKUPDIR}/{.,}*
 	do
 		[ -d "${file}" ] && rsync --avhpru --delete "${file}" "${HOME}"
 		[ -f "${file}" ] && rsync --avhpu --delete "${file}" "${HOME}"
 	done
 
-	PRINT "Tardis: '${BACKUPDIR}' restored."
+	# Confirm the restoration of the backup
+	LOG "'${BACKUPDIR}' restored."
 	return 0
 }
 
 # Remove a backup
-REMOVE()
+removeBackup()
 {
 	BACKUPDIR="${TARGET}/${1}"
 
-	[ ! -d "${BACKUPDIR}" ] && PRINT "Tardis: That backup does not exist!" && exit 1
+	# Check if the backup directory exists
+	[ ! -d "${BACKUPDIR}" ] && FAIL "That backup does not exist!"
 
-	read -p "Tardis: Are you sure you want to remove this backup? (y/N) " confirmation
+	# Confirm whether to remove the backup
+	read -p "Are you sure you want to remove this backup? (y/N) " confirmation
+	
+	# Make the confirmation text lowercase
 	confirmation=`LOWERCASE "${confirmation}"`
 
+	# Remove the backup directory if the user chose 'y' or 'yes' at the prompt
 	[ "${confirmation}" == "y" ] && rm -rf "${BACKUPDIR}" && return 0
 	[ "${confirmation}" == "yes" ] && rm -rf "${BACKUPDIR}" && return 0
 
-	PRINT "Tardis: Cancelling..."
+	# Cancel the removal of a backup if the user didn't choose 'y' or 'yes' at the prompt
+	LOG "Cancelling..."
 	return 0
 }
 
 # List all the previous backups in the target
-LIST()
+listBackups()
 {
+	# Array of all directories in the target (backups)
 	FILES=${TARGET}/*/
 
-	[ ! ${#FILES[@]} -gt 0 ] && PRINT "Tardis: There are no backups!" && return 1
-	[ ! -f ${MANIFEST} ] && PRINT "Tardis: There are no backups!" && return 1
+	# Send error if no backup directories exist or if the manifest file is missing
+	[ ! ${#FILES[@]} -gt 0 ] && ERROR "There are no backups!" && return $?
+	[ ! -f ${MANIFEST} ] && ERROR "There are no backups!" && return $?
 
+	# List all directories in the target
 	ls -F ${TARGET} | grep /\$
 	return 0
 }
 
-
-
 # Enable cron
-ENABLE_CRON()
+enableAutoBackups()
 {
 	# Allow file and tab file
 	local allow="/etc/cron.allow"
@@ -140,7 +167,7 @@ ENABLE_CRON()
 }
 
 # Disable Cron
-DISABLE_CRON()
+disableAutoBackups()
 {
 	# Get the entry text and remove the cron lock
 	local entry="`cat ${TARGET}/.cron`"
@@ -156,53 +183,85 @@ DISABLE_CRON()
 }
 
 # Toggle Cron
-TOGGLE_CRON()
+toggleAutoBackups()
 {
 	if [ ! -f "${TARGET}/.cron" ]
 	then
-		ENABLE_CRON
-		PRINT "\nTardis: Automatic Backups Enabled\n"
+		enableAutoBackups
+		LOG "Automatic Backups Enabled"
 	else
-		DISABLE_CRON
-		PRINT "\nTardis: Automatic Backups Disabled\n"
+		disableAutoBackups
+		LOG "Automatic Backups Disabled"
 	fi
 
 	return $?
 }
 
 # Set the default disk to look for when not specified on the command line
-DEFAULT_TARGET()
+setDefaultTarget()
 {
-	[ ! -d ${CONFDIR} ] && mkdir -p ${CONFDIR} && PRINT "Tardis: Created config file!"
-	[ -z "${1}" ] && PRINT "Tardis: You must specify a directory to set as the default!" && return 1
-	[ ! -d "${1}" ] && PRINT "Tardis: That is not a valid directory!" && return 1
+	# Create config directory & file if it doesn't exist
+	[ ! -d ${CONFDIR} ] && mkdir -p ${CONFDIR} && touch ${CONFIG}
 
-	cat ${CONFIG} | grep -iv "DEFAULT_DISK=" > ${CONFIG}
-	PRINT "DEFAULT_DISK=${1}" >> ${CONFIG}
-	PRINT "Tardis: Set a default target!"
+	# Check if a directory was specified
+	[ -z "${1}" ] && ERROR "You must specify a directory to set as the default!" && return $?
+	
+	# Check if specified directory exists
+	[ ! -d "${1}" ] && ERROR "That is not a valid directory!" && return $?
+
+	# Set the directory in the file
+	PRINT "${1}" > ${CONFIG}
+	
+	# Confirmation
+	LOG "Set a default target!"
+	
 	return 0
 }
 
-# Edit the list of exclusions in $HOME/.config/tardisrsync/exclusions.conf
-EXCLUSIONS()
+# Print the default target to STDOUT
+printDefaultTarget()
 {
-	[ ! -d ${CONFDIR} ] && mkdir -p ${CONFDIR}
-	[ ! -f ${EXCLUSION_FILE} ] && touch ${EXCLUSION_FILE} && PRINT "Tardis: Created exclusions file!"
+	[ -f "${CONFIG}" ] && cat "${CONFIG}" && return 0 || ERROR "There is no default target!" && return $?
+}
 
+# Edit the list of exclusions in $HOME/.config/tardisrsync/exclusions.conf
+setExclusions()
+{
+	# Create config directory & file if it doesn't exist
+	[ ! -d ${CONFDIR} ] && mkdir -p ${CONFDIR} && touch ${EXCLUSION_FILE}
+
+	# Add all file/directory names to new exclusions file if it doesn't exist
+	if [ ! -f "${EXCLUSION_FILE}" ]
+	then
+
+		for f in $HOME/{.,}*; do
+			
+			local name="`basename ${f}`"
+			if [ "${name}" != '.' ] && [ "${name}" != '..' ]; then PRINT "${name}" >> ${EXCLUSION_FILE}; fi
+		
+		done
+
+		# Confirmation of the exclusion file's existence
+		LOG "Created exclusions file!"
+	
+	fi
+
+	# Open the editor 
 	[ -z "${EDITOR}" ] && nano ${EXCLUSION_FILE} || ${EDITOR} ${EXCLUSION_FILE}
 
-	PRINT "Tardis: Exclusions edited!" && return 0
+	# Confirmation of the edited exclusions file
+	LOG "Exclusions edited!" && return 0
 }
 
 # Print the list of exclusions listed in $HOME/.config/tardisrsync/exclusions.conf
-PRINT_EXCLUSIONS()
+printExclusions()
 {
-	[ ! -e "${EXCLUSION_FILE}" ] && PRINT "Tardis: Exclusions have not been specified." && return 1
+	[ ! -e "${EXCLUSION_FILE}" ] && ERROR "Exclusions have not been specified." && return $?
 	cat ${EXCLUSION_FILE}
 }
 
 # Help Prompt
-help_prompt()
+helpPrompt()
 {
 	PRINT
 	PRINT "Create, restore, and list backups."
@@ -220,55 +279,61 @@ help_prompt()
 	PRINT "(a) toggle-automatic\tToggle automatic backups"
 	PRINT "(t) default-target\tSet a default target for future backups"
 	PRINT "(e) exclusions\t\tCreate or edit the exclusions file"
-	PRINT "(p) print-exclusions\tPrint out every excluded file/directory name"
+	PRINT "(pt) print-target\tPrint the default target to the terminal"
+	PRINT "(pe) print-exclusions\tPrint out every excluded file/directory name"
 	PRINT 
 	PRINT "Miscellaneous"
 	PRINT "(h) help\t\tShow this prompt"
 	PRINT "(v) version\t\tPrint the version of this script"
+	PRINT
 	return 0
 }
 
+# Make the command invocation lowercase
 cmd=`LOWERCASE ${1}`
 
 # Command line options
 case "${cmd}" in
 	b | backup )
-		GETDIR $2
-		BACKUP
+		getTarget $2
+		backupFiles
     	;;
 	r | restore)
-		GETDIR $2
-		RESTORE $3
+		getTarget $2
+		restoreFiles $3
 		;;
 	d | delete )
-		GETDIR $2
-		REMOVE
+		getTarget $2
+		removeBackup
 		;;
 	l | list )
-		GETDIR $2
-		LIST
+		getTarget $2
+		listBackups
 		;;
 	a | toggle-automatic )
-		GETDIR $2
-		TOGGLE_CRON
+		getTarget $2
+		toggleAutoBackups
 		;;
 	t | default-target )
-		DEFAULT_TARGET $2
+		setDefaultTarget $2
+		;;
+	pt | print-target )
+		printDefaultTarget
 		;;
 	e | exclusions )
-		EXCLUSIONS
+		setExclusions
 		;;
-	p | print-exclusions)
-		PRINT_EXCLUSIONS
+	pe | print-exclusions)
+		printExclusions
 		;;
 	v | version )
 		VERSION
 		;;
 	\? | h | help )
-		help_prompt
+		helpPrompt
 		;;
 	* )
-		[ -z "${cmd}" ] && help_prompt || INVALID "${cmd}"
+		[ -z "${cmd}" ] && helpPrompt || INVALID "${cmd}"
 		;;
 esac
 

@@ -23,7 +23,6 @@ source $SCRIPTS/01-api.sh
 
 # This is where you put your script's functions, variables, logic, etc.
 
-declare -- version
 declare -- TRASHINFO
 declare -- FILENAME
 declare -- FILEINFO
@@ -43,8 +42,7 @@ checkFile()
   then
     FILE="$1"
   else
-    PRINT "You must specify a FILE."
-    exit 1
+    FAIL "You must specify a FILE."
   fi
 }
 
@@ -74,11 +72,11 @@ add()
     PRINT "Path=${DELPATH}" >> "${TRASHINFO}/${FILENAME}.trashinfo"
     PRINT "DeletionDate=${DELDATE}" >> "${TRASHINFO}/${FILENAME}.trashinfo"
     mv ${FILE} ${TRASH}
-    PRINT "`SCRIPTNAME`: Moved ${FILE} to the trash!"
+    
+    LOG "Moved ${FILE} to the trash!"
     exit 0
   else
-    PRINT "File '${FILE}' doesn't exist!"
-    exit 1
+    FAIL "File '${FILE}' doesn't exist!"
   fi
 }
 
@@ -96,21 +94,32 @@ restore()
     mv "${FILEPATH}" "${RESTOREPATH}"
     rm -f "${FILEINFO}"
 
-    PRINT "`SCRIPTNAME`: Restored ${FILE} to ${RESTOREPATH}!"
+    LOG "Restored ${FILE} to ${RESTOREPATH}!"
     exit 0
   else
-    PRINT "File ${FILE} is not in the trash!"
-    exit 1
+    FAIL "File ${FILE} is not in the trash!"
   fi
 }
 
 empty()
 {
-  rm -rf $TRASH/*
-  rm -rf $TRASHINFO/*
-  find $TRASH -type f -name ".*" -delete
-  find $TRASHINFO -type f -name ".*" -delete
-  PRINT "Emptied the trash!"
+  local files=()
+
+  # Create a list of all files in the trash, hidden and not hidden
+  files=(`find ${TRASH} -maxdepth 1`)
+  unset files[0]
+
+  # Fail if there are no files in the trash
+  [ ${#files[@]} -eq 0 ] && FAIL "There are no files in the trash!"
+
+  # Remove all files from the trash
+  for file in ${files[@]}
+  do
+    rm -rf $file
+  done
+  
+  # Confirmation
+  LOG "Emptied the trash!"
   exit 0
 }
 
@@ -125,8 +134,7 @@ info()
     cat "${FILEINFO}"
     exit 0
   else
-    PRINT "`SCRIPTNAME`: File does not have metadata / doesn't exist!"
-    exit 1
+    FAIL "File does not have metadata / doesn't exist!"
   fi
 }
 
@@ -176,6 +184,6 @@ case "${cmd}" in
     helpPrompt
     ;;
   * )
-  	[ -z "${cmd}" ] && helpPrompt || INVALID "${1}" && exit 1
+  	[ -z "${cmd}" ] && helpPrompt || INVALID "${1}"
     ;;
 esac

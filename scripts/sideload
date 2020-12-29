@@ -76,8 +76,7 @@ function initsd ()
 
 	if [ -e "$HOME/.sideloadrc" ] && [ -d "$HOME/.Sideload" ]; then
 
-		PRINT "Sideload is already initialized!"
-		exit 1
+		FAIL "Sideload is already initialized!"
 
 	else
 
@@ -102,14 +101,13 @@ function initsd ()
 			# Initialize applist
 			touch $SIDELOAD_APPLIST
 
-			PRINT "Sideload Initialized."
+			LOG "Initialized."
 
 			return 0
 
 		else
 
-			PRINT "$rcpath does not exist!"
-			return 0
+			FAIL "$rcpath does not exist!"
 
 		fi
 
@@ -170,7 +168,7 @@ function list_apps ()
 
 function checkInit ()
 {
-	[ ! -f "${HOME}/.sideloadrc" ] && PRINT "You must initialize sideload!" && exit 1
+	[ ! -f "${HOME}/.sideloadrc" ] && FAIL "You must initialize sideload!"
 }
 
 command="${1}"

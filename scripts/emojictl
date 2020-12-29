@@ -84,7 +84,7 @@ function installer()
 	# Post
 	PRINT 
 	PRINT 
-	PRINT "Install finished."
+	LOG "Install finished."
 	PRINT 
 	PAUSE
 }
@@ -109,7 +109,7 @@ function uninstaller()
 	# Post
 	PRINT 
 	PRINT 
-	PRINT "Uninstall finished."
+	LOG "Uninstall finished."
 	PRINT 
 	PAUSE
 }
@@ -125,62 +125,12 @@ function help_prompt()
 	PRINT "Commands:"
 	PRINT "(i) install\tInstall Noto Color Emoji"
 	PRINT "(u) uninstall\tUninstall Noto Color Emoji"
-	PRINT "(s) shell\tUse the interactive shell to work with `SCRIPTNAME`"
 	PRINT "(e) exit\t(Shell only) exit the shell"
 	PRINT 
 	PRINT "Miscellaneous:"
 	PRINT "(h) help\tShow this help menu"
 	PRINT "(v) version\tShow this script's version"
 	PRINT 
-}
-
-function shell()
-{
-	while [ "${cmd}" != "exit" ]
-	do
-		clear
-		PRINT "Emoji Manager"
-		PRINT 
-		PRINT "Enter a command, or 'help' for a list of commands."
-		PRINT 
-		read -p "> " cmd
-
-		og_cmd="$cmd"
-
-		# Convert the command string to lower case
-		cmd=`LOWERCASE "${cmd}"`
-
-		case "$cmd" in
-			i | install )
-				installer
-				;;
-			u | uninstall )
-				uninstaller
-				;;
-			\? | h | help )
-				help_prompt
-				PAUSE
-				;;
-			v | version )
-				version
-				PAUSE
-				;;
-			e | exit )
-				clear
-				exit 0
-				;;
-			* )
-				if [ -z "${cmd}" ];
-				then
-					EMPTYCMD
-					PAUSE
-				else
-					INVALID "${cmd}"
-					PAUSE
-				fi
-				;;
-		esac
-	done
 }
 
 cmd=`LOWERCASE "${1}"`
@@ -202,9 +152,6 @@ case "${cmd}" in
 	version | v )
 		VERSION
 		exit 0
-		;;
-	shell | s )
-		shell
 		;;
 	* )
 		[ -z "${cmd}" ] && help_prompt || INVALID && exit 1

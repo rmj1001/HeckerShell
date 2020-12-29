@@ -41,10 +41,6 @@ append() {
   tee -a ${XDG_AUTOSTART}/${filename}.desktop
 }
 
-err() {
-  PRINT "[$(date +'%Y-%m-%d %H:%M:%S%z')]: ${@}"
-}
-
 function TEMPLATE()
 {
 _template="
@@ -68,7 +64,7 @@ makeEntry() {
 
     file="${XDG_AUTOSTART}/${filename}.desktop"
 
-    [[ -f "${file}" ]] && err "`SCRIPTNAME`: ${filename} already exists!" && exit 1
+    [[ -f "${file}" ]] && FAIL "${filename} already exists!"
 
     touch ${file}
 
@@ -85,7 +81,7 @@ makeEntry() {
     TEMPLATE
     PRINT ${_template} > ${file}
 
-    PRINT "`SCRIPTNAME`: Created ${filename}!"
+    LOG "Created ${filename}!"
     exit 0
 
 }
@@ -100,11 +96,10 @@ editEntry() {
   if [[ -f "${file}" ]]
   then
     ${EDITOR} ${file}
-    PRINT "`SCRIPTNAME`: Edited ${filename}!"
+    LOG "Edited ${filename}!"
     exit 0
   else
-    err "`SCRIPTNAME`: Entry ${filename} does not exist!"
-    exit 1
+    FAIL "Entry ${filename} does not exist!"
   fi
 }
 
@@ -118,11 +113,10 @@ removeEntry() {
   if [[ -e "${file}" ]]
   then
     rm -rf ${file}
-    PRINT "`SCRIPTNAME`: Removed ${filename}!"
+    LOG "Removed ${filename}!"
     exit 0
   else
-    err "`SCRIPTNAME`: Entry ${filename} does not exist!"
-    exit 1
+    FAIL "Entry ${filename} does not exist!"
   fi
 }
 
@@ -145,8 +139,7 @@ printEntry() {
     cat ${file}
     exit 0
   else
-    err "`SCRIPTNAME`: ${filename} does not exist!"
-    exit 1
+    FAIL "${filename} does not exist!"
   fi
 }
 
@@ -199,6 +192,6 @@ case "${cmd}" in
     helpPrompt
     ;;
   * )
-    [ -z "${cmd}" ] && helpPrompt || INVALID "${cmd}" && exit 1
+    [ -z "${cmd}" ] && helpPrompt || INVALID "${cmd}"
     ;;
 esac

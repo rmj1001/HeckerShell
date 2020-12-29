@@ -23,12 +23,12 @@ source $SCRIPTS/01-api.sh
 
 random()
 {
-	echo $(( 1 + ${RANDOM} % ${1} ))
+	PRINT $(( 1 + ${RANDOM} % ${1} ))
 }
 
 if [ $# -lt 1 ]
 then
-  PRINT "`SCRIPTNAME`: Type 1 or more numbers after '`SCRIPTNAME`'."
+  PRINT "Type 1 or more numbers after '`SCRIPTNAME`'."
   PRINT "A random number will then be generated from 1 to each."
   exit 1
 fi
@@ -50,9 +50,9 @@ do
 
 		if [ ! $minoutput = true ]
 		then
-			echo -e "d${arg}: ${result}"
+			PRINT "d${arg}: ${result}"
 		else
-			echo -e "${result}"
+			PRINT "${result}"
 		fi
 	fi
 done

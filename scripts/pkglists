@@ -32,4 +32,4 @@ PRINT "$pacmanlist" > pacmanlist.txt
 PRINT "$aurlist" > aurlist.txt
 cat pacmanlist.txt aurlist.txt > allpkgs.txt
 
-PRINT "Created lists in ${HOME}/Downloads!"
+LOG "Created lists in ${HOME}/Downloads!"
