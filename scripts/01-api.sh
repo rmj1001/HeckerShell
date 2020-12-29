@@ -11,14 +11,14 @@
 #		easier and more consistent.
 ##############################################
 
-# |---------------------------------------------------------------------------------|
-# |Rules																			|
-# |---------------------------------------------------------------------------------|
-# |1. Function names should be lowercase											|
-# |2. Functions should have comments above them declaring their purpose and usage   |
-# |3. Variables in functions should be declared as local							|
-# |4. No global variables should be available in the API							|
-# |---------------------------------------------------------------------------------|
+# ---------------------------------------------------------------------------------
+# Rules																			
+# ---------------------------------------------------------------------------------
+# 1. Function names should be lowercase
+# 2. Functions should have comments above them declaring their purpose and usage
+# 3. Variables in functions should be declared as local
+# 4. No global variables should be available in the API
+# ---------------------------------------------------------------------------------
 
 
 # Description: Replacement for 'echo'
