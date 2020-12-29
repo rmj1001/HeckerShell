@@ -32,21 +32,20 @@ default_shell="bash"
 [[ -z "${EDITOR}" ]] && EDITOR=nano
 [[ `command -v ${EDITOR}` ]] || EDITOR=nano
 
-# Functions
-
+# Script template string generator
 function TEMPLATE()
 {
-_template="#!/usr/bin/env ${default_shell}
+_template="#!/usr/bin/env ${default_shell:=bash}
 
 ##############################################
-#	Author: ${author_name}
+#	Author: ${author_name:=Some Random Scripter}
 #	Project: ${scriptname}
 #	Version: 1.0
 #
 #	Usage: ${scriptname} [command] [args]
 #
 #	Description:
-#		${description}
+#		${description:=Blah Blah Blah}
 ##############################################
 
 version='1.0'
@@ -64,18 +63,29 @@ source \$SCRIPTS/01-api.sh
 "
 }
 
+# Get the name of the script to manage
 function getName()
 {
+
     if [[ -z "${1}" ]]
     then
+
+		# Prompt for a script name if one wasn't provided in the command line
         read -p "Enter the name of the script: " scriptname
+
 	else
+
+		# Set the script name to the first command line argument if one was provided.
 		scriptname="${1}"
+
     fi
+
+	# Set the script path
     script="${SCRIPTS}/${scriptname}"
     return 0
 }
 
+# Prompt for basic script information and create it
 function createScript()
 {
 	getName "${1}"
@@ -85,110 +95,169 @@ function createScript()
 	read -p "Author Name > " author_name
 	read -p "Description > " description
 
+	# Generate the template
 	TEMPLATE
 
-    if [[ ! -e "${script}" ]]
+    if [[ ! -f "${script}" ]]
     then
+
+		# Create the script if it doesn't exist
     	touch ${script}
+
+		# Print the template string to the script
     	PRINT "${_template}" > ${script}
     	
+		# Edit the script
 		${EDITOR} ${script}
+
+		# Make the script executable
     	chmod +x ${script}
     	
+		# Confirmation log
 		LOG "${scriptname} created!"
     	return 0
-    else
-    	FAIL "${scriptname} already exists!"
-    fi
+    
+	else
+    
+		# Fail if script exists
+		FAIL "${scriptname} already exists!"
+    
+	fi
 }
 
+# Edit the contents of a script
 function editScript()
 {
 	getName "${1}"
 
-	if [[ -e "${script}" ]]
+	if [[ -f "${script}" ]]
 	then
+	
+		# Edit the script if it exists
 		${EDITOR} ${script}
+
+		# Confirmation
 		LOG "${scriptname} edited!"
 		
 		return 0
+	
 	else
-		LOG "${scriptname} does not exist!"
+	
+		# Error that the script doesn't exist
+		ERROR "${scriptname} does not exist!"
+		
+		# Ask if the script should be created
 		read -p "Create script? Y\n: " answer
 
+		# Create the script if the answer to the prompt was 'y' or 'yes'
 		answer=`LOWERCASE "${answer}"`
-		[ "${answer}" = "y" ] && createScript || return 1
+		[ "${answer}" = "y" ] && createScript ${scriptname} || return 1
+	
 	fi
 }
 
+# Delete a script
 function removeScript()
 {
 	getName "${1}"
 
-	if [[ -e "${script}" ]]
+	if [[ -f "${script}" ]]
 	then
+
+		# Remove the script if it exists
 		rm -f ${script}
+
+		# Confirmation
 		LOG "${scriptname} removed!"
 		return 0
+
 	else
+
+		# Fail if the script doesn't exist
 		FAIL "${scriptname} does not exist!"
 		return 1
+
 	fi
 }
 
+# Rename a script
 function renameScript()
 {
 	getName "${1}"
 
+	# Get the new name from the second command line argument
 	newName="${2}"
+
+	# Generate the new path based on the new name
 	newPath="${SCRIPTS}/${newName}"
 
+	# If the script exists and the newName string isn't empty:
 	if [ -f "${script}" ] && [ ! -z "${newName}" ]
 	then
 
+		# Rename the script
 		mv "${script}" "${SCRIPTS}/${newName}"
 
+		# Confirmation
 		LOG "Renamed '${script##*/}' to '${newName}'."
 		return 0
 
+	# If the newName string is empty:
 	elif [ -z "${newName}" ]
 	then
 
+		# Prompt for a new name
 		read -p "What do you want the script to be called?" newName
+
+		# Rename the script
 		mv "${script}" "${SCRIPTS}/${newName}"
 
+		# Confirmation
 		LOG "Renamed '${script##*/}' to '${newName}'."
 		return 0
 
+	# If the script doesn't exist:
 	elif [ ! -f "${script}" ]
 	then
 
+		# Fail
 		FAIL "Script '${script##*/}' does not exist!"
 		return 1
 
 	fi
 }
 
+# Print the script to the command line
 function printScript()
 {
 	getName "${1}"
 
-	if [[ -e "${script}" ]]
+	# If the script exists
+	if [[ -f "${script}" ]]
 	then
+		
+		# Print out the script
 		cat ${script}
 		return 0
+	
+	# If the script doesn't exist:
 	else
+	
+		# Fail
 		FAIL "${scriptname} does not exist!"
 		return 1
+	
 	fi
 }
 
+# List all files in the scripts directory
 function listScripts()
 {
 	ls -1 --color=auto $SCRIPTS
 	return 0
 }
 
+# Help prompt
 function helpPrompt()
 {
 	PRINT "Create, edit, remove, or print scripts."
@@ -213,6 +282,7 @@ function helpPrompt()
 # Create the scripts directory if it does not already exist.
 [[ ! -d "${SCRIPTS}" ]] && mkdir ${SCRIPTS}
 
+# Set the subcommand to lowercase
 cmd=`LOWERCASE ${1}`
 
 case "${cmd}" in
