@@ -252,7 +252,7 @@ function printScript()
 # List all files in the scripts directory
 function listScripts()
 {
-	ls -1 --color=auto $SCRIPTS
+	find $SCRIPTS/ -type f -executable -exec basename {} \;
 	return 0
 }
 
@@ -262,7 +262,7 @@ function helpPrompt()
 	PRINT "Create, edit, remove, or print scripts."
 	PRINT 
 	PRINT "Usage: `SCRIPTNAME` [command] [args]"
-	PRINT "Example: `SCRIPTNAME` create torrentctl zsh"
+	PRINT "Example: `SCRIPTNAME` create torrentctl"
 	PRINT 
 	PRINT "Commands:"
 	PRINT "(c) create\t\tCreate a new script"
