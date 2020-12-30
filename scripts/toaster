@@ -23,7 +23,7 @@ source $SCRIPTS/headers/02-api.sh
 
 broken="false"
 
-makeToast()
+toaster.makeToast()
 {
 	read -p "Pieces: " pieces
 
@@ -39,7 +39,7 @@ makeToast()
 	return 0
 }
 
-commitBath()
+toaster.commitBath()
 {
 	api.std.printLn 
 	api.std.printLn "Committing toaster bath..."
@@ -65,7 +65,7 @@ commitBath()
 	return 0
 }
 
-throwToaster()
+toaster.throw()
 {
 	read -p "Target: " target
 
@@ -105,13 +105,13 @@ while [[ "${cmd}" != "4" ]]; do
 	case "${cmd}" in
 
 		1 | 'make toast' | 'make me a sammich bitch' )
-			makeToast
+			toaster.makeToast
 			;;
 		2 | 'commit toaster bath' )
-			commitBath
+			toaster.commitBath
 			;;
 		3 | 'throw toaster' )
-			throwToaster
+			toaster.throw
 			;;
 		4 | 'exit' )
 			clear

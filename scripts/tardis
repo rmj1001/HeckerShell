@@ -31,7 +31,7 @@ EXCLUSION_FILE="${CONFDIR}/exclusions.conf"
 CONFIG="${CONFDIR}/default-disk.conf"
 
 # Get the target directory and manifest file
-getTarget()
+tardis.target.get()
 {
 	if [ -f "${CONFIG}" ]; then
 
@@ -58,7 +58,7 @@ getTarget()
 }
 
 # Create a backup in the target
-backupFiles()
+tardis.backups.create()
 {
 	# Generate the backup name based on the date/time
   	BACKUPNAME=$(date +"%Y-%m-%d_%H-%M-%S")
@@ -84,7 +84,7 @@ backupFiles()
 }
 
 # Restore a backup from the target
-restoreFiles()
+tardis.backups.restore()
 {
 	BACKUPDIR="${TARGET}/${1}"
 
@@ -104,7 +104,7 @@ restoreFiles()
 }
 
 # Remove a backup
-removeBackup()
+tardis.backups.remove()
 {
 	BACKUPDIR="${TARGET}/${1}"
 
@@ -127,7 +127,7 @@ removeBackup()
 }
 
 # List all the previous backups in the target
-listBackups()
+tardis.backups.list()
 {
 	# Array of all directories in the target (backups)
 	FILES=${TARGET}/*/
@@ -142,7 +142,7 @@ listBackups()
 }
 
 # Enable cron
-enableAutoBackups()
+tardis.settings.auto.enable()
 {
 	# Allow file and tab file
 	local allow="/etc/cron.allow"
@@ -167,7 +167,7 @@ enableAutoBackups()
 }
 
 # Disable Cron
-disableAutoBackups()
+tardis.settings.auto.disable()
 {
 	# Get the entry text and remove the cron lock
 	local entry="`cat ${TARGET}/.cron`"
@@ -183,14 +183,14 @@ disableAutoBackups()
 }
 
 # Toggle Cron
-toggleAutoBackups()
+tardis.settings.auto.toggle()
 {
 	if [ ! -f "${TARGET}/.cron" ]
 	then
-		enableAutoBackups
+		tardis.settings.auto.enable
 		api.std.logMsg "Automatic Backups Enabled"
 	else
-		disableAutoBackups
+		tardis.settings.auto.disable
 		api.std.logMsg "Automatic Backups Disabled"
 	fi
 
@@ -198,7 +198,7 @@ toggleAutoBackups()
 }
 
 # Set the default disk to look for when not specified on the command line
-setDefaultTarget()
+tardis.settings.target.set()
 {
 	# Create config directory & file if it doesn't exist
 	[ ! -d ${CONFDIR} ] && mkdir -p ${CONFDIR} && touch ${CONFIG}
@@ -219,13 +219,13 @@ setDefaultTarget()
 }
 
 # Print the default target to STDOUT
-printDefaultTarget()
+tardis.settings.target.print()
 {
 	[ -f "${CONFIG}" ] && cat "${CONFIG}" && return 0 || api.std.errorMsg "There is no default target!" && return $?
 }
 
 # Edit the list of exclusions in $HOME/.config/tardisrsync/exclusions.conf
-setExclusions()
+tardis.settings.exclusions.set()
 {
 	# Create config directory & file if it doesn't exist
 	[ ! -d ${CONFDIR} ] && mkdir -p ${CONFDIR} && touch ${EXCLUSION_FILE}
@@ -254,14 +254,14 @@ setExclusions()
 }
 
 # Print the list of exclusions listed in $HOME/.config/tardisrsync/exclusions.conf
-printExclusions()
+tardis.settings.exclusions.print()
 {
 	[ ! -e "${EXCLUSION_FILE}" ] && api.std.errorMsg "Exclusions have not been specified." && return $?
 	cat ${EXCLUSION_FILE}
 }
 
 # Help Prompt
-helpPrompt()
+tardis.help()
 {
 	api.std.printLn
 	api.std.printLn "Create, restore, and list backups."
@@ -295,45 +295,45 @@ cmd=`api.string.toLowerCase ${1}`
 # Command line options
 case "${cmd}" in
 	b | backup )
-		getTarget $2
-		backupFiles
+		tardis.target.get $2
+		tardis.backups.create
     	;;
 	r | restore)
-		getTarget $2
-		restoreFiles $3
+		tardis.target.get $2
+		tardis.backups.restore $3
 		;;
 	d | delete )
-		getTarget $2
-		removeBackup
+		tardis.target.get $2
+		tardis.backups.remove
 		;;
 	l | list )
-		getTarget $2
-		listBackups
+		tardis.target.get $2
+		tardis.backups.list
 		;;
 	a | toggle-automatic )
-		getTarget $2
-		toggleAutoBackups
+		tardis.target.get $2
+		tardis.settings.auto.toggle
 		;;
 	t | default-target )
-		setDefaultTarget $2
+		tardis.settings.target.set $2
 		;;
 	pt | print-target )
-		printDefaultTarget
+		tardis.settings.target.print
 		;;
 	e | exclusions )
-		setExclusions
+		tardis.settings.exclusions.set
 		;;
 	pe | print-exclusions)
-		printExclusions
+		tardis.settings.exclusions.print
 		;;
 	v | version )
 		api.script.version
 		;;
 	\? | h | help )
-		helpPrompt
+		tardis.help
 		;;
 	* )
-		[ -z "${cmd}" ] && helpPrompt || api.errors.invalidCommand "${cmd}"
+		[ -z "${cmd}" ] && tardis.help || api.errors.invalidCommand "${cmd}"
 		;;
 esac
 

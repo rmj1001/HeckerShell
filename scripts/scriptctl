@@ -32,7 +32,7 @@ api.required.command "nano"
 [[ `command -v ${EDITOR}` ]] || EDITOR=nano
 
 # Script template string generator
-function TEMPLATE()
+scriptctl.template.generate ()
 {
 _template="#!/usr/bin/env ${default_shell:=bash}
 
@@ -63,7 +63,7 @@ source \$SCRIPTS/libs/01-api.sh
 }
 
 # Get the name of the script to manage
-function getName()
+scriptctl.script.getName ()
 {
 
     if [[ -z "${1}" ]]
@@ -85,9 +85,9 @@ function getName()
 }
 
 # Prompt for basic script information and create it
-function createScript()
+scriptctl.script.create ()
 {
-	getName "${1}"
+	scriptctl.script.getName "${1}"
 
 	# Prompt for script information
 	read -p "Shell Name > " default_shell
@@ -95,7 +95,7 @@ function createScript()
 	read -p "Description > " description
 
 	# Generate the template
-	TEMPLATE
+	scriptctl.template.generate
 
     if [[ ! -f "${script}" ]]
     then
@@ -125,9 +125,9 @@ function createScript()
 }
 
 # Edit the contents of a script
-function editScript()
+scriptctl.script.edit ()
 {
-	getName "${1}"
+	scriptctl.script.getName "${1}"
 
 	if [[ -f "${script}" ]]
 	then
@@ -150,15 +150,15 @@ function editScript()
 
 		# Create the script if the answer to the prompt was 'y' or 'yes'
 		answer=`api.string.toLowerCase "${answer}"`
-		[ "${answer}" = "y" ] && createScript ${scriptname} || return 1
+		[ "${answer}" = "y" ] && scriptctl.script.create ${scriptname} || return 1
 	
 	fi
 }
 
 # Delete a script
-function removeScript()
+scriptctl.script.delete ()
 {
-	getName "${1}"
+	scriptctl.script.getName "${1}"
 
 	if [[ -f "${script}" ]]
 	then
@@ -180,9 +180,9 @@ function removeScript()
 }
 
 # Rename a script
-function renameScript()
+scriptctl.script.rename ()
 {
-	getName "${1}"
+	scriptctl.script.getName "${1}"
 
 	# Get the new name from the second command line argument
 	newName="${2}"
@@ -227,9 +227,9 @@ function renameScript()
 }
 
 # Print the script to the command line
-function printScript()
+scriptctl.script.print ()
 {
-	getName "${1}"
+	scriptctl.script.getName "${1}"
 
 	# If the script exists
 	if [[ -f "${script}" ]]
@@ -250,14 +250,14 @@ function printScript()
 }
 
 # List all files in the scripts directory
-function listScripts()
+scriptctl.scripts.list ()
 {
 	find $SCRIPTS/ -maxdepth 1 -type f -executable -exec basename {} \;
 	return 0
 }
 
 # Help prompt
-function helpPrompt()
+scriptctl.help ()
 {
 	api.std.printLn "Create, edit, remove, or print scripts."
 	api.std.printLn 
@@ -286,31 +286,31 @@ cmd=`api.string.toLowerCase ${1}`
 
 case "${cmd}" in
 	c | create )
-		createScript "${2}" "${3}"
+		scriptctl.script.create "${2}" "${3}"
 		;;
 	e | edit )
-		editScript "${2}"
+		scriptctl.script.edit "${2}"
 		;;
 	r | rename )
-		renameScript "${2}" "${3}"
+		scriptctl.script.rename "${2}" "${3}"
 		;;
 	d | delete )
-		removeScript "${2}"
+		scriptctl.script.delete "${2}"
 		;;
 	p | print )
-		printScript "${2}"
+		scriptctl.script.print "${2}"
 		;;
 	l | list )
-		listScripts
+		scriptctl.scripts.list
 		;;
 	v | version )
 		api.script.version
 		;;
 	\? | h | help )
-		helpPrompt
+		scriptctl.help
 		;;
 	* )
-		[ -z "${cmd}" ] && helpPrompt || api.errors.invalidCommand "${cmd}"
+		[ -z "${cmd}" ] && scriptctl.help || api.errors.invalidCommand "${cmd}"
 		;;
 esac
 

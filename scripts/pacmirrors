@@ -23,7 +23,7 @@ source $SCRIPTS/libs/01-api.sh
 
 api.required.command "pacman"
 
-refresh()
+pacmirrors.refresh()
 {
   mirrorlist=/etc/pacman.d/mirrorlist
   backupfile=/etc/pacman.d/mirrorlist.backup
@@ -35,8 +35,8 @@ refresh()
 
 if [[ `command -v reflector` ]]
 then
-  refresh
+  pacmirrors.refresh
 else
   pacman -S reflector
-  refresh
+  pacmirrors.refresh
 fi

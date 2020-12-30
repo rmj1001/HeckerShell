@@ -24,9 +24,14 @@ source $SCRIPTS/libs/01-api.sh
 
 api.required.command "dd"
 
+bootableusb.write ()
+{
+	sudo dd bs=4M if="$1" of="$2" conv=fdatasync
+}
+
 if [ "$1" = "--help" ]
 then
-	echo "usage: bootableusb <iso> <drive>"
+	api.std.printLn "usage: bootableusb <iso> <drive>"
 else
-	sudo dd bs=4M if="$1" of="$2" conv=fdatasync
+	bootableusb.write "$1" "$2"
 fi

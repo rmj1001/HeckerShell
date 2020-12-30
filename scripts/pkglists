@@ -24,12 +24,25 @@ source $SCRIPTS/libs/01-api.sh
 
 api.required.command "pacman"
 
-cd $HOME/Downloads
-pacmanlist="$(pacman -Qqe | grep -v '`pacman -Qq base`' | grep -v '`pacman -Qqm`')"
-aurlist="$(pacman -Qqm)"
+pkglists.lists.create ()
+{
+    pacmanlist="$(pacman -Qqe | grep -v '`pacman -Qq base`' | grep -v '`pacman -Qqm`')"
+    aurlist="$(pacman -Qqm)"
+}
 
-api.std.printLn "$pacmanlist" > pacmanlist.txt
-api.std.printLn "$aurlist" > aurlist.txt
-cat pacmanlist.txt aurlist.txt > allpkgs.txt
+pkglists.lists.write ()
+{
+    # Goto the Downloads directory
+    cd $HOME/Downloads
+    
+    # Write lists
+    api.std.printLn "$pacmanlist" > pacmanlist.txt
+    api.std.printLn "$aurlist" > aurlist.txt
+    cat pacmanlist.txt aurlist.txt > allpkgs.txt
+}
 
+pkglists.lists.create
+pkglists.lists.write
+
+# Confirmation
 api.std.logMsg "Created lists in ${HOME}/Downloads!"

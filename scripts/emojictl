@@ -46,7 +46,7 @@ FILE=$HOME/.fonts/NotoColorEmoji.ttf
 # cmd
 cmd=""
 
-function preparedirs()
+emojictl.prepare ()
 {
 	# Make the config directory and move to it
 	[ ! -d $CONFDIR ] && mkdir -p $CONFDIR
@@ -56,12 +56,12 @@ function preparedirs()
 	[ -f $NOTOPKG ] && rm -f $NOTOPKG
 }
 
-function installer()
+emojictl.emojis.install ()
 {
 	clear
 
 	# Make the config directory and move to it
-	preparedirs
+	emojictl.prepare
 	cd $CONFDIR
 
 	# Download the fontconfig files
@@ -89,10 +89,10 @@ function installer()
 	api.std.pause
 }
 
-function uninstaller()
+emojictl.emojis.uninstall ()
 {
 	clear
-	preparedirs
+	emojictl.prepare
 
 	# Remove the font file
 	rm -f ${FONTS}/NotoColorEmoji.ttf
@@ -114,7 +114,7 @@ function uninstaller()
 	api.std.pause
 }
 
-function help_prompt()
+emojictl.help ()
 {
 	api.std.printLn 
 	api.std.printLn "Manage emoji installation on your Linux system"
@@ -138,15 +138,15 @@ cmd=`api.string.toLowerCase "${1}"`
 case "${cmd}" in
 
 	install | i )
-		installer
+		emojictl.emojis.install
 		exit 0
 		;;
 	uninstall | u )
-		uninstaller
+		emojictl.emojis.uninstall
 		exit 0
 		;;
 	help | h | \? )
-		help_prompt
+		emojictl.help
 		exit 0
 		;;
 	version | v )
@@ -154,7 +154,7 @@ case "${cmd}" in
 		exit 0
 		;;
 	* )
-		[ -z "${cmd}" ] && help_prompt || api.errors.invalidCommand && exit 1
+		[ -z "${cmd}" ] && emojictl.help || api.errors.invalidCommand && exit 1
 		;;
 
 esac

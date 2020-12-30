@@ -25,7 +25,8 @@ source $SCRIPTS/headers/02-api.sh
 
 api.required.command "pactl"
 
-function setup() {
+golive.setup ()
+{
 	pactl list short modules | grep -q 'Virtual_Sink' && return
 
 	if [ -z "$MIC_SOURCE" ]; then
@@ -52,7 +53,8 @@ function setup() {
 	MIX_LOOPBACK=$(pactl load-module module-loopback latency_msec=1 source=$MIX_SOURCE sink=$OUTPUT_SINK)
 }
 
-function cleanup() {
+golive.cleanup ()
+{
 	virtual_sink=$(pactl list short modules | grep 'Virtual_Sink' | awk '{print $1;}') # e.g. 30
 	[ -z "$virtual_sink" ] && return
 	read -p '>> Press enter to unload PulseAudio modules for the virtual mix...'
@@ -61,9 +63,9 @@ function cleanup() {
 	pactl list short modules | grep -E 'Virtual_(Sink|Output)' | awk '{print $1;}' | xargs -L1 pactl unload-module
 }
 
-function run()
+golive.run ()
 {
-	setup
+	golive.setup
 	api.std.printLn ">> Your virtual mix is currently active! Feel free to open e.g. 'pavucontrol' now."
 	api.std.printLn 
 	api.std.printLn ">> For software that should have their audio included in the mix, move them"
@@ -71,10 +73,10 @@ function run()
 	api.std.printLn ">> For software that should capture the mixed audio, head to the 'Recording'"
 	api.std.printLn "   tab and make the software use 'Monitor of Virtual_Output' as their input."
 	api.std.printLn 
-	cleanup
+	golive.cleanup
 }
 
-function help_prompt()
+golive.help ()
 {
 	api.std.printLn 
 	api.std.printLn "Enable/disable sound sharing for discord with Pulseaudio"
@@ -97,10 +99,10 @@ cmd=`api.string.toLowerCase "${1}"`
 
 case "${cmd}" in
 	s | start )
-		run
+		golive.run
 		;;
 	\? | h | help )
-		help_prompt
+		golive.help
 		;;
 	v | version )
 		api.script.version

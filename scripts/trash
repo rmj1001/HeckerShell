@@ -36,7 +36,7 @@ TRASHDIRS=$HOME/.local/share/Trash
 TRASHINFO=$TRASHDIRS/info
 [ -z "$TRASH" ] && TRASH=$TRASHDIRS/files
 
-trash.checkFile()
+trash.file.check()
 {
   if [ -n "$1" ];
   then
@@ -60,7 +60,7 @@ trash.getDate()
 
 trash.files.add()
 {
-  trash.checkFile "$1"
+  trash.file.check "$1"
   if [ -e "${FILE}" ];
   then
     FILENAME="$(basename ${FILE})"
@@ -82,7 +82,7 @@ trash.files.add()
 
 trash.files.restore()
 {
-  trash.checkFile "$1"
+  trash.file.check "$1"
 
   FILEPATH="${TRASH}/${FILE}"
   FILEINFO="${TRASHINFO}/${FILE}.trashinfo"
@@ -125,7 +125,7 @@ trash.files.empty()
 
 trash.files.information()
 {
-  trash.checkFile "$1"
+  trash.file.check "$1"
 
   FILEINFO=$TRASHINFO/"${FILE}.trashinfo"
   

@@ -21,11 +21,6 @@ source $SCRIPTS/libs/01-api.sh
 # Core Code #
 #############
 
-random()
-{
-	api.std.printLn $(( 1 + ${RANDOM} % ${1} ))
-}
-
 if [ $# -lt 1 ]
 then
   api.std.printLn "Type 1 or more numbers after '`api.script.name`'."
@@ -46,7 +41,7 @@ do
 	arg=${!i}
 	if [[ $arg =~ ^[0-9]+$ ]]
 	then
-		result="`random ${arg}`"
+		result="`api.std.randomNumber ${arg}`"
 
 		if [ ! $minoutput = true ]
 		then

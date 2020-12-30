@@ -32,11 +32,11 @@ function menu ()
 
 name=`man -k . | awk '{print $1}' | menu`
 
-[[ -z "${name}" ]] && exit 1
+[[ -z "${name}" ]] && FAIL "You didn't specify a name."
 
 man -t ${name} | ps2pdf - ${name}.pdf
 
-[[ -f "${name}.pdf" ]] || exit 1
+[[ -f "${name}.pdf" ]] || FAIL "I couldn't generate the PDF for that manpage..."
 
 zathura "${name}.pdf"
 rm -rf "${name}.pdf"

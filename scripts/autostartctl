@@ -36,12 +36,7 @@ apptype=''
 categories=''
 path=''
 
-# Functions
-append() {
-  tee -a ${XDG_AUTOSTART}/${filename}.desktop
-}
-
-function TEMPLATE()
+autostartctl.generateTemplate ()
 {
 _template="
 [Desktop Entry]
@@ -57,7 +52,7 @@ Hidden=true
 [ -n "${path}" ] && _template="${_template}\nPath=${path}"
 }
 
-makeEntry() {
+autostartctl.entry.create() {
 
     filename="${1}"
     [[ -z "${filename}" ]] && read -p "Entry Name: " filename
@@ -78,7 +73,7 @@ makeEntry() {
     [[ -z "${categories}" ]] && categories="Utility;"
 
     # Add entry information to the file
-    TEMPLATE
+    autostartctl.generateTemplate
     api.std.printLn ${_template} > ${file}
 
     api.std.logMsg "Created ${filename}!"
@@ -86,7 +81,7 @@ makeEntry() {
 
 }
 
-editEntry() {
+autostartctl.entry.edit() {
 
   filename="${1}"
   [[ -z "${filename}" ]] && read -p "Name of Entry: " filename
@@ -103,7 +98,7 @@ editEntry() {
   fi
 }
 
-removeEntry() {
+autostartctl.entry.edit() {
   filename="${1}"
 
   [[ -z "${filename}" ]] && read -p "Name of Entry: " filename
@@ -120,12 +115,12 @@ removeEntry() {
   fi
 }
 
-listEntries() {
+autostartctl.entry.list() {
   ls -1 --group-directories-first ${XDG_AUTOSTART} | sed -e 's/\.desktop//'
   exit 0
 }
 
-printEntry() {
+autostartctl.entry.print() {
   filename="${1}"
 
   [[ -z "${filename}" ]] && read -p "Name of Entry: " filename
@@ -143,7 +138,7 @@ printEntry() {
   fi
 }
 
-helpPrompt() {
+autostartctl.help() {
   api.std.printLn 
   api.std.printLn "Manage XDG Autostart desktop entries."
   api.std.printLn
@@ -171,27 +166,27 @@ cmd=`api.string.toLowerCase ${1}`
 
 case "${cmd}" in
   c | create )
-    makeEntry "${2}"
+    autostartctl.entry.create "${2}"
     ;;
   e | edit )
-    editEntry "${2}"
+    autostartctl.entry.edit "${2}"
     ;;
   r | remove )
-    removeEntry "${2}"
+    autostartctl.entry.edit "${2}"
     ;;
   l | list )
-    listEntries
+    autostartctl.entry.list
     ;;
   p | print )
-    printEntry "${2}"
+    autostartctl.entry.print "${2}"
     ;;
   v | version )
     api.script.version
     ;;
   \? | h | help )
-    helpPrompt
+    autostartctl.help
     ;;
   * )
-    [ -z "${cmd}" ] && helpPrompt || api.errors.invalidCommand "${cmd}"
+    [ -z "${cmd}" ] && autostartctl.help || api.errors.invalidCommand "${cmd}"
     ;;
 esac

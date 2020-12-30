@@ -21,35 +21,8 @@ source $SCRIPTS/libs/01-api.sh
 # Core Code #
 #############
 
-function init_prompt ()
-{
-
-	# If .sideloadrc exists, then ask if they want to reset all the configs.
-	if [ -e ".sideloadrc" ]; then
-
-		api.std.printLn "You already have sideload installed. Do you want to reset all configs?"
-		read -p "Y\N >> " answer
-		if [ "$answer" = "y" ] || [ "$answer" = "Y" ]; then
-
-			# Sideload Initialization
-			initsd
-
-		else
-
-			return 0
-
-		fi
-
-	else
-
-		initsd
-
-	fi
-
-}
-
 # Help Menu
-function help_menu ()
+sideload.help ()
 {
 
 	api.std.printLn 
@@ -70,8 +43,8 @@ function help_menu ()
 	return 0
 }
 
-# Sideload Initialization
-function initsd ()
+# Initializiation
+sideload.init.init ()
 {
 
 	if [ -e "$HOME/.sideloadrc" ] && [ -d "$HOME/.Sideload" ]; then
@@ -115,7 +88,7 @@ function initsd ()
 
 }
 
-function install_app ()
+sideload.app.install ()
 {
 
 	local file="$1"
@@ -139,7 +112,7 @@ function install_app ()
 
 }
 
-function uninstall_app ()
+sideload.app.uninstall ()
 {
 
 	local file="$1"
@@ -158,7 +131,7 @@ function uninstall_app ()
 
 }
 
-function list_apps ()
+sideload.app.list ()
 {
 
 	cat $SIDELOAD_APPLIST
@@ -166,7 +139,7 @@ function list_apps ()
 
 }
 
-function checkInit ()
+sideload.init.check ()
 {
 	[ ! -f "${HOME}/.sideloadrc" ] && api.std.failMsg "You must initialize sideload!"
 }
@@ -176,22 +149,22 @@ program="${2}"
 
 case "${command}" in
 	i | install )
-		checkInit
-		install_app $program
+		sideload.init.check
+		sideload.app.install $program
 		;;
 
 	u | uninstall )
-		checkInit
-		uninstall_app $program
+		sideload.init.check
+		sideload.app.uninstall $program
 		;;
 
 	l | list-apps )
-		checkInit
-		list_apps
+		sideload.init.check
+		sideload.app.list
 		;;
 
 	\? | h | help )
-		help_menu
+		sideload.help
 		;;
 
 	v | version )
@@ -199,7 +172,7 @@ case "${command}" in
 		;;
 
 	*)
-		[ -z "${command}" ] && help_menu || api.errors.invalidCommand "${command}"
+		[ -z "${command}" ] && sideload.help || api.errors.invalidCommand "${command}"
 		return 1
 		;;
 esac
