@@ -23,79 +23,79 @@ source $SCRIPTS/libs/01-api.sh
 
 if [ $# -eq 0 ]
 then
-	api.PRINT 
-	api.PRINT "usage: `api.SCRIPTNAME` <file>\n"
-	api.PRINT 
-	api.PRINT "supported file types:"
-	api.PRINT "tar.bz2, tar.gz, bz2, rar, gz, tar, tbz2, tgz"
-	api.PRINT "zip, Z, 7z, deb, tar.xz, tar.zst"
-	api.PRINT 
+	api.std.printLn 
+	api.std.printLn "usage: `api.script.name` <file>\n"
+	api.std.printLn 
+	api.std.printLn "supported file types:"
+	api.std.printLn "tar.bz2, tar.gz, bz2, rar, gz, tar, tbz2, tgz"
+	api.std.printLn "zip, Z, 7z, deb, tar.xz, tar.zst"
+	api.std.printLn 
 	exit 0
 elif [ ! -f "${1}" ]
 then
-	api.FAIL "'${1}' is not a file."
+	api.std.failMsg "'${1}' is not a file."
 else
-	api.FAIL "Unknown error"
+	api.std.failMsg "Unknown error"
 fi
 
 case "${1}" in
 	*.tar.bz2)
-		api.DEPENDENCY "tar"
+		api.required.command "tar"
 		tar xjf ${1}
 		;;
 	*.tar.gz)
-		api.DEPENDENCY "tar"
+		api.required.command "tar"
 		tar xzf ${1}
 		;;
 	*.bz2)
-		api.DEPENDENCY "bunzip"
+		api.required.command "bunzip"
 		bunzip ${1}
 		;;
 	*.rar)
-		api.DEPENDENCY "unrar"
+		api.required.command "unrar"
 		unrar x ${1}
 		;;
 	*.gz)
-		api.DEPENDENCY "gunzip"
+		api.required.command "gunzip"
 		gunzip ${1}
 		;;
 	*.tar)
-		api.DEPENDENCY "tar"
+		api.required.command "tar"
 		tar xf ${1}
 		;;
 	*.tbz2)
-		api.DEPENDENCY "tar"
+		api.required.command "tar"
 		tar xjf ${1}
 		;;
 	*.tgz)
-		api.DEPENDENCY "tar"
+		api.required.command "tar"
 		tar xzf ${1}
 		;;
 	*.zip)
-		api.DEPENDENCY "unzip"
+		api.required.command "unzip"
 		unzip ${1}
 		;;
 	*.Z)
-		api.DEPENDENCY "uncompress"
+		api.required.command "uncompress"
 		uncompress ${1}
 		;;
 	*.7z)
-		api.DEPENDENCY "7z"
+		api.required.command "7z"
 		7z x ${1}
 		;;
 	*.deb)
-		api.DEPENDENCY "ar"
+		api.required.command "ar"
 		ar x ${1}
 		;;
 	*.tar.xz)
-		api.DEPENDENCY "tar"
+		api.required.command "tar"
 		tar xf ${1}
 		;;
 	*.tar.zst)
-		api.DEPENDENCY "unzstd"
+		api.required.command "unzstd"
 		unzstd ${1}
 		;;
 	*)
-		api.FAIL "'${1}' cannot be extracted via ${api.SCRIPTNAME}"
+		api.std.failMsg "'${1}' cannot be extracted via ${api.script.name}"
 		;;
 esac

@@ -22,9 +22,9 @@ source $SCRIPTS/libs/01-api.sh
 #############
 
 # Dependencies
-api.DEPENDENCY "wget"
-api.DEPENDENCY "unzip"
-api.DEPENDENCY "fc-cache"
+api.required.command "wget"
+api.required.command "unzip"
+api.required.command "fc-cache"
 
 # Noto Emoji package link
 EMOJIPKG="https://noto-website-2.storage.googleapis.com/pkgs/NotoColorEmoji-unhinted.zip"
@@ -82,11 +82,11 @@ function installer()
 	rm -rf $TEMP
 	
 	# Post
-	api.PRINT 
-	api.PRINT 
-	api.LOG "Install finished."
-	api.PRINT 
-	api.PAUSE
+	api.std.printLn 
+	api.std.printLn 
+	api.std.logMsg "Install finished."
+	api.std.printLn 
+	api.std.pause
 }
 
 function uninstaller()
@@ -107,33 +107,33 @@ function uninstaller()
 	fc-cache -fv
 	
 	# Post
-	api.PRINT 
-	api.PRINT 
-	api.LOG "Uninstall finished."
-	api.PRINT 
-	api.PAUSE
+	api.std.printLn 
+	api.std.printLn 
+	api.std.logMsg "Uninstall finished."
+	api.std.printLn 
+	api.std.pause
 }
 
 function help_prompt()
 {
-	api.PRINT 
-	api.PRINT "Manage emoji installation on your Linux system"
-	api.PRINT 
-	api.PRINT "Usage: `api.SCRIPTNAME` [command] [args]"
-	api.PRINT "Example: `api.SCRIPTNAME` install"
-	api.PRINT
-	api.PRINT "Commands:"
-	api.PRINT "(i) install\tInstall Noto Color Emoji"
-	api.PRINT "(u) uninstall\tUninstall Noto Color Emoji"
-	api.PRINT "(e) exit\t(Shell only) exit the shell"
-	api.PRINT 
-	api.PRINT "Miscellaneous:"
-	api.PRINT "(h) help\tShow this help menu"
-	api.PRINT "(v) version\tShow this script's version"
-	api.PRINT 
+	api.std.printLn 
+	api.std.printLn "Manage emoji installation on your Linux system"
+	api.std.printLn 
+	api.std.printLn "Usage: `api.script.name` [command] [args]"
+	api.std.printLn "Example: `api.script.name` install"
+	api.std.printLn
+	api.std.printLn "Commands:"
+	api.std.printLn "(i) install\tInstall Noto Color Emoji"
+	api.std.printLn "(u) uninstall\tUninstall Noto Color Emoji"
+	api.std.printLn "(e) exit\t(Shell only) exit the shell"
+	api.std.printLn 
+	api.std.printLn "Miscellaneous:"
+	api.std.printLn "(h) help\tShow this help menu"
+	api.std.printLn "(v) version\tShow this script's version"
+	api.std.printLn 
 }
 
-cmd=`api.LOWERCASE "${1}"`
+cmd=`api.string.toLowerCase "${1}"`
 
 case "${cmd}" in
 
@@ -150,11 +150,11 @@ case "${cmd}" in
 		exit 0
 		;;
 	version | v )
-		api.VERSION
+		api.script.version
 		exit 0
 		;;
 	* )
-		[ -z "${cmd}" ] && help_prompt || api.INVALID && exit 1
+		[ -z "${cmd}" ] && help_prompt || api.errors.invalidCommand && exit 1
 		;;
 
 esac

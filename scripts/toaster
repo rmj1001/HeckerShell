@@ -32,41 +32,41 @@ makeToast()
 {
 	read -p "Pieces: " pieces
 
-	api.PRINT 
-	[[ ! ${pieces} =~ [0-9]+ ]] && api.PRINT "You must specify a number!" && return 1
+	api.std.printLn 
+	[[ ! ${pieces} =~ [0-9]+ ]] && api.std.printLn "You must specify a number!" && return 1
 
-	api.PRINT "Making ${pieces} piece(s) of toast..."
+	api.std.printLn "Making ${pieces} piece(s) of toast..."
 	sleep 3
-	api.PRINT "Made ${pieces} piece(s) of toast."
+	api.std.printLn "Made ${pieces} piece(s) of toast."
 
-	api.PRINT 
-	api.PAUSE
+	api.std.printLn 
+	api.std.pause
 	return 0
 }
 
 commitBath()
 {
-	api.PRINT 
-	api.PRINT "Committing toaster bath..."
+	api.std.printLn 
+	api.std.printLn "Committing toaster bath..."
 	sleep 3
 
 	successful="`random 2`"
 
 	if [ "${broken}" != "false" ]; then
-		api.PRINT "The toaster was previously broken. Find a new toaster?"; sleep 3; api.PAUSE
+		api.std.printLn "The toaster was previously broken. Find a new toaster?"; sleep 3; api.std.pause
 		broken="true"
 		return 1
 	fi
 
 	if [ "${successful}" == "0" ]; then
-		api.PRINT "The toaster wasn't plugged in, and has been damaged by the water."; sleep 3; api.PAUSE
+		api.std.printLn "The toaster wasn't plugged in, and has been damaged by the water."; sleep 3; api.std.pause
 	else
-		api.PRINT "You have died. Have a nice afterlife!"; sleep 3; api.PAUSE
+		api.std.printLn "You have died. Have a nice afterlife!"; sleep 3; api.std.pause
 	fi
 
 	broken="true"
 
-	api.PRINT 
+	api.std.printLn 
 	return 0
 }
 
@@ -74,20 +74,20 @@ throwToaster()
 {
 	read -p "Target: " target
 
-	api.PRINT 
-	api.PRINT "You have thrown a toaster at ${target}."
+	api.std.printLn 
+	api.std.printLn "You have thrown a toaster at ${target}."
 	sleep 3
 
 	successful="`random 2`"
 
 	if [ "${successful}" == "0" ]; then
-		api.PRINT "You didn't aim properly, and the toaster hit the wall."; api.PAUSE
+		api.std.printLn "You didn't aim properly, and the toaster hit the wall."; api.std.pause
 	else
-		api.PRINT "Your aim was perfect and you hit ${target} in the head."; api.PAUSE
+		api.std.printLn "Your aim was perfect and you hit ${target} in the head."; api.std.pause
 	fi
 
 	broken="true"
-	api.PRINT 
+	api.std.printLn 
 	return 0
 }
 
@@ -95,17 +95,17 @@ cmd=""
 
 while [[ "${cmd}" != "4" ]]; do
 	clear
-	api.PRINT "Toaster Menu"
-	api.PRINT 
-	api.PRINT 
-	api.PRINT "1. Make Toast"
-	api.PRINT "2. Commit Toaster Bath"
-	api.PRINT "3. Throw Toaster"
-	api.PRINT "4. Exit"
-	api.PRINT
+	api.std.printLn "Toaster Menu"
+	api.std.printLn 
+	api.std.printLn 
+	api.std.printLn "1. Make Toast"
+	api.std.printLn "2. Commit Toaster Bath"
+	api.std.printLn "3. Throw Toaster"
+	api.std.printLn "4. Exit"
+	api.std.printLn
 	read -p "> " cmd
 
-	cmd=`api.LOWERCASE "${cmd}"`
+	cmd=`api.string.toLowerCase "${cmd}"`
 
 	case "${cmd}" in
 
@@ -123,8 +123,8 @@ while [[ "${cmd}" != "4" ]]; do
 			exit 0
 			;;
 		* )
-			api.ERROR "\nInvalid option!\n"
-			api.PAUSE
+			api.std.errorMsg "\nInvalid option!\n"
+			api.std.pause
 			;;
 
 	esac

@@ -22,7 +22,7 @@ source $SCRIPTS/libs/01-api.sh
 # Core Code #
 #############
 
-api.DEPENDENCY "wine"
+api.required.command "wine"
 
 pacman=$(command -v pacman)
 apt=$(command -v apt)

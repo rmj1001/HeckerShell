@@ -42,20 +42,20 @@ checkFile()
   then
     FILE="$1"
   else
-    api.FAIL "You must specify a FILE."
+    api.std.failMsg "You must specify a FILE."
   fi
 }
 
 getPath()
 {
   confFile="${1}"
-  api.PRINT "$(grep -m 1 Path= ${confFile} | sed 's|Path=||')"
+  api.std.printLn "$(grep -m 1 Path= ${confFile} | sed 's|Path=||')"
 }
 
 getDate()
 {
   confFile="${1}"
-  api.PRINT "$(grep -m 1 DeletionDate= ${confFile} | sed 's|DeletionDate=||')"
+  api.std.printLn "$(grep -m 1 DeletionDate= ${confFile} | sed 's|DeletionDate=||')"
 }
 
 add()
@@ -68,15 +68,15 @@ add()
     DELPATH=$(readlink -f ${FILE})
     DELDATE=$(date +"%Y-%m-%dT%H:%M:%S")
 
-    api.PRINT "[Trash Info]" > "${TRASHINFO}/${FILENAME}.trashinfo"
-    api.PRINT "Path=${DELPATH}" >> "${TRASHINFO}/${FILENAME}.trashinfo"
-    api.PRINT "DeletionDate=${DELDATE}" >> "${TRASHINFO}/${FILENAME}.trashinfo"
+    api.std.printLn "[Trash Info]" > "${TRASHINFO}/${FILENAME}.trashinfo"
+    api.std.printLn "Path=${DELPATH}" >> "${TRASHINFO}/${FILENAME}.trashinfo"
+    api.std.printLn "DeletionDate=${DELDATE}" >> "${TRASHINFO}/${FILENAME}.trashinfo"
     mv ${FILE} ${TRASH}
     
-    api.LOG "Moved ${FILE} to the trash!"
+    api.std.logMsg "Moved ${FILE} to the trash!"
     exit 0
   else
-    api.FAIL "File '${FILE}' doesn't exist!"
+    api.std.failMsg "File '${FILE}' doesn't exist!"
   fi
 }
 
@@ -94,10 +94,10 @@ restore()
     mv "${FILEPATH}" "${RESTOREPATH}"
     rm -f "${FILEINFO}"
 
-    api.LOG "Restored ${FILE} to ${RESTOREPATH}!"
+    api.std.logMsg "Restored ${FILE} to ${RESTOREPATH}!"
     exit 0
   else
-    api.FAIL "File ${FILE} is not in the trash!"
+    api.std.failMsg "File ${FILE} is not in the trash!"
   fi
 }
 
@@ -110,7 +110,7 @@ empty()
   unset files[0]
 
   # Fail if there are no files in the trash
-  [ ${#files[@]} -eq 0 ] && api.FAIL "There are no files in the trash!"
+  [ ${#files[@]} -eq 0 ] && api.std.failMsg "There are no files in the trash!"
 
   # Remove all files from the trash
   for file in ${files[@]}
@@ -119,7 +119,7 @@ empty()
   done
   
   # Confirmation
-  api.LOG "Emptied the trash!"
+  api.std.logMsg "Emptied the trash!"
   exit 0
 }
 
@@ -134,31 +134,31 @@ info()
     cat "${FILEINFO}"
     exit 0
   else
-    api.FAIL "File does not have metadata / doesn't exist!"
+    api.std.failMsg "File does not have metadata / doesn't exist!"
   fi
 }
 
 helpPrompt()
 {
-  api.PRINT 
-  api.PRINT "Manage your trash bin"
-  api.PRINT
-  api.PRINT "Usage: `api.SCRIPTNAME` [command] <file>"
-  api.PRINT "Example: `api.SCRIPTNAME` add <file>"
-  api.PRINT
-  api.PRINT "Commands:"
-  api.PRINT "(a) add\t\t\tAdd a FILE to the trash"
-  api.PRINT "(r) restore\t\tRestore a FILE from the trash"
-  api.PRINT "(e) empty\t\tEmpty the trash bin"
-  api.PRINT "(l) list\t\tList the contents of the trash bin"
-  api.PRINT "(i) info\t\tGet a FILE's trash metadata"
-  api.PRINT
-  api.PRINT "Miscellaneous"
-  api.PRINT "(h) help\t\tShow this prompt"
-  api.PRINT "(v) version\t\tPrint the version of this script"
+  api.std.printLn 
+  api.std.printLn "Manage your trash bin"
+  api.std.printLn
+  api.std.printLn "Usage: `api.script.name` [command] <file>"
+  api.std.printLn "Example: `api.script.name` add <file>"
+  api.std.printLn
+  api.std.printLn "Commands:"
+  api.std.printLn "(a) add\t\t\tAdd a FILE to the trash"
+  api.std.printLn "(r) restore\t\tRestore a FILE from the trash"
+  api.std.printLn "(e) empty\t\tEmpty the trash bin"
+  api.std.printLn "(l) list\t\tList the contents of the trash bin"
+  api.std.printLn "(i) info\t\tGet a FILE's trash metadata"
+  api.std.printLn
+  api.std.printLn "Miscellaneous"
+  api.std.printLn "(h) help\t\tShow this prompt"
+  api.std.printLn "(v) version\t\tPrint the version of this script"
 }
 
-cmd=`api.LOWERCASE "${1}"`
+cmd=`api.string.toLowerCase "${1}"`
 
 case "${cmd}" in
   a | add )
@@ -178,12 +178,12 @@ case "${cmd}" in
     info "${2}"
     ;;
   v | version )
-    api.VERSION
+    api.script.version
     ;;
   \? | h | help )
     helpPrompt
     ;;
   * )
-  	[ -z "${cmd}" ] && helpPrompt || api.INVALID "${1}"
+  	[ -z "${cmd}" ] && helpPrompt || api.errors.invalidCommand "${1}"
     ;;
 esac

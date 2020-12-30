@@ -27,7 +27,7 @@ function init_prompt ()
 	# If .sideloadrc exists, then ask if they want to reset all the configs.
 	if [ -e ".sideloadrc" ]; then
 
-		api.PRINT "You already have sideload installed. Do you want to reset all configs?"
+		api.std.printLn "You already have sideload installed. Do you want to reset all configs?"
 		read -p "Y\N >> " answer
 		if [ "$answer" = "y" ] || [ "$answer" = "Y" ]; then
 
@@ -52,21 +52,21 @@ function init_prompt ()
 function help_menu ()
 {
 
-	api.PRINT 
-	api.PRINT "Install/uninstall Appimages"
-	api.PRINT 
-	api.PRINT "Usage: `api.SCRIPTNAME` [command] [args]"
-	api.PRINT "Example: `api.SCRIPTNAME` install ./app.appimage"
-	api.PRINT 
-	api.PRINT "Commands:"
-	api.PRINT "init [shellrc] \t\t\t Initialize Sideload"
-	api.PRINT "(i) install [file] \t\t Install an appimage"
-	api.PRINT "(u) uninstall [name] \t\t Uninstall an appimage"
-	api.PRINT "(l) list \t\t\t List all appimages"
-	api.PRINT 
-	api.PRINT "Miscellaneous"
-	api.PRINT "(h) help \t\t\t Show this prompt"
-	api.PRINT "(v) version \t\t\t Print the version of this script"
+	api.std.printLn 
+	api.std.printLn "Install/uninstall Appimages"
+	api.std.printLn 
+	api.std.printLn "Usage: `api.script.name` [command] [args]"
+	api.std.printLn "Example: `api.script.name` install ./app.appimage"
+	api.std.printLn 
+	api.std.printLn "Commands:"
+	api.std.printLn "init [shellrc] \t\t\t Initialize Sideload"
+	api.std.printLn "(i) install [file] \t\t Install an appimage"
+	api.std.printLn "(u) uninstall [name] \t\t Uninstall an appimage"
+	api.std.printLn "(l) list \t\t\t List all appimages"
+	api.std.printLn 
+	api.std.printLn "Miscellaneous"
+	api.std.printLn "(h) help \t\t\t Show this prompt"
+	api.std.printLn "(v) version \t\t\t Print the version of this script"
 	return 0
 }
 
@@ -76,7 +76,7 @@ function initsd ()
 
 	if [ -e "$HOME/.sideloadrc" ] && [ -d "$HOME/.Sideload" ]; then
 
-		api.FAIL "Sideload is already initialized!"
+		api.std.failMsg "Sideload is already initialized!"
 
 	else
 
@@ -89,25 +89,25 @@ function initsd ()
 		touch $HOME/.sideloadrc
 		read -t 60 -p "Enter the path to your shellrc file. ex. bashrc or zshrc > " rcpath
 		if [ -e "$rcpath" ]; then
-			api.PRINT "if [ -e \".sideloadrc\" ]; then\n	. \$HOME/.sideloadrc" >> $rcpath
-			api.PRINT "	export \$SIDELOAD_ROOT=\$HOME/.Sideload" >> $rcpath
-			api.PRINT "	export \$SIDELOADRC=\$HOME/.sideloadrc" >> $rcpath
-			api.PRINT "	export \$SIDELOAD_APPS=\$HOME/.Sideload/Apps" >> $rcpath
-			api.PRINT "	export \$SIDELOAD_CONFIGS=\$HOME/.Sideload/Configs" >> $rcpath
-			api.PRINT "	export \$SIDELOAD_APPLIST=\$SIDELOAD_CONFIGS/applist.txt\nfi" >> $rcpath
-			api.PRINT "\n\n# Path\nexport \$PATH=\$PATH:\$SIDELOAD_APPS" >> $rcpath
+			api.std.printLn "if [ -e \".sideloadrc\" ]; then\n	. \$HOME/.sideloadrc" >> $rcpath
+			api.std.printLn "	export \$SIDELOAD_ROOT=\$HOME/.Sideload" >> $rcpath
+			api.std.printLn "	export \$SIDELOADRC=\$HOME/.sideloadrc" >> $rcpath
+			api.std.printLn "	export \$SIDELOAD_APPS=\$HOME/.Sideload/Apps" >> $rcpath
+			api.std.printLn "	export \$SIDELOAD_CONFIGS=\$HOME/.Sideload/Configs" >> $rcpath
+			api.std.printLn "	export \$SIDELOAD_APPLIST=\$SIDELOAD_CONFIGS/applist.txt\nfi" >> $rcpath
+			api.std.printLn "\n\n# Path\nexport \$PATH=\$PATH:\$SIDELOAD_APPS" >> $rcpath
 			source $rcpath
 
 			# Initialize applist
 			touch $SIDELOAD_APPLIST
 
-			api.LOG "Initialized."
+			api.std.logMsg "Initialized."
 
 			return 0
 
 		else
 
-			api.FAIL "$rcpath does not exist!"
+			api.std.failMsg "$rcpath does not exist!"
 
 		fi
 
@@ -123,7 +123,7 @@ function install_app ()
 	# Install Program
 	mv $file $SIDELOAD_APPS
 	chmod $file a+x
-	api.PRINT "$file" >> $SIDELOAD_APPLIST
+	api.std.printLn "$file" >> $SIDELOAD_APPLIST
 
 	# Prompt to ask if the user wants to run the program
 	read -p "Do you wish to run the program now? Y/N >> " answer
@@ -151,7 +151,7 @@ function uninstall_app ()
 	for OUTPUT in $(ls $SIDELOAD_APPS)
 	do
 
-		api.PRINT "$OUTPUT" >> $SIDELOAD_APPLIST
+		api.std.printLn "$OUTPUT" >> $SIDELOAD_APPLIST
 	done
 
 	return 0
@@ -168,7 +168,7 @@ function list_apps ()
 
 function checkInit ()
 {
-	[ ! -f "${HOME}/.sideloadrc" ] && api.FAIL "You must initialize sideload!"
+	[ ! -f "${HOME}/.sideloadrc" ] && api.std.failMsg "You must initialize sideload!"
 }
 
 command="${1}"
@@ -195,11 +195,11 @@ case "${command}" in
 		;;
 
 	v | version )
-		api.VERSION
+		api.script.version
 		;;
 
 	*)
-		[ -z "${command}" ] && help_menu || api.INVALID "${command}"
+		[ -z "${command}" ] && help_menu || api.errors.invalidCommand "${command}"
 		return 1
 		;;
 esac

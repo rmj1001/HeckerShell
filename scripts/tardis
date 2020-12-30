@@ -22,8 +22,8 @@ source $SCRIPTS/libs/01-api.sh
 #############
 
 # Dependencies
-api.DEPENDENCY "nano"
-api.DEPENDENCY "rsync"
+api.required.command "nano"
+api.required.command "rsync"
 
 # Config
 CONFDIR="${HOME}/.config/tardisrsync"
@@ -37,7 +37,7 @@ getTarget()
 
 		# If the config file exists, get the directory specified from it and set it as the target.
 		local text="$(cat ${CONFIG})"
-		TARGET="`api.TRIM ${text}`"
+		TARGET="`api.string.trim ${text}`"
 
 	elif [ -n "${1}" ]; then
 	
@@ -47,7 +47,7 @@ getTarget()
 	fi
 
 	# If the target directory exists, exit the script with an error message.
-	[ ! -d "${TARGET}" ] && api.FAIL "That directory does not exist!"
+	[ ! -d "${TARGET}" ] && api.std.failMsg "That directory does not exist!"
 
 	# Set the target to its absolute path
 	TARGET="`readlink -f ${TARGET}`"
@@ -76,10 +76,10 @@ backupFiles()
  	mv ${TARGET}/${USER} ${TARGET}/${BACKUPNAME}
 
 	# Confirm the backup has finished
-	api.PRINT "Tardis: Finished backup!"
+	api.std.printLn "Tardis: Finished backup!"
 
 	# Print the backupname to the manifest file
-	api.PRINT "Tardis:  ${BACKUPNAME}" | tee -a ${MANIFEST}
+	api.std.printLn "Tardis:  ${BACKUPNAME}" | tee -a ${MANIFEST}
 	return 0
 }
 
@@ -89,7 +89,7 @@ restoreFiles()
 	BACKUPDIR="${TARGET}/${1}"
 
 	# Check if the backup directory exists
-	[ ! -d "${BACKUPDIR}" ] && api.FAIL "That backup does not exist!"
+	[ ! -d "${BACKUPDIR}" ] && api.std.failMsg "That backup does not exist!"
 
 	# Restore all files/directories in the backup directory to $HOME
 	for file in ${BACKUPDIR}/{.,}*
@@ -99,7 +99,7 @@ restoreFiles()
 	done
 
 	# Confirm the restoration of the backup
-	api.LOG "'${BACKUPDIR}' restored."
+	api.std.logMsg "'${BACKUPDIR}' restored."
 	return 0
 }
 
@@ -109,20 +109,20 @@ removeBackup()
 	BACKUPDIR="${TARGET}/${1}"
 
 	# Check if the backup directory exists
-	[ ! -d "${BACKUPDIR}" ] && api.FAIL "That backup does not exist!"
+	[ ! -d "${BACKUPDIR}" ] && api.std.failMsg "That backup does not exist!"
 
 	# Confirm whether to remove the backup
 	read -p "Are you sure you want to remove this backup? (y/N) " confirmation
 	
 	# Make the confirmation text lowercase
-	confirmation=`api.LOWERCASE "${confirmation}"`
+	confirmation=`api.string.toLowerCase "${confirmation}"`
 
 	# Remove the backup directory if the user chose 'y' or 'yes' at the prompt
 	[ "${confirmation}" == "y" ] && rm -rf "${BACKUPDIR}" && return 0
 	[ "${confirmation}" == "yes" ] && rm -rf "${BACKUPDIR}" && return 0
 
 	# Cancel the removal of a backup if the user didn't choose 'y' or 'yes' at the prompt
-	api.LOG "Cancelling..."
+	api.std.logMsg "Cancelling..."
 	return 0
 }
 
@@ -133,8 +133,8 @@ listBackups()
 	FILES=${TARGET}/*/
 
 	# Send error if no backup directories exist or if the manifest file is missing
-	[ ! ${#FILES[@]} -gt 0 ] && api.ERROR "There are no backups!" && return $?
-	[ ! -f ${MANIFEST} ] && api.ERROR "There are no backups!" && return $?
+	[ ! ${#FILES[@]} -gt 0 ] && api.std.errorMsg "There are no backups!" && return $?
+	[ ! -f ${MANIFEST} ] && api.std.errorMsg "There are no backups!" && return $?
 
 	# List all directories in the target
 	ls -F ${TARGET} | grep /\$
@@ -156,12 +156,12 @@ enableAutoBackups()
 
 	# Check if the name of the user is in cron.allow, then add if it isn't
 	local name="`cat ${allow} | grep ${USER}`"
-	[ "${name}" != "${USER}" ] && api.PRINT "${USER}" | sudo tee -a "${allow}"
+	[ "${name}" != "${USER}" ] && api.std.printLn "${USER}" | sudo tee -a "${allow}"
 
 	# Add entry to tab & lock file
 	local entry="@daily ${HOME}/.local/bin/tardis backup"
-	api.PRINT "${entry}" | sudo tee -a "${tab}" >/dev/null 2>&1
-	api.PRINT "${entry}" | tee -a "${lock}" >/dev/null 2>&1
+	api.std.printLn "${entry}" | sudo tee -a "${tab}" >/dev/null 2>&1
+	api.std.printLn "${entry}" | tee -a "${lock}" >/dev/null 2>&1
 
 	return 0
 }
@@ -188,10 +188,10 @@ toggleAutoBackups()
 	if [ ! -f "${TARGET}/.cron" ]
 	then
 		enableAutoBackups
-		api.LOG "Automatic Backups Enabled"
+		api.std.logMsg "Automatic Backups Enabled"
 	else
 		disableAutoBackups
-		api.LOG "Automatic Backups Disabled"
+		api.std.logMsg "Automatic Backups Disabled"
 	fi
 
 	return $?
@@ -204,16 +204,16 @@ setDefaultTarget()
 	[ ! -d ${CONFDIR} ] && mkdir -p ${CONFDIR} && touch ${CONFIG}
 
 	# Check if a directory was specified
-	[ -z "${1}" ] && api.ERROR "You must specify a directory to set as the default!" && return $?
+	[ -z "${1}" ] && api.std.errorMsg "You must specify a directory to set as the default!" && return $?
 	
 	# Check if specified directory exists
-	[ ! -d "${1}" ] && api.ERROR "That is not a valid directory!" && return $?
+	[ ! -d "${1}" ] && api.std.errorMsg "That is not a valid directory!" && return $?
 
 	# Set the directory in the file
-	api.PRINT "${1}" > ${CONFIG}
+	api.std.printLn "${1}" > ${CONFIG}
 	
 	# Confirmation
-	api.LOG "Set a default target!"
+	api.std.logMsg "Set a default target!"
 	
 	return 0
 }
@@ -221,7 +221,7 @@ setDefaultTarget()
 # Print the default target to STDOUT
 printDefaultTarget()
 {
-	[ -f "${CONFIG}" ] && cat "${CONFIG}" && return 0 || api.ERROR "There is no default target!" && return $?
+	[ -f "${CONFIG}" ] && cat "${CONFIG}" && return 0 || api.std.errorMsg "There is no default target!" && return $?
 }
 
 # Edit the list of exclusions in $HOME/.config/tardisrsync/exclusions.conf
@@ -237,12 +237,12 @@ setExclusions()
 		for f in $HOME/{.,}*; do
 			
 			local name="`basename ${f}`"
-			if [ "${name}" != '.' ] && [ "${name}" != '..' ]; then api.PRINT "${name}" >> ${EXCLUSION_FILE}; fi
+			if [ "${name}" != '.' ] && [ "${name}" != '..' ]; then api.std.printLn "${name}" >> ${EXCLUSION_FILE}; fi
 		
 		done
 
 		# Confirmation of the exclusion file's existence
-		api.LOG "Created exclusions file!"
+		api.std.logMsg "Created exclusions file!"
 	
 	fi
 
@@ -250,47 +250,47 @@ setExclusions()
 	[ -z "${EDITOR}" ] && nano ${EXCLUSION_FILE} || ${EDITOR} ${EXCLUSION_FILE}
 
 	# Confirmation of the edited exclusions file
-	api.LOG "Exclusions edited!" && return 0
+	api.std.logMsg "Exclusions edited!" && return 0
 }
 
 # Print the list of exclusions listed in $HOME/.config/tardisrsync/exclusions.conf
 printExclusions()
 {
-	[ ! -e "${EXCLUSION_FILE}" ] && api.ERROR "Exclusions have not been specified." && return $?
+	[ ! -e "${EXCLUSION_FILE}" ] && api.std.errorMsg "Exclusions have not been specified." && return $?
 	cat ${EXCLUSION_FILE}
 }
 
 # Help Prompt
 helpPrompt()
 {
-	api.PRINT
-	api.PRINT "Create, restore, and list backups."
-	api.PRINT 
-	api.PRINT "Usage: `api.SCRIPTNAME` [command] [args]"
-	api.PRINT "Example: `api.SCRIPTNAME` backup <disk path>"
-	api.PRINT 
-	api.PRINT "Commands"
-	api.PRINT "(b) backup\t\tCreate a backup"
-	api.PRINT "(r) restore\t\tRestore a backup"
-	api.PRINT "(d) delete\t\tDelete a backup"
-	api.PRINT "(l) list\t\tList all backups"
-	api.PRINT
-	api.PRINT "Settings"
-	api.PRINT "(a) toggle-automatic\tToggle automatic backups"
-	api.PRINT "(t) default-target\tSet a default target for future backups"
-	api.PRINT "(e) exclusions\t\tCreate or edit the exclusions file"
-	api.PRINT "(pt) print-target\tPrint the default target to the terminal"
-	api.PRINT "(pe) print-exclusions\tPrint out every excluded file/directory name"
-	api.PRINT 
-	api.PRINT "Miscellaneous"
-	api.PRINT "(h) help\t\tShow this prompt"
-	api.PRINT "(v) version\t\tPrint the version of this script"
-	api.PRINT
+	api.std.printLn
+	api.std.printLn "Create, restore, and list backups."
+	api.std.printLn 
+	api.std.printLn "Usage: `api.script.name` [command] [args]"
+	api.std.printLn "Example: `api.script.name` backup <disk path>"
+	api.std.printLn 
+	api.std.printLn "Commands"
+	api.std.printLn "(b) backup\t\tCreate a backup"
+	api.std.printLn "(r) restore\t\tRestore a backup"
+	api.std.printLn "(d) delete\t\tDelete a backup"
+	api.std.printLn "(l) list\t\tList all backups"
+	api.std.printLn
+	api.std.printLn "Settings"
+	api.std.printLn "(a) toggle-automatic\tToggle automatic backups"
+	api.std.printLn "(t) default-target\tSet a default target for future backups"
+	api.std.printLn "(e) exclusions\t\tCreate or edit the exclusions file"
+	api.std.printLn "(pt) print-target\tPrint the default target to the terminal"
+	api.std.printLn "(pe) print-exclusions\tPrint out every excluded file/directory name"
+	api.std.printLn 
+	api.std.printLn "Miscellaneous"
+	api.std.printLn "(h) help\t\tShow this prompt"
+	api.std.printLn "(v) version\t\tPrint the version of this script"
+	api.std.printLn
 	return 0
 }
 
 # Make the command invocation lowercase
-cmd=`api.LOWERCASE ${1}`
+cmd=`api.string.toLowerCase ${1}`
 
 # Command line options
 case "${cmd}" in
@@ -327,13 +327,13 @@ case "${cmd}" in
 		printExclusions
 		;;
 	v | version )
-		api.VERSION
+		api.script.version
 		;;
 	\? | h | help )
 		helpPrompt
 		;;
 	* )
-		[ -z "${cmd}" ] && helpPrompt || api.INVALID "${cmd}"
+		[ -z "${cmd}" ] && helpPrompt || api.errors.invalidCommand "${cmd}"
 		;;
 esac
 

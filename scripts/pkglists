@@ -22,14 +22,14 @@ source $SCRIPTS/libs/01-api.sh
 # Core Code #
 #############
 
-api.DEPENDENCY "pacman"
+api.required.command "pacman"
 
 cd $HOME/Downloads
 pacmanlist="$(pacman -Qqe | grep -v '`pacman -Qq base`' | grep -v '`pacman -Qqm`')"
 aurlist="$(pacman -Qqm)"
 
-api.PRINT "$pacmanlist" > pacmanlist.txt
-api.PRINT "$aurlist" > aurlist.txt
+api.std.printLn "$pacmanlist" > pacmanlist.txt
+api.std.printLn "$aurlist" > aurlist.txt
 cat pacmanlist.txt aurlist.txt > allpkgs.txt
 
-api.LOG "Created lists in ${HOME}/Downloads!"
+api.std.logMsg "Created lists in ${HOME}/Downloads!"

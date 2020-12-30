@@ -22,7 +22,7 @@ source $SCRIPTS/libs/01-api.sh
 # Core Code #
 #############
 
-api.DEPENDENCY "dd"
+api.required.command "dd"
 
 if [ "$1" = "--help" ]
 then

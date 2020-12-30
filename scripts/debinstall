@@ -21,22 +21,22 @@ source $SCRIPTS/libs/01-api.sh
 # Core Code #
 #############
 
-api.DEPENDENCY 'apt'
+api.required.command 'apt'
 
 name="${1}"
 name="${name##*/}"
 
 if [[ ! "${name##*.}" == "deb" ]]; then
 
-	api.FAIL "That is not a valid deb file!"
+	api.std.failMsg "That is not a valid deb file!"
 
 fi
 
-api.PRINT 
-api.PRINT 
-api.LOG "Installing '${name}'..."
+api.std.printLn 
+api.std.printLn 
+api.std.logMsg "Installing '${name}'..."
 sudo apt install ${1} > /dev/null 2>&1
 
 code=$?
 
-[[ $code -eq 0 ]] && api.LOG "Installed '${name}'.\n" || api.FAIL "Install failed.\n"
+[[ $code -eq 0 ]] && api.std.logMsg "Installed '${name}'.\n" || api.std.failMsg "Install failed.\n"

@@ -22,7 +22,7 @@ source $SCRIPTS/libs/01-api.sh
 # Core Code #
 #############
 
-api.DEPENDENCY "youtube-dl"
+api.required.command "youtube-dl"
 
 DOWNDIR=$HOME/Downloads/Music
 [ ! -d $DOWNDIR ] && mkdir $DOWNDIR

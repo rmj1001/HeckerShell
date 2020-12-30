@@ -23,13 +23,13 @@ source $SCRIPTS/libs/01-api.sh
 
 random()
 {
-	api.PRINT $(( 1 + ${RANDOM} % ${1} ))
+	api.std.printLn $(( 1 + ${RANDOM} % ${1} ))
 }
 
 if [ $# -lt 1 ]
 then
-  api.PRINT "Type 1 or more numbers after '`api.SCRIPTNAME`'."
-  api.PRINT "A random number will then be generated from 1 to each."
+  api.std.printLn "Type 1 or more numbers after '`api.script.name`'."
+  api.std.printLn "A random number will then be generated from 1 to each."
   exit 1
 fi
 
@@ -50,9 +50,9 @@ do
 
 		if [ ! $minoutput = true ]
 		then
-			api.PRINT "d${arg}: ${result}"
+			api.std.printLn "d${arg}: ${result}"
 		else
-			api.PRINT "${result}"
+			api.std.printLn "${result}"
 		fi
 	fi
 done

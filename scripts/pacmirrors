@@ -21,7 +21,7 @@ source $SCRIPTS/libs/01-api.sh
 # Core Code #
 #############
 
-api.DEPENDENCY "pacman"
+api.required.command "pacman"
 
 refresh()
 {

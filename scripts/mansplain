@@ -21,9 +21,9 @@ source $SCRIPTS/libs/01-api.sh
 # Core Code #
 #############
 
-api.DEPENDENCY "rofi"
-api.DEPENDENCY "zathura"
-api.DEPENDENCY "ps2pdf"
+api.required.command "rofi"
+api.required.command "zathura"
+api.required.command "ps2pdf"
 
 function menu ()
 {
