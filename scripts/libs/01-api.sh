@@ -2,7 +2,7 @@
 
 ##############################################
 #	Author: Nidia Achrys
-#	Project: api.sh
+#	Library: api.sh
 #	Version: 1.0
 # 
 # 	Description:
@@ -10,17 +10,6 @@
 #		bash scripts, to make their development
 #		easier and more consistent.
 ##############################################
-
-# ---------------------------------------------------------------------------------
-# Rules																			
-# ---------------------------------------------------------------------------------
-# 1. Function names should be lowercase
-# 2. Functions should have comments above them declaring their purpose and usage
-# 3. Variables in functions should be declared as local
-# 4. No global variables should be available in the API
-# 5. If functions assume global variables exist, make sure to include a default
-#    value if it doesn't. i.e. ${version:=1.0}, where 1.0 is the default
-# ---------------------------------------------------------------------------------
 
 # Create an API class
 source $SCRIPTS/libs/class/class.sh
