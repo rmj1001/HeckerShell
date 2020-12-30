@@ -22,7 +22,8 @@
 #    value if it doesn't. i.e. ${version:=1.0}, where 1.0 is the default
 # ---------------------------------------------------------------------------------
 
-source $SCRIPTS/headers/01-class.sh
+# Create an API class
+source $SCRIPTS/libs/class/class.sh
 
 class "api"
 
@@ -182,5 +183,33 @@ api.ROOT ()
 	if [[ $EUID -ne 0 ]]
 	then
 		api.FAIL "This script must be run as root"
+	fi
+}
+
+###################### LIBRARY SUPPORT ######################
+
+# Description: Sources all script files from a directory
+# under $SCRIPTS/libs
+#
+# Usage: api.IMPORT "libraryName"
+api.IMPORT ()
+{
+	local libname="`api.LOWERCASE ${1}`"
+	local dir="${SCRIPTS}/libs/${libname}"
+
+	if [ -d "${dir}" ]
+	then
+
+		for file in ${dir}/*
+		do
+		
+			source $file
+		
+		done
+	
+	else
+
+		api.FAIL "Invalid library '${libname}'"
+	
 	fi
 }
