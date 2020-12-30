@@ -116,6 +116,14 @@ api.std.failMsg ()
 	api.std.logMsg "${@}" && exit 1
 }
 
+# Description: Generate a random number from 1 to the specified maximum
+#
+# Usage: api.std.randomNumber 100
+api.std.randomNumber ()
+{
+	printf "%b" "$(( ${RANDOM} % ${1} + 1 ))"
+}
+
 ###################### STRING MANIPULATION ######################
 
 # Description: Converts a string to all api.std.failMsg characters

@@ -23,11 +23,6 @@ source $SCRIPTS/headers/02-api.sh
 
 broken="false"
 
-random()
-{
-	echo $(( ${RANDOM} % ${1} ))
-}
-
 makeToast()
 {
 	read -p "Pieces: " pieces
@@ -50,7 +45,7 @@ commitBath()
 	api.std.printLn "Committing toaster bath..."
 	sleep 3
 
-	successful="`random 2`"
+	successful="`api.std.randomNumber 2`"
 
 	if [ "${broken}" != "false" ]; then
 		api.std.printLn "The toaster was previously broken. Find a new toaster?"; sleep 3; api.std.pause
@@ -58,7 +53,7 @@ commitBath()
 		return 1
 	fi
 
-	if [ "${successful}" == "0" ]; then
+	if [ "${successful}" == "1" ]; then
 		api.std.printLn "The toaster wasn't plugged in, and has been damaged by the water."; sleep 3; api.std.pause
 	else
 		api.std.printLn "You have died. Have a nice afterlife!"; sleep 3; api.std.pause
@@ -78,9 +73,9 @@ throwToaster()
 	api.std.printLn "You have thrown a toaster at ${target}."
 	sleep 3
 
-	successful="`random 2`"
+	successful="`api.std.randomNumber 2`"
 
-	if [ "${successful}" == "0" ]; then
+	if [ "${successful}" == "1" ]; then
 		api.std.printLn "You didn't aim properly, and the toaster hit the wall."; api.std.pause
 	else
 		api.std.printLn "Your aim was perfect and you hit ${target} in the head."; api.std.pause

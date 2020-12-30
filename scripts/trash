@@ -36,7 +36,7 @@ TRASHDIRS=$HOME/.local/share/Trash
 TRASHINFO=$TRASHDIRS/info
 [ -z "$TRASH" ] && TRASH=$TRASHDIRS/files
 
-checkFile()
+trash.checkFile()
 {
   if [ -n "$1" ];
   then
@@ -46,21 +46,21 @@ checkFile()
   fi
 }
 
-getPath()
+trash.getPath()
 {
   confFile="${1}"
   api.std.printLn "$(grep -m 1 Path= ${confFile} | sed 's|Path=||')"
 }
 
-getDate()
+trash.getDate()
 {
   confFile="${1}"
   api.std.printLn "$(grep -m 1 DeletionDate= ${confFile} | sed 's|DeletionDate=||')"
 }
 
-add()
+trash.files.add()
 {
-  checkFile "$1"
+  trash.checkFile "$1"
   if [ -e "${FILE}" ];
   then
     FILENAME="$(basename ${FILE})"
@@ -80,16 +80,16 @@ add()
   fi
 }
 
-restore()
+trash.files.restore()
 {
-  checkFile "$1"
+  trash.checkFile "$1"
 
   FILEPATH="${TRASH}/${FILE}"
   FILEINFO="${TRASHINFO}/${FILE}.trashinfo"
 
   if [ -f "${FILEINFO}" ] && [ -e "${FILEPATH}" ];
   then
-    RESTOREPATH="$(getPath ${FILEINFO})"
+    RESTOREPATH="$(trash.getPath ${FILEINFO})"
     
     mv "${FILEPATH}" "${RESTOREPATH}"
     rm -f "${FILEINFO}"
@@ -101,7 +101,7 @@ restore()
   fi
 }
 
-empty()
+trash.files.empty()
 {
   local files=()
 
@@ -123,9 +123,9 @@ empty()
   exit 0
 }
 
-info()
+trash.files.information()
 {
-  checkFile "$1"
+  trash.checkFile "$1"
 
   FILEINFO=$TRASHINFO/"${FILE}.trashinfo"
   
@@ -138,7 +138,7 @@ info()
   fi
 }
 
-helpPrompt()
+trash.help()
 {
   api.std.printLn 
   api.std.printLn "Manage your trash bin"
@@ -162,28 +162,28 @@ cmd=`api.string.toLowerCase "${1}"`
 
 case "${cmd}" in
   a | add )
-    add "${2}"
+    trash.files.add "${2}"
     ;;
   r | restore)
-    restore "${2}"
+    trash.files.restore "${2}"
     ;;
   e | empty )
-    empty
+    trash.files.empty
     ;;
   l | list )
     ls --color=auto -alvhF --group-directories-first $TRASH 
     exit 0
     ;;
   i | info )
-    info "${2}"
+    trash.files.information "${2}"
     ;;
   v | version )
     api.script.version
     ;;
   \? | h | help )
-    helpPrompt
+    trash.help
     ;;
   * )
-  	[ -z "${cmd}" ] && helpPrompt || api.errors.invalidCommand "${1}"
+  	[ -z "${cmd}" ] && trash.help || api.errors.invalidCommand "${1}"
     ;;
 esac

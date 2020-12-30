@@ -76,10 +76,10 @@ backupFiles()
  	mv ${TARGET}/${USER} ${TARGET}/${BACKUPNAME}
 
 	# Confirm the backup has finished
-	api.std.printLn "Tardis: Finished backup!"
+	api.std.logMsg "Finished backup!"
 
 	# Print the backupname to the manifest file
-	api.std.printLn "Tardis:  ${BACKUPNAME}" | tee -a ${MANIFEST}
+	api.std.logMsg "${BACKUPNAME}" | tee -a ${MANIFEST}
 	return 0
 }
 
