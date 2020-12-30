@@ -16,13 +16,13 @@ version='1.0'
 author='Nidia Achrys'
 
 # Source common script functions
-source $SCRIPTS/01-api.sh
+source $SCRIPTS/headers/02-api.sh
 
 #############
 # Core Code #
 #############
 
-DEPENDENCY "nano"
+api.DEPENDENCY "nano"
 
 # Set the scripts directory to $HOME/.local/bin if not already set
 [[ -z "${SCRIPTS}" ]] && SCRIPTS="$HOME/.local/bin"
@@ -104,7 +104,7 @@ function createScript()
     	touch ${script}
 
 		# Print the template string to the script
-    	PRINT "${_template}" > ${script}
+    	api.PRINT "${_template}" > ${script}
     	
 		# Edit the script
 		${EDITOR} ${script}
@@ -113,13 +113,13 @@ function createScript()
     	chmod +x ${script}
     	
 		# Confirmation log
-		LOG "${scriptname} created!"
+		api.LOG "${scriptname} created!"
     	return 0
     
 	else
     
 		# Fail if script exists
-		FAIL "${scriptname} already exists!"
+		api.FAIL "${scriptname} already exists!"
     
 	fi
 }
@@ -136,20 +136,20 @@ function editScript()
 		${EDITOR} ${script}
 
 		# Confirmation
-		LOG "${scriptname} edited!"
+		api.LOG "${scriptname} edited!"
 		
 		return 0
 	
 	else
 	
 		# Error that the script doesn't exist
-		ERROR "${scriptname} does not exist!"
+		api.ERROR "${scriptname} does not exist!"
 		
 		# Ask if the script should be created
 		read -p "Create script? Y\n: " answer
 
 		# Create the script if the answer to the prompt was 'y' or 'yes'
-		answer=`LOWERCASE "${answer}"`
+		answer=`api.LOWERCASE "${answer}"`
 		[ "${answer}" = "y" ] && createScript ${scriptname} || return 1
 	
 	fi
@@ -167,13 +167,13 @@ function removeScript()
 		rm -f ${script}
 
 		# Confirmation
-		LOG "${scriptname} removed!"
+		api.LOG "${scriptname} removed!"
 		return 0
 
 	else
 
 		# Fail if the script doesn't exist
-		FAIL "${scriptname} does not exist!"
+		api.FAIL "${scriptname} does not exist!"
 		return 1
 
 	fi
@@ -198,7 +198,7 @@ function renameScript()
 		mv "${script}" "${SCRIPTS}/${newName}"
 
 		# Confirmation
-		LOG "Renamed '${script##*/}' to '${newName}'."
+		api.LOG "Renamed '${script##*/}' to '${newName}'."
 		return 0
 
 	# If the newName string is empty:
@@ -212,7 +212,7 @@ function renameScript()
 		mv "${script}" "${SCRIPTS}/${newName}"
 
 		# Confirmation
-		LOG "Renamed '${script##*/}' to '${newName}'."
+		api.LOG "Renamed '${script##*/}' to '${newName}'."
 		return 0
 
 	# If the script doesn't exist:
@@ -220,7 +220,7 @@ function renameScript()
 	then
 
 		# Fail
-		FAIL "Script '${script##*/}' does not exist!"
+		api.FAIL "Script '${script##*/}' does not exist!"
 		return 1
 
 	fi
@@ -243,7 +243,7 @@ function printScript()
 	else
 	
 		# Fail
-		FAIL "${scriptname} does not exist!"
+		api.FAIL "${scriptname} does not exist!"
 		return 1
 	
 	fi
@@ -259,22 +259,22 @@ function listScripts()
 # Help prompt
 function helpPrompt()
 {
-	PRINT "Create, edit, remove, or print scripts."
-	PRINT 
-	PRINT "Usage: `SCRIPTNAME` [command] [args]"
-	PRINT "Example: `SCRIPTNAME` create torrentctl"
-	PRINT 
-	PRINT "Commands:"
-	PRINT "(c) create\t\tCreate a new script"
-	PRINT "(e) edit\t\tEdit an existing script"
-	PRINT "(r) rename\t\tRename an existing script"
-	PRINT "(d) delete\t\tDelete an existing script"
-	PRINT "(p) print\t\tPrint a script to STDOUT"
-	PRINT "(l) list\t\tList all scripts"
-	PRINT 
-	PRINT "Miscellaneous:"
-	PRINT "(h) help\t\tdisplay this help and exit"
-	PRINT "(v) version\t\toutput version information and exit"
+	api.PRINT "Create, edit, remove, or print scripts."
+	api.PRINT 
+	api.PRINT "Usage: `api.SCRIPTNAME` [command] [args]"
+	api.PRINT "Example: `api.SCRIPTNAME` create torrentctl"
+	api.PRINT 
+	api.PRINT "Commands:"
+	api.PRINT "(c) create\t\tCreate a new script"
+	api.PRINT "(e) edit\t\tEdit an existing script"
+	api.PRINT "(r) rename\t\tRename an existing script"
+	api.PRINT "(d) delete\t\tDelete an existing script"
+	api.PRINT "(p) print\t\tPrint a script to STDOUT"
+	api.PRINT "(l) list\t\tList all scripts"
+	api.PRINT 
+	api.PRINT "Miscellaneous:"
+	api.PRINT "(h) help\t\tdisplay this help and exit"
+	api.PRINT "(v) version\t\toutput version information and exit"
 	return 0
 }
 
@@ -282,7 +282,7 @@ function helpPrompt()
 [[ ! -d "${SCRIPTS}" ]] && mkdir ${SCRIPTS}
 
 # Set the subcommand to lowercase
-cmd=`LOWERCASE ${1}`
+cmd=`api.LOWERCASE ${1}`
 
 case "${cmd}" in
 	c | create )
@@ -304,13 +304,13 @@ case "${cmd}" in
 		listScripts
 		;;
 	v | version )
-		VERSION
+		api.VERSION
 		;;
 	\? | h | help )
 		helpPrompt
 		;;
 	* )
-		[ -z "${cmd}" ] && helpPrompt || INVALID "${cmd}"
+		[ -z "${cmd}" ] && helpPrompt || api.INVALID "${cmd}"
 		;;
 esac
 

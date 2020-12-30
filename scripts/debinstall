@@ -15,28 +15,28 @@ version='1.0'
 author='Nidia Achrys'
 
 # Source common script functions
-source $SCRIPTS/01-api.sh
+source $SCRIPTS/headers/02-api.sh
 
 #############
 # Core Code #
 #############
 
-DEPENDENCY 'apt'
+api.DEPENDENCY 'apt'
 
 name="${1}"
 name="${name##*/}"
 
 if [[ ! "${name##*.}" == "deb" ]]; then
 
-	FAIL "That is not a valid deb file!"
+	api.FAIL "That is not a valid deb file!"
 
 fi
 
-PRINT 
-PRINT 
-LOG "Installing '${name}'..."
+api.PRINT 
+api.PRINT 
+api.LOG "Installing '${name}'..."
 sudo apt install ${1} > /dev/null 2>&1
 
 code=$?
 
-[[ $code -eq 0 ]] && LOG "Installed '${name}'.\n" || FAIL "Install failed.\n"
+[[ $code -eq 0 ]] && api.LOG "Installed '${name}'.\n" || api.FAIL "Install failed.\n"

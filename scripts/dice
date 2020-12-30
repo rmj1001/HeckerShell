@@ -15,7 +15,7 @@ version='1.0'
 author='Nidia Achrys'
 
 # Source common script functions
-source $SCRIPTS/01-api.sh
+source $SCRIPTS/headers/02-api.sh
 
 #############
 # Core Code #
@@ -23,13 +23,13 @@ source $SCRIPTS/01-api.sh
 
 random()
 {
-	PRINT $(( 1 + ${RANDOM} % ${1} ))
+	api.PRINT $(( 1 + ${RANDOM} % ${1} ))
 }
 
 if [ $# -lt 1 ]
 then
-  PRINT "Type 1 or more numbers after '`SCRIPTNAME`'."
-  PRINT "A random number will then be generated from 1 to each."
+  api.PRINT "Type 1 or more numbers after '`api.SCRIPTNAME`'."
+  api.PRINT "A random number will then be generated from 1 to each."
   exit 1
 fi
 
@@ -50,9 +50,9 @@ do
 
 		if [ ! $minoutput = true ]
 		then
-			PRINT "d${arg}: ${result}"
+			api.PRINT "d${arg}: ${result}"
 		else
-			PRINT "${result}"
+			api.PRINT "${result}"
 		fi
 	fi
 done

@@ -15,7 +15,7 @@ version='1.0'
 author='Nidia Achrys'
 
 # Source common script functions
-source $SCRIPTS/01-api.sh
+source $SCRIPTS/headers/02-api.sh
 
 #############
 # Core Code #
@@ -32,41 +32,41 @@ makeToast()
 {
 	read -p "Pieces: " pieces
 
-	PRINT 
-	[[ ! ${pieces} =~ [0-9]+ ]] && PRINT "You must specify a number!" && return 1
+	api.PRINT 
+	[[ ! ${pieces} =~ [0-9]+ ]] && api.PRINT "You must specify a number!" && return 1
 
-	PRINT "Making ${pieces} piece(s) of toast..."
+	api.PRINT "Making ${pieces} piece(s) of toast..."
 	sleep 3
-	PRINT "Made ${pieces} piece(s) of toast."
+	api.PRINT "Made ${pieces} piece(s) of toast."
 
-	PRINT 
-	PAUSE
+	api.PRINT 
+	api.PAUSE
 	return 0
 }
 
 commitBath()
 {
-	PRINT 
-	PRINT "Committing toaster bath..."
+	api.PRINT 
+	api.PRINT "Committing toaster bath..."
 	sleep 3
 
 	successful="`random 2`"
 
 	if [ "${broken}" != "false" ]; then
-		PRINT "The toaster was previously broken. Find a new toaster?"; sleep 3; PAUSE
+		api.PRINT "The toaster was previously broken. Find a new toaster?"; sleep 3; api.PAUSE
 		broken="true"
 		return 1
 	fi
 
 	if [ "${successful}" == "0" ]; then
-		PRINT "The toaster wasn't plugged in, and has been damaged by the water."; sleep 3; PAUSE
+		api.PRINT "The toaster wasn't plugged in, and has been damaged by the water."; sleep 3; api.PAUSE
 	else
-		PRINT "You have died. Have a nice afterlife!"; sleep 3; PAUSE
+		api.PRINT "You have died. Have a nice afterlife!"; sleep 3; api.PAUSE
 	fi
 
 	broken="true"
 
-	PRINT 
+	api.PRINT 
 	return 0
 }
 
@@ -74,20 +74,20 @@ throwToaster()
 {
 	read -p "Target: " target
 
-	PRINT 
-	PRINT "You have thrown a toaster at ${target}."
+	api.PRINT 
+	api.PRINT "You have thrown a toaster at ${target}."
 	sleep 3
 
 	successful="`random 2`"
 
 	if [ "${successful}" == "0" ]; then
-		PRINT "You didn't aim properly, and the toaster hit the wall."; PAUSE
+		api.PRINT "You didn't aim properly, and the toaster hit the wall."; api.PAUSE
 	else
-		PRINT "Your aim was perfect and you hit ${target} in the head."; PAUSE
+		api.PRINT "Your aim was perfect and you hit ${target} in the head."; api.PAUSE
 	fi
 
 	broken="true"
-	PRINT 
+	api.PRINT 
 	return 0
 }
 
@@ -95,17 +95,17 @@ cmd=""
 
 while [[ "${cmd}" != "4" ]]; do
 	clear
-	PRINT "Toaster Menu"
-	PRINT 
-	PRINT 
-	PRINT "1. Make Toast"
-	PRINT "2. Commit Toaster Bath"
-	PRINT "3. Throw Toaster"
-	PRINT "4. Exit"
-	PRINT
+	api.PRINT "Toaster Menu"
+	api.PRINT 
+	api.PRINT 
+	api.PRINT "1. Make Toast"
+	api.PRINT "2. Commit Toaster Bath"
+	api.PRINT "3. Throw Toaster"
+	api.PRINT "4. Exit"
+	api.PRINT
 	read -p "> " cmd
 
-	cmd=`LOWERCASE "${cmd}"`
+	cmd=`api.LOWERCASE "${cmd}"`
 
 	case "${cmd}" in
 
@@ -123,8 +123,8 @@ while [[ "${cmd}" != "4" ]]; do
 			exit 0
 			;;
 		* )
-			ERROR "\nInvalid option!\n"
-			PAUSE
+			api.ERROR "\nInvalid option!\n"
+			api.PAUSE
 			;;
 
 	esac

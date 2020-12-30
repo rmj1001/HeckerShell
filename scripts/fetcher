@@ -15,17 +15,17 @@ version='1.0'
 author='Nidia Achrys'
 
 # Source common script functions
-source $SCRIPTS/01-api.sh
+source $SCRIPTS/headers/02-api.sh
 
 #############
 # Core Code #
 #############
 
 # Dependencies
-DEPENDENCY "grep"
-DEPENDENCY "sed"
-DEPENDENCY "uname"
-DEPENDENCY "cat"
+api.DEPENDENCY "grep"
+api.DEPENDENCY "sed"
+api.DEPENDENCY "uname"
+api.DEPENDENCY "cat"
 
 # Fetcher
 OS="`grep '^NAME=' /etc/os-release | sed 's/NAME=//;s/"//g'`"
@@ -54,16 +54,16 @@ MEMORY="$MEMFREE / $MEMTOTAL"
 # Print out the information gathered
 info()
 {
-    PRINT "Category|Information"
-    PRINT "  - Name|${USER}@${HOST}"
-    PRINT "  - OS|${OS}"
-    PRINT "  - Kernel|${KERNEL}"
-    PRINT "  - Uptime|${UPTIME}"
-    PRINT "  - Packages|${PKGCOUNT}"
-    PRINT "  - Shell|${SHELL}"
-    PRINT "  - Processor|${CPUNAME}"
-    PRINT "  - Cores|${CORES}"
-    PRINT "  - Memory|${MEMORY}"
+    api.PRINT "Category|Information"
+    api.PRINT "  - Name|${USER}@${HOST}"
+    api.PRINT "  - OS|${OS}"
+    api.PRINT "  - Kernel|${KERNEL}"
+    api.PRINT "  - Uptime|${UPTIME}"
+    api.PRINT "  - Packages|${PKGCOUNT}"
+    api.PRINT "  - Shell|${SHELL}"
+    api.PRINT "  - Processor|${CPUNAME}"
+    api.PRINT "  - Cores|${CORES}"
+    api.PRINT "  - Memory|${MEMORY}"
 }
 
 info | column -t -s "|"

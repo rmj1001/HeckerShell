@@ -15,16 +15,16 @@ version='1.0'
 author='Nidia Achrys'
 
 # Source common script functions
-source $SCRIPTS/01-api.sh
+source $SCRIPTS/headers/02-api.sh
 
 #############
 # Core Code #
 #############
 
 # Dependencies
-DEPENDENCY "wget"
-DEPENDENCY "unzip"
-DEPENDENCY "fc-cache"
+api.DEPENDENCY "wget"
+api.DEPENDENCY "unzip"
+api.DEPENDENCY "fc-cache"
 
 # Noto Emoji package link
 EMOJIPKG="https://noto-website-2.storage.googleapis.com/pkgs/NotoColorEmoji-unhinted.zip"
@@ -82,11 +82,11 @@ function installer()
 	rm -rf $TEMP
 	
 	# Post
-	PRINT 
-	PRINT 
-	LOG "Install finished."
-	PRINT 
-	PAUSE
+	api.PRINT 
+	api.PRINT 
+	api.LOG "Install finished."
+	api.PRINT 
+	api.PAUSE
 }
 
 function uninstaller()
@@ -107,33 +107,33 @@ function uninstaller()
 	fc-cache -fv
 	
 	# Post
-	PRINT 
-	PRINT 
-	LOG "Uninstall finished."
-	PRINT 
-	PAUSE
+	api.PRINT 
+	api.PRINT 
+	api.LOG "Uninstall finished."
+	api.PRINT 
+	api.PAUSE
 }
 
 function help_prompt()
 {
-	PRINT 
-	PRINT "Manage emoji installation on your Linux system"
-	PRINT 
-	PRINT "Usage: `SCRIPTNAME` [command] [args]"
-	PRINT "Example: `SCRIPTNAME` install"
-	PRINT
-	PRINT "Commands:"
-	PRINT "(i) install\tInstall Noto Color Emoji"
-	PRINT "(u) uninstall\tUninstall Noto Color Emoji"
-	PRINT "(e) exit\t(Shell only) exit the shell"
-	PRINT 
-	PRINT "Miscellaneous:"
-	PRINT "(h) help\tShow this help menu"
-	PRINT "(v) version\tShow this script's version"
-	PRINT 
+	api.PRINT 
+	api.PRINT "Manage emoji installation on your Linux system"
+	api.PRINT 
+	api.PRINT "Usage: `api.SCRIPTNAME` [command] [args]"
+	api.PRINT "Example: `api.SCRIPTNAME` install"
+	api.PRINT
+	api.PRINT "Commands:"
+	api.PRINT "(i) install\tInstall Noto Color Emoji"
+	api.PRINT "(u) uninstall\tUninstall Noto Color Emoji"
+	api.PRINT "(e) exit\t(Shell only) exit the shell"
+	api.PRINT 
+	api.PRINT "Miscellaneous:"
+	api.PRINT "(h) help\tShow this help menu"
+	api.PRINT "(v) version\tShow this script's version"
+	api.PRINT 
 }
 
-cmd=`LOWERCASE "${1}"`
+cmd=`api.LOWERCASE "${1}"`
 
 case "${cmd}" in
 
@@ -150,11 +150,11 @@ case "${cmd}" in
 		exit 0
 		;;
 	version | v )
-		VERSION
+		api.VERSION
 		exit 0
 		;;
 	* )
-		[ -z "${cmd}" ] && help_prompt || INVALID && exit 1
+		[ -z "${cmd}" ] && help_prompt || api.INVALID && exit 1
 		;;
 
 esac

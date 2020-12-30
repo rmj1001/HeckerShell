@@ -15,15 +15,15 @@ version='1.0'
 author='Nidia Achrys'
 
 # Source common script functions
-source $SCRIPTS/01-api.sh
+source $SCRIPTS/headers/02-api.sh
 
 #############
 # Core Code #
 #############
 
-DEPENDENCY "rofi"
-DEPENDENCY "zathura"
-DEPENDENCY "ps2pdf"
+api.DEPENDENCY "rofi"
+api.DEPENDENCY "zathura"
+api.DEPENDENCY "ps2pdf"
 
 function menu ()
 {

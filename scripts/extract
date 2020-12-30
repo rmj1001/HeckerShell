@@ -15,7 +15,7 @@ version='1.0'
 author='Nidia Achrys'
 
 # Source common script functions
-source $SCRIPTS/01-api.sh
+source $SCRIPTS/headers/02-api.sh
 
 #############
 # Core Code #
@@ -23,79 +23,79 @@ source $SCRIPTS/01-api.sh
 
 if [ $# -eq 0 ]
 then
-	PRINT 
-	PRINT "usage: `SCRIPTNAME` <file>\n"
-	PRINT 
-	PRINT "supported file types:"
-	PRINT "tar.bz2, tar.gz, bz2, rar, gz, tar, tbz2, tgz"
-	PRINT "zip, Z, 7z, deb, tar.xz, tar.zst"
-	PRINT 
+	api.PRINT 
+	api.PRINT "usage: `api.SCRIPTNAME` <file>\n"
+	api.PRINT 
+	api.PRINT "supported file types:"
+	api.PRINT "tar.bz2, tar.gz, bz2, rar, gz, tar, tbz2, tgz"
+	api.PRINT "zip, Z, 7z, deb, tar.xz, tar.zst"
+	api.PRINT 
 	exit 0
 elif [ ! -f "${1}" ]
 then
-	FAIL "'${1}' is not a file."
+	api.FAIL "'${1}' is not a file."
 else
-	FAIL "Unknown error"
+	api.FAIL "Unknown error"
 fi
 
 case "${1}" in
 	*.tar.bz2)
-		DEPENDENCY "tar"
+		api.DEPENDENCY "tar"
 		tar xjf ${1}
 		;;
 	*.tar.gz)
-		DEPENDENCY "tar"
+		api.DEPENDENCY "tar"
 		tar xzf ${1}
 		;;
 	*.bz2)
-		DEPENDENCY "bunzip"
+		api.DEPENDENCY "bunzip"
 		bunzip ${1}
 		;;
 	*.rar)
-		DEPENDENCY "unrar"
+		api.DEPENDENCY "unrar"
 		unrar x ${1}
 		;;
 	*.gz)
-		DEPENDENCY "gunzip"
+		api.DEPENDENCY "gunzip"
 		gunzip ${1}
 		;;
 	*.tar)
-		DEPENDENCY "tar"
+		api.DEPENDENCY "tar"
 		tar xf ${1}
 		;;
 	*.tbz2)
-		DEPENDENCY "tar"
+		api.DEPENDENCY "tar"
 		tar xjf ${1}
 		;;
 	*.tgz)
-		DEPENDENCY "tar"
+		api.DEPENDENCY "tar"
 		tar xzf ${1}
 		;;
 	*.zip)
-		DEPENDENCY "unzip"
+		api.DEPENDENCY "unzip"
 		unzip ${1}
 		;;
 	*.Z)
-		DEPENDENCY "uncompress"
+		api.DEPENDENCY "uncompress"
 		uncompress ${1}
 		;;
 	*.7z)
-		DEPENDENCY "7z"
+		api.DEPENDENCY "7z"
 		7z x ${1}
 		;;
 	*.deb)
-		DEPENDENCY "ar"
+		api.DEPENDENCY "ar"
 		ar x ${1}
 		;;
 	*.tar.xz)
-		DEPENDENCY "tar"
+		api.DEPENDENCY "tar"
 		tar xf ${1}
 		;;
 	*.tar.zst)
-		DEPENDENCY "unzstd"
+		api.DEPENDENCY "unzstd"
 		unzstd ${1}
 		;;
 	*)
-		FAIL "'${1}' cannot be extracted via ${SCRIPTNAME}"
+		api.FAIL "'${1}' cannot be extracted via ${api.SCRIPTNAME}"
 		;;
 esac

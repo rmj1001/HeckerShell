@@ -16,20 +16,20 @@ version='1.0'
 author='Nidia Achrys'
 
 # Source common script functions
-source $SCRIPTS/01-api.sh
+source $SCRIPTS/headers/02-api.sh
 
 #############
 # Core Code #
 #############
 
-DEPENDENCY "pacman"
+api.DEPENDENCY "pacman"
 
 cd $HOME/Downloads
 pacmanlist="$(pacman -Qqe | grep -v '`pacman -Qq base`' | grep -v '`pacman -Qqm`')"
 aurlist="$(pacman -Qqm)"
 
-PRINT "$pacmanlist" > pacmanlist.txt
-PRINT "$aurlist" > aurlist.txt
+api.PRINT "$pacmanlist" > pacmanlist.txt
+api.PRINT "$aurlist" > aurlist.txt
 cat pacmanlist.txt aurlist.txt > allpkgs.txt
 
-LOG "Created lists in ${HOME}/Downloads!"
+api.LOG "Created lists in ${HOME}/Downloads!"

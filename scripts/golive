@@ -17,13 +17,13 @@ version='1.0'
 author='Nidia Achrys'
 
 # Source common script functions
-source $SCRIPTS/01-api.sh
+source $SCRIPTS/headers/02-api.sh
 
 #############
 # Core Code #
 #############
 
-DEPENDENCY "pactl"
+api.DEPENDENCY "pactl"
 
 function setup() {
 	pactl list short modules | grep -q 'Virtual_Sink' && return
@@ -34,13 +34,13 @@ function setup() {
 		read -p ">> Source (input) number to use [$first_source]: " user_source
 		[ -z "$user_source" ] && user_source=$first_source
 		MIC_SOURCE=$user_source
-		PRINT 
+		api.PRINT 
 		first_sink=$(pactl list short sinks | head -1 | awk '{print $1;}') # e.g. 1
 		pactl list short sinks
 		read -p ">> Sink (output) number to use [$first_sink]: " user_sink
 		[ -z "$user_sink" ] && user_sink=$first_sink
 		OUTPUT_SINK=$user_sink
-		PRINT 
+		api.PRINT 
 	fi
 
 	pactl load-module module-null-sink sink_name=Virtual_Output sink_properties=device.description=Virtual_Output > /dev/null
@@ -64,36 +64,36 @@ function cleanup() {
 function run()
 {
 	setup
-	PRINT ">> Your virtual mix is currently active! Feel free to open e.g. 'pavucontrol' now."
-	PRINT 
-	PRINT ">> For software that should have their audio included in the mix, move them"
-	PRINT "   to the 'Virtual_Sink' under the 'Playback' tab."
-	PRINT ">> For software that should capture the mixed audio, head to the 'Recording'"
-	PRINT "   tab and make the software use 'Monitor of Virtual_Output' as their input."
-	PRINT 
+	api.PRINT ">> Your virtual mix is currently active! Feel free to open e.g. 'pavucontrol' now."
+	api.PRINT 
+	api.PRINT ">> For software that should have their audio included in the mix, move them"
+	api.PRINT "   to the 'Virtual_Sink' under the 'Playback' tab."
+	api.PRINT ">> For software that should capture the mixed audio, head to the 'Recording'"
+	api.PRINT "   tab and make the software use 'Monitor of Virtual_Output' as their input."
+	api.PRINT 
 	cleanup
 }
 
 function help_prompt()
 {
-	PRINT 
-	PRINT "Enable/disable sound sharing for discord with Pulseaudio"
-	PRINT 
-	PRINT "Usage: `SCRIPTNAME` [command] [args]"
-	PRINT "Example: `SCRIPTNAME` start"
-	PRINT
-	PRINT "Commands:"
-	PRINT "(s) start\tStart the sound sharing"
-	PRINT "(i) shell\tUse the interactive shell to work with `SCRIPTNAME`"
-	PRINT "(e) exit\t(Shell only) Exit the script"
-	PRINT
-	PRINT "Miscellaneous:"
-	PRINT "(h) help\tShow this help menu"
-	PRINT "(v) version\tShow this script's version"
-	PRINT 
+	api.PRINT 
+	api.PRINT "Enable/disable sound sharing for discord with Pulseaudio"
+	api.PRINT 
+	api.PRINT "Usage: `api.SCRIPTNAME` [command] [args]"
+	api.PRINT "Example: `api.SCRIPTNAME` start"
+	api.PRINT
+	api.PRINT "Commands:"
+	api.PRINT "(s) start\tStart the sound sharing"
+	api.PRINT "(i) shell\tUse the interactive shell to work with `api.SCRIPTNAME`"
+	api.PRINT "(e) exit\t(Shell only) Exit the script"
+	api.PRINT
+	api.PRINT "Miscellaneous:"
+	api.PRINT "(h) help\tShow this help menu"
+	api.PRINT "(v) version\tShow this script's version"
+	api.PRINT 
 }
 
-cmd=`LOWERCASE "${1}"`
+cmd=`api.LOWERCASE "${1}"`
 
 case "${cmd}" in
 	s | start )
@@ -103,14 +103,14 @@ case "${cmd}" in
 		help_prompt
 		;;
 	v | version )
-		VERSION
+		api.VERSION
 		;;
 	* )
 		if [ -z "${cmd}" ];
 		then
-			EMPTYCMD
+			api.EMPTYCMD
 		else
-			INVALID "${cmd}"
+			api.INVALID "${cmd}"
 		fi
 		;;
 esac

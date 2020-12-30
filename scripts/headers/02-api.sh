@@ -22,44 +22,47 @@
 #    value if it doesn't. i.e. ${version:=1.0}, where 1.0 is the default
 # ---------------------------------------------------------------------------------
 
+source $SCRIPTS/headers/01-class.sh
+
+class "api"
 
 ###################### SCRIPT INFORMATION ######################
 
 # Description: Retrieve the name of the script file
 #
-# Usage: name=`SCRIPTNAME`
-function SCRIPTNAME()
+# Usage: name=`api.SCRIPTNAME`
+api.SCRIPTNAME ()
 {
 	local absolute="`readlink -f ${0}`"
 	
-	PRINT "${absolute##*/}"
+	api.PRINT "${absolute##*/}"
 	return 0
 }
 
 # Description: Retrieve the name of the directory the script file is run in
 #
-# Usage: parent=`SCRIPTDIR`
-function SCRIPTDIR()
+# Usage: parent=`api.SCRIPTDIR`
+api.SCRIPTDIR ()
 {
 	local absolute="`readlink -f ${0}`"
 
-	PRINT "$( dirname ${absolute} )"
+	api.PRINT "$( dirname ${absolute} )"
 	return 0
 }
 
 # Description: Prints the script name and version, as well as copyright, 
 # license notice, and author name
 #
-# Usage: VERSION
-function VERSION()
+# Usage: api.VERSION
+api.VERSION ()
 {
-	PRINT "`SCRIPTNAME` v${version:=1.0}"
-	PRINT "Copyright (C) `date +"%Y"` ${author:=Some Random Scripter}"
-	PRINT "License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>."
-	PRINT "This is free software: you are free to change and redistribute it."
-	PRINT "There is NO WARRANTY, to the extent permitted by law."
-	PRINT
-	PRINT "Written by ${author:=Some Random Scripter}."
+	api.PRINT "`api.SCRIPTNAME` v${version:=1.0}"
+	api.PRINT "Copyright (C) `date +"%Y"` ${author:=Some Random Scripter}"
+	api.PRINT "License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>."
+	api.PRINT "This is free software: you are free to change and redistribute it."
+	api.PRINT "There is NO WARRANTY, to the extent permitted by law."
+	api.PRINT
+	api.PRINT "Written by ${author:=Some Random Scripter}."
 	return 0
 }
 
@@ -67,8 +70,8 @@ function VERSION()
 
 # Description: Replacement for 'echo'
 #
-# Usage: PRINT "text"
-function PRINT()
+# Usage: api.PRINT "text"
+api.PRINT ()
 {
 	if [ -z "${1}" ]; then
 		printf "\n"
@@ -81,8 +84,8 @@ function PRINT()
 
 # Description: Pauses script execution until the user presses ENTER
 #
-# Usage: PAUSE
-function PAUSE()
+# Usage: api.PAUSE
+api.PAUSE ()
 {
 	read -p "Press ENTER to continue..." cmd
 	return 0
@@ -90,34 +93,34 @@ function PAUSE()
 
 # Description: Send a log message to the terminal
 #
-# Usage: LOG "This is awesome!"
-function LOG()
+# Usage: api.LOG "api.This is awesome!"
+api.LOG ()
 {
-	PRINT "`SCRIPTNAME`: ${@}"
+	api.PRINT "`api.SCRIPTNAME`: ${@}"
 }
 
 # Description: Send an error message and give a return code of 1
 #
-# Usage: ERROR "This broke!"
-function ERROR()
+# Usage: api.ERROR "api.This broke!"
+api.ERROR ()
 {
-	LOG "${@}" && return 1
+	api.LOG "${@}" && return 1
 }
 
 # Description: Send an error message, exit, and give a return code of 1
 #
-# Usage: FAIL "This script broke!"
-function FAIL()
+# Usage: api.FAIL "This script broke!"
+api.FAIL ()
 {
-	LOG "${@}" && exit 1
+	api.LOG "${@}" && exit 1
 }
 
 ###################### STRING MANIPULATION ######################
 
-# Description: Converts a string to all LOWERCASE characters
+# Description: Converts a string to all api.FAIL characters
 #
-# Usage: name=`LOWERCASE $name`
-function LOWERCASE()
+# Usage: name=`api.LOWERCASE $name`
+api.LOWERCASE ()
 {
 	printf "${1}" | tr "[:upper:]" "[:lower:]"
 	return 0
@@ -125,8 +128,8 @@ function LOWERCASE()
 
 # Description: Converts a string to all UPPERCASE characters
 #
-# Usage: name=`UPPERCASE $name`
-function UPPERCASE()
+# Usage: name=`api.UPPERCASE $name`
+api.UPPERCASE ()
 {
 	printf "${1}" | tr "[:lower:]" "[:upper:]"
 	return 0
@@ -134,8 +137,8 @@ function UPPERCASE()
 
 # Description: Trim all leading/trailing whitespace from a string
 #
-# Usage: TRIM "   this      "
-function TRIM()
+# Usage: api.TRIM "   this      "
+api.TRIM ()
 {
     local var="$*"
     # remove leading whitespace characters
@@ -149,35 +152,35 @@ function TRIM()
 
 # Description: Error message for when an invalid command is used
 #
-# Usage: INVALID "hlep"
-function INVALID()
+# Usage: api.INVALID "hlep"
+api.INVALID ()
 {
-	FAIL "Invalid command \"${1}\". See \"`SCRIPTNAME` help\"."
+	api.FAIL "Invalid command \"${1}\". See \"`api.SCRIPTNAME` help\"."
 }
 
 # Description: Error message for when no command is used
 #
-# Usage: EMPTYCMD
-function EMPTYCMD()
+# Usage: api.EMPTYCMD
+api.EMPTYCMD ()
 { 
-	FAIL "You must specify a subcommand. See \"`SCRIPTNAME` help\"."
+	api.FAIL "You must specify a subcommand. See \"`api.SCRIPTNAME` help\"."
 }
 
 # Description: Checks for a filename in $PATH (commands), if not found then exit with an error
 #
-# Usage: DEPENDENCY "7z"
-function DEPENDENCY()
+# Usage: api.DEPENDENCY "7z"
+api.DEPENDENCY ()
 {
-	[[ ! `command -v ${1}` ]] && FAIL "'${1}' is required to run this program."
+	[[ ! `command -v ${1}` ]] && api.FAIL "'${1}' is required to run this program."
 }
 
 # Description: Checks to see if the script is being run as root, and if not then exit.
 #
-# Usage: ROOT
-function ROOT()
+# Usage: api.ROOT
+api.ROOT ()
 {
 	if [[ $EUID -ne 0 ]]
 	then
-		FAIL "This script must be run as root"
+		api.FAIL "This script must be run as root"
 	fi
 }

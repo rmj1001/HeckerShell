@@ -16,7 +16,7 @@ version='1.0'
 author='Nidia Achrys'
 
 # Source common script functions
-source $SCRIPTS/01-api.sh
+source $SCRIPTS/headers/02-api.sh
 
 #############
 # Core Code #
@@ -64,7 +64,7 @@ makeEntry() {
 
     file="${XDG_AUTOSTART}/${filename}.desktop"
 
-    [[ -f "${file}" ]] && FAIL "${filename} already exists!"
+    [[ -f "${file}" ]] && api.FAIL "${filename} already exists!"
 
     touch ${file}
 
@@ -79,9 +79,9 @@ makeEntry() {
 
     # Add entry information to the file
     TEMPLATE
-    PRINT ${_template} > ${file}
+    api.PRINT ${_template} > ${file}
 
-    LOG "Created ${filename}!"
+    api.LOG "Created ${filename}!"
     exit 0
 
 }
@@ -96,10 +96,10 @@ editEntry() {
   if [[ -f "${file}" ]]
   then
     ${EDITOR} ${file}
-    LOG "Edited ${filename}!"
+    api.LOG "Edited ${filename}!"
     exit 0
   else
-    FAIL "Entry ${filename} does not exist!"
+    api.FAIL "Entry ${filename} does not exist!"
   fi
 }
 
@@ -113,10 +113,10 @@ removeEntry() {
   if [[ -e "${file}" ]]
   then
     rm -rf ${file}
-    LOG "Removed ${filename}!"
+    api.LOG "Removed ${filename}!"
     exit 0
   else
-    FAIL "Entry ${filename} does not exist!"
+    api.FAIL "Entry ${filename} does not exist!"
   fi
 }
 
@@ -134,40 +134,40 @@ printEntry() {
 
   if [[ -e "${file}" ]]
   then
-    PRINT 
-    PRINT 
+    api.PRINT 
+    api.PRINT 
     cat ${file}
     exit 0
   else
-    FAIL "${filename} does not exist!"
+    api.FAIL "${filename} does not exist!"
   fi
 }
 
 helpPrompt() {
-  PRINT 
-  PRINT "Manage XDG Autostart desktop entries."
-  PRINT
-  PRINT "Usage: `SCRIPTNAME` [command] [FLAGS]... [VALUES]..." 
-  PRINT "Example: `SCRIPTNAME` c discord"
-  PRINT "Example: `SCRIPTNAME` l"
-  PRINT
-  PRINT "Options: "
-  PRINT "(c) create\t\tCreate an autostart entry and exit"
-  PRINT "(e) edit\t\tEdit an autostart entry and exit"
-  PRINT "(r) remove\t\tRemove an autostart entry and exit"
-  PRINT "(l) list\t\tList all entries and exit"
-  PRINT "(p) print\t\tDisplay an entry's contents and exit"
-  PRINT
-  PRINT "Miscellaneous:"
-  PRINT "(h) help\t\tDisplay this help and exit"
-  PRINT "(v) version\t\tDisplay this script's version and exit"
+  api.PRINT 
+  api.PRINT "Manage XDG Autostart desktop entries."
+  api.PRINT
+  api.PRINT "Usage: `api.SCRIPTNAME` [command] [FLAGS]... [VALUES]..." 
+  api.PRINT "Example: `api.SCRIPTNAME` c discord"
+  api.PRINT "Example: `api.SCRIPTNAME` l"
+  api.PRINT
+  api.PRINT "Options: "
+  api.PRINT "(c) create\t\tCreate an autostart entry and exit"
+  api.PRINT "(e) edit\t\tEdit an autostart entry and exit"
+  api.PRINT "(r) remove\t\tRemove an autostart entry and exit"
+  api.PRINT "(l) list\t\tList all entries and exit"
+  api.PRINT "(p) print\t\tDisplay an entry's contents and exit"
+  api.PRINT
+  api.PRINT "Miscellaneous:"
+  api.PRINT "(h) help\t\tDisplay this help and exit"
+  api.PRINT "(v) version\t\tDisplay this script's version and exit"
   exit 0
 }
 
 # Creates the autostart directory if it does not already exist.
 [[ ! -d "${XDG_AUTOSTART}" ]] && mkdir ${XDG_AUTOSTART}
 
-cmd=`LOWERCASE ${1}`
+cmd=`api.LOWERCASE ${1}`
 
 case "${cmd}" in
   c | create )
@@ -186,12 +186,12 @@ case "${cmd}" in
     printEntry "${2}"
     ;;
   v | version )
-    VERSION
+    api.VERSION
     ;;
   \? | h | help )
     helpPrompt
     ;;
   * )
-    [ -z "${cmd}" ] && helpPrompt || INVALID "${cmd}"
+    [ -z "${cmd}" ] && helpPrompt || api.INVALID "${cmd}"
     ;;
 esac
