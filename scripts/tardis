@@ -309,11 +309,25 @@ case "${cmd}" in
     	;;
 	r | restore)
 		tardis.target.get $2
-		tardis.backups.restore $3
+
+		if [ "${TARGET}" != "${2}" ]
+		then
+			tardis.backups.restore "${2}"
+		else
+			tardis.backups.restore "${3}"
+		fi
+
 		;;
 	d | delete )
 		tardis.target.get $2
-		tardis.backups.remove $2
+		
+		if [ "${TARGET}" != "${2}" ]
+		then
+			tardis.backups.remove "${2}"
+		else
+			tardis.backups.remove "${3}"
+		fi
+
 		;;
 	l | list )
 		tardis.target.get $2
