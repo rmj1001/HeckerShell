@@ -17,6 +17,14 @@ author='Nidia Achrys'
 # Source common script functions
 source $SCRIPTS/libs/01-api.sh
 
+# Help
+api.script.description "Manage emoji installation on your Linux system"
+api.script.usage "[command] [args]"
+api.script.example "install"
+
+api.script.option "i" "install" "Install Noto Color Emoji"
+api.script.option "u" "uninstall" "Uninstall Noto Color Emoji"
+
 #############
 # Core Code #
 #############
@@ -114,25 +122,6 @@ emojictl.emojis.uninstall ()
 	api.std.pause
 }
 
-emojictl.help ()
-{
-	api.std.printLn 
-	api.std.printLn "Manage emoji installation on your Linux system"
-	api.std.printLn 
-	api.std.printLn "Usage: `api.script.name` [command] [args]"
-	api.std.printLn "Example: `api.script.name` install"
-	api.std.printLn
-	api.std.printLn "Commands:"
-	api.std.printLn "(i) install\tInstall Noto Color Emoji"
-	api.std.printLn "(u) uninstall\tUninstall Noto Color Emoji"
-	api.std.printLn "(e) exit\t(Shell only) exit the shell"
-	api.std.printLn 
-	api.std.printLn "Miscellaneous:"
-	api.std.printLn "(h) help\tShow this help menu"
-	api.std.printLn "(v) version\tShow this script's version"
-	api.std.printLn 
-}
-
 cmd=`api.string.toLowerCase "${1}"`
 
 case "${cmd}" in
@@ -146,7 +135,7 @@ case "${cmd}" in
 		exit 0
 		;;
 	help | h | \? )
-		emojictl.help
+		api.script.help
 		exit 0
 		;;
 	version | v )
@@ -154,7 +143,7 @@ case "${cmd}" in
 		exit 0
 		;;
 	* )
-		[ -z "${cmd}" ] && emojictl.help || api.errors.invalidCommand && exit 1
+		[ -z "${cmd}" ] && api.script.help || api.errors.invalidCommand && exit 1
 		;;
 
 esac

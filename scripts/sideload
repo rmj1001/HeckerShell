@@ -17,31 +17,19 @@ author='Nidia Achrys'
 # Source common script functions
 source $SCRIPTS/libs/01-api.sh
 
+# Help
+api.script.description "Install/uninstall Appimages"
+api.script.usage "[command] [args]"
+api.script.example "install ./app.AppImage"
+
+api.script.option "c" "init [shellrc]" "Initialize $(api.script.name)'s settings."
+api.script.option "i" "install" "Install an appimage"
+api.script.option "u" "uninstall" "Uninstall an appimage"
+api.script.option "l" "list" "List all appimages"
+
 #############
 # Core Code #
 #############
-
-# Help Menu
-sideload.help ()
-{
-
-	api.std.printLn 
-	api.std.printLn "Install/uninstall Appimages"
-	api.std.printLn 
-	api.std.printLn "Usage: `api.script.name` [command] [args]"
-	api.std.printLn "Example: `api.script.name` install ./app.appimage"
-	api.std.printLn 
-	api.std.printLn "Commands:"
-	api.std.printLn "init [shellrc] \t\t\t Initialize Sideload"
-	api.std.printLn "(i) install [file] \t\t Install an appimage"
-	api.std.printLn "(u) uninstall [name] \t\t Uninstall an appimage"
-	api.std.printLn "(l) list \t\t\t List all appimages"
-	api.std.printLn 
-	api.std.printLn "Miscellaneous"
-	api.std.printLn "(h) help \t\t\t Show this prompt"
-	api.std.printLn "(v) version \t\t\t Print the version of this script"
-	return 0
-}
 
 # Initializiation
 sideload.init.init ()
@@ -164,7 +152,7 @@ case "${command}" in
 		;;
 
 	\? | h | help )
-		sideload.help
+		api.script.help
 		;;
 
 	v | version )
@@ -172,7 +160,7 @@ case "${command}" in
 		;;
 
 	*)
-		[ -z "${command}" ] && sideload.help || api.errors.invalidCommand "${command}"
+		[ -z "${command}" ] && api.script.help || api.errors.invalidCommand "${command}"
 		return 1
 		;;
 esac

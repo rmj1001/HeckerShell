@@ -17,6 +17,17 @@ author='Nidia Achrys'
 # Source common script functions
 source $SCRIPTS/libs/01-api.sh
 
+# Help
+api.script.description "Manage your trash bin"
+api.script.usage "[command] <file?>"
+api.script.example "add <file>"
+
+api.script.option "a" "add" "Add a file to the trash"
+api.script.option "r" "restore" "Restore a file from the trash"
+api.script.option "e" "empty" "Empty the trash bin"
+api.script.option "i" "info" "Get a trashed file's metadata"
+api.script.option "l" "list" "List the contents of the trash bin"
+
 #############
 # Core Code #
 #############
@@ -138,26 +149,6 @@ trash.files.information()
   fi
 }
 
-trash.help()
-{
-  api.std.printLn 
-  api.std.printLn "Manage your trash bin"
-  api.std.printLn
-  api.std.printLn "Usage: `api.script.name` [command] <file>"
-  api.std.printLn "Example: `api.script.name` add <file>"
-  api.std.printLn
-  api.std.printLn "Commands:"
-  api.std.printLn "(a) add\t\t\tAdd a FILE to the trash"
-  api.std.printLn "(r) restore\t\tRestore a FILE from the trash"
-  api.std.printLn "(e) empty\t\tEmpty the trash bin"
-  api.std.printLn "(l) list\t\tList the contents of the trash bin"
-  api.std.printLn "(i) info\t\tGet a FILE's trash metadata"
-  api.std.printLn
-  api.std.printLn "Miscellaneous"
-  api.std.printLn "(h) help\t\tShow this prompt"
-  api.std.printLn "(v) version\t\tPrint the version of this script"
-}
-
 cmd=`api.string.toLowerCase "${1}"`
 
 case "${cmd}" in
@@ -181,9 +172,9 @@ case "${cmd}" in
     api.script.version
     ;;
   \? | h | help )
-    trash.help
+    api.script.help
     ;;
   * )
-  	[ -z "${cmd}" ] && trash.help || api.errors.invalidCommand "${1}"
+  	[ -z "${cmd}" ] && api.script.help || api.errors.invalidCommand "${1}"
     ;;
 esac

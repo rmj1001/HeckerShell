@@ -18,6 +18,19 @@ author='Nidia Achrys'
 # Source common script functions
 source $SCRIPTS/libs/01-api.sh
 
+# Help
+api.script.description "Create, edit, remove, or print scripts."
+api.script.usage "[command] [args]"
+api.script.example "create torrentctl"
+api.script.example "list"
+
+api.script.option "c" "create" "Create a new script"
+api.script.option "e" "edit" "Edit an existing script"
+api.script.option "r" "rename" "Rename an existing script"
+api.script.option "d" "delete" "Delete an existing script"
+api.script.option "p" "print" "Print a script to the terminal"
+api.script.option "l" "list" "List all scripts"
+
 #############
 # Core Code #
 #############
@@ -52,6 +65,15 @@ author=''
 
 # Source common script functions
 source \$SCRIPTS/libs/01-api.sh
+
+# Help
+api.script.description ""
+api.script.usage ""
+api.script.example ""
+
+api.script.option "" "" ""
+
+api.script.setting "" "" ""
 
 #############
 # Core Code #
@@ -256,28 +278,6 @@ scriptctl.scripts.list ()
 	return 0
 }
 
-# Help prompt
-scriptctl.help ()
-{
-	api.std.printLn "Create, edit, remove, or print scripts."
-	api.std.printLn 
-	api.std.printLn "Usage: `api.script.name` [command] [args]"
-	api.std.printLn "Example: `api.script.name` create torrentctl"
-	api.std.printLn 
-	api.std.printLn "Commands:"
-	api.std.printLn "(c) create\t\tCreate a new script"
-	api.std.printLn "(e) edit\t\tEdit an existing script"
-	api.std.printLn "(r) rename\t\tRename an existing script"
-	api.std.printLn "(d) delete\t\tDelete an existing script"
-	api.std.printLn "(p) print\t\tPrint a script to STDOUT"
-	api.std.printLn "(l) list\t\tList all scripts"
-	api.std.printLn 
-	api.std.printLn "Miscellaneous:"
-	api.std.printLn "(h) help\t\tdisplay this help and exit"
-	api.std.printLn "(v) version\t\toutput version information and exit"
-	return 0
-}
-
 # Create the scripts directory if it does not already exist.
 [[ ! -d "${SCRIPTS}" ]] && mkdir ${SCRIPTS}
 
@@ -307,10 +307,10 @@ case "${cmd}" in
 		api.script.version
 		;;
 	\? | h | help )
-		scriptctl.help
+		api.script.help
 		;;
 	* )
-		[ -z "${cmd}" ] && scriptctl.help || api.errors.invalidCommand "${cmd}"
+		[ -z "${cmd}" ] && api.script.help || api.errors.invalidCommand "${cmd}"
 		;;
 esac
 

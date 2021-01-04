@@ -18,6 +18,19 @@ author='Nidia Achrys'
 # Source common script functions
 source $SCRIPTS/libs/01-api.sh
 
+# Help
+api.script.description "Manage XDG Autostart desktop entries."
+
+api.script.usage "[command] [FLAGS]... [VALUES]..."
+api.script.example "c discord"
+api.script.example "l"
+
+api.script.option "c" "create" "Create an autostart entry"
+api.script.option "e" "edit" "Edit an autostart entry"
+api.script.option "r" "remove" "Remove an autostart entry"
+api.script.option "l" "list" "List all autostart entries"
+api.script.option "p" "print" "Display an autostart entry's contents"
+
 #############
 # Core Code #
 #############
@@ -98,7 +111,7 @@ autostartctl.entry.edit() {
   fi
 }
 
-autostartctl.entry.edit() {
+autostartctl.entry.delete() {
   filename="${1}"
 
   [[ -z "${filename}" ]] && read -p "Name of Entry: " filename
@@ -116,7 +129,7 @@ autostartctl.entry.edit() {
 }
 
 autostartctl.entry.list() {
-  ls -1 --group-directories-first ${XDG_AUTOSTART} | sed -e 's/\.desktop//'
+  find ${XDG_AUTOSTART} -name '*.desktop' -exec basename {} \;
   exit 0
 }
 
@@ -138,27 +151,6 @@ autostartctl.entry.print() {
   fi
 }
 
-autostartctl.help() {
-  api.std.printLn 
-  api.std.printLn "Manage XDG Autostart desktop entries."
-  api.std.printLn
-  api.std.printLn "Usage: `api.script.name` [command] [FLAGS]... [VALUES]..." 
-  api.std.printLn "Example: `api.script.name` c discord"
-  api.std.printLn "Example: `api.script.name` l"
-  api.std.printLn
-  api.std.printLn "Options: "
-  api.std.printLn "(c) create\t\tCreate an autostart entry and exit"
-  api.std.printLn "(e) edit\t\tEdit an autostart entry and exit"
-  api.std.printLn "(r) remove\t\tRemove an autostart entry and exit"
-  api.std.printLn "(l) list\t\tList all entries and exit"
-  api.std.printLn "(p) print\t\tDisplay an entry's contents and exit"
-  api.std.printLn
-  api.std.printLn "Miscellaneous:"
-  api.std.printLn "(h) help\t\tDisplay this help and exit"
-  api.std.printLn "(v) version\t\tDisplay this script's version and exit"
-  exit 0
-}
-
 # Creates the autostart directory if it does not already exist.
 [[ ! -d "${XDG_AUTOSTART}" ]] && mkdir ${XDG_AUTOSTART}
 
@@ -172,7 +164,7 @@ case "${cmd}" in
     autostartctl.entry.edit "${2}"
     ;;
   r | remove )
-    autostartctl.entry.edit "${2}"
+    autostartctl.entry.delete "${2}"
     ;;
   l | list )
     autostartctl.entry.list
@@ -184,9 +176,9 @@ case "${cmd}" in
     api.script.version
     ;;
   \? | h | help )
-    autostartctl.help
+    api.script.help
     ;;
   * )
-    [ -z "${cmd}" ] && autostartctl.help || api.errors.invalidCommand "${cmd}"
+    [ -z "${cmd}" ] && api.script.help || api.errors.invalidCommand "${cmd}"
     ;;
 esac

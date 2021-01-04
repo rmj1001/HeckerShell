@@ -19,6 +19,13 @@ author='Nidia Achrys'
 # Source common script functions
 source $SCRIPTS/headers/02-api.sh
 
+# Help
+api.script.description "Enable/disable sound sharing for discord with Pulseaudio"
+api.script.usage "[command]"
+api.script.example "start"
+
+api.script.option "s" "start" "Start the sound sharing"
+
 #############
 # Core Code #
 #############
@@ -76,25 +83,6 @@ golive.run ()
 	golive.cleanup
 }
 
-golive.help ()
-{
-	api.std.printLn 
-	api.std.printLn "Enable/disable sound sharing for discord with Pulseaudio"
-	api.std.printLn 
-	api.std.printLn "Usage: `api.script.name` [command] [args]"
-	api.std.printLn "Example: `api.script.name` start"
-	api.std.printLn
-	api.std.printLn "Commands:"
-	api.std.printLn "(s) start\tStart the sound sharing"
-	api.std.printLn "(i) shell\tUse the interactive shell to work with `api.script.name`"
-	api.std.printLn "(e) exit\t(Shell only) Exit the script"
-	api.std.printLn
-	api.std.printLn "Miscellaneous:"
-	api.std.printLn "(h) help\tShow this help menu"
-	api.std.printLn "(v) version\tShow this script's version"
-	api.std.printLn 
-}
-
 cmd=`api.string.toLowerCase "${1}"`
 
 case "${cmd}" in
@@ -102,7 +90,7 @@ case "${cmd}" in
 		golive.run
 		;;
 	\? | h | help )
-		golive.help
+		api.script.help
 		;;
 	v | version )
 		api.script.version
@@ -110,7 +98,7 @@ case "${cmd}" in
 	* )
 		if [ -z "${cmd}" ];
 		then
-			api.errors.emptyCommand
+			api.script.help
 		else
 			api.errors.invalidCommand "${cmd}"
 		fi

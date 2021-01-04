@@ -17,6 +17,22 @@ author='Nidia Achrys'
 # Source common script functions
 source $SCRIPTS/libs/01-api.sh
 
+# Help
+api.script.description "Create, restore, and list backups."
+api.script.usage "[command] [args]"
+api.script.example "backup <disk path>"
+
+api.script.option "b" "backup" "Create a backup"
+api.script.option "r" "restore" "Restore a backup"
+api.script.option "d" "delete" "Delete a backup"
+api.script.option "l" "list" "List all backups"
+
+api.script.setting "a" "toggle-automatic" "Toggle automatic backups"
+api.script.setting "t" "default-target" "Set a default target for future backups"
+api.script.setting "e" "exclusions" "Create or edit the exclusions file"
+api.script.setting "pt" "print-target" "Print the default target to the terminal"
+api.script.setting "pe" "print-exclusions" "Print out every excluded file/directory name"
+
 #############
 # Core Code #
 #############
@@ -106,24 +122,33 @@ tardis.backups.restore()
 # Remove a backup
 tardis.backups.remove()
 {
-	BACKUPDIR="${TARGET}/${1}"
+	BNAME="${1}"
+	BACKUPDIR="${TARGET}/${BNAME}"
 
 	# Check if the backup directory exists
-	[ ! -d "${BACKUPDIR}" ] && api.std.failMsg "That backup does not exist!"
+	[ ! -d "${BACKUPDIR}" ] && api.std.failMsg "Backuo '${BNAME}' does not exist!"
 
 	# Confirm whether to remove the backup
-	read -p "Are you sure you want to remove this backup? (y/N) " confirmation
+	read -p "Are you sure you want to remove backup '${BNAME}'? (y/N) " confirmation
 	
 	# Make the confirmation text lowercase
 	confirmation=`api.string.toLowerCase "${confirmation}"`
 
 	# Remove the backup directory if the user chose 'y' or 'yes' at the prompt
-	[ "${confirmation}" == "y" ] && rm -rf "${BACKUPDIR}" && return 0
-	[ "${confirmation}" == "yes" ] && rm -rf "${BACKUPDIR}" && return 0
+	if [ "${confirmation}" == 'y' ] || [ "${confirmation}" == 'yes' ];
+	then
+		
+		# Remove the backup directory
+		rm -rf "${BACKUPDIR}"
+		return 0
+	
+	else
 
-	# Cancel the removal of a backup if the user didn't choose 'y' or 'yes' at the prompt
-	api.std.logMsg "Cancelling..."
-	return 0
+		# Cancel the removal of a backup if the user didn't choose 'y' or 'yes' at the prompt
+		api.std.logMsg "Cancelling..."
+		return 0
+
+	fi
 }
 
 # List all the previous backups in the target
@@ -260,35 +285,6 @@ tardis.settings.exclusions.print()
 	cat ${EXCLUSION_FILE}
 }
 
-# Help Prompt
-tardis.help()
-{
-	api.std.printLn
-	api.std.printLn "Create, restore, and list backups."
-	api.std.printLn 
-	api.std.printLn "Usage: `api.script.name` [command] [args]"
-	api.std.printLn "Example: `api.script.name` backup <disk path>"
-	api.std.printLn 
-	api.std.printLn "Commands"
-	api.std.printLn "(b) backup\t\tCreate a backup"
-	api.std.printLn "(r) restore\t\tRestore a backup"
-	api.std.printLn "(d) delete\t\tDelete a backup"
-	api.std.printLn "(l) list\t\tList all backups"
-	api.std.printLn
-	api.std.printLn "Settings"
-	api.std.printLn "(a) toggle-automatic\tToggle automatic backups"
-	api.std.printLn "(t) default-target\tSet a default target for future backups"
-	api.std.printLn "(e) exclusions\t\tCreate or edit the exclusions file"
-	api.std.printLn "(pt) print-target\tPrint the default target to the terminal"
-	api.std.printLn "(pe) print-exclusions\tPrint out every excluded file/directory name"
-	api.std.printLn 
-	api.std.printLn "Miscellaneous"
-	api.std.printLn "(h) help\t\tShow this prompt"
-	api.std.printLn "(v) version\t\tPrint the version of this script"
-	api.std.printLn
-	return 0
-}
-
 # Make the command invocation lowercase
 cmd=`api.string.toLowerCase ${1}`
 
@@ -304,7 +300,7 @@ case "${cmd}" in
 		;;
 	d | delete )
 		tardis.target.get $2
-		tardis.backups.remove
+		tardis.backups.remove $2
 		;;
 	l | list )
 		tardis.target.get $2
@@ -330,10 +326,10 @@ case "${cmd}" in
 		api.script.version
 		;;
 	\? | h | help )
-		tardis.help
+		api.script.help
 		;;
 	* )
-		[ -z "${cmd}" ] && tardis.help || api.errors.invalidCommand "${cmd}"
+		[ -z "${cmd}" ] && api.script.help || api.errors.invalidCommand "${cmd}"
 		;;
 esac
 
