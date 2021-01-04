@@ -307,18 +307,7 @@ case "${cmd}" in
 		;;
 	d | delete )
 		tardis.target.get $2
-<<<<<<< HEAD
 		tardis.backups.remove $2
-=======
-		
-		if [ "${TARGET}" != "${2}" ]
-		then
-			tardis.backups.remove "${2}"
-		else
-			tardis.backups.remove "${3}"
-		fi
-
->>>>>>> b72b674310a498961c03a8985d8e1ae9b0cc04f7
 		;;
 	l | list )
 		tardis.target.get $2
