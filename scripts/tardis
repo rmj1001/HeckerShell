@@ -76,8 +76,10 @@ tardis.target.get()
 # Create a backup in the target
 tardis.backups.create()
 {
+	clear
+
 	# Generate the backup name based on the date/time
-  	BACKUPNAME=$(date +"%Y-%m-%d_%H-%M-%S")
+  	local BACKUPNAME=$(date +"%Y-%m-%d_%H-%M-%S")
 
 	# Create the manifest file if it doesn't exist
   	touch "${MANIFEST}"
@@ -91,18 +93,25 @@ tardis.backups.create()
 	# Rename the backup directory to the timestamp
  	mv ${TARGET}/${USER} ${TARGET}/${BACKUPNAME}
 
-	# Confirm the backup has finished
-	api.std.logMsg "Finished backup!"
-
 	# Print the backupname to the manifest file
-	api.std.logMsg "${BACKUPNAME}" | tee -a ${MANIFEST}
+	api.std.logMsg "${BACKUPNAME}" >> ${MANIFEST}
+
+	# Confirm the backup has finished
+	clear
+	api.std.logMsg "Finished backup!"
+	api.std.pause
+	clear
+
 	return 0
 }
 
 # Restore a backup from the target
 tardis.backups.restore()
 {
-	BACKUPDIR="${TARGET}/${1}"
+	clear
+
+	# Variables
+	local BACKUPDIR="${TARGET}/${1}"
 
 	# Check if the backup directory exists
 	[ ! -d "${BACKUPDIR}" ] && api.std.failMsg "That backup does not exist!"
@@ -115,18 +124,25 @@ tardis.backups.restore()
 	done
 
 	# Confirm the restoration of the backup
+	clear
 	api.std.logMsg "'${BACKUPDIR}' restored."
+	api.std.pause
+	clear
+
 	return 0
 }
 
 # Remove a backup
 tardis.backups.remove()
 {
-	BNAME="${1}"
-	BACKUPDIR="${TARGET}/${BNAME}"
+	clear
+
+	# Variables
+	local BNAME="${1}"
+	local BACKUPDIR="${TARGET}/${BNAME}"
 
 	# Check if the backup directory exists
-	[ ! -d "${BACKUPDIR}" ] && api.std.failMsg "Backuo '${BNAME}' does not exist!"
+	[ ! -d "${BACKUPDIR}" ] && api.std.failMsg "Backup '${BNAME}' does not exist!"
 
 	# Confirm whether to remove the backup
 	read -p "Are you sure you want to remove backup '${BNAME}'? (y/N) " confirmation
@@ -138,14 +154,27 @@ tardis.backups.remove()
 	if [ "${confirmation}" == 'y' ] || [ "${confirmation}" == 'yes' ];
 	then
 		
+		# Msg
+		api.std.logMsg "Removing backup '${BNAME}'..."
+
 		# Remove the backup directory
 		rm -rf "${BACKUPDIR}"
+
+		# Confirmation
+		api.std.logMsg "Backup '${BNAME}' removed.\n"
+		api.std.pause
+		clear
+
 		return 0
 	
 	else
 
 		# Cancel the removal of a backup if the user didn't choose 'y' or 'yes' at the prompt
-		api.std.logMsg "Cancelling..."
+		api.std.logMsg "Cancelling...\n"
+		sleep 3
+		api.std.pause
+		clear
+
 		return 0
 
 	fi
@@ -265,6 +294,8 @@ tardis.settings.exclusions.set()
 			if [ "${name}" != '.' ] && [ "${name}" != '..' ]; then api.std.printLn "${name}" >> ${EXCLUSION_FILE}; fi
 		
 		done
+		
+		api.std.printLn "\n\n" >> ${EXCLUSION_FILE}
 
 		# Confirmation of the exclusion file's existence
 		api.std.logMsg "Created exclusions file!"

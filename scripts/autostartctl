@@ -129,7 +129,7 @@ autostartctl.entry.delete() {
 }
 
 autostartctl.entry.list() {
-  find ${XDG_AUTOSTART} -name '*.desktop' -exec basename {} \;
+  find ${XDG_AUTOSTART} -name '*.desktop' -exec basename {} \; | sort
   exit 0
 }
 

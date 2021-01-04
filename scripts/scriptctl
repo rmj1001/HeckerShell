@@ -67,13 +67,15 @@ author=''
 source \$SCRIPTS/libs/01-api.sh
 
 # Help
-api.script.description ""
-api.script.usage ""
-api.script.example ""
+api.script.description \"\"
+api.script.usage \"\"
+api.script.example \"\"
 
-api.script.option "" "" ""
+# Options (aka subcommands)
+api.script.option \"\" \"\" \"\"
 
-api.script.setting "" "" ""
+# Settings (like options)
+api.script.setting \"\" \"\" \"\"
 
 #############
 # Core Code #
@@ -81,6 +83,27 @@ api.script.setting "" "" ""
 
 # This is where you put your script's functions, variables, logic, etc.
 
+###############
+# CLI Handler #
+###############
+
+# Feel free to remove this if your script doesn't take in subcommands
+
+cmd=\"\$(api.string.toLowerCase \${1})\"
+
+case \"\${cmd}\" in
+	v | version )
+		api.script.version
+		;;
+	\? | h | help )
+		api.script.help
+		;;
+	* )
+		[ -z \"\${cmd}\" ] && api.script.help || api.errors.invalidCommand \"\${1}\"
+		;;
+esac
+
+exit \$?
 "
 }
 
@@ -274,7 +297,7 @@ scriptctl.script.print ()
 # List all files in the scripts directory
 scriptctl.scripts.list ()
 {
-	find $SCRIPTS/ -maxdepth 1 -type f -executable -exec basename {} \;
+	find $SCRIPTS/ -maxdepth 1 -type f -executable -exec basename {} \; | sort
 	return 0
 }
 

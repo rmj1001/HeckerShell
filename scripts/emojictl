@@ -49,7 +49,7 @@ CONFDIR=$HOME/.config/fontconfig/conf.d
 NOTOPKG="$HOME/Downloads/$(basename ${EMOJIPKG})"
 TEMP=$HOME/Downloads/temp
 FONTS=$HOME/.fonts
-FILE=$HOME/.fonts/NotoColorEmoji.ttf
+FILE=${FONTS}/NotoColorEmoji.ttf
 
 # cmd
 cmd=""
@@ -90,11 +90,12 @@ emojictl.emojis.install ()
 	rm -rf $TEMP
 	
 	# Post
-	api.std.printLn 
+	clear
 	api.std.printLn 
 	api.std.logMsg "Install finished."
 	api.std.printLn 
 	api.std.pause
+	clear
 }
 
 emojictl.emojis.uninstall ()
@@ -115,11 +116,12 @@ emojictl.emojis.uninstall ()
 	fc-cache -fv
 	
 	# Post
-	api.std.printLn 
+	clear
 	api.std.printLn 
 	api.std.logMsg "Uninstall finished."
 	api.std.printLn 
 	api.std.pause
+	clear
 }
 
 cmd=`api.string.toLowerCase "${1}"`

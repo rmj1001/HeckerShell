@@ -162,7 +162,7 @@ case "${cmd}" in
     trash.files.empty
     ;;
   l | list )
-    ls --color=auto -alvhF --group-directories-first $TRASH 
+    ls --color=auto -AlvhF --group-directories-first $TRASH
     exit 0
     ;;
   i | info )
