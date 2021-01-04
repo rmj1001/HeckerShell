@@ -106,24 +106,33 @@ tardis.backups.restore()
 # Remove a backup
 tardis.backups.remove()
 {
-	BACKUPDIR="${TARGET}/${1}"
+	BNAME="${1}"
+	BACKUPDIR="${TARGET}/${BNAME}"
 
 	# Check if the backup directory exists
-	[ ! -d "${BACKUPDIR}" ] && api.std.failMsg "That backup does not exist!"
+	[ ! -d "${BACKUPDIR}" ] && api.std.failMsg "Backuo '${BNAME}' does not exist!"
 
 	# Confirm whether to remove the backup
-	read -p "Are you sure you want to remove this backup? (y/N) " confirmation
+	read -p "Are you sure you want to remove backup '${BNAME}'? (y/N) " confirmation
 	
 	# Make the confirmation text lowercase
 	confirmation=`api.string.toLowerCase "${confirmation}"`
 
 	# Remove the backup directory if the user chose 'y' or 'yes' at the prompt
-	[ "${confirmation}" == "y" ] && rm -rf "${BACKUPDIR}" && return 0
-	[ "${confirmation}" == "yes" ] && rm -rf "${BACKUPDIR}" && return 0
+	if [ "${confirmation}" == 'y' ] || [ "${confirmation}" == 'yes' ];
+	then
+		
+		# Remove the backup directory
+		rm -rf "${BACKUPDIR}"
+		return 0
+	
+	else
 
-	# Cancel the removal of a backup if the user didn't choose 'y' or 'yes' at the prompt
-	api.std.logMsg "Cancelling..."
-	return 0
+		# Cancel the removal of a backup if the user didn't choose 'y' or 'yes' at the prompt
+		api.std.logMsg "Cancelling..."
+		return 0
+
+	fi
 }
 
 # List all the previous backups in the target
@@ -304,7 +313,7 @@ case "${cmd}" in
 		;;
 	d | delete )
 		tardis.target.get $2
-		tardis.backups.remove
+		tardis.backups.remove $2
 		;;
 	l | list )
 		tardis.target.get $2
