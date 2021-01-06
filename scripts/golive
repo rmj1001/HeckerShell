@@ -13,17 +13,22 @@
 #		golive feature
 ##############################################
 
-version='1.0'
-author='Nidia Achrys'
-
 # Source common script functions
-source $SCRIPTS/headers/02-api.sh
+source $SCRIPTS/libs/01-api.sh
 
-# Help
+#############
+# Help Menu #
+#############
+
+api.script.author "Nidia Achrys"
+api.script.setVersion "1.0"
+
+# Description/usage/examples
 api.script.description "Enable/disable sound sharing for discord with Pulseaudio"
 api.script.usage "[command]"
 api.script.example "start"
 
+# CLI Commands
 api.script.option "s" "start" "Start the sound sharing"
 
 #############

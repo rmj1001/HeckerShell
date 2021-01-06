@@ -42,6 +42,7 @@ fetcher.fetch ()
     PKGCOUNT=""
     [[ `command -v pacman` ]] && PKGCOUNT="$PKGCOUNT`pacman -Qq | wc -l` (pacman), "
     [[ `command -v apt` ]] && PKGCOUNT="$PKGCOUNT`apt list --installed 2>/dev/null | wc -l` (apt), "
+    [[ `command -v dnf` ]] && PKGCOUNT="$PKGCOUNT`dnf list installed | wc -l` (rpm), "
     [[ `command -v flatpak` ]] && PKGCOUNT="$PKGCOUNT`flatpak list | wc -l` (flatpak), "
     [[ `command -v snap` ]] && snapCount=$(( $(snap list | wc -l) - 1 )) && PKGCOUNT="$PKGCOUNT$snapCount (snap), "
 
@@ -58,17 +59,32 @@ fetcher.fetch ()
 # Print out the information gathered
 fetcher.info()
 {
-    api.std.printLn "Category|Information"
-    api.std.printLn "  - Name|${USER}@${HOST}"
-    api.std.printLn "  - OS|${OS}"
-    api.std.printLn "  - Kernel|${KERNEL}"
-    api.std.printLn "  - Uptime|${UPTIME}"
-    api.std.printLn "  - Packages|${PKGCOUNT}"
-    api.std.printLn "  - Shell|${SHELL}"
-    api.std.printLn "  - Processor|${CPUNAME}"
-    api.std.printLn "  - Cores|${CORES}"
-    api.std.printLn "  - Memory|${MEMORY}"
+    api.std.printLn "Name|${USER}@${HOST}"
+    api.std.printLn "OS|${OS}"
+    api.std.printLn "Kernel|${KERNEL}"
+    api.std.printLn "Uptime|${UPTIME}"
+    api.std.printLn "Packages|${PKGCOUNT/%, /}"
+    api.std.printLn "Shell|${SHELL}"
+    api.std.printLn "Processor|${CPUNAME}"
+    api.std.printLn "Cores|${CORES}"
+    api.std.printLn "Memory|${MEMORY}"
 }
 
+# Retrieve
 fetcher.fetch
+
+line="---------------------------------------------------------"
+
+# Header
+api.std.printLn $line
+api.std.printLn "|                        Fetcher                        |"
+api.std.printLn $line
+
+# Print
+api.std.printLn
 fetcher.info | column -t -s "|"
+api.std.printLn
+
+# Footer
+api.std.printLn $line
+

@@ -12,18 +12,23 @@
 #		and print shell scripts.
 ##############################################
 
-version='1.0'
-author='Nidia Achrys'
-
 # Source common script functions
 source $SCRIPTS/libs/01-api.sh
 
-# Help
+#############
+# Help Menu #
+#############
+
+api.script.author "Nidia Achrys"
+api.script.setVersion "1.0"
+
+# Description/usage/examples
 api.script.description "Create, edit, remove, or print scripts."
 api.script.usage "[command] [args]"
 api.script.example "create torrentctl"
 api.script.example "list"
 
+# CLI Commands
 api.script.option "c" "create" "Create a new script"
 api.script.option "e" "edit" "Edit an existing script"
 api.script.option "r" "rename" "Rename an existing script"
@@ -60,21 +65,25 @@ _template="#!/usr/bin/env ${default_shell:=bash}
 #		${description:=Blah Blah Blah}
 ##############################################
 
-version='1.0'
-author=''
-
 # Source common script functions
 source \$SCRIPTS/libs/01-api.sh
 
-# Help
+#############
+# Help Menu #
+#############
+
+api.script.author \"${author_name:=Some Random Scripter}\"
+api.script.setVersion \"1.0\"
+
+# Description/usage/examples
 api.script.description \"\"
 api.script.usage \"\"
 api.script.example \"\"
 
-# Options (aka subcommands)
+# CLI Commands
 api.script.option \"\" \"\" \"\"
 
-# Settings (like options)
+# CLI Settings Commands
 api.script.setting \"\" \"\" \"\"
 
 #############
@@ -83,11 +92,15 @@ api.script.setting \"\" \"\" \"\"
 
 # This is where you put your script's functions, variables, logic, etc.
 
+"
+
+# Add the CLI handler to the template if the variable is true
+if [ "${includeCliHandler}" == "true" ]
+then
+_template="${_template}
 ###############
 # CLI Handler #
 ###############
-
-# Feel free to remove this if your script doesn't take in subcommands
 
 cmd=\"\$(api.string.toLowerCase \${1})\"
 
@@ -102,9 +115,9 @@ case \"\${cmd}\" in
 		[ -z \"\${cmd}\" ] && api.script.help || api.errors.invalidCommand \"\${1}\"
 		;;
 esac
-
-exit \$?
 "
+fi
+
 }
 
 # Get the name of the script to manage
@@ -115,7 +128,7 @@ scriptctl.script.getName ()
     then
 
 		# Prompt for a script name if one wasn't provided in the command line
-        read -p "Enter the name of the script: " scriptname
+        read -p "Script Name > " scriptname
 
 	else
 
@@ -136,8 +149,17 @@ scriptctl.script.create ()
 
 	# Prompt for script information
 	read -p "Shell Name > " default_shell
+	read -p "CLI handler (y/N) " includeHandler
 	read -p "Author Name > " author_name
 	read -p "Description > " description
+
+	# Determine whether to include the cli handler in the template
+	includeHandler="$(api.string.toLowerCase ${includeHandler})"
+	case "${includeHandler}" in
+
+		y | yes ) includeCliHandler="true"
+	
+	esac
 
 	# Generate the template
 	scriptctl.template.generate

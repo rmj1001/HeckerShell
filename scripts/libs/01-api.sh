@@ -18,6 +18,15 @@ class "api"
 
 ###################### SCRIPT INFORMATION ######################
 
+# Variables
+SCRIPT_AUTHOR="Some Random Dude"
+SCRIPT_VERSION="1.0"
+SCRIPT_DESCRIPTION="Some Random Description"
+SCRIPT_USAGE="[args]"
+SCRIPT_EXAMPLES=()
+SCRIPT_OPTIONS=()
+SCRIPT_SETTINGS=()
+
 # Description: Retrieve the name of the script file
 #
 # Usage: name=`api.script.name`
@@ -42,10 +51,26 @@ api.script.directory ()
 
 # Description: Set the script's description for the help menu
 #
+# Usage: api.script.author "dude"
+api.script.author ()
+{
+	SCRIPT_AUTHOR="${1}"
+}
+
+# Description: Set the script's version for the help menu
+#
+# Usage: api.script.version "1.0"
+api.script.setVersion ()
+{
+	SCRIPT_VERSION="${1}"
+}
+
+# Description: Set the script's description for the help menu
+#
 # Usage: api.script.description "some text"
 api.script.description ()
 {
-  DESCRIPTION="${1}"
+	SCRIPT_DESCRIPTION="${1}"
 }
 
 # Description: Set the script's usage for the help menu
@@ -53,7 +78,7 @@ api.script.description ()
 # Usage: api.script.usage "some text"
 api.script.usage ()
 {
-  USAGE="${1}"
+	SCRIPT_USAGE="${1}"
 }
 
 # Description: Add a script usage example for the help menu
@@ -61,7 +86,7 @@ api.script.usage ()
 # Usage: api.script.example "some text"
 api.script.example ()
 {
-  EXAMPLES+=( "${1}" )
+	SCRIPT_EXAMPLES+=( "${1}" )
 }
 
 # Description: Add a script command for the help menu
@@ -69,8 +94,8 @@ api.script.example ()
 # Usage: api.script.option "some text"
 api.script.option ()
 {
-  local entry="($1) $2 \n  - $3"
-  OPTIONS+=( "${entry}" )
+	local entry="($1) $2 \n  - $3"
+	SCRIPT_OPTIONS+=( "${entry}" )
 }
 
 # Description: Add a script setting command for the help menu
@@ -79,7 +104,7 @@ api.script.option ()
 api.script.setting ()
 {
 	local entry="($1) $2 \n  - $3"
-  	SETTINGS+=( "${entry}" )
+  	SCRIPT_SETTINGS+=( "${entry}" )
 }
 
 # Description: Automatically generate and print a help menu for the script
@@ -87,37 +112,37 @@ api.script.setting ()
 # Usage: api.script.help
 api.script.help ()
 {
-  api.std.printLn "${DESCRIPTION:=This Script does something}\n"
-  api.std.printLn "Usage: `api.script.name` ${USAGE:=[args]}"
+  api.std.printLn "${SCRIPT_DESCRIPTION}\n"
+  api.std.printLn "Usage: `api.script.name` ${SCRIPT_USAGE:=[args]}"
 
   # Examples
-  if [ ${#EXAMPLES[@]} -gt 0 ]; then
+  if [ ${#SCRIPT_EXAMPLES[@]} -gt 0 ]; then
     
-    for example in "${EXAMPLES[@]}"; do
+    for example in "${SCRIPT_EXAMPLES[@]}"; do
       api.std.printLn "Example: `api.script.name` ${example}"
     done
 
   fi
   
   # CLI options
-  if [ ${#OPTIONS[@]} -gt 0 ]; then
+  if [ ${#SCRIPT_OPTIONS[@]} -gt 0 ]; then
   
     api.std.printLn 
     api.std.printLn "Commands"
 
-	for entry in "${OPTIONS[@]}"; do
+	for entry in "${SCRIPT_OPTIONS[@]}"; do
 		api.std.printLn "${entry}"
 	done
   
   fi
 
   # Script Settings
-  if [ ${#SETTINGS[@]} -gt 0 ]; then
+  if [ ${#SCRIPT_SETTINGS[@]} -gt 0 ]; then
   
     api.std.printLn 
     api.std.printLn "Settings"
 
-    for entry in "${SETTINGS[@]}"; do
+    for entry in "${SCRIPT_SETTINGS[@]}"; do
       api.std.printLn "${entry}"
     done
   
@@ -137,13 +162,13 @@ api.script.help ()
 api.script.version ()
 {
 	api.std.printLn 
-  api.std.printLn "`api.script.name` v${version:=1.0}"
-	api.std.printLn "Copyright (C) `date +"%Y"` ${author:=Some Random Scripter}"
+  	api.std.printLn "`api.script.name` v${SCRIPT_VERSION}"
+	api.std.printLn "Copyright (C) `date +"%Y"` ${SCRIPT_AUTHOR}"
 	api.std.printLn "License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>."
 	api.std.printLn "This is free software: you are free to change and redistribute it."
 	api.std.printLn "There is NO WARRANTY, to the extent permitted by law."
 	api.std.printLn
-	api.std.printLn "Written by ${author:=Some Random Scripter}."
+	api.std.printLn "Written by ${SCRIPT_AUTHOR}."
   api.std.printLn 
 	return 0
 }

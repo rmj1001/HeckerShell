@@ -11,17 +11,22 @@
 #		This utility manages your trash bin.
 ##############################################
 
-version='1.0'
-author='Nidia Achrys'
-
 # Source common script functions
 source $SCRIPTS/libs/01-api.sh
 
-# Help
+#############
+# Help Menu #
+#############
+
+api.script.author "Nidia Achrys"
+api.script.setVersion "1.0"
+
+# Description/usage/examples
 api.script.description "Manage your trash bin"
 api.script.usage "[command] <file?>"
 api.script.example "add <file>"
 
+# CLI Commands
 api.script.option "a" "add" "Add a file to the trash"
 api.script.option "r" "restore" "Restore a file from the trash"
 api.script.option "e" "empty" "Empty the trash bin"

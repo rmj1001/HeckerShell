@@ -11,22 +11,28 @@
 #		This utility manages backups
 ##############################################
 
-version='1.0'
-author='Nidia Achrys'
-
 # Source common script functions
 source $SCRIPTS/libs/01-api.sh
 
-# Help
+#############
+# Help Menu #
+#############
+
+api.script.author "Nidia Achrys"
+api.script.setVersion "1.0"
+
+# Description/usage/examples
 api.script.description "Create, restore, and list backups."
 api.script.usage "[command] [args]"
 api.script.example "backup <disk path>"
 
+# CLI Commands
 api.script.option "b" "backup" "Create a backup"
 api.script.option "r" "restore" "Restore a backup"
 api.script.option "d" "delete" "Delete a backup"
 api.script.option "l" "list" "List all backups"
 
+# CLI Settings Commands
 api.script.setting "a" "toggle-automatic" "Toggle automatic backups"
 api.script.setting "t" "default-target" "Set a default target for future backups"
 api.script.setting "e" "exclusions" "Create or edit the exclusions file"
@@ -85,10 +91,10 @@ tardis.backups.create()
   	touch "${MANIFEST}"
 
 	# Backup files not specified in the exclusion file, if it exists
-	[ -f "${EXCLUSION_FILE}" ] && rsync -avhpru --exclude-from="${EXCLUSION_FILE}" --delete ${HOME} ${TARGET}
+	[ -f "${EXCLUSION_FILE}" ] && rsync -avhpru --stats --human-readable --exclude-from="${EXCLUSION_FILE}" --delete ${HOME} ${TARGET}
 	
 	# If the exclusions file doesn't exist, then backup all files in $HOME to the target directory.
-	[ ! -f "${EXCLUSION_FILE}" ] && rsync -avhpru --delete ${HOME} ${TARGET}
+	[ ! -f "${EXCLUSION_FILE}" ] && rsync -avhpru --stats --human-readable --delete ${HOME} ${TARGET}
 
 	# Rename the backup directory to the timestamp
  	mv ${TARGET}/${USER} ${TARGET}/${BACKUPNAME}
@@ -135,8 +141,6 @@ tardis.backups.restore()
 # Remove a backup
 tardis.backups.remove()
 {
-	clear
-
 	# Variables
 	local BNAME="${1}"
 	local BACKUPDIR="${TARGET}/${BNAME}"
@@ -144,6 +148,7 @@ tardis.backups.remove()
 	# Check if the backup directory exists
 	[ ! -d "${BACKUPDIR}" ] && api.std.failMsg "Backup '${BNAME}' does not exist!"
 
+  clear
 	# Confirm whether to remove the backup
 	read -p "Are you sure you want to remove backup '${BNAME}'? (y/N) " confirmation
 	
@@ -312,7 +317,7 @@ tardis.settings.exclusions.set()
 # Print the list of exclusions listed in $HOME/.config/tardisrsync/exclusions.conf
 tardis.settings.exclusions.print()
 {
-	[ ! -e "${EXCLUSION_FILE}" ] && api.std.errorMsg "Exclusions have not been specified." && return $?
+	[ -f "${EXCLUSION_FILE}" ] || api.std.errorMsg "Exclusions have not been specified." && return 1
 	cat ${EXCLUSION_FILE}
 }
 

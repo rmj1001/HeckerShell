@@ -18,13 +18,20 @@ author='Nidia Achrys'
 # Source common script functions
 source $SCRIPTS/libs/01-api.sh
 
-# Help
-api.script.description "Manage XDG Autostart desktop entries."
+#############
+# Help Menu #
+#############
 
+api.script.author "Nidia Achrys"
+api.script.setVersion "1.0"
+
+# Description/usage/examples
+api.script.description "Manage XDG Autostart desktop entries."
 api.script.usage "[command] [FLAGS]... [VALUES]..."
 api.script.example "c discord"
 api.script.example "l"
 
+# CLI Commands
 api.script.option "c" "create" "Create an autostart entry"
 api.script.option "e" "edit" "Edit an autostart entry"
 api.script.option "r" "remove" "Remove an autostart entry"
@@ -51,14 +58,12 @@ path=''
 
 autostartctl.generateTemplate ()
 {
-_template="
-[Desktop Entry]
+_template="[Desktop Entry]
 Name=${name}
 Exec=${binary}
 Type=${apptype}
 Categories=${categories}
-Hidden=true
-"
+Hidden=true"
 
 [ -n "${generic}" ] && _template="${_template}\nGenericName=${generic}"
 [ -n "${icon}" ] && _template="${_template}\nIcon=${icon}"
@@ -87,7 +92,7 @@ autostartctl.entry.create() {
 
     # Add entry information to the file
     autostartctl.generateTemplate
-    api.std.printLn ${_template} > ${file}
+    api.std.printLn "${_template}" > ${file}
 
     api.std.logMsg "Created ${filename}!"
     exit 0

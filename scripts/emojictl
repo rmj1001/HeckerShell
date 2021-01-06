@@ -11,17 +11,23 @@
 #		Install/uninstall Noto Color Emoji on Linux
 ##############################################
 
-version='1.0'
-author='Nidia Achrys'
-
 # Source common script functions
 source $SCRIPTS/libs/01-api.sh
 
-# Help
+
+#############
+# Help Menu #
+#############
+
+api.script.author "Nidia Achrys"
+api.script.setVersion "1.0"
+
+# Description/usage/examples
 api.script.description "Manage emoji installation on your Linux system"
 api.script.usage "[command] [args]"
 api.script.example "install"
 
+# CLI Commands
 api.script.option "i" "install" "Install Noto Color Emoji"
 api.script.option "u" "uninstall" "Uninstall Noto Color Emoji"
 
