@@ -112,6 +112,7 @@ api.script.setting ()
 # Usage: api.script.help
 api.script.help ()
 {
+  api.std.printLn 
   api.std.printLn "${SCRIPT_DESCRIPTION}\n"
   api.std.printLn "Usage: `api.script.name` ${SCRIPT_USAGE:=[args]}"
 
@@ -153,6 +154,7 @@ api.script.help ()
   api.std.printLn "Miscellaneous"
   api.std.printLn "(h) help\n  - Show this help menu"
   api.std.printLn "(v) version\n  - Show the script version"
+  api.std.printLn 
 }
 
 # Description: Prints the script name and version, as well as copyright, 
