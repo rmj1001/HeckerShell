@@ -12,20 +12,22 @@
 #		them to mp3 files
 ##############################################
 
-version='1.0'
-author='Nidia Achrys'
+PRINT()
+{
+	printf "%b\n" "${@}"
+}
 
-# Source common script functions
-source $SCRIPTS/libs/01-api.sh
+[[ -x "$(which youtube-dl)" ]] && PRINT "youtubedl is required to run this program." && exit 1
 
-#############
-# Core Code #
-#############
+DIR=$HOME/Downloads/Music
 
-api.required.command "youtube-dl"
+[[ -d $DIR ]] || mkdir $DIR
 
-DOWNDIR=$HOME/Downloads/Music
-[ ! -d $DOWNDIR ] && mkdir $DOWNDIR
-cd $DOWNDIR
+cd $DIR
 
-youtube-dl --prefer-ffmpeg --add-metadata --output '%(title)s.%(ext)s' --extract-audio --audio-format mp3 $@
+youtube-dl \
+	--prefer-ffmpeg \
+	--add-metadata \
+	--output '%(title)s.%(ext)s' \
+	--extract-audio \
+	--audio-format mp3 ${@}

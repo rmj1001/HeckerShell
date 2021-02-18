@@ -11,30 +11,17 @@
 #		Manage minecraft installations
 ##############################################
 
-# Source common script functions
-source $SCRIPTS/libs/01-api.sh
+PRINT ()
+{
+	printf "%b\n" "${@}"
+	return $?
+}
 
-#############
-# Help Menu #
-#############
-
-api.script.author "Nidia Achrys"
-api.script.setVersion "1.0"
-
-# Description/usage/examples
-api.script.description "Manage your minecraft installation"
-api.script.example "install"
-
-# Options (aka subcommands)
-api.script.option "i" "install" "Install Minecraft"
-api.script.option "r" "remove" "Remove Minecraft"
-api.script.option "u" "update" "Update Minecraft"
-
-#############
-# Core Code #
-#############
-
-# This is where you put your script's functions, variables, logic, etc.
+PAUSE ()
+{
+	read -p "Press ENTER to continue..." pause_entry
+	return 0
+}
 
 desktopEntry="/usr/share/applications/minecraft-launcher.desktop"
 downloadLink="https://launcher.mojang.com/download/Minecraft.deb"
@@ -55,20 +42,20 @@ minecraftctl.install()
 	if [[ -f "Minecraft.deb" ]]
 	then
 		read -p "Do you want to remove the old Minecraft debfile (y/N)? " ans
-		ans="$(api.string.toLowerCase ${ans})"
+		ans="$(printf '%b' ${ans} | tr '[:upper:]' '[:lower:]')"
 
 		case "${ans}" in
 
 			y | yes ) clear; rm -f ./Minecraft.deb && wget "${link}" ;;
 
-			* ) api.std.logMsg "Not removing deb file." ;;
+			* ) PRINT "Not removing deb file." ;;
 
 		esac
 	else
 		wget "${link}"
 	fi
 
-	api.std.logMsg "Installing Minecraft..."
+	PRINT "Installing Minecraft..."
 
 	# Install the deb file
 	sudo ar xf Minecraft.deb
@@ -79,13 +66,13 @@ minecraftctl.install()
 	entryText="Exec=env JAVA_HOME=/usr/lib64/openjdk-8 ${launcherPath1}/minecraft-launcher"
 
 	# Create the desktop entry
-	api.std.printLn "${entryText}" | sudo tee -a "${dentry}"
+	PRINT "${entryText}" | sudo tee -a "${dentry}"
 
 	# Confirmation
 	clear
-	api.std.logMsg "Installation finished."
-	api.std.printLn 
-	api.std.pause
+	PRINT "Installation finished."
+	PRINT
+	PAUSE
 	clear
 }
 
@@ -95,15 +82,15 @@ minecraftctl.remove()
 	clear
 
 	# Remove files
-	sudo rm -rf ${launcherPath1} && sudo rm -rf ${launcherPath2} && api.std.logMsg "Removed Launcher."
+	sudo rm -rf ${launcherPath1} && sudo rm -rf ${launcherPath2} && PRINT "Removed Launcher."
 	sleep 1.5
 
-	sudo rm -f ${desktopEntry} && api.std.logMsg "Removed desktop entry."
+	sudo rm -f ${desktopEntry} && PRINT "Removed desktop entry."
 	sleep 1.5
 
 	# Confirmation
-	api.std.logMsg "Uninstallation finished."
-	api.std.pause
+	PRINT "Uninstallation finished."
+	PAUSE
 	clear
 }
 
@@ -113,13 +100,20 @@ minecraftctl.update()
 	minecraftctl.install
 }
 
-###############
-# CLI Handler #
-###############
+_help()
+{
+	PRINT 
+	PRINT "minecraftctl - Manage minecraft from the terminal"
+	PRINT
+	PRINT "Commands:"
+	PRINT
+	PRINT "(i) install\n\t- Install minecraft"
+	PRINT "(r) remove\n\t- Uninstall minecraft"
+	PRINT "(u) update\n\t- Update minecraft"
+	PRINT "(h) help\n\t- Show this help menu"
+}
 
-# Feel free to remove this if your script doesn't take in subcommands
-
-cmd="$(api.string.toLowerCase ${1})"
+cmd="$(printf '%b' $1 | tr '[:upper:]' '[:lower:]')"
 
 case "${cmd}" in
 	i | install )
@@ -131,13 +125,10 @@ case "${cmd}" in
 	u | update )
 		minecraftctl.update
 		;;
-	v | version )
-		api.script.version
-		;;
 	\? | h | help )
-		api.script.help
+		_help
 		;;
 	* )
-		[ -z "${cmd}" ] && api.script.help || api.errors.invalidCommand "${1}"
+		[ -z "${cmd}" ] && _help || PRINT "'${1}' is an invalid subcommand!"
 		;;
 esac

@@ -11,32 +11,33 @@
 #		Change this
 ##############################################
 
-version='1.0'
-author='Nidia Achrys'
+PRINT()
+{
+	printf "%b\n" "${1}"
+}
 
-# Source common script functions
-source $SCRIPTS/libs/01-api.sh
+[[ ! -x "$(which apt)" ]] && PRINT "This command requires 'apt'\!" && exit 1
 
-#############
-# Core Code #
-#############
-
-api.required.command 'apt'
+if [[ $# -lt 1 ]]; then
+	PRINT "Install debian packages\n"
+	PRINT "Usage: debinstall <file>.deb"
+	exit 0
+fi
 
 name="${1}"
 name="${name##*/}"
 
 if [[ ! "${name##*.}" == "deb" ]]; then
 
-	api.std.failMsg "That is not a valid deb file!"
+	PRINT "That is not a valid deb file!" && exit 1
 
 fi
 
-api.std.printLn 
-api.std.printLn 
-api.std.logMsg "Installing '${name}'..."
+PRINT "\n\nInstalling '${name}'..."
 sudo apt install ${1} > /dev/null 2>&1
 
 code=$?
 
-[[ $code -eq 0 ]] && api.std.logMsg "Installed '${name}'.\n" || api.std.failMsg "Install failed.\n"
+[[ $code -eq 0 ]] && \
+	PRINT "Installed '${name}'.\n" && exit 0 || \
+	PRINT "Install failed.\n" && exit 1

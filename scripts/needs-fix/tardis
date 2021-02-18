@@ -36,6 +36,7 @@ api.script.option "l" "list" "List all backups"
 api.script.setting "a" "toggle-automatic" "Toggle automatic backups"
 api.script.setting "t" "default-target" "Set a default target for future backups"
 api.script.setting "e" "exclusions" "Create or edit the exclusions file"
+api.script.setting "re" "reset-exclusions" "Reset the default exclusions file"
 api.script.setting "pt" "print-target" "Print the default target to the terminal"
 api.script.setting "pe" "print-exclusions" "Print out every excluded file/directory name"
 
@@ -314,6 +315,14 @@ tardis.settings.exclusions.set()
 	api.std.logMsg "Exclusions edited!" && return 0
 }
 
+# Reset the default exclusions file
+tardis.settings.exclusions.reset()
+{
+	[ -f "${EXCLUSION_FILE}" ] && rm -rf ${EXCLUSION_FILE}
+
+	tardis.settings.exclusions.set
+}
+
 # Print the list of exclusions listed in $HOME/.config/tardisrsync/exclusions.conf
 tardis.settings.exclusions.print()
 {
@@ -362,6 +371,9 @@ case "${cmd}" in
 	e | exclusions )
 		tardis.settings.exclusions.set
 		;;
+	re | reset-exclusions)
+		tardis.settings.exclusions.reset
+		;;
 	pe | print-exclusions)
 		tardis.settings.exclusions.print
 		;;
@@ -369,7 +381,7 @@ case "${cmd}" in
 		api.script.version
 		;;
 	\? | h | help )
-		api.script.help
+		api.script.helpa
 		;;
 	* )
 		[ -z "${cmd}" ] && api.script.help || api.errors.invalidCommand "${cmd}"

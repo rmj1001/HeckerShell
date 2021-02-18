@@ -12,26 +12,19 @@
 #		ISO file 
 ##############################################
 
-version='1.0'
-author='Nidia Achrys'
-
-# Source common script functions
-source $SCRIPTS/libs/01-api.sh
-
-#############
-# Core Code #
-#############
-
-api.required.command "dd"
+PRINT ()
+{
+	printf "%b\n" "${@}"
+}
 
 bootableusb.write ()
 {
 	sudo dd bs=4M if="$1" of="$2" conv=fdatasync
 }
 
-if [ "$1" = "--help" ]
+if [[ "$1" = "--help" ]] || [[ $# -lt 1 ]]
 then
-	api.std.printLn "usage: bootableusb <iso> <drive>"
+	PRINT "usage: bootableusb <iso> <drive>"
 else
 	bootableusb.write "$1" "$2"
 fi

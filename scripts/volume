@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+
+##############################################
+#	Author: Nidia Achrys
+#	Project: volume
+#	Version: 1.0
+#
+#	Usage: volume [command] [args]
+#
+#	Description:
+#		Control volume from the terminal
+##############################################
+
+PRINT()
+{
+	printf "%b\n" "${@}"
+}
+
+
+
+_up() 
+{ 
+	percent=${1:-15}
+	amixer sset Master ${percent}%+ 2>&1 > /dev/null
+}
+
+_down() 
+{
+	percent=${1:-15}
+	amixer sset Master ${percent}%- 2>&1 > /dev/null
+}
+
+_mute() 
+{
+	amixer sset Master toggle 2>&1 > /dev/null
+}
+
+_view()
+{
+	local volume="$(amixer sget Master | grep 'Front Left' | grep '%' | sed -e 's|.* Playback [0-9]* ||g' -e 's|\[on\]||g' -re 's|[^0-9]||g')%"
+
+	PRINT "${volume}"
+}
+
+_help()
+{
+	PRINT
+	PRINT "Control volume from the terminal"
+	PRINT
+	PRINT "Usage:   volume [command] [%]"
+	PRINT "Example: volume up 5"
+	PRINT
+	PRINT "Commands"
+	PRINT "(u) up\n - Increase Volume\n"
+	PRINT "(d) down\n - Decrease Volume\n"
+	PRINT "(m) mute\n - Toggle mute\n"
+	PRINT "(v) view\n - View the current volume\n"
+	PRINT "Miscellaneous"
+	PRINT "(h) help\n - Shows this help menu\n"
+	return 0
+}
+
+cmd="$(printf '%b' ${1} | tr '[:upper:]' '[:lower:]')"
+
+case "${cmd}" in
+
+	u | up )
+		_up $2 ;;
+
+	d | down )
+		_down $2 ;;
+
+	m | mute )
+		_mute ;;
+
+	v | view )
+		_view ;;
+		
+	\? | h | help )
+		_help ;;
+
+	* )
+		[ -z "${1}" ] && _help || PRINT "Invalid command '${1}'!" && exit 1
+		;;
+esac

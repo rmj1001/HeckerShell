@@ -33,7 +33,7 @@ SCRIPT_SETTINGS=()
 api.script.name ()
 {
 	local absolute="`readlink -f ${0}`"
-	
+
 	api.std.printLn "${absolute##*/}"
 	return 0
 }
@@ -118,35 +118,35 @@ api.script.help ()
 
   # Examples
   if [ ${#SCRIPT_EXAMPLES[@]} -gt 0 ]; then
-    
+
     for example in "${SCRIPT_EXAMPLES[@]}"; do
       api.std.printLn "Example: `api.script.name` ${example}"
     done
 
   fi
-  
+
   # CLI options
   if [ ${#SCRIPT_OPTIONS[@]} -gt 0 ]; then
-  
+
     api.std.printLn 
     api.std.printLn "Commands"
 
 	for entry in "${SCRIPT_OPTIONS[@]}"; do
 		api.std.printLn "${entry}"
 	done
-  
+
   fi
 
   # Script Settings
   if [ ${#SCRIPT_SETTINGS[@]} -gt 0 ]; then
-  
+
     api.std.printLn 
     api.std.printLn "Settings"
 
     for entry in "${SCRIPT_SETTINGS[@]}"; do
       api.std.printLn "${entry}"
     done
-  
+
   fi
 
   # Miscellaneous
@@ -175,6 +175,14 @@ api.script.version ()
 	return 0
 }
 
+# Description: Sets the terminal window title
+#
+# Usage: api.screen.title "test"
+api.screen.title ()
+{
+	printf "\033]2;${1}\a"
+}
+
 ###################### INTERACTIVITY ######################
 
 # Description: Replacement for 'echo'
@@ -198,6 +206,15 @@ api.std.pause ()
 {
 	read -p "Press ENTER to continue..." cmd
 	return 0
+}
+
+
+# Description: Set the terminal title to the specified text
+#
+# Usage: api.std.title "Final Realm"
+api.std.title ()
+{
+	printf "\033]2;${@}\a"
 }
 
 # Description: Send a log message to the terminal

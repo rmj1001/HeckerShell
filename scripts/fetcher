@@ -11,63 +11,80 @@
 #		Retrieve system information for use in screenshots
 ##############################################
 
-version='1.0'
-author='Nidia Achrys'
+PRINT ()
+{
+	printf "%b\n" "${@}"
+}
 
-# Source common script functions
-source $SCRIPTS/libs/01-api.sh
+REQUIRE ()
+{
+	for arg in "${@}"; do
+		if [[ ! -x "$(which $arg)" ]]; then
 
-#############
-# Core Code #
-#############
+			PRINT "'${arg}' is required to run this program!"
+			exit 1
+
+		fi
+	done
+}
 
 # Dependencies
-api.required.command "grep"
-api.required.command "sed"
-api.required.command "uname"
-api.required.command "cat"
+REQUIRE "grep" "sed" "uname" "cat"
 
 fetcher.fetch ()
 {
     # Operating System Information
-    OS="`grep '^NAME=' /etc/os-release | sed 's/NAME=//;s/"//g'`"
-    OS="${OS} `grep '^VERSION=' /etc/os-release | sed 's/VERSION=//;s/"//g'`"
+    OS="$(grep '^NAME=' /etc/os-release | sed 's/NAME=//;s/"//g')"
+    OS="${OS} $(grep '^VERSION=' /etc/os-release | sed 's/VERSION=//;s/"//g')"
 
     # Host, Kernel, and Uptime Information
-    HOST="`uname -n`"
-    KERNEL="`uname -r`"
-    UPTIME=`uptime --pretty | sed 's|^up\s||'`
+    HOST="$(uname -n)"
+    KERNEL="$(uname -r)"
+    UPTIME=$(uptime --pretty | sed 's|^up\s||')
 
     # Package count
     PKGCOUNT=""
-    [[ `command -v pacman` ]] && PKGCOUNT="$PKGCOUNT`pacman -Qq | wc -l` (pacman), "
-    [[ `command -v apt` ]] && PKGCOUNT="$PKGCOUNT`apt list --installed 2>/dev/null | wc -l` (apt), "
-    [[ `command -v dnf` ]] && PKGCOUNT="$PKGCOUNT`dnf list installed | wc -l` (rpm), "
-    [[ `command -v flatpak` ]] && PKGCOUNT="$PKGCOUNT`flatpak list | wc -l` (flatpak), "
-    [[ `command -v snap` ]] && snapCount=$(( $(snap list | wc -l) - 1 )) && PKGCOUNT="$PKGCOUNT$snapCount (snap), "
+    [[ -x "$(command -v pacman)" ]] && \
+	    PKGCOUNT="$PKGCOUNT`pacman -Qq | wc -l` (pacman), "
+    [[ -x "$(command -v apt)" ]] && \
+	    PKGCOUNT="$PKGCOUNT`apt list --installed 2>/dev/null | wc -l` (apt), "
+    [[ -x "$(command -v dnf)" ]] && \
+	    PKGCOUNT="$PKGCOUNT`dnf list installed | wc -l` (rpm), "
+    [[ -x "$(command -v flatpak)" ]] && \
+	    PKGCOUNT="$PKGCOUNT`flatpak list | wc -l` (flatpak), "
+    [[ -x "$(command -v snap)" ]] && snapCount=$(( $(snap list | wc -l) - 1 )) && \
+	    PKGCOUNT="$PKGCOUNT$snapCount (snap), "
 
     # Processor
-    CORES=`cat /proc/cpuinfo | grep processor | wc -l`
-    CPUNAME=`grep '^model name' /proc/cpuinfo -m 1 | sed -E 's|^model\sname\s*:\s||g'`
+    CORES=$(cat /proc/cpuinfo | grep processor | wc -l)
+    CPUNAME=$(grep '^model name' /proc/cpuinfo -m 1 | sed -E 's|^model\sname\s*:\s||g')
 
     # Memory
-    MEMTOTAL="`grep 'MemTotal' /proc/meminfo | sed 's|MemTotal:\s*||g'`"
-    MEMFREE="`grep 'MemFree' /proc/meminfo | sed 's|MemFree:\s*||g'`"
-    MEMORY="$MEMFREE / $MEMTOTAL"
+    MEMTOTALKB=$(grep 'MemTotal' /proc/meminfo | sed -e 's|MemTotal:\s*||g' -e 's|\s*kB\s*||g')
+    MEMFREEKB=$(grep 'MemFree' /proc/meminfo | sed -e 's|MemFree:\s*||g' -e 's|\s*kB\s*||g')
+
+    MEMFREE=$(( ${MEMFREEKB} / 1000 ))
+    MEMTOTAL=$(( ${MEMTOTALKB} / 1000 ))
+
+    MEMORY="$MEMFREE MB / $MEMTOTAL MB"
+
+    # Resolution
+    RESOLUTION="$(xrandr -q | grep current | sed -e 's|.*current\s||g' -e 's|,.*||g')"
 }
 
 # Print out the information gathered
 fetcher.info()
 {
-    api.std.printLn "Name|${USER}@${HOST}"
-    api.std.printLn "OS|${OS}"
-    api.std.printLn "Kernel|${KERNEL}"
-    api.std.printLn "Uptime|${UPTIME}"
-    api.std.printLn "Packages|${PKGCOUNT/%, /}"
-    api.std.printLn "Shell|${SHELL}"
-    api.std.printLn "Processor|${CPUNAME}"
-    api.std.printLn "Cores|${CORES}"
-    api.std.printLn "Memory|${MEMORY}"
+    PRINT "Name|${USER}@${HOST}"
+    PRINT "OS|${OS}"
+    PRINT "Kernel|${KERNEL}"
+    PRINT "Uptime|${UPTIME}"
+    PRINT "Packages|${PKGCOUNT/%, /}"
+    PRINT "Shell|${SHELL}"
+    PRINT "Processor|${CPUNAME}"
+    PRINT "Cores|${CORES}"
+    PRINT "Resolution|${RESOLUTION}"
+    PRINT "Memory|${MEMORY}"
 }
 
 # Retrieve
@@ -76,15 +93,15 @@ fetcher.fetch
 line="---------------------------------------------------------"
 
 # Header
-api.std.printLn $line
-api.std.printLn "|                        Fetcher                        |"
-api.std.printLn $line
+PRINT $line
+PRINT "|                        Fetcher                        |"
+PRINT $line
 
 # Print
-api.std.printLn
+PRINT
 fetcher.info | column -t -s "|"
-api.std.printLn
+PRINT
 
 # Footer
-api.std.printLn $line
+PRINT $line
 

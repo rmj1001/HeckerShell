@@ -14,17 +14,21 @@
 version='1.0'
 author='Nidia Achrys'
 
-# Source common script functions
-source $SCRIPTS/libs/01-api.sh
+PRINT()
+{
+	printf "%b\n" "${@}"
+}
 
-#############
-# Core Code #
-#############
+_RANDNUM()
+{
+	printf "%b" "$(( ${RANDOM} % ${1:-100} + 1 ))"
+}
 
 if [ $# -lt 1 ]
 then
-  api.std.printLn "Type 1 or more numbers after '`api.script.name`'."
-  api.std.printLn "A random number will then be generated from 1 to each."
+	PRINT "dice - Generates random numbers\n"
+	PRINT "usage: dice [number...]"
+	PRINT "example: dice 100 50 30 5 2"
   exit 1
 fi
 
@@ -41,13 +45,13 @@ do
 	arg=${!i}
 	if [[ $arg =~ ^[0-9]+$ ]]
 	then
-		result="`api.std.randomNumber ${arg}`"
+		result="$(_RANDNUM ${arg})"
 
 		if [ ! $minoutput = true ]
 		then
-			api.std.printLn "d${arg}: ${result}"
+			PRINT "d${arg}: ${result}"
 		else
-			api.std.printLn "${result}"
+			PRINT "${result}"
 		fi
 	fi
 done

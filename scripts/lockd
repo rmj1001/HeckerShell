@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+
+_echo() { 
+	printf "%b\n" "$@" 
+}
+
+getSessionID() { 
+	SESSIONS=( "$(loginctl list-sessions | grep $(whoami) | awk 'BEGIN {ORS=" "}; {print $1}')" )
+	return 0
+}
+
+_lock() { 
+	for SESSION in ${SESSIONS[@]}; do
+		loginctl lock-session "$SESSION"
+	done
+
+	return 0
+}
+
+_unlock() {
+	for SESSION in ${SESSIONS[@]}; do
+		loginctl unlock-session "$SESSION"
+	done
+
+	return 0
+}
+
+_logout() {
+	for SESSION in ${SESSIONS[@]}; do
+		loginctl kill-session "$SESSION"
+	done
+
+	return 0
+}
+
+_help() {
+	_echo "lockd - Lock/Unlock your computer from the command line"
+	_echo 
+	_echo "Commands:"
+	_echo "- l, lock\tLock your computer"
+	_echo "- u, unlock\tUnlock your computer"
+	_echo "- e, logout\tLogout of all sessions"
+	_echo "- i, id\t\tView your session ID"
+	_echo "- h, help\tView this prompt"
+	_echo
+	return 0
+}
+
+# Get the Session ID
+getSessionID
+
+# Get the cli command
+arg="$(printf '%b' $1 | tr '[:upper:]' '[:lower:]')"
+
+case "$arg" in
+
+	l | lock )
+		_lock ;;
+	u | unlock )
+		_unlock ;;
+	e | logout )
+		_logout ;;
+	i | id )
+		_echo "${SESSIONS[@]}" ;;
+	h | help )
+		_help ;;
+	* )
+		[[ -z "${1}" ]] && _help && exit 0
+		_echo "Invalid Command '${arg}'!" ;;
+esac
