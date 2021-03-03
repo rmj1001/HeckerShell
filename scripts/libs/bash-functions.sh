@@ -11,8 +11,6 @@
 #		to use these functions in your own scripts.
 ##############################################
 
-###################### INTERACTIVITY ######################
-
 # Description: Replacement for 'echo'
 #
 # Usage: PRINT "text"
@@ -48,8 +46,6 @@ RANDOM_NUM ()
 	printf "%b" "$(( ${RANDOM} % ${1} + 1 ))"
 }
 
-###################### STRING MANIPULATION ######################
-
 # Description: Converts a string to all api.std.failMsg characters
 #
 # Usage: name="$(LOWERCASE $name)"
@@ -82,8 +78,6 @@ TRIM ()
     var="${var%"${var##*[![:space:]]}"}"   
     printf '%s' "$var"
 }
-
-###################### SCRIPT PREPROCCESSORS & PERMISSION CHECKING ######################
 
 # Description: Checks for a filename in $PATH (commands), if not found then exit with an error
 #
