@@ -108,5 +108,6 @@ REQUIRE_ROOT ()
 	if [[ $EUID -ne 0 ]]
 	then
 		printf "%b\n" "This script must be run as root"
+		exit 1
 	fi
 }
