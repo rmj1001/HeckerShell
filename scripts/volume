@@ -16,8 +16,6 @@ PRINT()
 	printf "%b\n" "${@}"
 }
 
-
-
 _up() 
 { 
 	percent=${1:-15}
