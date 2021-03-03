@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+##############################################
+#	Author: Nidia Achrys
+#	Project: mansplain
+#	Version: 1.0
+#
+#	Usage: mansplain [command] [args]
+#
+#	Description:
+#		Use dmenu to view manpages in PDF format
+##############################################
+
+REQUIRE ()
+{
+	for arg in "${@}"; do
+		if [[ ! -x "$(which $arg)" ]]; then
+
+			PRINT "'${arg}' is required to run this program!"
+			exit 1
+
+		fi
+	done
+}
+
+REQUIRE "rofi" "zathura" "ps2pdf"
+
+function menu ()
+{
+	rofi -dmenu -columns 3 -disable-history -p "Manpage" -mesg "Pick the manpage you want to view in Zathura."
+}
+
+name=`man -k . | awk '{print $1}' | menu`
+
+[[ -z "${name}" ]] && FAIL "You didn't specify a name."
+
+man -t ${name} | ps2pdf - ${name}.pdf
+
+[[ -f "${name}.pdf" ]] || FAIL "I couldn't generate the PDF for that manpage..."
+
+zathura "${name}.pdf"
+rm -rf "${name}.pdf"

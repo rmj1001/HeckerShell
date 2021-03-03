@@ -1,0 +1,172 @@
+#!/usr/bin/env bash
+
+##############################################
+#	Author: Nidia Achrys
+#	Project: emojictl
+#	Version: 1.0
+# 
+#	Usage: emojictl [command] [args]
+# 
+#	Description:
+#		Install/uninstall Noto Color Emoji on Linux
+##############################################
+
+PRINT()
+{
+	printf "%b\n" "${@}"
+}
+
+REQUIRE ()
+{
+	for arg in "${@}"; do
+		if [[ ! -x "$(which $arg)" ]]; then
+
+			PRINT "'${arg}' is required to run this program!"
+			exit 1
+
+		fi
+	done
+}
+
+PAUSE()
+{
+	local p=""
+	read -p "Press <ENTER> to continue..." p
+
+	return 0
+}
+
+LOWER()
+{
+	printf "%b" "$@" | tr '[:upper:]' '[:lower:]'
+}
+
+#############
+# Core Code #
+#############
+
+# Dependencies
+REQUIRE "wget" "unzip" "fc-cache"
+
+# Noto Emoji package link
+EMOJIPKG="https://noto-website-2.storage.googleapis.com/pkgs/NotoColorEmoji-unhinted.zip"
+
+# Fontconfig file links
+FONTCONFIGS=(
+"https://raw.githubusercontent.com/garman1001/dotfiles/master/configs/fontconfig/conf.d/01-dejavu.conf"
+"https://raw.githubusercontent.com/garman1001/dotfiles/master/configs/fontconfig/conf.d/02-mozilla.conf"
+"https://raw.githubusercontent.com/garman1001/dotfiles/master/configs/fontconfig/conf.d/03-emoji.conf"
+)
+
+# Directories
+CONFDIR=$HOME/.config/fontconfig/conf.d
+NOTOPKG="$HOME/Downloads/$(basename ${EMOJIPKG})"
+TEMP=$HOME/Downloads/temp
+FONTS=$HOME/.fonts
+FILE=${FONTS}/NotoColorEmoji.ttf
+
+# cmd
+cmd=""
+
+emojictl.prepare ()
+{
+	# Make the config directory and move to it
+	[ ! -d $CONFDIR ] && mkdir -p $CONFDIR
+	[ ! -d $FONTS ] && mkdir -p $FONTS
+	[ -d $TEMP ] && rm -rf $TEMP
+	[ -f $FILE ] && rm -rf $FILE
+	[ -f $NOTOPKG ] && rm -f $NOTOPKG
+}
+
+emojictl.emojis.install ()
+{
+	clear
+
+	# Make the config directory and move to it
+	emojictl.prepare
+	cd $CONFDIR
+
+	# Download the fontconfig files
+	for file in "${FONTCONFIGS[@]}"; do
+		name=$(basename $file)
+		rm -f $name
+		wget $file
+	done
+
+	# Download noto emoji font
+	cd $TEMP
+	wget $EMOJIPKG
+
+	# Install emojis
+	unzip NotoColorEmoji-unhinted.zip
+	mv NotoColorEmoji.ttf $FONTS
+	fc-cache -fv
+	rm -rf $TEMP
+	
+	# Post
+	clear
+	PRINT
+	PRINT "Install finished."
+	PRINT
+	PAUSE
+	clear
+}
+
+emojictl.emojis.uninstall ()
+{
+	clear
+	emojictl.prepare
+
+	# Remove the font file
+	rm -f ${FONTS}/NotoColorEmoji.ttf
+
+	# Remove the config files
+	for file in "${FONTCONFIGS[@]}"; do
+		name=$(basename ${file})
+		rm -f ${CONFDIR}/${name}
+	done
+
+	# Reload the font cache
+	fc-cache -fv
+	
+	# Post
+	clear
+	PRINT
+	PRINT "Uninstall finished."
+	PRINT
+	PAUSE
+	clear
+}
+
+emojictl.help ()
+{
+	PRINT "emojictl - Install/uninstall color emojis"
+	PRINT 
+	PRINT "Commands:"
+	PRINT "- install\t\tInstall emojis"
+	PRINT "- uninstall\t\tRemove emojis"
+	PRINT "- help\t\tShow this prompt"
+	PRINT 
+}
+
+cmd="$(LOWER ${1})"
+
+case "${cmd}" in
+
+	install | i )
+		emojictl.emojis.install
+		exit 0
+		;;
+	uninstall | u )
+		emojictl.emojis.uninstall
+		exit 0
+		;;
+	help | h | \? )
+		emojictl.help
+		exit 0
+		;;
+	* )
+		[ -z "${cmd}" ] && emojictl.help || PRINT "Invalid command '${1}'." && exit 1
+		;;
+
+esac

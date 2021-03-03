@@ -1,0 +1,162 @@
+#!/usr/bin/env bash
+
+##############################################
+#	Author: Nidia Achrys
+#	Project: extract
+#	Version: 1.0
+#
+#	Usage: extract [command] [args]
+#
+#	Description:
+#		Extract any archive file
+##############################################
+
+PRINT()
+{
+	printf "%b\n" "${@}"
+}
+
+REQUIRE ()
+{
+	for arg in "${@}"; do
+		if [[ ! -x "$(which $arg)" ]]; then
+
+			PRINT "'${arg}' is required to run this program!"
+			exit 1
+
+		fi
+	done
+}
+
+#############
+# Core Code #
+#############
+
+extract.types ()
+{
+	PRINT 
+	PRINT "Supported file types:"
+	PRINT "- tar.bz2"
+	PRINT "- tar.gz"
+	PRINT "- bz2"
+	PRINT "- rar"
+	PRINT "- gz"
+	PRINT "- tar"
+	PRINT "- tbz2"
+	PRINT "- tgz"
+	PRINT "- zip"
+	PRINT "- Z"
+	PRINT "- 7z"
+	PRINT "- deb"
+	PRINT "- tar.xz"
+	PRINT "- tar.zst"
+	PRINT 
+	return 0
+}
+
+extract.valid ()
+{
+	if [ ! -f "${1}" ]
+	then
+		PRINT "'${1}' is not a file."
+		exit 1
+	else
+		PRINT "Unknown error"
+		exit 1
+	fi
+}
+
+extract.help ()
+{
+	PRINT "extract - Extract various archive files"
+	PRINT 
+	PRINT "To view different types, run 'extract types'."
+	PRINT
+}
+
+case "${1}" in
+	*.tar.bz2)
+		REQUIRE "tar"
+		extract.valid ${1}
+		tar xjf ${1}
+		;;
+	*.tar.gz)
+		REQUIRE "tar"
+		extract.valid ${1}
+		tar xzf ${1}
+		;;
+	*.bz2)
+		REQUIRE "bunzip"
+		extract.valid ${1}
+		bunzip ${1}
+		;;
+	*.rar)
+		REQUIRE "unrar"
+		extract.valid ${1}
+		unrar x ${1}
+		;;
+	*.gz)
+		REQUIRE "gunzip"
+		extract.valid ${1}
+		gunzip ${1}
+		;;
+	*.tar)
+		REQUIRE "tar"
+		extract.valid ${1}
+		tar xf ${1}
+		;;
+	*.tbz2)
+		REQUIRE "tar"
+		extract.valid ${1}
+		tar xjf ${1}
+		;;
+	*.tgz)
+		REQUIRE "tar"
+		extract.valid ${1}
+		tar xzf ${1}
+		;;
+	*.zip)
+		REQUIRE "unzip"
+		extract.valid ${1}
+		unzip ${1}
+		;;
+	*.Z)
+		REQUIRE "uncompress"
+		extract.valid ${1}
+		uncompress ${1}
+		;;
+	*.7z)
+		REQUIRE "7z"
+		extract.valid ${1}
+		7z x ${1}
+		;;
+	*.deb)
+		REQUIRE "ar"
+		extract.valid ${1}
+		ar x ${1}
+		;;
+	*.tar.xz)
+		REQUIRE "tar"
+		extract.valid ${1}
+		tar xf ${1}
+		;;
+	*.tar.zst)
+		REQUIRE "unzstd"
+		extract.valid ${1}
+		unzstd ${1}
+		;;
+	t | types )
+		extract.types
+		;;
+	\? | h | help )
+		extract.help
+		;;
+	*)
+		if [[ -z "${1}" ]]
+		then
+			extract.help
+		else
+			PRINT "'${1}' cannot be extracted." && exit 1
+		fi
+		;;
+esac

@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+##############################################
+#	Author: Nidia Achrys
+#	Project: winepurge
+#	Version: 1.0
+#
+#	Usage: winepurge [command] [args]
+#
+#	Description:
+#		Remove WINE and WINE applications from
+#		your system.
+##############################################
+
+REQUIRE ()
+{
+	for arg in "${@}"; do
+		if [[ ! -x "$(which $arg)" ]]; then
+
+			PRINT "'${arg}' is required to run this program!"
+			exit 1
+
+		fi
+	done
+}
+
+REQUIRE "wine"
+
+if [[ -x "$(command -v pacman)" ]];
+then
+	sudo pacman -Rnsv wine wine-gecko wine-mono winetricks wine-staging
+elif [[ -x "$(command -v apt)" ]];
+then
+	sudo apt remove wine-stable-amd wine-stable-i386 wine-stable
+	sudo apt autoremove
+fi
+
+# Removes all leftover wine applications
+cd $HOME
+rm -rf .wine
+
+# The lines below will remove all entries for any windows software
+# installed with WINE from your application menu(s). Make sure to
+# remove them using your menu editor as well.
+
+rm -f $HOME/.config/menus/applications-merged/wine*
+rm -rf $HOME/.local/share/applications/wine
+rm -f $HOME/.local/share/desktop-directories/wine*
+rm -f $HOME/.local/share/icons/????_*.{xpm,png}
+rm -f $HOME/.local/share/icons/*-x-wine-*.{xpm,png}
