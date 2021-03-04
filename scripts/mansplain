@@ -11,6 +11,11 @@
 #		Use dmenu to view manpages in PDF format
 ##############################################
 
+PRINT ()
+{
+	printf "%b\n" "${@}"
+}
+
 REQUIRE ()
 {
 	for arg in "${@}"; do

@@ -72,10 +72,12 @@ TRIM ()
     local var="$*"
 
     # remove leading whitespace characters
-    var="${var#"${var%%[![:space:]]*}"}"
+    var="${var##*( )}"
     
 	# remove trailing whitespace characters
-    var="${var%"${var##*[![:space:]]}"}"   
+    var="${var%%*( )}"
+    
+    # Return trimmed string
     printf '%s' "$var"
 }
 

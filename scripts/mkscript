@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+
+##############################################
+#   Author: Roy Conn
+#   Project: mkscript
+#   Version: 1.0
+#
+#   Usage: mkscript <name>
+#
+#   Description:
+#		Make new scripts and set the files as
+#		executable.
+##############################################
+
+PRINT()
+{
+	printf "%b\n" "$@"
+}
+
+# Variables
+EDITOR="${EDITOR:-nano}"
+SCRIPTS="${SCRIPTS:-$HOME/.local/bin}"
+FILE="${SCRIPTS}/${1}"
+
+# Check if script name was passed
+[[ $# -lt 1 ]] && PRINT "You must provide a script name!" && exit 1
+
+# Check if script exists
+[[ -f "${FILE}" ]] && PRINT "Script '${1}' exists!" && exit 1
+
+# Create script
+touch ${FILE}
+chmod +x ${FILE}
+
+# Add template to script
+_template='#!/usr/bin/env bash
+
+##############################################
+#   Author: 
+#   Project: 
+#   Version: 
+#
+#   Usage: 
+#
+#   Description:
+##############################################
+
+PRINT()
+{
+	printf "%b\\n" "$@"
+}
+'
+
+PRINT "${_template}" > ${FILE}
+
+# Edit script
+${EDITOR} ${FILE}
+
+# Exit
+exit 0

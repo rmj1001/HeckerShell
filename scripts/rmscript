@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+##############################################
+#   Author: Roy Conn
+#   Project: rmscript
+#   Version: 1.0
+#
+#   Usage: rmscript <name>
+#
+#   Description:
+#		Delete existing scripts
+##############################################
+
+PRINT()
+{
+	printf "%b\n" "$@"
+}
+
+# Variables
+SCRIPTS="${SCRIPTS:-$HOME/.local/bin}"
+FILE="${SCRIPTS}/${1}"
+
+# Check if script name was passed
+[[ $# -lt 1 ]] && PRINT "You must provide a script name!" && exit 1
+
+# Check if script exists
+[[ ! -f "${FILE}" ]] && PRINT "Script '${1}' does not exist!" && exit 1
+
+# Edit script
+rm -f ${FILE}
+
+# Exit
+exit 0

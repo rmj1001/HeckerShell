@@ -53,6 +53,9 @@ backup.create()
 	# Determine the target for the backup
 	local target="${1}/${USER}_$(date +%d-%m-%Y).tar.gz"
 
+	# Cleanly exit backup process
+	trap 'clear; PRINT "Backup Terminated."; PAUSE; clear; exit 0' SIGTERM SIGINT
+
 	# Remove today's previous backup if it exists
 	[[ -f "${target}" ]] && rm -rf "${target}"
 
@@ -62,7 +65,7 @@ backup.create()
 
 	# Confirmation
 	PRINT "\n\nBackup finished."
-	pause
+	PAUSE
 	clear
 }
 
@@ -71,7 +74,16 @@ backup.restore()
 {
 	clear
 
-	[[ ! -f "${1}" ]] && PRINT "Invalid tarball!\n" && PAUSE && clear && return 1
+	# Check if file specified exists and is a tarball
+	if [[ ! -f "${1}" ]] || [[ ${1} != *.tar.gz ]]; then
+		PRINT "Invalid tarball!\n"
+		PAUSE
+		clear
+		return 1
+	fi
+
+	# Cleanly exit restoration process
+	trap 'clear; PRINT "Restoration Terminated."; PAUSE; clear; exit 0' SIGTERM SIGINT
 	
 	pause
 	clear
