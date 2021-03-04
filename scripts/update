@@ -1,0 +1,106 @@
+#!/usr/bin/env bash
+
+##############################################
+#   Author: Roy Conn
+#   Project: update
+#   Version: 1.0
+#
+#   Usage: update
+#
+#   Description: Update all software on your
+#	linux PC.
+##############################################
+
+PRINT()
+{
+	printf "%b\n" "$@"
+}
+
+PAUSE ()
+{
+    local p=""
+
+    PRINT
+    read -p "Press <ENTER> to continue..." p
+    PRINT
+
+    return 0
+}
+
+# Flatpak
+if [[  -x "$(command -v flatpak)" ]]; then
+
+	clear
+	PRINT "Updating flatpak...\n"
+
+	flatpak update
+
+	PAUSE
+
+fi
+
+# Snap
+if [[ -x "$(command -v snap)" ]]; then
+
+	clear
+	PRINT "Updating snap...\n"
+
+	sudo snap refresh
+
+	PAUSE
+
+fi
+
+# APT
+if [[ -x "$(command -v apt)" ]]; then
+
+	clear
+	PRINT "Updating apt...\n"
+
+	sudo apt update
+	sudo apt upgrade
+
+	PAUSE
+
+fi
+
+# DNF
+if [[ -x "$(command -v dnf)" ]]; then
+
+	clear
+	PRINT "Updating dnf...\n"
+
+	sudo dnf update
+
+	PAUSE
+
+fi
+
+# Pacman
+if [[ -x "$(command -v pacman)" ]] && [[ ! -x "$(command -v yay)" ]]; then
+
+	clear
+	PRINT "Updating pacman...\n"
+
+	sudo pacman -Syu
+
+	PAUSE
+
+fi
+
+# Yay (not pacman)
+if [[ -x "$(command -v yay)" ]]; then
+
+	clear
+	PRINT "Updating yay...\n"
+
+	yay -Syu
+
+	PAUSE
+
+fi
+
+clear
+PRINT "Updates finished."
+PAUSE
+clear
