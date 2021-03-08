@@ -32,24 +32,29 @@ FILE="${SCRIPTS}/${1}"
 touch ${FILE}
 chmod +x ${FILE}
 
+read -p "Author: " author
+read -p "Usage: " usage
+read -p "Description: " description
+
 # Add template to script
-_template='#!/usr/bin/env bash
+_template="#!/usr/bin/env bash
 
 ##############################################
-#   Author: 
-#   Project: 
-#   Version: 
+#   Author: ${author}
+#   Project: ${1}
+#   Version: 1.0
 #
-#   Usage: 
+#   Usage: ${usage}
 #
 #   Description:
+#		${description}
 ##############################################
 
 PRINT()
 {
-	printf "%b\\n" "$@"
+	printf '%b\\\n' \$@
 }
-'
+"
 
 PRINT "${_template}" > ${FILE}
 
