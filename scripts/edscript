@@ -16,10 +16,19 @@ PRINT()
 	printf "%b\n" "$@"
 }
 
+PAUSE ()
+{
+	local p=""
+	read -p "Press <ENTER> to continue..." p
+
+	return 0
+}
+
 # Variables
 EDITOR="${EDITOR:-nano}"
 SCRIPTS="${SCRIPTS:-$HOME/.local/bin}"
 FILE="${SCRIPTS}/${1}"
+TEMP="${SCRIPTS}/${1}~"
 
 # Check if script name was passed
 [[ $# -lt 1 ]] && PRINT "You must provide a script name!" && exit 1
@@ -27,8 +36,32 @@ FILE="${SCRIPTS}/${1}"
 # Check if script exists
 [[ ! -f "${FILE}" ]] && PRINT "Script '${1}' does not exist!" && exit 1
 
+# Backup file
+cat ${FILE} > ${TEMP}
+
 # Edit script
 ${EDITOR} ${FILE}
+
+# Confirm save changes to script
+read -p "Save changes to file (Y/n)? " confirmation
+
+if [[ ! $confirmation =~ ^[nN][oO]?$ ]]; then
+
+	rm -f ${TEMP}
+
+	# Confirmation message
+	PRINT "Saved changes.\n"
+
+else
+
+	rm -f ${FILE}
+	mv ${TEMP} ${FILE}
+	chmod +x ${FILE}
+
+	# Confirmation message
+	PRINT "Discarded changes.\n"
+
+fi
 
 # Exit
 exit 0

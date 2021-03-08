@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+##############################################
+#   Author: Roy Conn
+#   Project: catscript
+#   Version: 1.0
+#
+#   Usage: [script]
+#
+#   Description:
+#		Print the script's contents to STDOUT
+##############################################
+
+PRINT()
+{
+	printf '%b\n' $@
+}
+
+SCRIPTS="${SCRIPTS:-$HOME/.local/bin}"
+FILE="${SCRIPTS}/${1}"
+
+# Check if script name was passed
+[[ $# -lt 1 ]] && PRINT "You must provide a script name!" && exit 1
+
+# Check if script exists
+[[ ! -f "${FILE}" ]] && PRINT "Script '${1}' does not exist!" && exit 1
+
+cat ${FILE}
+
+exit 0
