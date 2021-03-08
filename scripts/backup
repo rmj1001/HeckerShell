@@ -116,9 +116,9 @@ backup.help.commands()
 	PRINT "Command|Arguments|Description"
 	PRINT "|||"
 	PRINT "create|<destination>|Create a new tarball backup"
-	PRINT "restore|<backup file>|Restore a tarball backup"
-	PRINT "exclusions|n/a|Create/edit a file specifying exclusions from backups"
-	PRINT "help|n/a|Show this prompt"
+	PRINT "restore|<tarball>|Restore a tarball backup"
+	PRINT "exclusions||Create/edit a file specifying exclusions from backups"
+	PRINT "help||Show this prompt"
 }
 
 # Help prompt

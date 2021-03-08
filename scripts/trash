@@ -11,33 +11,24 @@
 #		This utility manages your trash bin.
 ##############################################
 
-# Source common script functions
-source $SCRIPTS/libs/01-api.sh
+PRINT()
+{
+	printf "%b\n" "${@}"
+}
 
-#############
-# Help Menu #
-#############
+PAUSE ()
+{
+	local p=""
+	read -p "Press <ENTER> to continue..." p
 
-api.script.author "Nidia Achrys"
-api.script.setVersion "1.0"
+	return 0
+}
 
-# Description/usage/examples
-api.script.description "Manage your trash bin"
-api.script.usage "[command] <file?>"
-api.script.example "add <file>"
-
-# CLI Commands
-api.script.option "a" "add" "Add a file to the trash"
-api.script.option "r" "restore" "Restore a file from the trash"
-api.script.option "e" "empty" "Empty the trash bin"
-api.script.option "i" "info" "Get a trashed file's metadata"
-api.script.option "l" "list" "List the contents of the trash bin"
-
-#############
-# Core Code #
-#############
-
-# This is where you put your script's functions, variables, logic, etc.
+LOWERCASE ()
+{
+	printf "${1}" | tr "[:upper:]" "[:lower:]"
+	return 0
+}
 
 declare -- TRASHINFO
 declare -- FILENAME
@@ -58,20 +49,20 @@ trash.file.check()
   then
     FILE="$1"
   else
-    api.std.failMsg "You must specify a FILE."
+    PRINT "You must specify a FILE." && exit 1
   fi
 }
 
 trash.getPath()
 {
   confFile="${1}"
-  api.std.printLn "$(grep -m 1 Path= ${confFile} | sed 's|Path=||')"
+  PRINT "$(grep -m 1 Path= ${confFile} | sed 's|Path=||')"
 }
 
 trash.getDate()
 {
   confFile="${1}"
-  api.std.printLn "$(grep -m 1 DeletionDate= ${confFile} | sed 's|DeletionDate=||')"
+  PRINT "$(grep -m 1 DeletionDate= ${confFile} | sed 's|DeletionDate=||')"
 }
 
 trash.files.add()
@@ -84,15 +75,15 @@ trash.files.add()
     DELPATH=$(readlink -f ${FILE})
     DELDATE=$(date +"%Y-%m-%dT%H:%M:%S")
 
-    api.std.printLn "[Trash Info]" > "${TRASHINFO}/${FILENAME}.trashinfo"
-    api.std.printLn "Path=${DELPATH}" >> "${TRASHINFO}/${FILENAME}.trashinfo"
-    api.std.printLn "DeletionDate=${DELDATE}" >> "${TRASHINFO}/${FILENAME}.trashinfo"
+    PRINT "[Trash Info]" > "${TRASHINFO}/${FILENAME}.trashinfo"
+    PRINT "Path=${DELPATH}" >> "${TRASHINFO}/${FILENAME}.trashinfo"
+    PRINT "DeletionDate=${DELDATE}" >> "${TRASHINFO}/${FILENAME}.trashinfo"
     mv ${FILE} ${TRASH}
     
-    api.std.logMsg "Moved ${FILE} to the trash!"
+    PRINT "Moved ${FILE} to the trash!"
     exit 0
   else
-    api.std.failMsg "File '${FILE}' doesn't exist!"
+    PRINT "File '${FILE}' doesn't exist!" && exit 1
   fi
 }
 
@@ -110,10 +101,10 @@ trash.files.restore()
     mv "${FILEPATH}" "${RESTOREPATH}"
     rm -f "${FILEINFO}"
 
-    api.std.logMsg "Restored ${FILE} to ${RESTOREPATH}!"
+    PRINT "Restored ${FILE} to ${RESTOREPATH}!"
     exit 0
   else
-    api.std.failMsg "File ${FILE} is not in the trash!"
+    PRINT "File ${FILE} is not in the trash!" && exit 1
   fi
 }
 
@@ -126,7 +117,7 @@ trash.files.empty()
   unset files[0]
 
   # Fail if there are no files in the trash
-  [ ${#files[@]} -eq 0 ] && api.std.failMsg "There are no files in the trash!"
+  [ ${#files[@]} -eq 0 ] && PRINT "There are no files in the trash!" && exit 1
 
   # Remove all files from the trash
   for file in ${files[@]}
@@ -135,7 +126,7 @@ trash.files.empty()
   done
   
   # Confirmation
-  api.std.logMsg "Emptied the trash!"
+  PRINT "Emptied the trash!"
   exit 0
 }
 
@@ -150,11 +141,30 @@ trash.files.information()
     cat "${FILEINFO}"
     exit 0
   else
-    api.std.failMsg "File does not have metadata / doesn't exist!"
+    PRINT "File does not have metadata / doesn't exist!" && exit 1
   fi
 }
 
-cmd=`api.string.toLowerCase "${1}"`
+trash.help.commands()
+{
+  PRINT "Command|Arguments|Description"
+  PRINT "|||"
+  PRINT "a, add|<file>|Add a file to the trash"
+  PRINT "r, restore|<file>|Restore a file from the trash"
+  PRINT "e, empty||Empty the trash bin"
+  PRINT "i, info|<file>|Get a trashed file's metadata"
+  PRINT "l, list||List the contents of the trash bin"
+	PRINT "h, help||Show this prompt"
+}
+
+trash.help()
+{
+  PRINT "trash - Manage your trash bin"
+  PRINT 
+  trash.help.commands | column -t -s "|"
+}
+
+cmd="$(LOWERCASE ${1})"
 
 case "${cmd}" in
   a | add )
@@ -173,13 +183,10 @@ case "${cmd}" in
   i | info )
     trash.files.information "${2}"
     ;;
-  v | version )
-    api.script.version
-    ;;
   \? | h | help )
-    api.script.help
+    trash.help
     ;;
   * )
-  	[ -z "${cmd}" ] && api.script.help || api.errors.invalidCommand "${1}"
+  	[ -z "${cmd}" ] && trash.help || PRINT "Invalid command!" && exit 1
     ;;
 esac
