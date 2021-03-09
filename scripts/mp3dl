@@ -17,17 +17,45 @@ PRINT()
 	printf "%b\n" "${@}"
 }
 
-[[ -x "$(which youtube-dl)" ]] && PRINT "youtubedl is required to run this program." && exit 1
+REQUIRE_CMD ()
+{
+    for arg in "${@}"; do
+        if [[ ! -x "$(which $arg)" ]]; then
 
-DIR=$HOME/Downloads/Music
+            printf "%b\n" "'${arg}' is required to run this program!"
+            exit 1
 
-[[ -d $DIR ]] || mkdir $DIR
+        fi
+    done
+}
 
-cd $DIR
+REQUIRE_CMD "youtube-dl"
 
-youtube-dl \
-	--prefer-ffmpeg \
-	--add-metadata \
-	--output '%(title)s.%(ext)s' \
-	--extract-audio \
-	--audio-format mp3 ${@}
+mp3dl.download()
+{
+	# Preparations
+	DIR=$HOME/Downloads/Music
+	[[ -d $DIR ]] || mkdir $DIR
+
+	cd $DIR
+
+	# Download
+	youtube-dl \
+		--prefer-ffmpeg \
+		--add-metadata \
+		--output '%(title)s.%(ext)s' \
+		--extract-audio \
+		--audio-format mp3 ${@}		
+}
+
+if [[ $# -lt 1 ]]; then
+
+	# Help message
+	PRINT "mp3dl - Download youtube videos"
+	PRINT "\nUsage: mp3dl <video[]>"
+
+else
+
+	mp3dl.download $@
+
+fi

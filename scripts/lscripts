@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+##############################################
+#   Author: Roy Conn
+#   Project: lscripts
+#   Version: 1.0
+#
+#   Usage: n/a
+#
+#   Description:
+#		List all user-made scripts
+##############################################
+
+PRINT()
+{
+	printf '%b\n' $@
+}
+
+SCRIPTS="${SCRIPTS:-$HOME/.local/bin}"
+
+for script in $SCRIPTS/*; do
+
+	name="$(basename $script)"
+	[[ ! -h $script ]] && [[ ! -d $script ]] && [[ -x $script ]] && PRINT "${name}"
+
+done
+
+PRINT 
+
+exit 0

@@ -100,17 +100,21 @@ minecraftctl.update()
 	minecraftctl.install
 }
 
-_help()
+minecraftctl.help.commands()
 {
-	PRINT 
-	PRINT "minecraftctl - Manage minecraft from the terminal"
+	PRINT "Command|Arguments|Description"
+	PRINT "|||"
+	PRINT "i, install||Install minecraft"
+	PRINT "r, remove||Uninstall minecraft"
+	PRINT "u, update||Update minecraft"
+	PRINT "h, help||Show this help menu"
+}
+
+minecraftctl.help()
+{
+	PRINT "minecraftctl - Manage your minecraft installation"
 	PRINT
-	PRINT "Commands:"
-	PRINT
-	PRINT "(i) install\n\t- Install minecraft"
-	PRINT "(r) remove\n\t- Uninstall minecraft"
-	PRINT "(u) update\n\t- Update minecraft"
-	PRINT "(h) help\n\t- Show this help menu"
+	minecraftctl.help.commands | column -t -s "|"
 }
 
 cmd="$(printf '%b' $1 | tr '[:upper:]' '[:lower:]')"
@@ -126,9 +130,9 @@ case "${cmd}" in
 		minecraftctl.update
 		;;
 	\? | h | help )
-		_help
+		minecraftctl.help
 		;;
 	* )
-		[ -z "${cmd}" ] && _help || PRINT "'${1}' is an invalid subcommand!"
+		[ -z "${cmd}" ] && minecraftctl.help || PRINT "'${1}' is an invalid subcommand!"
 		;;
 esac
