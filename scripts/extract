@@ -32,8 +32,24 @@ REQUIRE ()
 # Core Code #
 #############
 
-extract.types ()
+extract.valid ()
 {
+	if [[ ! -f "${1}" ]]
+	then
+		PRINT "'${1}' is not a file."
+		exit 1
+	elif [[ -f "${1}" ]]
+	then
+		return 0
+	else
+		PRINT "Unknown error"
+		exit 1
+	fi
+}
+
+extract.help ()
+{
+	PRINT "extract - Extract various archive files"
 	PRINT 
 	PRINT "Supported file types:"
 	PRINT "- tar.bz2"
@@ -52,26 +68,6 @@ extract.types ()
 	PRINT "- tar.zst"
 	PRINT 
 	return 0
-}
-
-extract.valid ()
-{
-	if [ ! -f "${1}" ]
-	then
-		PRINT "'${1}' is not a file."
-		exit 1
-	else
-		PRINT "Unknown error"
-		exit 1
-	fi
-}
-
-extract.help ()
-{
-	PRINT "extract - Extract various archive files"
-	PRINT 
-	PRINT "To view different types, run 'extract types'."
-	PRINT
 }
 
 case "${1}" in
@@ -145,15 +141,11 @@ case "${1}" in
 		extract.valid ${1}
 		unzstd ${1}
 		;;
-	t | types )
-		extract.types
-		;;
 	\? | h | help )
 		extract.help
 		;;
 	*)
-		if [[ -z "${1}" ]]
-		then
+		if [[ -z "${1}" ]]; then
 			extract.help
 		else
 			PRINT "'${1}' cannot be extracted." && exit 1
