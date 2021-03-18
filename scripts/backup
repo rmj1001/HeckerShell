@@ -34,58 +34,129 @@ REQUIRE ()
 	done
 }
 
-### Program Dependencies ###
-REQUIRE "tar"
-
-### Main Logic ###
-
-# Exclusions file
+### Variables ###
 exclusions="${HOME}/.backup_exclusions"
+method="tar"
+ARGS=()
 
-# Create a new backup tarball
 backup.create()
 {
 	clear
 
 	# If the directory doesn't exist, throw an error and exit
-	[[ ! -d "${1}" ]] && PRINT "Invalid destination directory!\n" && PAUSE && clear && return 1
-
-	# Determine the target for the backup
-	local target="${1}/${USER}_$(date +%d-%m-%Y).tar.gz"
+	[[ ! -d "${1}" ]] && PRINT "Invalid destination directory!\n" && PAUSE && clear && exit 1
 
 	# Cleanly exit backup process
-	trap 'clear; PRINT "Backup Terminated."; PAUSE; clear; exit 0' SIGTERM SIGINT
+	trap 'clear; PRINT "Backup Terminated."; PAUSE; clear; exit 0' SIGTERM SIGINT	
 
-	# Remove today's previous backup if it exists
-	[[ -f "${target}" ]] && rm -rf "${target}"
+	case "${method}" in	
+		tar )
+			local target="${1}/${USER}_$(date +%d-%m-%Y).tar.gz"
+			[[ -f "${target}" ]] && rm -rf "${target}"
 
-	# Backups up files, with exclusions if file exists, or without exclusions if no file exists.
-	[[ -f "${exclusions}" ]] && tar -zcvpf "${target}" -X "${exclusions}" "${HOME}"
-	[[ ! -f "${exclusions}" ]] && tar -zcvpf "${target}" "${HOME}"
+			# Check if tar exists
+			REQUIRE "tar"
+			
+			# Confirmation
+			PRINT "Backing up with tar..."
+			
+			# Backups up files, with exclusions if file exists, or without exclusions if no file exists.
+			[[ -f "${exclusions}" ]] && tar -zcvpf "${target}" -X "${exclusions}" "${HOME}"
+			[[ ! -f "${exclusions}" ]] && tar -zcvpf "${target}" "${HOME}"
+			
+			;;
+		rsync )
+			local target="${1}"
+			local dirname="${USER}_$(date +%d-%m-%Y)"
+			local final="${target}/${dirname}"
+			
+			# Check if rsync exists
+			REQUIRE "rsync"
+			
+			# Confirmation
+			PRINT "Backing up with rsync..."
 
+			# Backup all files
+			[[ -f "${exclusions}" ]] && rsync -azvhP --exclude-from="${exclusions}" "${HOME}" "${target}"
+			[[ ! -f "${exclusions}" ]] && rsync -azvhP "${HOME}" "${target}"
+
+			# Remove duplicate backup
+			[[ -d "${final}" ]] && rm -rf "${final}"
+
+			# Rename directory
+			mv "${target}/${USER}" "${USER}_$(date +%d-%m-%Y)"
+			
+			;;
+		cp )
+			local target="${1}"
+			local dirname="${USER}_$(date +%d-%m-%Y)"
+			local final="${target}/${dirname}"
+			
+			# Check if rsync exists
+			REQUIRE "cp"
+			
+			# Confirmation
+			PRINT "Backing up with cp..."
+
+			# Backup all files
+			cp -vr "${HOME}" "${target}"
+
+			
+			# Remove duplicate backup
+			[[ -d "${final}" ]] && rm -rf "${final}"
+
+			# Rename directory
+			mv "${target}/${USER}" "${USER}_$(date +%d-%m-%Y)"
+			
+			;;
+	esac
+	
 	# Confirmation
 	PRINT "\n\nBackup finished."
 	PAUSE
 	clear
 }
 
-# Restore a specified backup tarball
 backup.restore()
 {
 	clear
 
-	# Check if file specified exists and is a tarball
-	if [[ ! -f "${1}" ]] || [[ ${1} != *.tar.gz ]]; then
-		PRINT "Invalid tarball!\n"
-		PAUSE
-		clear
-		return 1
-	fi
-
-	# Cleanly exit restoration process
-	trap 'clear; PRINT "Restoration Terminated."; PAUSE; clear; exit 0' SIGTERM SIGINT
+	# Cleanly exit backup process
+	trap 'clear; PRINT "Backup Terminated."; PAUSE; clear; exit 0' SIGTERM SIGINT
 	
-	pause
+	if [[ -f "${target}" ]] && [[ "${target}" =~ ^*.tar.gz$ ]]; then
+	
+		# tar
+		PRINT "Restoring tarball..."
+		
+		tar -xvf "${target}" -C "${HOME}"
+	
+	elif [[ -d "${target}" ]] && [[ -x "$(which rsync)" ]]; then
+	
+		# rsync
+		PRINT "Restoring backup..."
+		
+		rsync -auv "${target}" "${HOME}"
+		
+	elif [[ -d "${target}" ]]; then
+	
+		# cp
+		PRINT "Restoring backup..."
+		
+		cp -vR "${target}" "${HOME}"
+
+	else
+	
+		# Error
+		PRINT "Invalid target!"
+		exit 1
+
+	fi
+	
+	PRINT
+	PRINT
+	PRINT "Restore Finished"
+	PAUSE
 	clear
 }
 
@@ -113,12 +184,20 @@ backup.exclusions()
 # Commands portion of help prompt (columnized)
 backup.help.commands()
 {
+	PRINT "Flags|Arguments|Description"
+	PRINT "|||"
+	PRINT "-t, --tar||(Default) Uses tar to backup your files"
+	PRINT "-r, --rsync||Uses rsync to backup your files"
+	PRINT "-c, --cp||Uses cp to backup your files (no exclusions)"
+	PRINT "|||"
+	PRINT "|||"
 	PRINT "Command|Arguments|Description"
 	PRINT "|||"
-	PRINT "create|<destination>|Create a new tarball backup"
-	PRINT "restore|<tarball>|Restore a tarball backup"
+	PRINT "create|<destination>|Create a new backup"
+	PRINT "restore|<target>|Restore a backup"
 	PRINT "exclusions||Create/edit a file specifying exclusions from backups"
 	PRINT "help||Show this prompt"
+	exit 0
 }
 
 # Help prompt
@@ -129,19 +208,38 @@ backup.help()
 	backup.help.commands | column -t -s "|"
 }
 
-### Argument Handling ###
+### Flags ###
+for arg in $@; do
+	case "$(LOWER $arg)" in
+		-r | --rsync )
+			method="rsync"
+			;;
+		
+		-t | --tar )
+			method="tar"
+			;;
+			
+		-c | --cp )
+			method="cp"
+			;;
+		* )
+			ARGS+=("$arg")
+			;;
+	esac
+done
 
-cmd="$(LOWER $1)"
+### Argument Handling ###
+cmd="$(LOWER ${ARGS[0]})"
 
 case "${cmd}" in
 
 	create ) 
 
-		backup.create $2 ;;
+		backup.create ${ARGS[1]} ;;
 
 	restore ) 
 
-		backup.restore $2 ;;
+		backup.restore ${ARGS[1]} ;;
 
 	exclusions )
 

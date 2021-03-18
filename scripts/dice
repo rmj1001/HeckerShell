@@ -29,6 +29,10 @@ then
 	PRINT "dice - Generates random numbers\n"
 	PRINT "usage: dice [number...]"
 	PRINT "example: dice 100 50 30 5 2"
+	PRINT
+	PRINT "Flags:"
+	PRINT "-r, --raw\t\tPrint only the numbers"
+	PRINT
   exit 1
 fi
 
@@ -36,8 +40,13 @@ minoutput=false
 
 for (( i = 1 ; i <= $# ; i++ ))
 do
-	[[ ${!i} = "-l" ]] && minoutput=true
-	[[ ${!i} = "--less" ]] && minoutput=true
+	case ${!i} in
+
+		-r | --raw )
+
+			minoutput=true
+
+	esac
 done
 
 for (( i = 1 ; i <= $# ; i++ ))
@@ -55,3 +64,4 @@ do
 		fi
 	fi
 done
+
