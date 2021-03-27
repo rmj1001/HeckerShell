@@ -51,11 +51,14 @@ backup.create()
 
 	case "${method}" in	
 		tar )
-			local target="${1}/${USER}_$(date +%d-%m-%Y).tar.gz"
+			local target="${1}/${USER}_$(date +m%m-d%d-y%y).tar.gz"
 			[[ -f "${target}" ]] && rm -rf "${target}"
 
 			# Check if tar exists
 			REQUIRE "tar"
+			
+			# Remove duplicate backup
+			[[ -f "${target}" ]] && PRINT "Removing duplicate backup..." && rm -rf "${target}"
 			
 			# Confirmation
 			PRINT "Backing up with tar..."
@@ -66,47 +69,36 @@ backup.create()
 			
 			;;
 		rsync )
-			local target="${1}"
-			local dirname="${USER}_$(date +%d-%m-%Y)"
-			local final="${target}/${dirname}"
+			local target="${1}/${USER}_$(date +m%m-d%d-y%y)"
 			
 			# Check if rsync exists
 			REQUIRE "rsync"
+			
+			# Remove duplicate backup
+			[[ -d "${target}" ]] && PRINT "Removing duplicate backup..." && rm -rf "${target}"
 			
 			# Confirmation
 			PRINT "Backing up with rsync..."
 
 			# Backup all files
-			[[ -f "${exclusions}" ]] && rsync -azvhP --exclude-from="${exclusions}" "${HOME}" "${target}"
-			[[ ! -f "${exclusions}" ]] && rsync -azvhP "${HOME}" "${target}"
-
-			# Remove duplicate backup
-			[[ -d "${final}" ]] && rm -rf "${final}"
-
-			# Rename directory
-			mv "${target}/${USER}" "${USER}_$(date +%d-%m-%Y)"
+			[[ -f "${exclusions}" ]] && rsync -arzvhP --exclude-from="${exclusions}" "${HOME}/" "${target}"
+			[[ ! -f "${exclusions}" ]] && rsync -arzvhP "${HOME}/" "${target}"
 			
 			;;
 		cp )
-			local target="${1}"
-			local dirname="${USER}_$(date +%d-%m-%Y)"
-			local final="${target}/${dirname}"
+			local target="${1}/${USER}_$(date +m%m-d%d-y%y)"
 			
 			# Check if rsync exists
 			REQUIRE "cp"
+			
+			# Remove duplicate backup
+			[[ -d "${target}" ]] && PRINT "Removing duplicate backup..." && rm -rf "${target}"
 			
 			# Confirmation
 			PRINT "Backing up with cp..."
 
 			# Backup all files
-			cp -vr "${HOME}" "${target}"
-
-			
-			# Remove duplicate backup
-			[[ -d "${final}" ]] && rm -rf "${final}"
-
-			# Rename directory
-			mv "${target}/${USER}" "${USER}_$(date +%d-%m-%Y)"
+			cp -vR "${HOME}" "${target}"
 			
 			;;
 	esac
@@ -251,5 +243,5 @@ case "${cmd}" in
 	* )
 
 		[[ $# -eq 0 ]] && backup.help || PRINT "Invalid command!" && exit 1
-
+		;;
 esac
