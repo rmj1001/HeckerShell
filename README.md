@@ -19,7 +19,7 @@ All scripts are licensed under the BSD 3 Clause license.
 ## Scripts
 
 All scripts are self-dependent.
-The folder `scripts/libs` contains various scripts providing common bash
+The folder `.local/bin/libs` contains various scripts providing common bash
 functions used in my scripts. Scripts will never source one another.
 
 Any scripts with dependencies will give an error message, should the dependencies be
