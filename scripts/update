@@ -51,6 +51,7 @@ UPDATER "apt" "sudo apt update && sudo apt upgrade"
 UPDATER "dnf" "sudo dnf update"
 UPDATER "pacman" "sudo pacman -Syu"
 UPDATER "yay" "yay -Syu"
+UPDATER "paru" "paru -Syu"
 
 clear
 PRINT "Updates finished."

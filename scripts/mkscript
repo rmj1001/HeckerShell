@@ -22,6 +22,8 @@ EDITOR="${EDITOR:-nano}"
 SCRIPTS="${SCRIPTS:-$HOME/.local/bin}"
 FILE="${SCRIPTS}/${1}"
 
+trap 'rm -f ${FILE}; PRINT "\nmkscript cancelled."; exit' SIGINT SIGHUP
+
 # Check if script name was passed
 [[ $# -lt 1 ]] && PRINT "You must provide a script name!" && exit 1
 

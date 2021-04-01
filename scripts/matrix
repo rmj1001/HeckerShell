@@ -45,24 +45,24 @@ tput cup 0 0
 
 while : ; do
 
-for i in $(eval echo {1..$lines}); do
+	for i in $(eval echo {1..$lines}); do
 
-for i in $(eval echo {1..$cols}); do
+		for i in $(eval echo {1..$cols}); do
 
-	rand=$(( RANDOM % spacing ))
+			rand=$(( RANDOM % spacing ))
 
-case "$rand" in
-	0 ) printf "${colors[$RANDOM%$colorcount]}${chars[$RANDOM%$count]} " ;;
-	1 ) printf "  " ;;
-	* ) printf "\033[2C" ;;
-esac
+			case "$rand" in
+				0 ) printf "${colors[$RANDOM%$colorcount]}${chars[$RANDOM%$count]} " ;;
+				1 ) printf "  " ;;
+				* ) printf "\033[2C" ;;
+			esac
 
-done
+		done
 
-printf "\n"
+		printf "\n"
 
-done
+	done
 
-tput cup 0 0
+	tput cup 0 0
 
 done
