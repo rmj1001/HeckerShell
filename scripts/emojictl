@@ -53,9 +53,9 @@ EMOJIPKG="https://noto-website-2.storage.googleapis.com/pkgs/NotoColorEmoji-unhi
 
 # Fontconfig file links
 FONTCONFIGS=(
-"https://raw.githubusercontent.com/garman1001/dotfiles/master/configs/fontconfig/conf.d/01-dejavu.conf"
-"https://raw.githubusercontent.com/garman1001/dotfiles/master/configs/fontconfig/conf.d/02-mozilla.conf"
-"https://raw.githubusercontent.com/garman1001/dotfiles/master/configs/fontconfig/conf.d/03-emoji.conf"
+"https://raw.githubusercontent.com/garman1001/dotfiles/master/.config/fontconfig/conf.d/01-dejavu.conf"
+"https://raw.githubusercontent.com/garman1001/dotfiles/master/.config/fontconfig/conf.d/02-mozilla.conf"
+"https://raw.githubusercontent.com/garman1001/dotfiles/master/.config/fontconfig/conf.d/03-emoji.conf"
 )
 
 # Directories
