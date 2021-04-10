@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+##############################################
+#   Author: Roy Conn
+#   Project: pacbrowse
+#   Version: 1.0
+#
+#   Usage: [flags]
+#
+#   Description:
+#		Browse installed pacman packages
+##############################################
+
+PRINT()
+{
+	printf '%b\n' $@
+}
+
+trap 'exit 0' SIGINT SIGHUP
+
+[[ ! -x "$(which pacman)" ]] && PRINT "This can only be run on Arch linux!" && exit 1
+
+pacman -Qq | fzf --preview 'pacman -Qil {}' --layout=reverse --bind 'enter:execute(pacman -Qil {} | less)'

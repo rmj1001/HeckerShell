@@ -1,5 +1,45 @@
 #!/usr/bin/env zsh
 
+############################## SHELL FUNCTIONS ##############################
+
+### Print text to STDOUT without 'echo'
+# usage: PRINT "<text>"
+PRINT() { printf "%b\n" "${@}" }
+
+### Run programs silently in the background
+# usage: silentrun <program> [args?]
+SILENTRUN() { $@ 2>&1 > /dev/null; return $? }
+
+### Run programs in the background in disowned processes
+# usage: ASYNC '<commands>'
+ASYNC() { nohup $@ > /dev/null 2>&1 & }
+
+### Make all text uppercase
+# usage: UPPERCASE "text" -> "TEXT"
+UPPERCASE() { PRINT "$1" | tr '[:lower:]' '[:upper:]' }
+
+### Make all text lowercase
+# usage: LOWERCASE "TEXT" -> "text"
+LOWERCASE() { PRINT "$1" | tr '[:upper:]' '[:lower:]' }
+
+### Random number generator
+# usage: random <number?>
+random() { PRINT "$(( 1 + ${RANDOM} % ${1:-100} ))" }
+
+### Message of the Day
+# usage: motd
+motd ()
+{
+    local motdFile="${HOME}/.zsh/motd.txt"
+
+    [[ -f "${motdFile}" ]] || return 0
+
+    [[ "$1" == '--lolcat' ]] && SILENTRUN which lolcat && lolcat ${motdFile} && return 0
+    [[ "$1" == '--edit' ]] && ${EDITOR} ${motdFile} && return 0
+
+    cat ${motdFile}
+}
+
 ############################## SHELL ALIASES ##############################
 
 # Edit files
@@ -16,13 +56,13 @@ alias grep="grep --color=auto"
 alias readfile="/bin/cat -n"
 
 # Replaces 'cat' with 'batcat' (Rust rewrite)
-if [[ -x "$(command -v batcat)" ]]; then
+if SILENTRUN which batcat; then
 	alias bat="/bin/batcat"
 	alias cat="bat -p"
 fi
 
 # Replaces 'cat' with 'bat' on Arch (Rust rewrite)
-if [[ -x "$(command -v bat)" ]] && [[ -x "$(command -v pacman)" ]]; then
+if SILENTRUN which bat && SILENTRUN which pacman; then
 	alias cat="bat -p"
 fi
 
@@ -62,59 +102,19 @@ alias terminal="${TERMINAL}"
 alias browser="${BROWSER}"
 alias auth="${AUTH}"
 
-############################## SHELL FUNCTIONS ##############################
-
-### Print text to STDOUT without 'echo'
-# usage: PRINT "<text>"
-PRINT() { printf "%s\n" "${@}" && return 0 }
-
-### Run programs silently in the background
-# usage: silentrun <program> [args?]
-SILENTRUN() { $@ 2>&1 > /dev/null &! }
-
-### Run programs in the background in disowned processes
-# usage: ASYNC '<commands>'
-ASYNC() { nohup $@ > /dev/null 2>&1 & }
-
-### Make all text uppercase
-# usage: UPPERCASE "text" -> "TEXT"
-UPPERCASE() { PRINT "$1" | tr '[:lower:]' '[:upper:]' }
-
-### Make all text lowercase
-# usage: LOWERCASE "TEXT" -> "text"
-LOWERCASE() { PRINT "$1" | tr '[:upper:]' '[:lower:]' }
-
-### Random number generator
-# usage: random <number?>
-random() { PRINT "$(( 1 + ${RANDOM} % ${1:-100} ))" }
-
-### Message of the Day
-# usage: motd
-motd ()
-{
-    local _motd="${HOME}/.zsh/motd.txt"
-
-    [[ -f "${_motd}" ]] || return 0
-
-    [[ "$1" == '--lolcat' ]] && [[ -x "$(command -v lolcat)" ]] && lolcat ${_motd} && return 0
-    [[ "$1" == '--edit' ]] && ${EDITOR} ${_motd} && return 0
-
-    cat ${_motd}
-}
-
 ########################## CURL APPS ##########################
 
 ### CURL APPS HELP
 # usage: curlapps
 curlapps()
 {
-    printf "%b\n" "cheat \t\t [command]"
-    printf "%b\n" "weather"
-    printf "%b\n" "qrcode \t\t [url]"
-    printf "%b\n" "dict \t\t [word]"
-    printf "%b\n" "rate \t\t [emtpy or currency]"
-    printf "%b\n" "getnews \t [query]"
-    printf "%b\n" "parrot"
+    PRINT "cheat \t\t [command]"
+    PRINT "weather"
+    PRINT "qrcode \t\t [url]"
+    PRINT "dict \t\t [word]"
+    PRINT "rate \t\t [emtpy or currency]"
+    PRINT "getnews \t [query]"
+    PRINT "parrot"
 }
 
 ### CHEAT PAGES

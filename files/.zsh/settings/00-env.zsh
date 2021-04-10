@@ -1,20 +1,17 @@
 #!/usr/bin/env zsh
 
-# Editor
+# Default Editor
 [[ -f "$(which code)" ]] && export EDITOR="$(which code)"
 [[ -f "$(which nano)" ]] && export EDITOR="$(which nano)"
 [[ -f "$(which nvim)" ]] && export EDITOR="$(which nvim)"
 [[ -f "$(which micro)" ]] && export EDITOR="$(which micro)"
 
-# Browser
+# Default Browser
 [[ -x "$(which firefox)" ]] && export BROWSER="$(which firefox)"
 
-# Authentication
+# Default Authentication
 [[ -x "$(which sudo)" ]] && export AUTH="$(which sudo)"
 [[ -x "$(which doas)" ]] && export AUTH="$(which doas)"
-
-# Default Applications
-[[ -x "$(which tilix)" ]] && export TERMINAL="$(which tilix)"
 
 # ZSH
 export ZSH="${HOME}/.zsh/.oh-my-zsh"
@@ -57,4 +54,4 @@ export DENO_INSTALL="/home/roy/.deno"
 export PATH=${PATH}:${SCRIPTS}:${APPIMAGES}:${GOPATH}/bin:${HOMEBREW}:${DENO_INSTALL}/bin
 
 # Conditional PATH additions
-[ -z "${CARGOPATH}" ] || export PATH="${PATH}:${CARGOPATH}"
+[[ -z "${CARGOPATH}" ]] || export PATH="${PATH}:${CARGOPATH}"
