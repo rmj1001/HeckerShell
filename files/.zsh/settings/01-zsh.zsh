@@ -4,3 +4,8 @@
 setopt +o nomatch
 setopt NO_HUP
 zstyle ':completion:*' rehash true
+
+# Plugins
+export plugins=(
+    doas
+)

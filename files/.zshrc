@@ -3,7 +3,7 @@
 # ZSH folder
 export zfiles=${HOME}/.zsh
 export zsettings=( ${zfiles}/settings/* )
-export zplugins=( ${zfiles}/plugins/* )
+export zplugins="${zfiles}/plugins"
 export zsources=( ${zfiles}/sources/* )
 
 # File Lists
@@ -11,7 +11,6 @@ files=()
 
 [[ ${#zsources[@]} -gt 0 ]] && files+=( ${zsources[@]} )
 [[ ${#zsettings[@]} -gt 0 ]] && files+=( ${zsettings[@]} )
-[[ ${#zplugins[@]} -gt 0 ]] && files+=( ${zplugins[@]} )
 
 # Load all files
 for file in ${files[@]}
@@ -19,11 +18,16 @@ do
 	. "${file}"
 done
 
+# Plugin Loading (see $zfiles/settings/01-zsh.zsh)
+for plugin in ${plugins[@]}; do
+
+	. "${zplugins}/${plugin}.zsh"
+
+done
+
 # Header
 motd
 
 # Prompt
-export PS1='C:$(pwd | tr "/" "\\\\") > '
+export PS1="C:%/ > "
 
-# Generated for envman. Do not edit.
-[[ -s "$HOME/.config/envman/load.sh" ]] && source "$HOME/.config/envman/load.sh"
