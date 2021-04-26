@@ -87,6 +87,8 @@ fetcher.info()
     PRINT "Memory|${MEMORY}"
 }
 
+[[ "$1" == "--clear" ]] && clear
+
 # Retrieve
 fetcher.fetch
 
