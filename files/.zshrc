@@ -30,4 +30,3 @@ motd
 
 # Prompt
 export PS1="C:%/ > "
-

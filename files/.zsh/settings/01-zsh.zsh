@@ -7,5 +7,5 @@ zstyle ':completion:*' rehash true
 
 # Plugins
 export plugins=(
-    doas
+    sudo
 )
