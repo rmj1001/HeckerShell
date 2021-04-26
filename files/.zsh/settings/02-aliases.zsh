@@ -6,6 +6,10 @@
 # usage: PRINT "<text>"
 PRINT() { printf "%b\n" "${@}" }
 
+### Print text without newline
+# usage: NPRINT "<text>"
+NPRINT() { printf "%b" "${@}" }
+
 ### Run programs silently in the background
 # usage: silentrun <program> [args?]
 SILENTRUN() { $@ 2>&1 > /dev/null; return $? }
@@ -16,15 +20,15 @@ ASYNC() { nohup $@ > /dev/null 2>&1 & }
 
 ### Make all text uppercase
 # usage: UPPERCASE "text" -> "TEXT"
-UPPERCASE() { PRINT "$1" | tr '[:lower:]' '[:upper:]' }
+UPPERCASE() { NPRINT "$1" | tr '[:lower:]' '[:upper:]' }
 
 ### Make all text lowercase
 # usage: LOWERCASE "TEXT" -> "text"
-LOWERCASE() { PRINT "$1" | tr '[:upper:]' '[:lower:]' }
+LOWERCASE() { NPRINT "$1" | tr '[:upper:]' '[:lower:]' }
 
 ### Random number generator
 # usage: random <number?>
-random() { PRINT "$(( 1 + ${RANDOM} % ${1:-100} ))" }
+random() { NPRINT "$(( 1 + ${RANDOM} % ${1:-100} ))" }
 
 ### Message of the Day
 # usage: motd
