@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+
+##############################################
+#   Author: Roy Conn
+#   Project: pactools
+#   Version: 1.0
+#
+#   Usage: [flags]
+#
+#   Description:
+#		Browse installed pacman packages
+##############################################
+
+PRINT()
+{
+	printf "%b\n" "$@"
+}
+
+LOWERCASE ()
+{
+    printf "${1}" | tr "[:upper:]" "[:lower:]"
+    return 0
+}
+
+_browse()
+{
+	trap 'exit 0' SIGINT SIGHUP
+		
+	[[ ! -x "$(which pacman)" ]] && PRINT "This can only be run on Arch linux!" && exit 1
+		
+	pacman -Qq | fzf --preview 'pacman -Qil {}' --layout=reverse --bind 'enter:execute(pacman -Qil {} | less)'	
+
+	exit 0
+}
+
+_refresh_mirrors()
+{
+	[[ -x "$(which reflector)" ]] || exit 1
+
+	sudo reflector --latest 100 --protocol https --sort rate --verbose --save /etc/pacman.d/mirrorlist
+
+	exit 0
+}
+
+_help.commands()
+{
+	PRINT "Command|Arguments|Description"
+	PRINT "|||"
+	PRINT "browse|n/a|Browse installed packages"
+	PRINT "refresh-mirrors|n/a|Refresh your mirror list"
+}
+
+_help()
+{
+	PRINT "pactools - Various pacman tools"
+	PRINT
+	_help.commands | column -t -s '|'
+}
+
+case "$(LOWERCASE $1)" in
+
+	browse )
+
+		_browse
+		;;
+
+	refresh-mirrors )
+
+		_refresh_mirrors
+		;;
+
+	help )
+		_help
+		;;
+
+	* )
+
+		[[ -z "$1" ]] && _help && exit 0
+		PRINT "Invalid command '$1'!" && exit 1
+		;;
+esac

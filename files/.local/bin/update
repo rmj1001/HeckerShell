@@ -50,8 +50,8 @@ UPDATER "brew" "brew upgrade"
 UPDATER "apt" "sudo apt update && sudo apt upgrade"
 UPDATER "dnf" "sudo dnf update"
 UPDATER "pacman" "sudo pacman -Syu"
-UPDATER "yay" "yay -Syua"
-UPDATER "paru" "paru -Syua"
+UPDATER "yay" "yay -Sua"
+UPDATER "paru" "paru -Sua"
 
 clear
 PRINT "Updates finished."

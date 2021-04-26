@@ -30,7 +30,7 @@ random() { PRINT "$(( 1 + ${RANDOM} % ${1:-100} ))" }
 # usage: motd
 motd ()
 {
-    local motdFile="${HOME}/.zsh/motd.txt"
+    local motdFile="${HOME}/.motd.txt"
 
     [[ -f "${motdFile}" ]] || return 0
 
@@ -97,6 +97,9 @@ alias zmanage="cd ${HOME}.zsh"
 alias zshrc="${EDITOR} ${ZSHRC}"
 alias zaliases="${EDITOR} ${HOME}/.zsh/settings/02-aliases.zsh && zreload"
 
+# Pipewire
+alias restart-pipewire="systemctl restart --user pipewire; systemctl restart --user pipewire-pulse; systemctl restart --user bluetooth"
+
 # Default apps
 alias terminal="${TERMINAL}"
 alias browser="${BROWSER}"
@@ -119,7 +122,7 @@ curlapps()
 
 ### CHEAT PAGES
 # usage: cheat <command>
-cheat()
+cheatsh()
 {
     curl cheat.sh/$1
 }

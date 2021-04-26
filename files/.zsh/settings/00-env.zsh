@@ -38,6 +38,7 @@ export XINITRC="${XDG_CONFIG_HOME}/X11/xinitrc"
 export XSERVERRC="${XDG_CONFIG_HOME}/X11/xserverrc"
 export ANDROID_HOME="${XDG_DATA_HOME}/android-sdk"
 export MYSQL_HISTFILE="${XDG_DATA_HOME}/mysql_history"
+export QT_QPA_PLATFORMTHEME="qt5ct"
 
 # Compilation flags
 export ARCHFLAGS="-arch x86_64"
