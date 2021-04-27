@@ -34,7 +34,7 @@ random() { NPRINT "$(( 1 + ${RANDOM} % ${1:-100} ))" }
 # usage: motd
 motd ()
 {
-    local motdFile="${HOME}/.motd.txt"
+    local motdFile="${HOME}/.zsh/.motd.txt"
 
     [[ -f "${motdFile}" ]] || return 0
 

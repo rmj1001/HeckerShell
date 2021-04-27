@@ -18,8 +18,8 @@ PRINT()
 
 PAUSE ()
 {
-	local p=""
-	read -p "Press <ENTER> to continue..." p
+	PRINT "Press <ENTER> to continue..."
+	read -r
 
 	return 0
 }
@@ -37,26 +37,26 @@ TEMP="${SCRIPTS}/${1}~"
 [[ ! -f "${FILE}" ]] && PRINT "Script '${1}' does not exist!" && exit 1
 
 # Backup file
-cat ${FILE} > ${TEMP}
+cat "${FILE}" > "${TEMP}"
 
 # Edit script
-${EDITOR} ${FILE}
+${EDITOR} "${FILE}"
 
 # Confirm save changes to script
-read -p "Save changes to file (Y/n)? " confirmation
+read -r -p "Save changes to file (Y/n)? " confirmation
 
 if [[ ! $confirmation =~ ^[nN][oO]?$ ]]; then
 
-	rm -f ${TEMP}
+	rm -f "${TEMP}"
 
 	# Confirmation message
 	PRINT "Saved changes.\n"
 
 else
 
-	rm -f ${FILE}
-	mv ${TEMP} ${FILE}
-	chmod +x ${FILE}
+	rm -f "${FILE}"
+	mv "${TEMP}" "${FILE}"
+	chmod +x "${FILE}"
 
 	# Confirmation message
 	PRINT "Discarded changes.\n"

@@ -11,9 +11,6 @@
 #		Roll some dice!
 ##############################################
 
-version='1.0'
-author='Nidia Achrys'
-
 PRINT()
 {
 	printf "%b\n" "${@}"
@@ -21,7 +18,7 @@ PRINT()
 
 _RANDNUM()
 {
-	printf "%b" "$(( ${RANDOM} % ${1:-100} + 1 ))"
+	printf "%b" "$(( RANDOM % ${1:-100} + 1 ))"
 }
 
 if [ $# -lt 1 ]
@@ -54,7 +51,7 @@ do
 	arg=${!i}
 	if [[ $arg =~ ^[0-9]+$ ]]
 	then
-		result="$(_RANDNUM ${arg})"
+		result="$(_RANDNUM "${arg}")"
 
 		if [ ! $minoutput = true ]
 		then

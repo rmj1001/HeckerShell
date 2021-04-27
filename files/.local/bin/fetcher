@@ -19,7 +19,7 @@ PRINT ()
 REQUIRE ()
 {
 	for arg in "${@}"; do
-		if [[ ! -x "$(which $arg)" ]]; then
+		if [[ ! -x "$(which "$arg")" ]]; then
 
 			PRINT "'${arg}' is required to run this program!"
 			exit 1
@@ -45,26 +45,26 @@ fetcher.fetch ()
     # Package count
     PKGCOUNT=""
     [[ -x "$(command -v pacman)" ]] && \
-	    PKGCOUNT="$PKGCOUNT`pacman -Qq | wc -l` (pacman), "
+	    PKGCOUNT="${PKGCOUNT}$(pacman -Qq | wc -l) (pacman), "
     [[ -x "$(command -v apt)" ]] && \
-	    PKGCOUNT="$PKGCOUNT`apt list --installed 2>/dev/null | wc -l` (apt), "
+	    PKGCOUNT="${PKGCOUNT}$(apt list --installed 2>/dev/null | wc -l) (apt), "
     [[ -x "$(command -v dnf)" ]] && \
-	    PKGCOUNT="$PKGCOUNT`dnf list installed | wc -l` (rpm), "
+	    PKGCOUNT="${PKGCOUNT}$(dnf list installed | wc -l) (rpm), "
     [[ -x "$(command -v flatpak)" ]] && \
-	    PKGCOUNT="$PKGCOUNT`flatpak list | wc -l` (flatpak), "
+	    PKGCOUNT="${PKGCOUNT}$(flatpak list | wc -l) (flatpak), "
     [[ -x "$(command -v snap)" ]] && snapCount=$(( $(snap list | wc -l) - 1 )) && \
-	    PKGCOUNT="$PKGCOUNT$snapCount (snap), "
+	    PKGCOUNT="${PKGCOUNT}$snapCount (snap), "
 
     # Processor
-    CORES=$(cat /proc/cpuinfo | grep processor | wc -l)
+    CORES=$(grep -c processor < /proc/cpuinfo)
     CPUNAME=$(grep '^model name' /proc/cpuinfo -m 1 | sed -E 's|^model\sname\s*:\s||g')
 
     # Memory
     MEMTOTALKB=$(grep 'MemTotal' /proc/meminfo | sed -e 's|MemTotal:\s*||g' -e 's|\s*kB\s*||g')
     MEMFREEKB=$(grep 'MemFree' /proc/meminfo | sed -e 's|MemFree:\s*||g' -e 's|\s*kB\s*||g')
 
-    MEMFREE=$(( ${MEMFREEKB} / 1000 ))
-    MEMTOTAL=$(( ${MEMTOTALKB} / 1000 ))
+    MEMFREE=$(( MEMFREEKB / 1000 ))
+    MEMTOTAL=$(( MEMTOTALKB / 1000 ))
 
     MEMORY="$MEMFREE MB / $MEMTOTAL MB"
 
