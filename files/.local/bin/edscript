@@ -41,7 +41,7 @@ cat "${FILE}" > "${TEMP}"
 # Edit script
 ${EDITOR} "${FILE}"
 
-[[ "$(diff -s $FILE $TEMP)" == "Files $FILE and $TEMP are identical" ]] && rm -f "$TEMP" && PRINT "No changes detected.\n" && exit 0
+[[ "$(diff -s "$FILE" "$TEMP")" == "Files $FILE and $TEMP are identical" ]] && rm -f "$TEMP" && PRINT "No changes detected.\n" && exit 0
 
 # Confirm save changes to script
 read -r -p "Save changes to file (Y/n)? " confirmation
