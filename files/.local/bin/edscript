@@ -18,8 +18,7 @@ PRINT()
 
 PAUSE ()
 {
-	PRINT "Press <ENTER> to continue..."
-	read -r
+	read -r -p "Press <ENTER> to continue..."
 
 	return 0
 }
@@ -41,6 +40,8 @@ cat "${FILE}" > "${TEMP}"
 
 # Edit script
 ${EDITOR} "${FILE}"
+
+[[ "$(diff -s $FILE $TEMP)" == "Files $FILE and $TEMP are identical" ]] && rm -f "$TEMP" && PRINT "No changes detected.\n" && exit 0
 
 # Confirm save changes to script
 read -r -p "Save changes to file (Y/n)? " confirmation
