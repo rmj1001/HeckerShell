@@ -27,7 +27,7 @@ PAUSE ()
 EDITOR="${EDITOR:-nano}"
 SCRIPTS="${SCRIPTS:-$HOME/.local/bin}"
 FILE="${SCRIPTS}/${1}"
-TEMP="${SCRIPTS}/${1}~"
+TEMP="${SCRIPTS}/${1}.backup"
 
 # Check if script name was passed
 [[ $# -lt 1 ]] && PRINT "You must provide a script name!" && exit 1
@@ -41,7 +41,8 @@ cat "${FILE}" > "${TEMP}"
 # Edit script
 ${EDITOR} "${FILE}"
 
-[[ "$(diff -s "$FILE" "$TEMP")" == "Files $FILE and $TEMP are identical" ]] && rm -f "$TEMP" && PRINT "No changes detected.\n" && exit 0
+# Check to see if edited script is changed, if not then delete backup and exit.
+cmp -s "$FILE" "$TEMP" && rm -f "$TEMP" && PRINT "No changes detected.\n" && exit 0
 
 # Confirm save changes to script
 read -r -p "Save changes to file (Y/n)? " confirmation
@@ -66,4 +67,3 @@ fi
 
 # Exit
 exit 0
-
