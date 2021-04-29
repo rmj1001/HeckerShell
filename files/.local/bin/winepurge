@@ -15,7 +15,7 @@
 REQUIRE ()
 {
 	for arg in "${@}"; do
-		if [[ ! -x "$(which $arg)" ]]; then
+		if [[ ! -x "$(which "$arg")" ]]; then
 
 			PRINT "'${arg}' is required to run this program!"
 			exit 1
@@ -36,15 +36,15 @@ then
 fi
 
 # Removes all leftover wine applications
-cd $HOME
+cd "$HOME" || exit
 rm -rf .wine
 
 # The lines below will remove all entries for any windows software
 # installed with WINE from your application menu(s). Make sure to
 # remove them using your menu editor as well.
 
-rm -f $HOME/.config/menus/applications-merged/wine*
-rm -rf $HOME/.local/share/applications/wine
-rm -f $HOME/.local/share/desktop-directories/wine*
-rm -f $HOME/.local/share/icons/????_*.{xpm,png}
-rm -f $HOME/.local/share/icons/*-x-wine-*.{xpm,png}
+rm -f "$HOME"/.config/menus/applications-merged/wine*
+rm -rf "$HOME"/.local/share/applications/wine
+rm -f "$HOME"/.local/share/desktop-directories/wine*
+rm -f "$HOME"/.local/share/icons/????_*.{xpm,png}
+rm -f "$HOME"/.local/share/icons/*-x-wine-*.{xpm,png}

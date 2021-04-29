@@ -19,13 +19,20 @@ PRINT()
 	printf "%b\n" "${@}"
 }
 
+# Description: 'echo' replacement w/o newline
+#
+# Usage: NPRINT "text"
+NPRINT()
+{
+	printf "%b" "${@}"
+}
+
 # Description: Pauses script execution until the user presses ENTER
 #
 # Usage: PAUSE
 PAUSE ()
 {
-	local p=""
-	read -p "Press <ENTER> to continue..." p
+	read -r -p "Press <ENTER> to continue..."
 
 	return 0
 }
@@ -35,7 +42,7 @@ PAUSE ()
 # Usage: TITLE "test"
 TITLE ()
 {
-	printf "\033]2;${1}\a"
+	NPRINT "\033]2;${1}\a"
 }
 
 # Description: Generate a random number from 1 to the specified maximum
@@ -43,7 +50,7 @@ TITLE ()
 # Usage: RANDOM_NUM 100
 RANDOM_NUM ()
 {
-	printf "%b" "$(( ${RANDOM} % ${1} + 1 ))"
+	NPRINT "$(( RANDOM % ${1} + 1 ))"
 }
 
 # Description: Converts a string to all api.std.failMsg characters
@@ -51,7 +58,7 @@ RANDOM_NUM ()
 # Usage: name="$(LOWERCASE $name)"
 LOWERCASE ()
 {
-	printf "${1}" | tr "[:upper:]" "[:lower:]"
+	NPRINT "${1}" | tr "[:upper:]" "[:lower:]"
 	return 0
 }
 
@@ -60,7 +67,7 @@ LOWERCASE ()
 # Usage: name="$(UPPERCASE $name)"
 UPPERCASE ()
 {
-	printf "${1}" | tr "[:lower:]" "[:upper:]"
+	NPRINT "${1}" | tr "[:lower:]" "[:upper:]"
 	return 0
 }
 
@@ -87,7 +94,7 @@ TRIM ()
 REQUIRE_CMD ()
 {
 	for arg in "${@}"; do
-		if [[ ! -x "$(which $arg)" ]]; then
+		if [[ ! -x "$(which "$arg")" ]]; then
 
 			printf "%b\n" "'${arg}' is required to run this program!"
 			exit 1

@@ -13,14 +13,14 @@
 
 PRINT()
 {
-	printf '%b\n' $@
+	printf '%b\n' "$@"
 }
 
 SCRIPTS="${SCRIPTS:-$HOME/.local/bin}"
 
-for script in $SCRIPTS/*; do
+for script in "$SCRIPTS"/*; do
 
-	name="$(basename $script)"
+	name="$(basename "$script")"
 	[[ ! -h $script ]] && [[ ! -d $script ]] && [[ -x $script ]] && PRINT "${name}"
 
 done

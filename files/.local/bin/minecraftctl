@@ -19,7 +19,7 @@ PRINT ()
 
 PAUSE ()
 {
-	read -p "Press ENTER to continue..." pause_entry
+	read -r -p "Press ENTER to continue..."
 	return 0
 }
 
@@ -38,11 +38,11 @@ minecraftctl.install()
 	local dentry="${desktopEntry}"
 
 	# Download
-	cd $HOME/Downloads
+	cd "$HOME"/Downloads || return 1
 	if [[ -f "Minecraft.deb" ]]
 	then
-		read -p "Do you want to remove the old Minecraft debfile (y/N)? " ans
-		ans="$(printf '%b' ${ans} | tr '[:upper:]' '[:lower:]')"
+		read -r -p "Do you want to remove the old Minecraft debfile (y/N)? " ans
+		ans="$(printf '%b' "${ans}" | tr '[:upper:]' '[:lower:]')"
 
 		case "${ans}" in
 
@@ -117,7 +117,7 @@ minecraftctl.help()
 	minecraftctl.help.commands | column -t -s "|"
 }
 
-cmd="$(printf '%b' $1 | tr '[:upper:]' '[:lower:]')"
+cmd="$(printf '%b' "$1" | tr '[:upper:]' '[:lower:]')"
 
 case "${cmd}" in
 	i | install )
@@ -133,6 +133,6 @@ case "${cmd}" in
 		minecraftctl.help
 		;;
 	* )
-		[ -z "${cmd}" ] && minecraftctl.help || PRINT "'${1}' is an invalid subcommand!"
+		if [[ -z "${cmd}" ]]; then minecraftctl.help; else PRINT "'${1}' is an invalid subcommand!"; fi
 		;;
 esac

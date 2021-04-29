@@ -13,7 +13,7 @@
 
 PRINT()
 {
-	printf '%b\n' $@
+	printf '%b\n' "$@"
 }
 
 SCRIPTS="${SCRIPTS:-$HOME/.local/bin}"
@@ -25,6 +25,6 @@ FILE="${SCRIPTS}/${1}"
 # Check if script exists
 [[ ! -f "${FILE}" ]] && PRINT "Script '${1}' does not exist!" && exit 1
 
-cat ${FILE}
+cat "${FILE}"
 
 exit 0

@@ -16,7 +16,7 @@
 REQUIRE ()
 {
 	for arg in "${@}"; do
-		if [[ ! -x "$(which $arg)" ]]; then
+		if [[ ! -x "$(which "$arg")" ]]; then
 
 			PRINT "'${arg}' is required to run this program!"
 			exit 1
@@ -44,13 +44,13 @@ golive.setup ()
 	if [ -z "$MIC_SOURCE" ]; then
 		first_source=$(pactl list short sources | head -1 | awk '{print $1;}') # e.g. 0
 		pactl list short sources
-		read -p ">> Source (input) number to use [$first_source]: " user_source
+		read -r -p ">> Source (input) number to use [$first_source]: " user_source
 		[ -z "$user_source" ] && user_source=$first_source
 		MIC_SOURCE=$user_source
 		PRINT 
 		first_sink=$(pactl list short sinks | head -1 | awk '{print $1;}') # e.g. 1
 		pactl list short sinks
-		read -p ">> Sink (output) number to use [$first_sink]: " user_sink
+		read -r -p ">> Sink (output) number to use [$first_sink]: " user_sink
 		[ -z "$user_sink" ] && user_sink=$first_sink
 		OUTPUT_SINK=$user_sink
 		PRINT 
@@ -60,18 +60,18 @@ golive.setup ()
 	pactl load-module module-null-sink sink_name=Virtual_Sink sink_properties=device.description=Virtual_Sink > /dev/null
 	MIX_SOURCE=$(pactl list short sources | grep 'Virtual_Sink' | awk '{print $1;}') # e.g. 14
 
-	pactl load-module module-loopback latency_msec=1 source=$MIC_SOURCE sink=Virtual_Output > /dev/null
-	pactl load-module module-loopback latency_msec=1 source=$MIX_SOURCE sink=Virtual_Output > /dev/null
-	MIX_LOOPBACK=$(pactl load-module module-loopback latency_msec=1 source=$MIX_SOURCE sink=$OUTPUT_SINK)
+	pactl load-module module-loopback latency_msec=1 source="$MIC_SOURCE" sink=Virtual_Output > /dev/null
+	pactl load-module module-loopback latency_msec=1 source="$MIX_SOURCE" sink=Virtual_Output > /dev/null
+	MIX_LOOPBACK=$(pactl load-module module-loopback latency_msec=1 source="$MIX_SOURCE" sink="$OUTPUT_SINK")
 }
 
 golive.cleanup ()
 {
 	virtual_sink=$(pactl list short modules | grep 'Virtual_Sink' | awk '{print $1;}') # e.g. 30
 	[ -z "$virtual_sink" ] && return
-	read -p '>> Press enter to unload PulseAudio modules for the virtual mix...'
+	read -r -p '>> Press enter to unload PulseAudio modules for the virtual mix...'
 
-	[ ! -z "$MIX_LOOPBACK" ] && pactl unload-module $MIX_LOOPBACK || pactl unload-module module-loopback
+	[ ! -z "$MIX_LOOPBACK" ] && pactl unload-module "$MIX_LOOPBACK" || pactl unload-module module-loopback
 	pactl list short modules | grep -E 'Virtual_(Sink|Output)' | awk '{print $1;}' | xargs -L1 pactl unload-module
 }
 
@@ -98,7 +98,7 @@ golive.help()
 	PRINT
 }
 
-cmd="$(LOWERCASE ${1})"
+cmd="$(LOWERCASE "${1}")"
 
 case "${cmd}" in
 	s | start )

@@ -19,23 +19,25 @@ PRINT()
 _up() 
 { 
 	percent=${1:-15}
-	amixer sset Master ${percent}%+ 2>&1 > /dev/null
+	amixer sset Master "${percent}%+" > /dev/null 2>&1
 }
 
 _down() 
 {
 	percent=${1:-15}
-	amixer sset Master ${percent}%- 2>&1 > /dev/null
+	amixer sset Master "${percent}%-" > /dev/null 2>&1
 }
 
 _mute() 
 {
-	amixer sset Master toggle 2>&1 > /dev/null
+	amixer sset Master toggle > /dev/null 2>&1
 }
 
 _view()
 {
-	local volume="$(amixer sget Master | grep 'Front Left' | grep '%' | sed -e 's|.* Playback [0-9]* ||g' -e 's|\[on\]||g' -re 's|[^0-9]||g')%"
+	local volume
+	
+	volume="$(amixer sget Master | grep 'Front Left' | grep '%' | sed -e 's|.* Playback [0-9]* ||g' -e 's|\[on\]||g' -re 's|[^0-9]||g')%"
 
 	PRINT "${volume}"
 }
@@ -58,15 +60,15 @@ _help()
 	return 0
 }
 
-cmd="$(printf '%b' ${1} | tr '[:upper:]' '[:lower:]')"
+cmd="$(printf '%b' "${1}" | tr '[:upper:]' '[:lower:]')"
 
 case "${cmd}" in
 
 	u | up )
-		_up $2 ;;
+		_up "$2" ;;
 
 	d | down )
-		_down $2 ;;
+		_down "$2" ;;
 
 	m | mute )
 		_mute ;;

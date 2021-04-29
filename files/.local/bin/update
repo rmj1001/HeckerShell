@@ -18,10 +18,9 @@ PRINT()
 
 PAUSE ()
 {
-    local p=""
-
     PRINT
-    read -p "Press <ENTER> to continue..." p
+    read -r -p "Press <ENTER> to continue..."
+
     PRINT
 
     return 0
@@ -32,7 +31,7 @@ UPDATER()
 	req="${1}"
 	cmd="${2}"
 
-	if [[ -x "$(command -v ${req})" ]]; then
+	if [[ -x "$(command -v "${req}")" ]]; then
 
 		clear
 		PRINT "Updating ${req}...\n"

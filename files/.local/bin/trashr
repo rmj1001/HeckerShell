@@ -18,8 +18,7 @@ PRINT()
 
 PAUSE ()
 {
-	local p=""
-	read -p "Press <ENTER> to continue..." p
+	read -p "Press <ENTER> to continue..."
 
 	return 0
 }

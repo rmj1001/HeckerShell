@@ -18,7 +18,7 @@ PRINT()
 
 LOWERCASE ()
 {
-    printf "${1}" | tr "[:upper:]" "[:lower:]"
+    printf "%b" "${1}" | tr "[:upper:]" "[:lower:]"
     return 0
 }
 
@@ -52,12 +52,14 @@ _help.commands()
 
 _help()
 {
+	PRINT
 	PRINT "pactools - Various pacman tools"
 	PRINT
 	_help.commands | column -t -s '|'
+	PRINT
 }
 
-case "$(LOWERCASE $1)" in
+case "$(LOWERCASE "$1")" in
 
 	browse )
 

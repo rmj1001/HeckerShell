@@ -31,12 +31,12 @@ trap 'rm -f ${FILE}; PRINT "\nmkscript cancelled."; exit' SIGINT SIGHUP
 [[ -f "${FILE}" ]] && PRINT "Script '${1}' exists!" && exit 1
 
 # Create script
-touch ${FILE}
-chmod +x ${FILE}
+touch "${FILE}"
+chmod +x "${FILE}"
 
-read -p "Author: " author
-read -p "Usage: " usage
-read -p "Description: " description
+read -r -p "Author: " author
+read -r -p "Usage: " usage
+read -r -p "Description: " description
 
 # Add template to script
 _template="#!/usr/bin/env bash
@@ -58,10 +58,10 @@ PRINT()
 }
 "
 
-PRINT "${_template}" > ${FILE}
+PRINT "${_template}" > "${FILE}"
 
 # Edit script
-${EDITOR} ${FILE}
+${EDITOR} "${FILE}"
 
 # Exit
 exit 0

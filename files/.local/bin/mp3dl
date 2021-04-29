@@ -20,7 +20,7 @@ PRINT()
 REQUIRE_CMD ()
 {
     for arg in "${@}"; do
-        if [[ ! -x "$(which $arg)" ]]; then
+        if [[ ! -x "$(which "$arg")" ]]; then
 
             printf "%b\n" "'${arg}' is required to run this program!"
             exit 1
@@ -35,9 +35,9 @@ mp3dl.download()
 {
 	# Preparations
 	DIR=$HOME/Downloads/Music
-	[[ -d $DIR ]] || mkdir $DIR
+	[[ -d "$DIR" ]] || mkdir "$DIR"
 
-	cd $DIR
+	cd "$DIR" || exit
 
 	# Download
 	youtube-dl \
@@ -45,7 +45,7 @@ mp3dl.download()
 		--add-metadata \
 		--output '%(title)s.%(ext)s' \
 		--extract-audio \
-		--audio-format mp3 ${@}		
+		--audio-format mp3 "${@}"
 }
 
 if [[ $# -lt 1 ]]; then
@@ -56,6 +56,6 @@ if [[ $# -lt 1 ]]; then
 
 else
 
-	mp3dl.download $@
+	mp3dl.download "$@"
 
 fi
