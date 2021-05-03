@@ -26,7 +26,16 @@ for plugin in ${plugins[@]}; do
 done
 
 # Header
-motd
+motd || fetcher || neofetch || printf "%b" ""
+
+function precmd()
+{
+	for ((i = 0; i < $COLUMNS; ++i)); do
+	  printf -
+	done
+
+	printf "%b\n" ""
+}
 
 # Prompt
-export PS1="C:%/ > "
+export PS1='C:$(pwd | tr "////" "\\\\" ) > '

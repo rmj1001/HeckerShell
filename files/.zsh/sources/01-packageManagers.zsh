@@ -19,8 +19,8 @@ userPrefix=/home/linuxbrew/.linuxbrew
 [[ -d "${homePrefix}" ]] && export BREW_PREFIX="${homePrefix}"
 [[ -d "${userPrefix}" ]] && export BREW_PREFIX="${userPrefix}"
 
-# Evaluate the homebrew prefix's shellenv
-eval "$(${BREW_PREFIX}/bin/brew shellenv)"
+# Evaluate the homebrew prefix's shellenv if brew exists
+[[ -z "${BREW_PREFIX}" ]] || eval "$(${BREW_PREFIX}/bin/brew shellenv)"
 
 # Generated for envman. Do not edit.
 [[ -s "$HOME/.config/envman/load.sh" ]] && source "$HOME/.config/envman/load.sh"
