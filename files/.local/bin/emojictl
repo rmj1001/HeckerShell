@@ -137,18 +137,22 @@ emojictl.emojis.uninstall ()
 	clear
 }
 
-emojictl.help.commands ()
-{
-	PRINT "Command|Arguments|Description"
-	PRINT "|||"
-	PRINT "install||Install emojis"
-	PRINT "uninstall||Remove emojis"
-	PRINT "help||Show this help menu"
-}
-
 emojictl.help ()
 {
-	PRINT "emojictl - Install/uninstall color emojis"
+
+	emojictl.help.commands ()
+	{
+		PRINT "Command|Arguments|Description"
+		PRINT "(i) install||Install emojis"
+		PRINT "(u) uninstall||Remove emojis"
+		PRINT "(h) help||Show this help menu"
+	}
+
+	PRINT
+	PRINT "Install/uninstall color emojis"
+	PRINT
+	PRINT "Usage:\t\temojictl [command] <args?[]>"
+	PRINT "Example:\temojictl install"
 	PRINT
 	emojictl.help.commands | column -t -s "|"
 }

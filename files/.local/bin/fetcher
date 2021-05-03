@@ -103,7 +103,4 @@ PRINT $line
 PRINT
 fetcher.info | column -t -s "|"
 PRINT
-
-# Footer
-PRINT $line
-
+PRINT

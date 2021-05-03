@@ -44,19 +44,24 @@ _view()
 
 _help()
 {
+
+	_commands()
+	{
+		PRINT "Commands|Arguments|Description"
+		PRINT "(u) up|[%]|Increase volume"
+		PRINT "(d) down|[%]|Decrease volume"
+		PRINT "(m) mute||Toggle mute"
+		PRINT "(v) view||View the current volume"
+		PRINT "(h) help||Show this help menu"
+	}
+
 	PRINT
 	PRINT "Control volume from the terminal"
 	PRINT
-	PRINT "Usage:   volume [command] [%]"
+	PRINT "Usage:   volume [command] <args?[]>"
 	PRINT "Example: volume up 5"
 	PRINT
-	PRINT "Commands"
-	PRINT "(u) up\n - Increase Volume\n"
-	PRINT "(d) down\n - Decrease Volume\n"
-	PRINT "(m) mute\n - Toggle mute\n"
-	PRINT "(v) view\n - View the current volume\n"
-	PRINT "Miscellaneous"
-	PRINT "(h) help\n - Shows this help menu\n"
+	_commands | column -t -s "|"
 	return 0
 }
 

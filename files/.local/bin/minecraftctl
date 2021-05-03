@@ -100,19 +100,23 @@ minecraftctl.update()
 	minecraftctl.install
 }
 
-minecraftctl.help.commands()
-{
-	PRINT "Command|Arguments|Description"
-	PRINT "|||"
-	PRINT "i, install||Install minecraft"
-	PRINT "r, remove||Uninstall minecraft"
-	PRINT "u, update||Update minecraft"
-	PRINT "h, help||Show this help menu"
-}
-
 minecraftctl.help()
 {
-	PRINT "minecraftctl - Manage your minecraft installation"
+
+	minecraftctl.help.commands()
+	{
+		PRINT "Command|Arguments|Description"
+		PRINT "(i) install||Install minecraft"
+		PRINT "(r) remove||Uninstall minecraft"
+		PRINT "(u) update||Update minecraft"
+		PRINT "(h) help||Show this help menu"
+	}
+
+	PRINT
+	PRINT "Manage your minecraft installation"
+	PRINT
+	PRINT "Usage:\t\tminecraftctl [command] <args?[]>"
+	PRINT "Example:\tminecraftctl install"
 	PRINT
 	minecraftctl.help.commands | column -t -s "|"
 }

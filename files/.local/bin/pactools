@@ -42,18 +42,33 @@ _refresh_mirrors()
 	exit 0
 }
 
-_help.commands()
+_list_orphans()
 {
-	PRINT "Command|Arguments|Description"
-	PRINT "|||"
-	PRINT "browse|n/a|Browse installed packages"
-	PRINT "refresh-mirrors|n/a|Refresh your mirror list"
+	pacman -Qtdq
+}
+
+_remove_orphans()
+{
+	pacman -Qtdq | sudo pacman -Rns -
 }
 
 _help()
 {
+
+	_help.commands()
+	{
+		PRINT "Command|Arguments|Description"
+		PRINT "browse||Browse installed packages"
+		PRINT "refresh-mirrors||Refresh your mirror list"
+		PRINT "list-orphans||List dependencies no longer required by any packages"
+		PRINT "remove-orphans||Remove orphans and their config files"
+	}
+
 	PRINT
 	PRINT "pactools - Various pacman tools"
+	PRINT
+	PRINT "Usage:\t\tpactools [command] <args?[]>"
+	PRINT "Example:\tpactools refresh-mirrors"
 	PRINT
 	_help.commands | column -t -s '|'
 	PRINT
@@ -61,23 +76,16 @@ _help()
 
 case "$(LOWERCASE "$1")" in
 
-	browse )
+	browse ) _browse ;;
 
-		_browse
-		;;
+	refresh-mirrors ) _refresh_mirrors ;;
 
-	refresh-mirrors )
+	list-orphans ) _list_orphans ;;
 
-		_refresh_mirrors
-		;;
+	remove-orphans ) _remove_orphans ;;
+	
+	help ) _help ;;
 
-	help )
-		_help
-		;;
-
-	* )
-
-		[[ -z "$1" ]] && _help && exit 0
-		PRINT "Invalid command '$1'!" && exit 1
-		;;
+	* ) [[ -z "$1" ]] && _help && exit 0; PRINT "Invalid command '$1'!" && exit 1 ;;
+	
 esac

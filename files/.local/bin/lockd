@@ -4,12 +4,14 @@ PRINT() {
 	printf "%b\n" "$@" 
 }
 
-_fetchSessionID() {
+_fetchSessions() {
 	SESSIONS=( "$(loginctl list-sessions | grep "$(whoami)" | awk 'BEGIN {ORS=" "}; {print $1}')" )
 	return 0
 }
 
 _lock() { 
+	_fetchSessions
+
 	for SESSION in "${SESSIONS[@]}"; do
 		loginctl lock-session "$SESSION"
 	done
@@ -18,6 +20,8 @@ _lock() {
 }
 
 _unlock() {
+	_fetchSessions
+	
 	for SESSION in "${SESSIONS[@]}"; do
 		loginctl unlock-session "$SESSION"
 	done
@@ -26,6 +30,8 @@ _unlock() {
 }
 
 _logout() {
+	_fetchSessions
+
 	for SESSION in "${SESSIONS[@]}"; do
 		loginctl kill-session "$SESSION"
 	done
@@ -33,39 +39,49 @@ _logout() {
 	return 0
 }
 
-_help() {
-	PRINT "lockd - Lock/Unlock your computer from the command line"
-	PRINT
-	PRINT "Commands:"
-	PRINT "- l, lock\tLock your computer"
-	PRINT "- u, unlock\tUnlock your computer"
-	PRINT "- e, logout\tLogout of all sessions"
-	PRINT "- i, id\t\tView your session ID"
-	PRINT "- h, help\tView this prompt"
-	PRINT
-	return 0
+_list()
+{
+	_fetchSessions
+	PRINT "${SESSIONS[@]}" | tr ' ' '\n'
 }
 
-# Get the Session ID
-_fetchSessionID
+_help() {
+
+	_commands() {
+		PRINT "Command|Arguments|Description "
+		PRINT "(l) lock||Lock your computer"
+		PRINT "(u) unlock||Unlock your computer"
+		PRINT "(e) exit||Logout of all sessions"
+		PRINT "(p) print-sessions||View all session IDs"
+		PRINT "(h) help||View this prompt"
+		PRINT
+	}
+
+	PRINT
+	PRINT "Lock/Unlock your computer from the command line"
+	PRINT
+	PRINT "Usage:	lockd [command] <args?[]>"
+	PRINT "Example: lockd lock"
+	PRINT
+	_commands | column -t -s "|"
+	
+	return 0
+}
 
 # Get the cli command
 arg="$(printf '%b' "$1" | tr '[:upper:]' '[:lower:]')"
 
 case "$arg" in
 
-	l | lock )
-		_lock ;;
-	u | unlock )
-		_unlock ;;
-	e | logout )
-		_logout ;;
-	i | id )
-		PRINT "${SESSIONS[@]}" ;;
-	h | help )
-		_help ;;
-	* )
-		[[ -z "${1}" ]] && _help && exit 0
-		PRINT "Invalid Command '${arg}'!" ;;
-esac
+	l | lock ) _lock ;;
 
+	u | unlock ) _unlock ;;
+
+	e | exit ) _logout ;;
+	
+	p | print-sessions ) _list ;;
+	
+	h | help ) _help ;;
+	
+	* ) [[ -z "${1}" ]] && _help && exit 0; PRINT "Invalid Command '${arg}'!" ;;
+esac

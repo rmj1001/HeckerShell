@@ -90,12 +90,21 @@ golive.run ()
 
 golive.help()
 {
-	PRINT "golive - Enable/disable sound settings for discord golive"
+
+	golive.help.commands()
+	{
+		PRINT "Commands|Arguments|Description"
+		PRINT "(s) start||Start golive"
+		PRINT "(h) help||Show this prompt"
+	}
+
 	PRINT
-	PRINT "Commands:"
-	PRINT "- start\t\tStart golive"
-	PRINT "- help\t\tShow this prompt"
+	PRINT "Enable/disable sound settings for discord golive"
 	PRINT
+	PRINT "Usage:\t\tgolive [command] <args?[]>"
+	PRINT "Example:\tgolive start"
+	PRINT
+	golive.help.commands | column -t -s "|"
 }
 
 cmd="$(LOWERCASE "${1}")"
