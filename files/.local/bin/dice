@@ -23,9 +23,11 @@ _RANDNUM()
 
 if [ $# -lt 1 ]
 then
-	PRINT "dice - Generates random numbers\n"
-	PRINT "usage: dice [number...]"
-	PRINT "example: dice 100 50 30 5 2"
+	PRINT
+	PRINT "Generates random numbers\n"
+	PRINT
+	PRINT "Usage: dice [number...]"
+	PRINT "Example: dice 100 50 30 5 2"
 	PRINT
 	PRINT "Flags:"
 	PRINT "-r, --raw\t\tPrint only the numbers"

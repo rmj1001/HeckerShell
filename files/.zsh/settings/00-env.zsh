@@ -1,17 +1,17 @@
 #!/usr/bin/env zsh
 
 # Default Editor
-[[ -f "$(which code)" ]] && export EDITOR="$(which code)"
-[[ -f "$(which nano)" ]] && export EDITOR="$(which nano)"
-[[ -f "$(which nvim)" ]] && export EDITOR="$(which nvim)"
-[[ -f "$(which micro)" ]] && export EDITOR="$(which micro)"
+[[ -f "$(command -v code)" ]] && export EDITOR="$(command -v code)"
+[[ -f "$(command -v nano)" ]] && export EDITOR="$(command -v nano)"
+[[ -f "$(command -v nvim)" ]] && export EDITOR="$(command -v nvim)"
+[[ -f "$(command -v micro)" ]] && export EDITOR="$(command -v micro)"
 
 # Default Browser
-[[ -x "$(which firefox)" ]] && export BROWSER="$(which firefox)"
+[[ -x "$(command -v firefox)" ]] && export BROWSER="$(command -v firefox)"
 
 # Default Authentication
-[[ -x "$(which sudo)" ]] && export AUTH="$(which sudo)"
-[[ -x "$(which doas)" ]] && export AUTH="$(which doas)"
+[[ -x "$(command -v sudo)" ]] && export AUTH="$(command -v sudo)"
+[[ -x "$(command -v doas)" ]] && export AUTH="$(command -v doas)"
 
 # ZSH
 export ZSH="${HOME}/.zsh/.oh-my-zsh"
@@ -29,7 +29,7 @@ export TRASH="${XDG_DATA_HOME}/Trash/files"
 # Environment Variables
 export LANG="en_US.UTF-8"
 export SNAPS="/snap/bin"
-export GNUPGHOME="${XDG_DATA_HOME}/gnupg"
+export GNUPGHOME="${HOME}/.gnupg"
 export CARGO_HOME="${XDG_DATA_HOME}/cargo" # Rust
 export RUSTUP_HOME="${XDG_DATA_HOME}/rustup" # Rust
 export GTK2_RC_FILES="${XDG_CONFIG_HOME}/gtk-2.0/gtkrc"

@@ -22,9 +22,19 @@ bootableusb.write ()
 	sudo dd bs=4M if="$1" of="$2" conv=fdatasync
 }
 
+bootableusb.help ()
+{
+	PRINT
+	PRINT "Create a bootable USB drive"
+	PRINT
+	PRINT "Usage:\t\tbootableusb <iso> <drive>"
+	PRINT "Example:\tbootableusb ubuntu.iso /dev/sdb"
+	PRINT
+}
+
 if [[ "$1" = "--help" ]] || [[ $# -lt 1 ]]
 then
-	PRINT "usage: bootableusb <iso> <drive>"
+	bootableusb.help
 else
 	bootableusb.write "$1" "$2"
 fi

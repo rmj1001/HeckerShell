@@ -38,7 +38,7 @@ motd ()
 
     [[ -f "${motdFile}" ]] || return 0
 
-    [[ "$1" == '--lolcat' ]] && SILENTRUN which lolcat && lolcat ${motdFile} && return 0
+    [[ "$1" == '--lolcat' ]] && SILENTRUN command -v lolcat && lolcat ${motdFile} && return 0
     [[ "$1" == '--edit' ]] && ${EDITOR} ${motdFile} && return 0
 
     cat ${motdFile}
@@ -59,14 +59,17 @@ alias grep="grep --color=auto"
 # Cat a file w/ line numbers
 alias readfile="/bin/cat -n"
 
+# Replace 'which'
+alias which="command -v"
+
 # Replaces 'cat' with 'batcat' (Rust rewrite)
-if SILENTRUN which batcat; then
+if SILENTRUN command -v batcat; then
 	alias bat="/bin/batcat"
 	alias cat="bat -p"
 fi
 
 # Replaces 'cat' with 'bat' on Arch (Rust rewrite)
-if SILENTRUN which bat && SILENTRUN which pacman; then
+if SILENTRUN command -v bat && SILENTRUN command -v pacman; then
 	alias cat="bat -p"
 fi
 

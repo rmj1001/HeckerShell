@@ -4,8 +4,22 @@ PRINT() {
 	printf "%b\n" "$@" 
 }
 
+TRIM ()
+{
+    local var="$*"
+
+    # remove leading whitespace characters
+    var="${var##*( )}"
+    
+	# remove trailing whitespace characters
+    var="${var%%*( )}"
+    
+    # Return trimmed string
+    printf '%s' "$var"
+}
+
 _fetchSessions() {
-	SESSIONS=( "$(loginctl list-sessions | grep "$(whoami)" | awk 'BEGIN {ORS=" "}; {print $1}')" )
+	SESSIONS=( "$(loginctl list-sessions | grep $(whoami) | awk 'BEGIN {ORS=" "}; {print $1}')" )
 	return 0
 }
 
@@ -42,7 +56,9 @@ _logout() {
 _list()
 {
 	_fetchSessions
-	PRINT "${SESSIONS[@]}" | tr ' ' '\n'
+	IDS="$(TRIM ${SESSIONS[@]})"
+	PRINT "[ ${IDS// /, } ]"
+	return 0
 }
 
 _help() {

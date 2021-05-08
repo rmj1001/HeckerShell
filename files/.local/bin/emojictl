@@ -50,11 +50,13 @@ REQUIRE "wget" "unzip" "fc-cache"
 # Noto Emoji package link
 EMOJIPKG="https://noto-website-2.storage.googleapis.com/pkgs/NotoColorEmoji-unhinted.zip"
 
+CONFLINK="https://raw.githubusercontent.com/rmj1001/dotfiles/main/files/.config/fontconfig/conf.d"
+
 # Fontconfig file links
 FONTCONFIGS=(
-"https://raw.githubusercontent.com/garman1001/dotfiles/master/.config/fontconfig/conf.d/01-dejavu.conf"
-"https://raw.githubusercontent.com/garman1001/dotfiles/master/.config/fontconfig/conf.d/02-mozilla.conf"
-"https://raw.githubusercontent.com/garman1001/dotfiles/master/.config/fontconfig/conf.d/03-emoji.conf"
+"${CONFLINK}/01-dejavu.conf"
+"${CONFLINK}/02-mozilla.conf"
+"${CONFLINK}/03-emoji.conf"
 )
 
 # Directories
@@ -72,7 +74,7 @@ emojictl.prepare ()
 	# Make the config directory and move to it
 	[ ! -d "$CONFDIR" ] && mkdir -p "$CONFDIR"
 	[ ! -d "$FONTS" ] && mkdir -p "$FONTS"
-	[ -d "$TEMP" ] && rm -rf "$TEMP"
+	[ -d "$TEMP" ] && rm -rf "$TEMP/*" || mkdir "$TEMP"
 	[ -f "$FILE" ] && rm -rf "$FILE"
 	[ -f "$NOTOPKG" ] && rm -f "$NOTOPKG"
 }
