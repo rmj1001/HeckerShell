@@ -84,6 +84,6 @@ case "$(LOWERCASE "${1}")" in
 
 	i | install ) _install ;;
 	u | uninstall ) _uninstall ;;
-	h | help ) _help ;;
+	\? | h | help ) _help ;;
 	* ) [[ -z "${1}" ]] && _help && exit 0; PRINT "Invalid command '$1'." && return 1
 esac

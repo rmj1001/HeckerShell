@@ -54,7 +54,7 @@ _install()
 	PRINT "Done."
 }
 
-_uninstall()
+_remove()
 {
 	PRINT
 
@@ -86,13 +86,21 @@ _uninstall()
 	PRINT "Done."
 }
 
+_update()
+{
+	cd $DOTFILES/..
+
+	git pull
+}
+
 _help()
 {
 	_help.commands()
 	{
 		PRINT "Command|Arguments|Description"
 		PRINT "(i) install||Install dotfiles to the system"
-		PRINT "(u) uninstall||Remove dotfiles from the system"
+		PRINT "(r) remove||Remove dotfiles from the system"
+		PRINT "(u) update||Update the dotfiles repo"
 		PRINT "(h) help||Show this help menu"
 	}
 
@@ -108,7 +116,8 @@ _help()
 case "$(LOWERCASE $1)" in
 
 	i | install ) _install ;;
-	u | uninstall ) _uninstall ;;
+	r | remove ) _remove ;;
+	u | update ) _update ;;
 	\? | h | help ) _help ;;
 	* ) [[ -z "${1}" ]] && _help && exit 0 || PRINT "Invalid subcommand '$1'." && exit 1
 
