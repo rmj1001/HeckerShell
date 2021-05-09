@@ -1,1 +1,0 @@
-/home/roy/Bin/dotfiles/files/.zsh

@@ -54,7 +54,7 @@ _template="#!/usr/bin/env bash
 
 PRINT()
 {
-	printf '%b\\\n' \$@
+	printf '%b\\\n' \"\$@\"
 }
 "
 

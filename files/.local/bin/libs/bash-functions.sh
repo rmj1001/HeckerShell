@@ -42,7 +42,7 @@ PAUSE ()
 # Usage: TITLE "test"
 TITLE ()
 {
-	NPRINT "\033]2;${1}\a"
+	printf "%b" "\033]2;${1}\a"
 }
 
 # Description: Generate a random number from 1 to the specified maximum
@@ -50,7 +50,7 @@ TITLE ()
 # Usage: RANDOM_NUM 100
 RANDOM_NUM ()
 {
-	NPRINT "$(( RANDOM % ${1} + 1 ))"
+	printf "%b" "$(( RANDOM % ${1} + 1 ))"
 }
 
 # Description: Converts a string to all api.std.failMsg characters
@@ -58,7 +58,7 @@ RANDOM_NUM ()
 # Usage: name="$(LOWERCASE $name)"
 LOWERCASE ()
 {
-	NPRINT "${1}" | tr "[:upper:]" "[:lower:]"
+	printf "%b" "${1}" | tr "[:upper:]" "[:lower:]"
 	return 0
 }
 
@@ -67,7 +67,7 @@ LOWERCASE ()
 # Usage: name="$(UPPERCASE $name)"
 UPPERCASE ()
 {
-	NPRINT "${1}" | tr "[:lower:]" "[:upper:]"
+	printf "%b" "${1}" | tr "[:lower:]" "[:upper:]"
 	return 0
 }
 

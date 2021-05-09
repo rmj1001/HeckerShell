@@ -28,12 +28,12 @@ _install()
 
 	# Scripts
 	PRINT "Installing scripts..."
-	[[ -h "$SYM_SCRIPTS" ]] || ln -sf $SYM_SCRIPTS $SCRIPTS
+	[[ -h "$SYM_SCRIPTS" ]] || ln -s $SYM_SCRIPTS $SCRIPTS
 	
 	# ZSH
 	PRINT "Installing ZSH config..."
-	[[ -h "$SYM_ZSHRC" ]] || ln -sf $SYM_ZSHRC $ZSHRC
-	[[ -h "$SYM_ZSH" ]] || ln -sf $SYM_ZSH $ZSH
+	[[ -h "$SYM_ZSHRC" ]] || ln -s $SYM_ZSHRC $ZSHRC
+	[[ -h "$SYM_ZSH" ]] || ln -s $SYM_ZSH $ZSH
 	
 	# Configs
 	PRINT "Installing miscellaneous configs..."
@@ -48,7 +48,7 @@ _install()
 
 		PRINT "Installing config ${linkRef}..."
 		
-		[[ -h "$sym" ]] || ln -sf $folder $sym
+		[[ -h "$sym" ]] || ln -s $folder $sym
 	done
 
 	PRINT "Done."
