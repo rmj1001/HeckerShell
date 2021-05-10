@@ -70,6 +70,15 @@ fetcher.fetch ()
 
     # Resolution
     RESOLUTION="$(xrandr -q | grep current | sed -e 's|.*current\s||g' -e 's|,.*||g')"
+
+    # Terminal
+    case "$(ps -p $(ps -p $$ o ppid=) o args= | sed 's|.*/||')" in
+
+        *gnome-terminal* ) TERMINAL="gnome-terminal" ;;
+        *lxterminal* ) TERMINAL="lxterminal" ;;
+        *rxvt* ) TERMINAL="rxvt" ;;
+
+    esac
 }
 
 # Print out the information gathered
@@ -84,23 +93,54 @@ fetcher.info()
     PRINT "Processor|${CPUNAME}"
     PRINT "Cores|${CORES}"
     PRINT "Resolution|${RESOLUTION}"
+    PRINT "Display Server|${XDG_SESSION_TYPE}"
     PRINT "Memory|${MEMORY}"
+    [[ -n "${TERMINAL}" ]] && PRINT "Terminal|${TERMINAL}"
 }
 
-[[ "$1" == "--clear" ]] && clear
+fetcher.info.neofetch()
+{
+    PRINT "OS|${OS}"
+    PRINT "Kernel|${KERNEL}"
+    PRINT "Uptime|${UPTIME}"
+    PRINT "Packages|${PKGCOUNT/%, /}"
+    PRINT "Shell|${SHELL}"
+    PRINT "Resolution|${RESOLUTION}"
+    PRINT "Display Server|${XDG_SESSION_TYPE}"
+    PRINT "Memory|${MEMORY}"
+    [[ -n "${TERMINAL}" ]] && PRINT "Terminal|${TERMINAL}"
+}
 
 # Retrieve
 fetcher.fetch
 
-line="---------------------------------------------------------"
+[[ "$1" == "--clear" ]] && clear
 
-# Header
-PRINT $line
-PRINT "|                        Fetcher                        |"
-PRINT $line
+if [[ "$1" == "--neofetch" ]]; then
 
-# Print
-PRINT
-fetcher.info | column -t -s "|"
-PRINT
-PRINT
+    PRINT
+    PRINT "${USER}@${HOST}"
+    PRINT "---------------"
+    fetcher.info.neofetch | column -t -s "|"
+    PRINT
+    
+    exit 0
+
+else
+
+    line="---------------------------------------------------------"
+
+    # Header
+    PRINT $line
+    PRINT "|                        Fetcher                        |"
+    PRINT $line
+
+    # Print
+    PRINT
+    fetcher.info | column -t -s "|"
+    PRINT
+    PRINT
+
+    exit 0
+
+fi

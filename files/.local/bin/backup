@@ -180,18 +180,14 @@ backup.exclusions()
 # Help prompt
 backup.help()
 {
-
-	backup.help.flags()
+	# Commands portion of help prompt (columnized)
+	backup.help.commands()
 	{
 		PRINT "Flags|Arguments|Description"
 		PRINT "-t, --tar||(Default) Uses tar to backup your files"
 		PRINT "-r, --rsync||Uses rsync to backup your files"
 		PRINT "-c, --cp||Uses cp to backup your files (no exclusions)"
-	}
-
-	# Commands portion of help prompt (columnized)
-	backup.help.commands()
-	{
+		PRINT "|||"
 		PRINT "Commands|Arguments|Description"
 		PRINT "(c) create|<destination>|Create a new backup"
 		PRINT "(r) restore|<target>|Restore a backup"
@@ -205,8 +201,6 @@ backup.help()
 	PRINT "Usage:\t\tbackup [command] [flag] <args?[]>"
 	PRINT "Example:\tbackup create --rsync \$HOME/Documents/Backups"
 	PRINT
-	backup.help.flags | column -t -s "|"
-	PRINT "\n"
 	backup.help.commands | column -t -s "|"
 }
 
