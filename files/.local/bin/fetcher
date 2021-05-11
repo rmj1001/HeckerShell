@@ -139,7 +139,6 @@ else
     PRINT
     fetcher.info | column -t -s "|"
     PRINT
-    PRINT
 
     exit 0
 
