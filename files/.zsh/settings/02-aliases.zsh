@@ -112,6 +112,13 @@ alias terminal="${TERMINAL}"
 alias browser="${BROWSER}"
 alias auth="${AUTH}"
 
+########################## Pantheon ##########################
+alias startPantheon="/usr/bin/gnome-session session=pantheon; ASYNC plank; ASYNC wingpanel"
+
+########################## HOMEBREW ##########################
+alias installhomebrew="curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | bash -c -"
+alias uninstallhomebrew="curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh | bash -c -"
+
 ########################## CURL APPS ##########################
 
 ### CURL APPS HELP
