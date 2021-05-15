@@ -52,7 +52,7 @@ fetcher.fetch ()
 	    PKGCOUNT="${PKGCOUNT}$(dnf list installed | wc -l) (rpm), "
     [[ -x "$(command -v flatpak)" ]] && \
 	    PKGCOUNT="${PKGCOUNT}$(flatpak list | wc -l) (flatpak), "
-    [[ -x "$(command -v snap)" ]] && snapCount=$(( $(snap list | wc -l) - 1 )) && \
+    [[ -x "$(command -v snap)" ]] && snapCount=$(snap list | wc -l) && \
 	    PKGCOUNT="${PKGCOUNT}$snapCount (snap), "
 
     # Processor
