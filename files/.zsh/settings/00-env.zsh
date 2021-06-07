@@ -17,6 +17,8 @@
 export ZSH="${HOME}/.zsh/.oh-my-zsh"
 export ZSHRC="${HOME}/.zshrc"
 export HISTFILE="${HOME}/.zsh-history"
+export HISTSIZE=1000
+export SAVEHIST=1000
 
 # XDG
 export XDG_CONFIG_HOME="${HOME}/.config"

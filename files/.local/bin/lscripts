@@ -16,6 +16,15 @@ PRINT()
 	printf '%b\n' "$@"
 }
 
+# Check if running as root
+if [[ $EUID -eq 0 ]]; then
+
+	PROGRAM_NAME="$(basename "$0")"
+
+	PRINT "'${PROGRAM_NAME}' should not be run as root. Please try again as a normal user."
+	exit 1
+fi
+
 SCRIPTS="${SCRIPTS:-$HOME/.local/bin}"
 
 for script in "$SCRIPTS"/*; do

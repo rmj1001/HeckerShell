@@ -2,13 +2,13 @@
 
 ##############################################
 #   Author: Roy Conn
-#   Project: catscript
+#   Project: correctGPGPermissions
 #   Version: 1.0
 #
-#   Usage: [script]
+#   Usage: 
 #
 #   Description:
-#		Print the script's contents to STDOUT
+#		Correct the permissions for the gnupg directory
 ##############################################
 
 PRINT()
@@ -25,15 +25,7 @@ if [[ $EUID -eq 0 ]]; then
 	exit 1
 fi
 
-SCRIPTS="${SCRIPTS:-$HOME/.local/bin}"
-FILE="${SCRIPTS}/${1}"
+chown -R $(whoami) ~/.gnupg/
 
-# Check if script name was passed
-[[ $# -lt 1 ]] && PRINT "You must provide a script name!" && exit 1
-
-# Check if script exists
-[[ ! -f "${FILE}" ]] && PRINT "Script '${1}' does not exist!" && exit 1
-
-cat "${FILE}"
-
-exit 0
+chmod 600 ~/.gnupg/*
+chmod 700 ~/.gnupg

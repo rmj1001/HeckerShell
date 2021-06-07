@@ -29,7 +29,7 @@ done
 # motd || fetcher || neofetch || printf "%b" ""
 # neofetch || fetcher || motd || printf "%b" ""
 # fetcher || neofetch || motd || printf "%b" ""
-fetcher --neofetch || motd || neofetch || printf "%b" ""
+motd
 
 function precmd()
 {

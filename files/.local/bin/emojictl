@@ -47,6 +47,15 @@ LOWER()
 # Dependencies
 REQUIRE "wget" "unzip" "fc-cache"
 
+# Check if running as root
+if [[ $EUID -eq 0 ]]; then
+
+	PROGRAM_NAME="$(basename "$0")"
+
+	PRINT "'${PROGRAM_NAME}' should not be run as root. Please try again as a normal user."
+	exit 1
+fi
+
 # Noto Emoji package link
 EMOJIPKG="https://noto-website-2.storage.googleapis.com/pkgs/NotoColorEmoji-unhinted.zip"
 

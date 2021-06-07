@@ -29,6 +29,15 @@ REQUIRE_CMD ()
     done
 }
 
+# Check if running as root
+if [[ $EUID -eq 0 ]]; then
+
+	PROGRAM_NAME="$(basename "$0")"
+
+	PRINT "'${PROGRAM_NAME}' should not be run as root. Please try again as a normal user."
+	exit 1
+fi
+
 REQUIRE_CMD "youtube-dl"
 
 mp3dl.download()

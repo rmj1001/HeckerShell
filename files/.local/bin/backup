@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-
 ### Helper Functions ###
 PRINT()
 {
@@ -33,10 +32,20 @@ REQUIRE ()
 	done
 }
 
+
 ### Variables ###
 exclusions="${HOME}/.backup_exclusions"
 method="tar"
 ARGS=()
+
+# Check if running as root
+if [[ $EUID -eq 0 ]]; then
+
+	PROGRAM_NAME="$(basename "$0")"
+
+	PRINT "'${PROGRAM_NAME}' should not be run as root. Please try again as a normal user."
+	exit 1
+fi
 
 backup.create()
 {
@@ -57,53 +66,53 @@ backup.create()
 
 			# Check if tar exists
 			REQUIRE "tar"
-			
+
 			# Remove duplicate backup
 			[[ -f "${target}" ]] && PRINT "Removing duplicate backup..." && rm -rf "${target}"
-			
+
 			# Confirmation
 			PRINT "Backing up with tar..."
-			
+
 			# Backups up files, with exclusions if file exists, or without exclusions if no file exists.
 			[[ -f "${exclusions}" ]] && tar -zcvpf "${target}" -X "${exclusions}" "${HOME}"
 			[[ ! -f "${exclusions}" ]] && tar -zcvpf "${target}" "${HOME}"
-			
+
 			;;
 		rsync )
 			target="${1}/${USER}_$(date +m%m-d%d-y%y)"
-			
+
 			# Check if rsync exists
 			REQUIRE "rsync"
-			
+
 			# Remove duplicate backup
 			[[ -d "${target}" ]] && PRINT "Removing duplicate backup..." && rm -rf "${target}"
-			
+
 			# Confirmation
 			PRINT "Backing up with rsync..."
 
 			# Backup all files
 			[[ -f "${exclusions}" ]] && rsync -arzvhP --exclude-from="${exclusions}" "${HOME}/" "${target}"
 			[[ ! -f "${exclusions}" ]] && rsync -arzvhP "${HOME}/" "${target}"
-			
+
 			;;
 		cp )
 			target="${1}/${USER}_$(date +m%m-d%d-y%y)"
-			
+
 			# Check if rsync exists
 			REQUIRE "cp"
-			
+
 			# Remove duplicate backup
 			[[ -d "${target}" ]] && PRINT "Removing duplicate backup..." && rm -rf "${target}"
-			
+
 			# Confirmation
 			PRINT "Backing up with cp..."
 
 			# Backup all files
 			cp -vR "${HOME}" "${target}"
-			
+
 			;;
 	esac
-	
+
 	# Confirmation
 	PRINT "\n\nBackup finished."
 	PAUSE
@@ -116,36 +125,36 @@ backup.restore()
 
 	# Cleanly exit backup process
 	trap 'clear; PRINT "Backup Terminated."; PAUSE; clear; exit 0' SIGTERM SIGINT
-	
+
 	if [[ -f "${target}" ]] && [[ "${target}" =~ ^*.tar.gz$ ]]; then
-	
+
 		# tar
 		PRINT "Restoring tarball..."
-		
+
 		tar -xvf "${target}" -C "${HOME}"
-	
+
 	elif [[ -d "${target}" ]] && [[ -x "$(which rsync)" ]]; then
-	
+
 		# rsync
 		PRINT "Restoring backup..."
-		
+
 		rsync -auv "${target}" "${HOME}"
-		
+
 	elif [[ -d "${target}" ]]; then
-	
+
 		# cp
 		PRINT "Restoring backup..."
-		
+
 		cp -vR "${target}" "${HOME}"
 
 	else
-	
+
 		# Error
 		PRINT "Invalid target!"
 		exit 1
 
 	fi
-	
+
 	PRINT
 	PRINT
 	PRINT "Restore Finished"
@@ -210,11 +219,11 @@ for arg in "$@"; do
 		-r | --rsync )
 			method="rsync"
 			;;
-		
+
 		-t | --tar )
 			method="tar"
 			;;
-			
+
 		-c | --cp )
 			method="cp"
 			;;

@@ -29,12 +29,12 @@ _install()
 	# Scripts
 	PRINT "Installing scripts..."
 	[[ -h "$SYM_SCRIPTS" ]] || ln -s $SYM_SCRIPTS $SCRIPTS
-	
+
 	# ZSH
 	PRINT "Installing ZSH config..."
 	[[ -h "$SYM_ZSHRC" ]] || ln -s $SYM_ZSHRC $ZSHRC
 	[[ -h "$SYM_ZSH" ]] || ln -s $SYM_ZSH $ZSH
-	
+
 	# Configs
 	PRINT "Installing miscellaneous configs..."
 
@@ -47,7 +47,7 @@ _install()
 		sym="$HOME/.config/$linkRef"
 
 		PRINT "Installing config ${linkRef}..."
-		
+
 		[[ -h "$sym" ]] || ln -s $folder $sym
 	done
 
@@ -66,7 +66,7 @@ _remove()
 	PRINT "Removing ZSH config symlinks..."
 	[[ -h "$SYM_ZSHRC" ]] && rm $SYM_ZSHRC
 	[[ -h "$SYM_ZSH" ]] && rm $SYM_ZSH
-	
+
 	# Configs
 	PRINT "Removing miscellaneous configs..."
 
@@ -119,6 +119,7 @@ case "$(LOWERCASE $1)" in
 	r | remove ) _remove ;;
 	u | update ) _update ;;
 	\? | h | help ) _help ;;
-	* ) [[ -z "${1}" ]] && _help && exit 0 || PRINT "Invalid subcommand '$1'." && exit 1
+	* ) [[ -z "${1}" ]] && _help && exit 0 || PRINT "Invalid subcommand '$1'." \
+		&& exit 1
 
 esac

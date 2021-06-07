@@ -44,6 +44,11 @@ motd ()
     cat ${motdFile}
 }
 
+downloadYTVideo ()
+{
+    youtube-dl --format mp4 -o "$HOME/Downloads/VideoDownloader/%(title)s.%(ext)s" "${1}"
+}
+
 ############################## SHELL ALIASES ##############################
 
 # Edit files
@@ -116,8 +121,8 @@ alias auth="${AUTH}"
 alias startPantheon="/usr/bin/gnome-session session=pantheon; ASYNC plank; ASYNC wingpanel"
 
 ########################## HOMEBREW ##########################
-alias installhomebrew="curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | bash -c -"
-alias uninstallhomebrew="curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh | bash -c -"
+alias homebrew_installer="/bin/bash -c '$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)'"
+alias homebrew_uninstaller="/bin/bash -c '$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)'"
 
 ########################## CURL APPS ##########################
 
