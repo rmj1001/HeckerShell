@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+
+# Description: Replacement for 'echo'
+#
+# Usage: PRINT "text"
+PRINT()
+{
+	printf "%b\n" "${@}"
+}
+
+
+# Description: Converts a string to all api.std.failMsg characters
+#
+# Usage: name="$(LOWERCASE $name)"
+LOWERCASE ()
+{
+	printf "%b" "${1}" | tr "[:upper:]" "[:lower:]"
+	return 0
+}
+
+# Description: Checks for a filename in $PATH (commands), if not found then exit with an error
+#
+# Usage: REQUIRE_CMD "7z" "tar"
+REQUIRE_CMD ()
+{
+	for arg in "${@}"; do
+		if [[ ! -x "$(which "$arg")" ]]; then
+
+			printf "%b\n" "'${arg}' is required to run this program!"
+			exit 1
+
+		fi
+	done
+}
+
+####################################
+
+REQUIRE_CMD "zenity"
+REQUIRE_CMD "rofi"
+
+ZENITY()                                                                                                                            
+{
+    zenity --title="Power Manager" --window-icon='warning' --width=350 --height=300 $@
+}
+
+DMENU()
+{
+	rofi -dmenu -i -window-title "Power Manager" -prompt "Option: "
+}
+
+powermgr.shutoff()
+{
+    zenity --info --text="Shutting down in 60 seconds..."
+    sleep 60
+    /usr/bin/env bash -c "systemctl poweroff"
+}
+
+powermgr.restart()
+{
+    zenity --info --text="Rebooting in 60 seconds..."
+    sleep 60
+    /usr/bin/env bash -c "systemctl reboot"
+}
+
+powermgr.logout()
+{
+    zenity --info --text="Logging out in 60 seconds..."
+    sleep 60
+    /usr/bin/env bash -c "session=`loginctl session-status | head -n 1 | awk '{print $1}'`; loginctl terminate-session $session"
+}
+
+option="$(PRINT 'Shutdown\nReboot\nLogout\nCancel' | DMENU)"
+
+case "$(LOWERCASE ${option})" in
+
+    shutdown ) powermgr.shutoff ;;
+    reboot ) powermgr.restart ;;
+    logout ) powermgr.logout ;;
+    cancel ) zenity --info --text="Cancelled." && exit 5 ;;
+    * ) zenity --info --text="Cancelled." && exit 1 ;;
+
+esac
