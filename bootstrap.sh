@@ -88,7 +88,7 @@ _remove()
 
 _update()
 {
-	cd $DOTFILES/..
+	cd "$DOTFILES"/.. || return 1;
 
 	git pull
 }
