@@ -35,48 +35,134 @@ REQUIRE_CMD ()
 
 ####################################
 
-REQUIRE_CMD "zenity"
-REQUIRE_CMD "rofi"
-
-ZENITY()                                                                                                                            
+# Rofi power menu
+powermgr.gui()
 {
-    zenity --title="Power Manager" --window-icon='warning' --width=350 --height=300 $@
+	PRINT 'Shutdown\nReboot\nLock\nLogout\nCancel' | rofi -dmenu -i -window-title "Power Manager" -prompt "Option: "
 }
 
-DMENU()
-{
-	rofi -dmenu -i -window-title "Power Manager" -prompt "Option: "
-}
-
+# Shutdown PC
 powermgr.shutoff()
 {
-    zenity --info --text="Shutting down in 60 seconds..."
-    sleep 60
-    /usr/bin/env bash -c "systemctl poweroff"
+    [[ $GUI -eq 1 ]] && zenity --info --text="Shutting down..."
+
+    systemctl poweroff
 }
 
+# Restart PC
 powermgr.restart()
 {
-    zenity --info --text="Rebooting in 60 seconds..."
-    sleep 60
-    /usr/bin/env bash -c "systemctl reboot"
+    [[ $GUI -eq 1 ]] && zenity --info --text="Rebooting..."
+    
+    systemctl reboot
 }
 
+# Kill user process and logout
 powermgr.logout()
 {
-    zenity --info --text="Logging out in 60 seconds..."
-    sleep 60
-    /usr/bin/env bash -c "session=`loginctl session-status | head -n 1 | awk '{print $1}'`; loginctl terminate-session $session"
+    [[ $GUI -eq 1 ]] && zenity --info --text="Logging out..."
+
+    killall -u $USER
 }
 
-option="$(PRINT 'Shutdown\nReboot\nLogout\nCancel' | DMENU)"
+# Screen locker
+powermgr.lock()
+{
+    [[ $GUI -eq 1 ]] && zenity --info --text="Locking screen..."
 
-case "$(LOWERCASE ${option})" in
+	# Lightdm lock command
+    [[ -x "$(which dm-tool)" ]] && dm-tool lock && return 0
 
+	# Systemd lock command (doesn't work with lightdm)
+	SESSIONS=( $(loginctl list-sessions | grep $(whoami) | awk '{print $1}' | tr '\n' ' ') )
+    loginctl lock-session ${SESSIONS[@]}
+}
+
+# Unlock available for KDE connect (CLI/Phone only)
+powermgr.unlock()
+{
+	# Lightdm unlock command
+	[[ -x "$(which dm-tool)" ]] && dm-tool unlock && return 0
+
+	# Systemd unlock command (doesn't work with lightdm)
+	SESSIONS=( $(loginctl list-sessions | grep $(whoami) | awk '{print $1}' | tr '\n' ' ') )
+	loginctl unlock-session ${SESSIONS[@]}
+}
+
+# Help prompt (CLI only)
+powermgr.help()
+{
+	powermgr.help.commands()
+	{
+		PRINT "Command|Arguments|Description"
+		PRINT "shutdown||Power off computer"
+		PRINT "reboot||Restart computer"
+		PRINT "logout||Log out of account"
+		PRINT "lock||Lock user account"
+		PRINT "|||"
+		PRINT "gui||Show the interactive prompt"
+		PRINT "help||Show this help menu"
+	}
+
+	PRINT
+	PRINT "Manage the state of your running PC or user account"
+	PRINT
+	PRINT "Usage:\t\tpowermgr [command]"
+	PRINT "Example:\tpowermgr shutdown"
+	PRINT "Example:\tpowermgr\t\t# Run for interactive prompt"
+	PRINT
+	powermgr.help.commands | column -t -s "|"
+}
+
+# Check for root
+if [[ $EUID -eq 0 ]]; then
+	
+	PRINT "This script cannot be run with root."
+	exit 1
+
+fi
+
+# Command to be evaluated
+cmd=""
+
+# If the gui is invoked, use ROFI and turn on zenity dialogs.
+if [[ "$1" == "gui" ]]; then
+
+	# If zenity or rofi are missing then disallow GUI use.
+	REQUIRE_CMD "zenity"
+	REQUIRE_CMD "rofi"
+
+	# If no display then disallow GUI use.
+	[[ -z "$DISPLAY" ]] && PRINT "No valid display!" && exit 1
+	
+	# Turns on zenity dialogs
+	GUI=1
+
+	# Receive command from rofi
+	cmd="$(LOWERCASE $(powermgr.gui))"
+
+	# Show message 'cancelled' if cmd is empty (exit from rofi)
+	[[ "${cmd}" == "" ]] && zenity --info --text="Cancelled." && exit 1
+
+# If input is blank, show help prompt.
+elif [[ -z "$1" ]]; then
+	
+	powermgr.help && exit 0
+
+else
+	
+	cmd="$(LOWERCASE ${1})"
+
+fi
+
+# Evaluate commands
+case "$(LOWERCASE ${cmd})" in
     shutdown ) powermgr.shutoff ;;
     reboot ) powermgr.restart ;;
     logout ) powermgr.logout ;;
-    cancel ) zenity --info --text="Cancelled." && exit 5 ;;
-    * ) zenity --info --text="Cancelled." && exit 1 ;;
-
+    lock ) powermgr.lock ;;
+    unlock ) powermgr.unlock ;;
+	cancel ) zenity --info --text="Cancelled." && exit 1 ;;
+	help ) powermgr.help ;;
+	* ) zenity --warning --text="Invalid command." && exit 1 ;;
 esac
