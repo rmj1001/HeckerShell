@@ -23,14 +23,22 @@ LOWERCASE ()
 # Usage: REQUIRE_CMD "7z" "tar"
 REQUIRE_CMD ()
 {
+	NEEDED=()
+
 	for arg in "${@}"; do
 		if [[ ! -x "$(which "$arg")" ]]; then
 
-			printf "%b\n" "'${arg}' is required to run this program!"
-			exit 1
+			NEEDED+=("${arg}")
 
 		fi
 	done
+
+	if [[ ${#NEEDED[@]} -gt 0 ]]; then
+		printf "%b\n" "The following programs are required to run this program:"
+		printf "%b\n" "${NEEDED[@]}"
+		
+		exit 1
+	fi
 }
 
 ####################################
@@ -129,8 +137,7 @@ cmd=""
 if [[ "$1" == "gui" ]]; then
 
 	# If zenity or rofi are missing then disallow GUI use.
-	REQUIRE_CMD "zenity"
-	REQUIRE_CMD "rofi"
+	REQUIRE_CMD "zenity" "rofi"
 
 	# If no display then disallow GUI use.
 	[[ -z "$DISPLAY" ]] && PRINT "No valid display!" && exit 1
