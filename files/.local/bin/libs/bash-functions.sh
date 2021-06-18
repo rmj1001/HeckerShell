@@ -93,14 +93,22 @@ TRIM ()
 # Usage: REQUIRE_CMD "7z" "tar"
 REQUIRE_CMD ()
 {
+	NEEDED=()
+
 	for arg in "${@}"; do
 		if [[ ! -x "$(which "$arg")" ]]; then
 
-			printf "%b\n" "'${arg}' is required to run this program!"
-			exit 1
+			NEEDED+=("${arg}")
 
 		fi
 	done
+
+	if [[ ${#NEEDED[@]} -gt 0 ]]; then
+		printf "%b\n" "The following programs are required to run this program:"
+		printf "%b\n" "${NEEDED[@]}"
+		
+		exit 1
+	fi
 }
 
 # Description: Checks to see if the script is being run as root, and if not then exit.
