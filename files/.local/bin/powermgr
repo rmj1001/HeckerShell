@@ -87,11 +87,9 @@ powermgr.lock()
 }
 
 # Unlock available for KDE connect (CLI/Phone only)
+# Does not work with Lightdm
 powermgr.unlock()
 {
-	# Lightdm unlock command
-	[[ -x "$(which dm-tool)" ]] && dm-tool unlock && return 0
-
 	# Systemd unlock command (doesn't work with lightdm)
 	SESSIONS=( $(loginctl list-sessions | grep $(whoami) | awk '{print $1}' | tr '\n' ' ') )
 	loginctl unlock-session ${SESSIONS[@]}
@@ -107,6 +105,7 @@ powermgr.help()
 		PRINT "reboot||Restart computer"
 		PRINT "logout||Log out of account"
 		PRINT "lock||Lock user account"
+		PRINT "unlock||Unlock user account (CLI only)"
 		PRINT "|||"
 		PRINT "gui||Show the interactive prompt"
 		PRINT "help||Show this help menu"
