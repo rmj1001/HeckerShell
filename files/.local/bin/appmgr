@@ -1,0 +1,96 @@
+#!/usr/bin/env bash
+
+##############################################
+#   Author: Roy Conn
+#   Project: appmgr
+#   Version: 1.0
+#
+#   Usage: 
+#
+#   Description:
+#		Appmenu, App switcher, etc.
+##############################################
+
+PRINT()
+{
+	printf '%b\n' "$@"
+}
+
+# Description: Converts a string to all api.std.failMsg characters
+#
+# Usage: name="$(LOWERCASE $name)"
+LOWERCASE ()
+{
+	printf "%b" "${1}" | tr "[:upper:]" "[:lower:]"
+	return 0
+}
+
+# Description: Checks for a filename in $PATH (commands), if not found then exit with an error
+#
+# Usage: REQUIRE_CMD "7z" "tar"
+REQUIRE_CMD ()
+{
+	NEEDED=()
+
+	for arg in "${@}"; do
+		if [[ ! -x "$(which "$arg")" ]]; then
+
+			NEEDED+=("${arg}")
+
+		fi
+	done
+
+	if [[ ${#NEEDED[@]} -gt 0 ]]; then
+		printf "%b\n" "The following programs are required to run this program:"
+		printf "%b\n" "${NEEDED[@]}"
+		
+		exit 1
+	fi
+}
+
+####################################
+
+REQUIRE_CMD "rofi"
+
+appmgr.menu ()
+{
+	rofi -show drun -scroll-method 1 -show-icons -columns 2 -disable-history -sorting-method 'fzf'
+}
+
+appmgr.switcher ()
+{
+	rofi -show window -window-icon -window-format "{c}    {t}"
+}
+
+appmgr.help()
+{
+	appmgr.help.commands()
+	{
+		PRINT "Command|Arguments|Description"
+		PRINT "menu||Application Menu"
+		PRINT "switcher||Switch between running apps"
+		PRINT "|||"
+		PRINT "help||Show this help menu"
+	}
+
+	PRINT
+	PRINT "Invoke common application management programs"
+	PRINT
+	PRINT "Usage:\t\tappmgr [command]"
+	PRINT "Example:\tappmgr menu"
+	PRINT
+	appmgr.help.commands | column -t -s "|"
+}
+
+cmd="$(LOWERCASE $1)"
+
+case "${cmd}" in
+
+	menu ) 		appmgr.menu ;;
+	switcher ) 	appmgr.switcher ;;
+	help ) 		appmgr.help ;;
+
+	* ) [[ -z "${cmd}" ]] && appmgr.help && exit 0 || \
+		PRINT "Invalid command '${cmd}'." && exit 1
+
+esac
