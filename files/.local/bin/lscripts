@@ -1,39 +1,27 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python3
 
-##############################################
-#   Author: Roy Conn
-#   Project: lscripts
-#   Version: 1.0
-#
-#   Usage: n/a
-#
-#   Description:
-#		List all user-made scripts
-##############################################
-
-PRINT()
-{
-	printf '%b\n' "$@"
-}
+from genericpath import isfile
+from pathlib import Path
+from sys import argv
+from os import environ, geteuid, listdir, path, pathsep
 
 # Check if running as root
-if [[ $EUID -eq 0 ]]; then
+if geteuid() == 0:
+    print("This script should not be run as root. Please run as a normal user.")
+    exit(1)
 
-	PROGRAM_NAME="$(basename "$0")"
+# Establish scripts folder
+if not Path.exists(Path(environ['SCRIPTS'])):
+    scriptsPath = Path(f"{environ['HOME']}{pathsep}.local{pathsep}bin")
+else:
+    scriptsPath = Path(environ['SCRIPTS'])
 
-	PRINT "'${PROGRAM_NAME}' should not be run as root. Please try again as a normal user."
-	exit 1
-fi
+scripts = listdir(scriptsPath)
 
-SCRIPTS="${SCRIPTS:-$HOME/.local/bin}"
+scripts.sort()
 
-for script in "$SCRIPTS"/*; do
+for scriptName in scripts:
+    if path.isfile(f"{scriptsPath}{pathsep}{scriptName}"):
+        print(scriptName)
 
-	name="$(basename "$script")"
-	[[ ! -h $script ]] && [[ ! -d $script ]] && [[ -x $script ]] && PRINT "${name}"
-
-done
-
-PRINT 
-
-exit 0
+print()
