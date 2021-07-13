@@ -1,75 +1,41 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python3
 
-##############################################
-#	Author: Nidia Achrys
-#	Project: dice
-#	Version: 1.0
-#
-#	Usage: dice [command] [args]
-# 
-#	Description:
-#		Roll some dice!
-##############################################
+import random
+import sys
 
-PRINT()
-{
-	printf "%b\n" "${@}"
-}
+# Variables
+args = sys.argv
+nums = []
+minoutput = False
 
-# Check if running as root
-if [[ $EUID -eq 0 ]]; then
 
-	PROGRAM_NAME="$(basename "$0")"
+def randomNumber(max=100):
+    return random.randint(1, int(max))
 
-	PRINT "'${PROGRAM_NAME}' should not be run as root. Please try again as a normal user."
-	exit 1
-fi
 
-_RANDNUM()
-{
-	printf "%b" "$(( RANDOM % ${1:-100} + 1 ))"
-}
+def roll_dice(number=20):
 
-if [ $# -lt 1 ]
-then
-	PRINT
-	PRINT "Generates random numbers\n"
-	PRINT
-	PRINT "Usage: dice [number...]"
-	PRINT "Example: dice 100 50 30 5 2"
-	PRINT
-	PRINT "Flags:"
-	PRINT "-r, --raw\t\tPrint only the numbers"
-	PRINT
-  exit 1
-fi
+    result = randomNumber(int(number))
 
-minoutput=false
+    if minoutput is False:
+        print(f"d{number}: {result}")
+    else:
+        print(f"{result}")
 
-for (( i = 1 ; i <= $# ; i++ ))
-do
-	case ${!i} in
 
-		-r | --raw )
+if __name__ == "__main__":
 
-			minoutput=true
+    for arg in args:
 
-	esac
-done
+        if arg == '-r' or arg == '--raw':
 
-for (( i = 1 ; i <= $# ; i++ ))
-do
-	arg=${!i}
-	if [[ $arg =~ ^[0-9]+$ ]]
-	then
-		result="$(_RANDNUM "${arg}")"
+            minoutput = True
+            continue
 
-		if [ ! $minoutput = true ]
-		then
-			PRINT "d${arg}: ${result}"
-		else
-			PRINT "${result}"
-		fi
-	fi
-done
+        if arg.isdigit():
 
+            nums.append(int(arg))
+            continue
+
+    for num in nums:
+        roll_dice(num)
