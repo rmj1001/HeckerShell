@@ -46,7 +46,7 @@ export QT_QPA_PLATFORMTHEME="qt5ct"
 export ARCHFLAGS="-arch x86_64"
 
 # User-defined PATH additions
-export SCRIPTS="${HOME}/.local/bin"
+if [[ -e "${HOME}/System32" ]]; then export SCRIPTS="${HOME}/System32"; else export SCRIPTS="${HOME}/.local/bin"; fi
 export APPIMAGES="${HOME}/Apps"
 export GOPATH="${XDG_DATA_HOME}/go:${HOME}/Bin/projects/golang"
 export CARGOPATH="${CARGO_HOME}/.cargo/bin" # Rust
@@ -54,7 +54,7 @@ export HOMEBREW="/home/linuxbrew/.linuxbrew/bin"
 export DENO_INSTALL="/home/roy/.deno"
 
 # Update PATH
-export PATH=${PATH}:${SCRIPTS}:${APPIMAGES}:${GOPATH}/bin:${HOMEBREW}:${DENO_INSTALL}/bin
+export PATH=${PATH}:${SYSTEM32}:${SCRIPTS}:${APPIMAGES}:${GOPATH}/bin:${HOMEBREW}:${DENO_INSTALL}/bin
 
 # Conditional PATH additions
 [[ -z "${CARGOPATH}" ]] || export PATH="${PATH}:${CARGOPATH}"
