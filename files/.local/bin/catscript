@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from pathlib import Path
-from os import environ, geteuid, pathsep
+from os import environ, geteuid, path
 from sys import argv
 
 
@@ -13,7 +13,7 @@ if geteuid() == 0:
 
 # Establish scripts folder
 if not Path.exists(Path(environ['SCRIPTS'])):
-    scriptsPath = Path(f"{environ['HOME']}{pathsep}.local{pathsep}bin")
+    scriptsPath = Path(f"{environ['HOME']}{path.sep}.local{path.sep}bin")
 else:
     scriptsPath = Path(environ['SCRIPTS'])
 
@@ -25,7 +25,7 @@ except IndexError:
     exit(1)
 
 scriptName = argv[1]
-scriptFile = Path(f"{scriptsPath}{pathsep}{scriptName}")
+scriptFile = Path(f"{scriptsPath}{path.sep}{scriptName}")
 
 if not Path.exists(scriptFile):
     print(f"Script '{scriptName}' does not exist!")
