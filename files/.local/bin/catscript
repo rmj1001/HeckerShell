@@ -4,7 +4,6 @@ from pathlib import Path
 from os import environ, geteuid, path
 from sys import argv
 
-
 # Check if running as root
 if geteuid() == 0:
     print("This script should not be run as root. Please run as a normal user.")

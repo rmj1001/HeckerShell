@@ -1,56 +1,41 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python3
 
-##############################################
-#   Author: Roy Conn
-#   Project: rmscript
-#   Version: 1.0
-#
-#   Usage: rmscript <name>
-#
-#   Description:
-#		Delete existing scripts
-##############################################
-
-PRINT()
-{
-	printf "%b\n" "$@"
-}
+from pathlib import Path
+from os import environ, geteuid, path
+from sys import argv
+from send2trash import send2trash as trash
 
 # Check if running as root
-if [[ $EUID -eq 0 ]]; then
+if geteuid() == 0:
+    print("This script should not be run as root. Please run as a normal user.")
+    exit(1)
 
-	PROGRAM_NAME="$(basename "$0")"
 
-	PRINT "'${PROGRAM_NAME}' should not be run as root. Please try again as a normal user."
-	exit 1
-fi
+# Establish scripts folder
+if not Path.exists(Path(environ['SCRIPTS'])):
+    scriptsPath = Path(f"{environ['HOME']}{path.sep}.local{path.sep}bin")
+else:
+    scriptsPath = Path(environ['SCRIPTS'])
 
-# Variables
-SCRIPTS="${SCRIPTS:-$HOME/.local/bin}"
-FILE="${SCRIPTS}/${1}"
+# Check if a filename was passed as an arg
+try:
+    argv[1]
+except IndexError:
+    print("You must provide a script name!")
+    exit(1)
 
-# Check if script name was passed
-[[ $# -lt 1 ]] && PRINT "You must provide a script name!" && exit 1
 
-# Check if script exists
-[[ ! -f "${FILE}" ]] && PRINT "Script '${1}' does not exist!" && exit 1
+scriptName = argv[1]
+scriptFile = Path(f"{scriptsPath}{path.sep}{scriptName}")
 
-# Confirm deletion of the script
-read -r -p "Are you sure you want to delete this script (y/N)? " confirm
 
-if [[ $confirm =~ ^[yY][eE]?[sS]?$ ]]; then
+if not Path.exists(scriptFile):
+    print(f"Script '{scriptName}' does not exist!")
+    exit(1)
 
-	# Edit script
-	rm -f "${FILE}"
-	
-	PRINT
-	PRINT "Deleted '${1}'."
-
-else
-
-	PRINT "Cancelled."
-
-fi
-
-# Exit
-exit 0
+try:
+    trash(scriptFile)
+    print(f"Moved '{scriptName}' to trash.")
+except:
+    print(f"Could not move '{scriptName}' to trash.")
+    exit(1)
