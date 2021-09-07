@@ -42,3 +42,4 @@ function precmd()
 
 # Prompt
 export PS1='C:$(pwd | tr "////" "\\\\" ) > '
+export RPS1='$HOSTNAME'
