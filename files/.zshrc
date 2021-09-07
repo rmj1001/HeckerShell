@@ -21,7 +21,14 @@ done
 # Plugin Loading (see $zfiles/settings/01-zsh.zsh)
 for plugin in ${plugins[@]}; do
 
-	. "${zplugins}/${plugin}.zsh"
+	plugPath="${zplugins}/${plugin}.zsh"
+
+	if [[ -f "${plugPath}" ]]
+	then
+		. "${plugPath}"
+	else
+		echo "zshrc: Plugin '${plugin}' not valid. Please edit '${HOME}/.zsh/settings/01-zsh.zsh'."
+	fi
 
 done
 
