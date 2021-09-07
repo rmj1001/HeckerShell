@@ -1,5 +1,9 @@
 #!/usr/bin/env zsh
 
+# Prompt
+export PS1='C:$(pwd | tr "////" "\\\\" ) > '
+export RPS1='$HOSTNAME'
+
 # ZSH Options
 setopt +o nomatch
 setopt NO_HUP

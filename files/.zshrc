@@ -1,16 +1,13 @@
 #!/bin/zsh
 
-# ZSH folder
-export zfiles=${HOME}/.zsh
-export zsettings=( ${zfiles}/settings/* )
-export zplugins="${zfiles}/plugins"
-export zsources=( ${zfiles}/sources/* )
-
 # File Lists
 files=()
 
-[[ ${#zsources[@]} -gt 0 ]] && files+=( ${zsources[@]} )
-[[ ${#zsettings[@]} -gt 0 ]] && files+=( ${zsettings[@]} )
+# ZSH folder
+export zfiles=${HOME}/.zsh
+export zplugins="${HOME}/.zsh/plugins"
+export zsettings=( ${HOME}/.zsh/settings/* ); [[ ${#zsettings[@]} -gt 0 ]] && files+=( ${zsettings[@]} )
+export zsources=( ${HOME}/.zsh/sources/* ); [[ ${#zsources[@]} -gt 0 ]] && files+=( ${zsources[@]} )
 
 # Load all files
 for file in ${files[@]}
@@ -18,7 +15,10 @@ do
 	. "${file}"
 done
 
-# Plugin Loading (see $zfiles/settings/01-zsh.zsh)
+# Remove 'files' array
+unset files
+
+# Plugin Loading (Enable in '$HOME/.zsh/settings/01-zsh.zsh')
 for plugin in ${plugins[@]}; do
 
 	plugPath="${zplugins}/${plugin}.zsh"
@@ -41,12 +41,8 @@ motd
 function precmd()
 {
 	for ((i = 0; i < $COLUMNS; ++i)); do
-	  printf -
+	printf -
 	done
 
 	printf "%b\n" ""
 }
-
-# Prompt
-export PS1='C:$(pwd | tr "////" "\\\\" ) > '
-export RPS1='$HOSTNAME'
