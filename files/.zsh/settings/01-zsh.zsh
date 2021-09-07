@@ -25,4 +25,5 @@ autoload -U compinit && compinit
 # Plugins
 export plugins=(
     sudo
+    backstreet
 )
