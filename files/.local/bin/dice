@@ -4,29 +4,22 @@ from random import randint
 from sys import argv
 from os import geteuid
 
-
-# Check if running as root
-if geteuid() == 0:
-    print("This script should not be run as root. Please run as a normal user.")
-    exit(1)
-
-
 # Variables
 nums = []
 minoutput = False
 
 
-def roll_dice(number=20):
-
-    result = randint(1, int(number))
-
-    if minoutput is False:
-        print(f"d{number}: {result}")
-    else:
-        print(f"{result}")
-
-
 if __name__ == "__main__":
+
+    # Check if running as root
+    if geteuid() == 0:
+        print("This script should not be run as root. Please run as a normal user.")
+        exit(1)
+
+    # Check argv length
+        if len(argv) == 1:
+            print("You must give arguments for this script!")
+            exit(1)
 
     for arg in argv:
 
@@ -41,4 +34,10 @@ if __name__ == "__main__":
             continue
 
     for num in nums:
-        roll_dice(num)
+
+        result = randint(1, int(num))
+
+        if minoutput is False:
+            print(f"d{num}: {result}")
+        else:
+            print(f"{result}")
