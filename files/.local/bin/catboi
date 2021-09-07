@@ -1,0 +1,30 @@
+#!/usr/bin/env python3
+
+from sys import argv
+from pathlib import Path
+
+fileLines = []
+filesNotExist = []
+thisScript = argv.pop(0)
+
+for arg in argv:
+
+    file = Path(arg)
+
+    if not file.exists():
+        filesNotExist.append(arg)
+        continue
+
+    file = open(file, "r")
+
+    for line in file.read().splitlines():
+        fileLines.append(line)
+
+if len(filesNotExist) > 0:
+    for file in filesNotExist:
+        print(f"{thisScript}: File '{file}' does not exist.")
+
+    exit(1)
+
+for line in fileLines:
+    print(line)
