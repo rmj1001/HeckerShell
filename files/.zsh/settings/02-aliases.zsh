@@ -90,7 +90,7 @@ alias md="mkdir"
 alias mf="touch"
 alias rd="rm -rf"
 alias rf="rm -f"
-alias rmcd="dir=${PWD}; cd ${dir}/.. && rm -rf ${dir}"
+alias rmcd="dir=${PWD}; cd .. && rm -rf ${dir}"
 mkcd () { mkdir "${1}" && cd "${1}" }
 
 # File Permissions (Exec/Non-exec)
