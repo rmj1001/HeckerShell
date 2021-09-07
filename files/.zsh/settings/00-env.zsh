@@ -48,6 +48,7 @@ export ARCHFLAGS="-arch x86_64"
 # User-defined PATH additions
 export SYSTEM32="${HOME}/System32"
 export BIN="${HOME}/.local/bin"
+export SCRIPTS="${SYSTEM32}"
 export APPIMAGES="${HOME}/Apps"
 export GOPATH="${XDG_DATA_HOME}/go:${HOME}/Bin/projects/golang"
 export CARGOPATH="${CARGO_HOME}/.cargo/bin" # Rust
