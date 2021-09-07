@@ -6,7 +6,7 @@
   - [Table of Contents](#table-of-contents)
   - [Warranty](#warranty)
   - [Scripts](#scripts)
-    - [Function Importing](#function-importing)
+  - [ZSH Plugins](#zsh-plugins)
     - [Development Guidelines](#development-guidelines)
 
 ## Warranty
@@ -19,24 +19,24 @@ All scripts are licensed under the BSD 3 Clause license.
 ## Scripts
 
 All scripts are self-dependent.
-The folder `.local/bin/libs` contains various scripts providing common bash
-functions used in my scripts. Scripts will never source one another.
-
-Any scripts with dependencies will give an error message, should the dependencies be
-missing.
-
-### Function Importing
-
-Just copy/paste each needed function into your script. Importing
+The folder `files/System32/libs` contains various scripts providing common bash
+functions used in my scripts. Just copy/paste each needed function into your script. Importing
 them will only make the scripts dependent on the master script, thus
 making portability harder.
 
+If a script requires dependencies, and the dependencies are missing, the script should
+throw an error.
+
+## ZSH Plugins
+
+Any optional ZSH functionality should be made into a plugin. All plugins must be stored in `files/.zsh/plugins`,
+and must be named as `<plugin>.zsh`.
+
 ### Development Guidelines
 
-1. Each script should follow this format: `<name>.sh`
-2. Do not mark lib scripts as executable, since they are used more like headers.
-3. Do not declare global variables. Always use `local <name>=""` to declare variables in functons.
-4. Function names should be uppercase.
-5. Functions should have comments with a description and usage example.
-6. If functions assume global variables exist, make sure to include a default value if the variable is empty.
+1. Do not mark lib scripts as executable, since they are used more like headers.
+2. Do not declare global variables. Always use `local <name>=""` to declare variables in functons.
+3. Function names should be uppercase.
+4. Functions should have comments with a description and usage example.
+5. If functions assume global variables exist, make sure to include a default value if the variable is empty.
 Example: `${version:=1.0}`, where 1.0 is the default
