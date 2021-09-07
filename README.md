@@ -1,13 +1,12 @@
-# Dotfiles
+# RMCJ's Dotfiles
 
 ## Table of Contents
 
-- [Dotfiles](#dotfiles)
-  - [Table of Contents](#table-of-contents)
-  - [Warranty](#warranty)
-  - [Scripts](#scripts)
-  - [ZSH Plugins](#zsh-plugins)
-    - [Development Guidelines](#development-guidelines)
+- [Table of Contents](#table-of-contents)
+- [Warranty](#warranty)
+- [Scripts](#scripts)
+- [ZSH Plugins](#zsh-plugins)
+- [Development Guidelines](#development-guidelines)
 
 ## Warranty
 
@@ -32,7 +31,7 @@ throw an error.
 Any optional ZSH functionality should be made into a plugin. All plugins must be stored in `files/.zsh/plugins`,
 and must be named as `<plugin>.zsh`.
 
-### Development Guidelines
+## Development Guidelines
 
 1. Do not mark lib scripts as executable, since they are used more like headers.
 2. Do not declare global variables. Always use `local <name>=""` to declare variables in functons.
