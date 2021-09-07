@@ -67,14 +67,17 @@ alias readfile="/bin/cat -n"
 # Replace 'which'
 alias which="command -v"
 
+# Check if program exists (silent, use return codes)
+alias CMDEXISTS="SILENTRUN command -v"
+
 # Replaces 'cat' with 'batcat' (Rust rewrite)
-if SILENTRUN command -v batcat; then
+if CMDEXISTS batcat; then
 	alias bat="/bin/batcat"
 	alias cat="bat -p"
 fi
 
 # Replaces 'cat' with 'bat' on Arch (Rust rewrite)
-if SILENTRUN command -v bat && SILENTRUN command -v pacman; then
+if CMDEXISTS bat && CMDEXISTS pacman; then
 	alias cat="bat -p"
 fi
 
@@ -106,8 +109,8 @@ alias home="cd ${HOME}"
 # ZSH management
 alias zreload="clear; exec ${SHELL}"
 alias zmanage="cd ${HOME}.zsh"
-alias zshrc="${EDITOR} ${ZSHRC}"
-alias zaliases="${EDITOR} ${HOME}/.zsh/settings/02-aliases.zsh && zreload"
+alias zshrc="${EDITOR} ${ZSHRC} && echo 'Run \'zreload\' when you finish editing.'"
+alias zaliases="${EDITOR} ${HOME}/.zsh/settings/02-aliases.zsh && echo 'Run \'zreload\' when you finish editing.'"
 
 # Pipewire
 alias restart-pipewire="systemctl restart --user pipewire; systemctl restart --user pipewire-pulse; systemctl restart --user bluetooth"
@@ -121,8 +124,8 @@ alias auth="${AUTH}"
 alias startPantheon="/usr/bin/gnome-session session=pantheon; ASYNC plank; ASYNC wingpanel"
 
 ########################## HOMEBREW ##########################
-alias homebrew_installer="/bin/bash -c '$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)'"
-alias homebrew_uninstaller="/bin/bash -c '$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)'"
+alias homebrew_installer="$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+alias homebrew_uninstaller="$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/uninstall.sh)"
 
 ########################## CURL APPS ##########################
 
