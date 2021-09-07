@@ -16,12 +16,12 @@ should be familiar with case statements & for loops.
 # Command evaluation
 case "$1" in
 
-	v | version )
+    v | version )
 
-		# Usage: script v
-		# Usage: script version
-		printf "%b\n" "versions"
-		;;
+        # Usage: script v
+        # Usage: script version
+        printf "%b\n" "versions"
+        ;;
 
 esac
 ```
@@ -37,17 +37,17 @@ ARGUMENTS="$@"
 # Loops over all subtext after a command to find flags
 for ((i = 0 ; i < ${#ARGUMENTS[@]} ; i++)); do
 
-	j=$((i + 1))
-	arg=${ARGUMENTS[@]}
+    j=$((i + 1))
+    arg=${ARGUMENTS[@]}
 
-	case ${ARGUMENTS[i]} in
+    case ${ARGUMENTS[i]} in
 
-		-f | --flag )
+        -f | --flag )
 
-			FLAG="$arg"
-			;;
+        FLAG="$arg"
+        ;;
 
-	esac
+    esac
 
-done		
+done
 ```
