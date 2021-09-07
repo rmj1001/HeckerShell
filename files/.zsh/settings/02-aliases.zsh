@@ -70,15 +70,11 @@ alias which="command -v"
 # Check if program exists (silent, use return codes)
 alias CMDEXISTS="SILENTRUN command -v"
 
-# Replaces 'cat' with 'batcat' (Rust rewrite)
-if CMDEXISTS batcat; then
-	alias bat="/bin/batcat"
-	alias cat="bat -p"
-fi
-
-# Replaces 'cat' with 'bat' on Arch (Rust rewrite)
-if CMDEXISTS bat && CMDEXISTS pacman; then
-	alias cat="bat -p"
+# If bat/batcat exists, create opposite alias to replace cat
+if CMDEXISTS bat; then
+	alias batcat="/bin/bat -p"
+elif CMDEXISTS batcat; then
+    alias bat="/bin/batcat -p"
 fi
 
 # Listing files/directories
