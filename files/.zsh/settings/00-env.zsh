@@ -1,15 +1,15 @@
 #!/usr/bin/env zsh
 
-# Default Editor
-[[ -f "$(command -v code)" ]] && export EDITOR="$(command -v code)"
+# Default Editor (checks for each editor, if proceeding editor exists then default is changed)
 [[ -f "$(command -v nano)" ]] && export EDITOR="$(command -v nano)"
 [[ -f "$(command -v nvim)" ]] && export EDITOR="$(command -v nvim)"
 [[ -f "$(command -v micro)" ]] && export EDITOR="$(command -v micro)"
+[[ -f "$(command -v code)" ]] && export EDITOR="$(command -v code)"
 
 # Default Browser
 [[ -x "$(command -v firefox)" ]] && export BROWSER="$(command -v firefox)"
 
-# Default Authentication
+# Default Authentication (sudo is default, if doas exists then it becomes default)
 [[ -x "$(command -v sudo)" ]] && export AUTH="$(command -v sudo)"
 [[ -x "$(command -v doas)" ]] && export AUTH="$(command -v doas)"
 
@@ -45,18 +45,23 @@ export QT_QPA_PLATFORMTHEME="qt5ct"
 # Compilation flags
 export ARCHFLAGS="-arch x86_64"
 
-# User-defined PATH additions
+# User Scripts/AppImages
 export SYSTEM32="${HOME}/System32"
-export BIN="${HOME}/.local/bin"
 export SCRIPTS="${SYSTEM32}"
+export BIN="${HOME}/.local/bin"
 export APPIMAGES="${HOME}/Apps"
+
+# Update PATH with script paths and AppImages
+export PATH=${PATH}:${SYSTEM32}:${BIN}:${APPIMAGES}
+
+# Developer Language Paths
 export GOPATH="${XDG_DATA_HOME}/go:${HOME}/Bin/projects/golang"
 export CARGOPATH="${CARGO_HOME}/.cargo/bin" # Rust
 export HOMEBREW="/home/linuxbrew/.linuxbrew/bin"
 export DENO_INSTALL="/home/roy/.deno"
 
-# Update PATH
-export PATH=${PATH}:${SYSTEM32}:${SYSTEM32}:${BIN}:${APPIMAGES}:${GOPATH}/bin:${HOMEBREW}:${DENO_INSTALL}/bin
-
-# Conditional PATH additions
+# Conditional PATH additions (Developer Languages)
 [[ -z "${CARGOPATH}" ]] || export PATH="${PATH}:${CARGOPATH}"
+[[ -z "${GOPATH}" ]] || export PATH="${PATH}:${GOPATH}/bin"
+[[ -z "${HOMEBREW}" ]] || export PATH="${PATH}:${HOMEBREW}"
+[[ -z "${DENO_INSTALL}" ]] || export PATH="${PATH}:${DENO_INSTALL}/bin"
