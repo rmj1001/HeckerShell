@@ -5,12 +5,12 @@ DOTFILES="$(dirname "$(readlink -f "$0")")/files"
 # OG Paths
 SYM_ZSHRC="$DOTFILES/.zshrc"
 SYM_ZSH="$DOTFILES/.zsh"
-SYM_SCRIPTS="$DOTFILES/.local/bin"
+SYM_SCRIPTS="$DOTFILES/System32"
 
 # Paths
 ZSHRC="$HOME/.zshrc"
 ZSH="$HOME/.zsh"
-SCRIPTS="$HOME/.local/bin"
+SCRIPTS="$HOME/System32"
 
 PRINT()
 {
