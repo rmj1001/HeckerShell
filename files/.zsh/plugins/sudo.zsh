@@ -1,16 +1,8 @@
-# ------------------------------------------------------------------------------
-# Description
-# -----------
 #
-# sudo or rootedit will be inserted before the command
+# Plugin Name: sudo
+# Description: sudo or rootedit will be inserted before the command
+# Author(s): RMCJ <rmichael1001@gmail.com>
 #
-# ------------------------------------------------------------------------------
-# Authors
-# -------
-#
-# * RMCJ <email@email.com>
-#
-# ------------------------------------------------------------------------------
 
 __sudo-replace-buffer() {
     local old=$1 new=$2 space=${2:+ }

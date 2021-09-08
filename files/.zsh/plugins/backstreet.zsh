@@ -1,16 +1,8 @@
-# ------------------------------------------------------------------------------
-# Description
-# -----------
 #
-# Tell my why by backstreet boys
+# Plugin Name: backstreet
+# Description: Tell my why by backstreet boys
+# Author(s): RMCJ <rmichael1001@gmail.com>
 #
-# ------------------------------------------------------------------------------
-# Authors
-# -------
-#
-# * RMCJ <email@email.com>
-#
-# ------------------------------------------------------------------------------
 
 tellmewhy() {
     [[ -z "$iters" ]] && iters=0
