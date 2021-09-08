@@ -44,9 +44,26 @@ motd ()
     cat ${motdFile}
 }
 
+### Download youtube video
+# usage: downloadYTVideo <video url>
 downloadYTVideo ()
 {
     youtube-dl --format mp4 -o "$HOME/Downloads/VideoDownloader/%(title)s.%(ext)s" "${1}"
+}
+
+### Create plugin (zplugmake <name>)
+# usage: zplugmake <name>
+zplugmake()
+{
+    file="${zPluginsPath}/${1}.zsh"
+    
+    [[ -f "${file}" ]] && PRINT "Plugin exists!" && return 1 || touch ${file}
+
+    PRINT "#\n# Plugin Name: \n# Description: \n# Author(s): \n#\n\n" > ${file}
+    
+    ${EDITOR} ${file}
+
+    PRINT "zsh: Created plugin '${1}'!"
 }
 
 ############################## SHELL ALIASES ##############################
