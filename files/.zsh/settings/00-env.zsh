@@ -13,13 +13,6 @@
 [[ -x "$(command -v sudo)" ]] && export AUTH="$(command -v sudo)"
 [[ -x "$(command -v doas)" ]] && export AUTH="$(command -v doas)"
 
-# ZSH
-export ZSH="${HOME}/.zsh/.oh-my-zsh"
-export ZSHRC="${HOME}/.zshrc"
-export HISTFILE="${HOME}/.zsh-history"
-export HISTSIZE=1000
-export SAVEHIST=1000
-
 # XDG
 export XDG_CONFIG_HOME="${HOME}/.config"
 export XDG_DATA_HOME="${HOME}/.local/share"
@@ -60,8 +53,15 @@ export CARGOPATH="${CARGO_HOME}/.cargo/bin" # Rust
 export HOMEBREW="/home/linuxbrew/.linuxbrew/bin"
 export DENO_INSTALL="/home/roy/.deno"
 
+export FNM_MULTISHELL_PATH="/tmp/fnm_multishells/36217_1631124687204"
+export FNM_DIR="/home/roy/.fnm"
+export FNM_LOGLEVEL="info"
+export FNM_NODE_DIST_MIRROR="https://nodejs.org/dist"
+export FNM_ARCH="x64"
+
 # Conditional PATH additions (Developer Languages)
 [[ -z "${CARGOPATH}" ]] || export PATH="${PATH}:${CARGOPATH}"
 [[ -z "${GOPATH}" ]] || export PATH="${PATH}:${GOPATH}/bin"
 [[ -z "${HOMEBREW}" ]] || export PATH="${PATH}:${HOMEBREW}"
 [[ -z "${DENO_INSTALL}" ]] || export PATH="${PATH}:${DENO_INSTALL}/bin"
+[[ -z "${FNM_MULTISHELL_PATH}" ]] || export PATH="${PATH}:${FNM_MULTISHELL_PATH}/bin"
