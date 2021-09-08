@@ -4,10 +4,13 @@
 files=()
 
 # ZSH folder
-export zfiles=${HOME}/.zsh
-export zplugins="${HOME}/.zsh/plugins"
-export zsettings=( ${HOME}/.zsh/settings/* ); [[ ${#zsettings[@]} -gt 0 ]] && files+=( ${zsettings[@]} )
-export zsources=( ${HOME}/.zsh/sources/* ); [[ ${#zsources[@]} -gt 0 ]] && files+=( ${zsources[@]} )
+export zshrc="${HOME}/.zshrc"
+export zfiles="${HOME}/.zsh"
+export zPluginsPath="${zfiles}/plugins"
+export zSettingsPath="${zfiles}/settings"
+export zSourcesPath="${zfiles}/sources"
+export zsettings=( ${zSettingsPath}/* ); [[ ${#zsettings[@]} -gt 0 ]] && files+=( ${zsettings[@]} )
+export zsources=( ${zSourcesPath}/* ); [[ ${#zsources[@]} -gt 0 ]] && files+=( ${zsources[@]} )
 
 # Load all files
 for file in ${files[@]}
@@ -21,7 +24,7 @@ unset files
 # Plugin Loading (Enable in '$HOME/.zsh/settings/01-zsh.zsh')
 for plugin in ${plugins[@]}; do
 
-	plugPath="${zplugins}/${plugin}.zsh"
+	plugPath="${zPluginsPath}/${plugin}.zsh"
 
 	if [[ -f "${plugPath}" ]]
 	then
