@@ -1,54 +1,18 @@
 #!/usr/bin/env bash
 
-### Helper Functions ###
-PRINT()
-{
-	printf "%b\n" "$@"
+# shellcheck disable=SC1091
+source "${SCRIPTS}"/00-api.sh
 
-	return 0
-}
+####################################
 
-PAUSE()
-{
-	read -r -p "Press <ENTER> to continue..."
-
-	return 0
-}
-
-LOWER()
-{
-	printf "%b" "$@" | tr '[:upper:]' '[:lower:]'
-}
-
-REQUIRE ()
-{
-	for arg in "${@}"; do
-		if [[ ! -x "$(which "$arg")" ]]; then
-
-			PRINT "'${arg}' is required to run this program!"
-			exit 1
-
-		fi
-	done
-}
-
+DISABLE_ROOT
 
 ### Variables ###
 exclusions="${HOME}/.backup_exclusions"
 method="tar"
 ARGS=()
 
-# Check if running as root
-if [[ $EUID -eq 0 ]]; then
-
-	PROGRAM_NAME="$(basename "$0")"
-
-	PRINT "'${PROGRAM_NAME}' should not be run as root. Please try again as a normal user."
-	exit 1
-fi
-
-backup.create()
-{
+backup.create() {
 	clear
 
 	# If the directory doesn't exist, throw an error and exit
@@ -59,58 +23,58 @@ backup.create()
 
 	local target
 
-	case "${method}" in	
-		tar )
-			target="${1}/${USER}_$(date +m%m-d%d-y%y).tar.gz"
-			[[ -f "${target}" ]] && rm -rf "${target}"
+	case "${method}" in
+	tar)
+		target="${1}/${USER}_$(date +m%m-d%d-y%y).tar.gz"
+		[[ -f "${target}" ]] && rm -rf "${target}"
 
-			# Check if tar exists
-			REQUIRE "tar"
+		# Check if tar exists
+		REQUIRE_CMD "tar"
 
-			# Remove duplicate backup
-			[[ -f "${target}" ]] && PRINT "Removing duplicate backup..." && rm -rf "${target}"
+		# Remove duplicate backup
+		[[ -f "${target}" ]] && PRINT "Removing duplicate backup..." && rm -rf "${target}"
 
-			# Confirmation
-			PRINT "Backing up with tar..."
+		# Confirmation
+		PRINT "Backing up with tar..."
 
-			# Backups up files, with exclusions if file exists, or without exclusions if no file exists.
-			[[ -f "${exclusions}" ]] && tar -zcvpf "${target}" -X "${exclusions}" "${HOME}"
-			[[ ! -f "${exclusions}" ]] && tar -zcvpf "${target}" "${HOME}"
+		# Backups up files, with exclusions if file exists, or without exclusions if no file exists.
+		[[ -f "${exclusions}" ]] && tar -zcvpf "${target}" -X "${exclusions}" "${HOME}"
+		[[ ! -f "${exclusions}" ]] && tar -zcvpf "${target}" "${HOME}"
 
-			;;
-		rsync )
-			target="${1}/${USER}_$(date +m%m-d%d-y%y)"
+		;;
+	rsync)
+		target="${1}/${USER}_$(date +m%m-d%d-y%y)"
 
-			# Check if rsync exists
-			REQUIRE "rsync"
+		# Check if rsync exists
+		REQUIRE_CMD "rsync"
 
-			# Remove duplicate backup
-			[[ -d "${target}" ]] && PRINT "Removing duplicate backup..." && rm -rf "${target}"
+		# Remove duplicate backup
+		[[ -d "${target}" ]] && PRINT "Removing duplicate backup..." && rm -rf "${target}"
 
-			# Confirmation
-			PRINT "Backing up with rsync..."
+		# Confirmation
+		PRINT "Backing up with rsync..."
 
-			# Backup all files
-			[[ -f "${exclusions}" ]] && rsync -arzvhP --exclude-from="${exclusions}" "${HOME}/" "${target}"
-			[[ ! -f "${exclusions}" ]] && rsync -arzvhP "${HOME}/" "${target}"
+		# Backup all files
+		[[ -f "${exclusions}" ]] && rsync -arzvhP --exclude-from="${exclusions}" "${HOME}/" "${target}"
+		[[ ! -f "${exclusions}" ]] && rsync -arzvhP "${HOME}/" "${target}"
 
-			;;
-		cp )
-			target="${1}/${USER}_$(date +m%m-d%d-y%y)"
+		;;
+	cp)
+		target="${1}/${USER}_$(date +m%m-d%d-y%y)"
 
-			# Check if rsync exists
-			REQUIRE "cp"
+		# Check if rsync exists
+		REQUIRE_CMD "cp"
 
-			# Remove duplicate backup
-			[[ -d "${target}" ]] && PRINT "Removing duplicate backup..." && rm -rf "${target}"
+		# Remove duplicate backup
+		[[ -d "${target}" ]] && PRINT "Removing duplicate backup..." && rm -rf "${target}"
 
-			# Confirmation
-			PRINT "Backing up with cp..."
+		# Confirmation
+		PRINT "Backing up with cp..."
 
-			# Backup all files
-			cp -vR "${HOME}" "${target}"
+		# Backup all files
+		cp -vR "${HOME}" "${target}"
 
-			;;
+		;;
 	esac
 
 	# Confirmation
@@ -119,8 +83,7 @@ backup.create()
 	clear
 }
 
-backup.restore()
-{
+backup.restore() {
 	clear
 
 	# Cleanly exit backup process
@@ -163,8 +126,7 @@ backup.restore()
 }
 
 # Create/edit the exclusions file
-backup.exclusions()
-{
+backup.exclusions() {
 
 	local name
 
@@ -177,7 +139,7 @@ backup.exclusions()
 			name="$(basename "$f")"
 
 			if [[ "${name}" != "." ]] && [[ "${name}" != ".." ]]; then
-				PRINT "${name}" >> "${exclusions}"
+				PRINT "${name}" >>"${exclusions}"
 			fi
 
 		done
@@ -187,11 +149,9 @@ backup.exclusions()
 }
 
 # Help prompt
-backup.help()
-{
+backup.help() {
 	# Commands portion of help prompt (columnized)
-	backup.help.commands()
-	{
+	backup.help.commands() {
 		PRINT "Flags|Arguments|Description"
 		PRINT "-t, --tar||(Default) Uses tar to backup your files"
 		PRINT "-r, --rsync||Uses rsync to backup your files"
@@ -206,7 +166,7 @@ backup.help()
 
 	PRINT
 	PRINT "Create/restore tarball backups of your HOME directory"
-	PRINT 
+	PRINT
 	PRINT "Usage:\t\tbackup [command] [flag] <args?[]>"
 	PRINT "Example:\tbackup create --rsync \$HOME/Documents/Backups"
 	PRINT
@@ -216,20 +176,20 @@ backup.help()
 ### Flags ###
 for arg in "$@"; do
 	case "$(LOWER "$arg")" in
-		-r | --rsync )
-			method="rsync"
-			;;
+	-r | --rsync)
+		method="rsync"
+		;;
 
-		-t | --tar )
-			method="tar"
-			;;
+	-t | --tar)
+		method="tar"
+		;;
 
-		-c | --cp )
-			method="cp"
-			;;
-		* )
-			ARGS+=("$arg")
-			;;
+	-c | --cp)
+		method="cp"
+		;;
+	*)
+		ARGS+=("$arg")
+		;;
 	esac
 done
 
@@ -238,23 +198,27 @@ cmd="$(LOWER "${ARGS[0]}")"
 
 case "${cmd}" in
 
-	c | create ) 
+c | create)
 
-		backup.create "${ARGS[1]}" ;;
+	backup.create "${ARGS[1]}"
+	;;
 
-	r | restore ) 
+r | restore)
 
-		backup.restore "${ARGS[1]}" ;;
+	backup.restore "${ARGS[1]}"
+	;;
 
-	e | exclusions )
+e | exclusions)
 
-		backup.exclusions ;;
+	backup.exclusions
+	;;
 
-	\? | h | help )
-		backup.help ;;
+\? | h | help)
+	backup.help
+	;;
 
-	* )
+*)
 
-		[[ $# -eq 0 ]] && backup.help || PRINT "Invalid command!" && exit 1
-		;;
+	[[ $# -eq 0 ]] && backup.help || PRINT "Invalid command!" && exit 1
+	;;
 esac

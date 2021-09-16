@@ -12,36 +12,16 @@
 #		them to mp3 files
 ##############################################
 
-PRINT()
-{
-	printf "%b\n" "${@}"
-}
+# shellcheck disable=SC1091
+source "${SCRIPTS}"/00-api.sh
 
-REQUIRE_CMD ()
-{
-    for arg in "${@}"; do
-        if [[ ! -x "$(which "$arg")" ]]; then
+####################################
 
-            printf "%b\n" "'${arg}' is required to run this program!"
-            exit 1
-
-        fi
-    done
-}
-
-# Check if running as root
-if [[ $EUID -eq 0 ]]; then
-
-	PROGRAM_NAME="$(basename "$0")"
-
-	PRINT "'${PROGRAM_NAME}' should not be run as root. Please try again as a normal user."
-	exit 1
-fi
+DISABLE_ROOT
 
 REQUIRE_CMD "youtube-dl"
 
-mp3dl.download()
-{
+mp3dl.download() {
 	# Preparations
 	DIR=$HOME/Downloads/Music
 	[[ -d "$DIR" ]] || mkdir "$DIR"

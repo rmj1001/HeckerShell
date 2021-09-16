@@ -11,36 +11,16 @@
 #		Use dmenu to view manpages in PDF format
 ##############################################
 
-PRINT ()
-{
-	printf "%b\n" "${@}"
-}
+# shellcheck disable=SC1091
+source "${SCRIPTS}"/00-api.sh
 
-REQUIRE ()
-{
-	for arg in "${@}"; do
-		if [[ ! -x "$(which "$arg")" ]]; then
+####################################
 
-			PRINT "'${arg}' is required to run this program!"
-			exit 1
+DISABLE_ROOT
 
-		fi
-	done
-}
+REQUIRE_CMD "rofi" "zathura" "ps2pdf"
 
-# Check if running as root
-if [[ $EUID -eq 0 ]]; then
-
-	PROGRAM_NAME="$(basename "$0")"
-
-	PRINT "'${PROGRAM_NAME}' should not be run as root. Please try again as a normal user."
-	exit 1
-fi
-
-REQUIRE "rofi" "zathura" "ps2pdf"
-
-function menu ()
-{
+function menu() {
 	rofi -dmenu -columns 3 -disable-history -p "Manpage" -mesg "Pick the manpage you want to view in Zathura."
 }
 

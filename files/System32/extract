@@ -11,44 +11,18 @@
 #		Extract any archive file
 ##############################################
 
-PRINT()
-{
-	printf "%b\n" "${@}"
-}
+# shellcheck disable=SC1091
+source "${SCRIPTS}"/00-api.sh
 
-REQUIRE ()
-{
-	for arg in "${@}"; do
-		if [[ ! -x "$(which "$arg")" ]]; then
+####################################
 
-			PRINT "'${arg}' is required to run this program!"
-			exit 1
+DISABLE_ROOT
 
-		fi
-	done
-}
-
-#############
-# Core Code #
-#############
-
-# Check if running as root
-if [[ $EUID -eq 0 ]]; then
-
-	PROGRAM_NAME="$(basename "$0")"
-
-	PRINT "'${PROGRAM_NAME}' should not be run as root. Please try again as a normal user."
-	exit 1
-fi
-
-extract.valid ()
-{
-	if [[ ! -f "${1}" ]]
-	then
+extract.valid() {
+	if [[ ! -f "${1}" ]]; then
 		PRINT "'${1}' is not a file."
 		exit 1
-	elif [[ -f "${1}" ]]
-	then
+	elif [[ -f "${1}" ]]; then
 		return 0
 	else
 		PRINT "Unknown error"
@@ -56,10 +30,9 @@ extract.valid ()
 	fi
 }
 
-extract.help ()
-{
+extract.help() {
 	PRINT "extract - Extract various archive files"
-	PRINT 
+	PRINT
 	PRINT "Supported file types:"
 	PRINT "- tar.bz2"
 	PRINT "- tar.gz"
@@ -75,89 +48,89 @@ extract.help ()
 	PRINT "- deb"
 	PRINT "- tar.xz"
 	PRINT "- tar.zst"
-	PRINT 
+	PRINT
 	return 0
 }
 
 case "${1}" in
-	*.tar.bz2)
-		REQUIRE "tar"
-		extract.valid "${1}"
-		tar xjf "${1}"
-		;;
-	*.tar.gz)
-		REQUIRE "tar"
-		extract.valid "${1}"
-		tar xzf "${1}"
-		;;
-	*.bz2)
-		REQUIRE "bunzip"
-		extract.valid "${1}"
-		bunzip "${1}"
-		;;
-	*.rar)
-		REQUIRE "unrar"
-		extract.valid "${1}"
-		unrar x "${1}"
-		;;
-	*.gz)
-		REQUIRE "gunzip"
-		extract.valid "${1}"
-		gunzip "${1}"
-		;;
-	*.tar)
-		REQUIRE "tar"
-		extract.valid "${1}"
-		tar xf "${1}"
-		;;
-	*.tbz2)
-		REQUIRE "tar"
-		extract.valid "${1}"
-		tar xjf "${1}"
-		;;
-	*.tgz)
-		REQUIRE "tar"
-		extract.valid "${1}"
-		tar xzf "${1}"
-		;;
-	*.zip)
-		REQUIRE "unzip"
-		extract.valid "${1}"
-		unzip "${1}"
-		;;
-	*.Z)
-		REQUIRE "uncompress"
-		extract.valid "${1}"
-		uncompress "${1}"
-		;;
-	*.7z)
-		REQUIRE "7z"
-		extract.valid "${1}"
-		7z x "${1}"
-		;;
-	*.deb)
-		REQUIRE "ar"
-		extract.valid "${1}"
-		ar x "${1}"
-		;;
-	*.tar.xz)
-		REQUIRE "tar"
-		extract.valid "${1}"
-		tar xf "${1}"
-		;;
-	*.tar.zst)
-		REQUIRE "unzstd"
-		extract.valid "${1}"
-		unzstd "${1}"
-		;;
-	\? | h | help )
+*.tar.bz2)
+	REQUIRE_CMD "tar"
+	extract.valid "${1}"
+	tar xjf "${1}"
+	;;
+*.tar.gz)
+	REQUIRE_CMD "tar"
+	extract.valid "${1}"
+	tar xzf "${1}"
+	;;
+*.bz2)
+	REQUIRE_CMD "bunzip"
+	extract.valid "${1}"
+	bunzip "${1}"
+	;;
+*.rar)
+	REQUIRE_CMD "unrar"
+	extract.valid "${1}"
+	unrar x "${1}"
+	;;
+*.gz)
+	REQUIRE_CMD "gunzip"
+	extract.valid "${1}"
+	gunzip "${1}"
+	;;
+*.tar)
+	REQUIRE_CMD "tar"
+	extract.valid "${1}"
+	tar xf "${1}"
+	;;
+*.tbz2)
+	REQUIRE_CMD "tar"
+	extract.valid "${1}"
+	tar xjf "${1}"
+	;;
+*.tgz)
+	REQUIRE_CMD "tar"
+	extract.valid "${1}"
+	tar xzf "${1}"
+	;;
+*.zip)
+	REQUIRE_CMD "unzip"
+	extract.valid "${1}"
+	unzip "${1}"
+	;;
+*.Z)
+	REQUIRE_CMD "uncompress"
+	extract.valid "${1}"
+	uncompress "${1}"
+	;;
+*.7z)
+	REQUIRE_CMD "7z"
+	extract.valid "${1}"
+	7z x "${1}"
+	;;
+*.deb)
+	REQUIRE_CMD "ar"
+	extract.valid "${1}"
+	ar x "${1}"
+	;;
+*.tar.xz)
+	REQUIRE_CMD "tar"
+	extract.valid "${1}"
+	tar xf "${1}"
+	;;
+*.tar.zst)
+	REQUIRE_CMD "unzstd"
+	extract.valid "${1}"
+	unzstd "${1}"
+	;;
+\? | h | help)
+	extract.help
+	;;
+*)
+	if [[ -z "${1}" ]]; then
 		extract.help
-		;;
-	*)
-		if [[ -z "${1}" ]]; then
-			extract.help
-		else
-			PRINT "'${1}' cannot be extracted." && exit 1
-		fi
-		;;
+	else
+		PRINT "'${1}' cannot be extracted." && exit 1
+	fi
+	;;
 esac

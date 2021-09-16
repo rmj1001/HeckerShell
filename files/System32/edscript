@@ -11,26 +11,12 @@
 #		Edit existing scripts
 ##############################################
 
-PRINT()
-{
-	printf "%b\n" "$@"
-}
+# shellcheck disable=SC1091
+source "${SCRIPTS}"/00-api.sh
 
-PAUSE ()
-{
-	read -r -p "Press <ENTER> to continue..."
+####################################
 
-	return 0
-}
-
-# Check if running as root
-if [[ $EUID -eq 0 ]]; then
-
-	PROGRAM_NAME="$(basename "$0")"
-
-	PRINT "'${PROGRAM_NAME}' should not be run as root. Please try again as a normal user."
-	exit 1
-fi
+DISABLE_ROOT
 
 # Variables
 EDITOR="${EDITOR:-nano}"
@@ -45,7 +31,7 @@ TEMP="${SCRIPTS}/${1}.backup"
 [[ ! -f "${FILE}" ]] && PRINT "Script '${1}' does not exist!" && exit 1
 
 # Backup file
-cat "${FILE}" > "${TEMP}"
+cat "${FILE}" >"${TEMP}"
 
 # Edit script
 ${EDITOR} "${FILE}"

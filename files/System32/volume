@@ -11,51 +11,38 @@
 #		Control volume from the terminal
 ##############################################
 
-PRINT()
-{
-	printf "%b\n" "${@}"
-}
+# shellcheck disable=SC1091
+source "${SCRIPTS}"/00-api.sh
 
-# Check if running as root
-if [[ $EUID -eq 0 ]]; then
+####################################
 
-	PROGRAM_NAME="$(basename "$0")"
+DISABLE_ROOT
 
-	PRINT "'${PROGRAM_NAME}' should not be run as root. Please try again as a normal user."
-	exit 1
-fi
-
-_up() 
-{ 
+_up() {
 	percent=${1:-15}
-	amixer sset Master "${percent}%+" > /dev/null 2>&1
+	amixer sset Master "${percent}%+" >/dev/null 2>&1
 }
 
-_down() 
-{
+_down() {
 	percent=${1:-15}
-	amixer sset Master "${percent}%-" > /dev/null 2>&1
+	amixer sset Master "${percent}%-" >/dev/null 2>&1
 }
 
-_mute() 
-{
-	amixer sset Master toggle > /dev/null 2>&1
+_mute() {
+	amixer sset Master toggle >/dev/null 2>&1
 }
 
-_view()
-{
+_view() {
 	local volume
-	
+
 	volume="$(amixer sget Master | grep 'Front Left' | grep '%' | sed -e 's|.* Playback [0-9]* ||g' -e 's|\[on\]||g' -re 's|[^0-9]||g')%"
 
 	PRINT "${volume}"
 }
 
-_help()
-{
+_help() {
 
-	_commands()
-	{
+	_commands() {
 		PRINT "Commands|Arguments|Description"
 		PRINT "(u) up|[%]|Increase volume"
 		PRINT "(d) down|[%]|Decrease volume"
@@ -78,22 +65,27 @@ cmd="$(printf '%b' "${1}" | tr '[:upper:]' '[:lower:]')"
 
 case "${cmd}" in
 
-	u | up )
-		_up "$2" ;;
+u | up)
+	_up "$2"
+	;;
 
-	d | down )
-		_down "$2" ;;
+d | down)
+	_down "$2"
+	;;
 
-	m | mute )
-		_mute ;;
+m | mute)
+	_mute
+	;;
 
-	v | view )
-		_view ;;
-		
-	\? | h | help )
-		_help ;;
+v | view)
+	_view
+	;;
 
-	* )
-		[ -z "${1}" ] && _help || PRINT "Invalid command '${1}'!" && exit 1
-		;;
+\? | h | help)
+	_help
+	;;
+
+*)
+	[ -z "${1}" ] && _help || PRINT "Invalid command '${1}'!" && exit 1
+	;;
 esac

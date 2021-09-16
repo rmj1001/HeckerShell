@@ -4,35 +4,26 @@
 #	Author: Nidia Achrys
 #	Project: bootableusb
 #	Version: 1.0
-# 
+#
 #	Usage: bootableusb <iso> /path/to/drive
-# 
+#
 #	Description:
 #		Create a bootable USB drive from an
-#		ISO file 
+#		ISO file
 ##############################################
 
-PRINT ()
-{
-	printf "%b\n" "${@}"
-}
+# shellcheck disable=SC1091
+source "${SCRIPTS}"/00-api.sh
 
-# Check if running as root
-if [[ $EUID -eq 0 ]]; then
+####################################
 
-	PROGRAM_NAME="$(basename "$0")"
+DISABLE_ROOT
 
-	PRINT "'${PROGRAM_NAME}' should not be run as root. Please try again as a normal user."
-	exit 1
-fi
-
-bootableusb.write ()
-{
+bootableusb.write() {
 	sudo dd bs=4M if="$1" of="$2" conv=fdatasync
 }
 
-bootableusb.help ()
-{
+bootableusb.help() {
 	PRINT
 	PRINT "Create a bootable USB drive"
 	PRINT
@@ -41,8 +32,7 @@ bootableusb.help ()
 	PRINT
 }
 
-if [[ "$1" = "--help" ]] || [[ $# -lt 1 ]]
-then
+if [[ "$1" = "--help" ]] || [[ $# -lt 1 ]]; then
 	bootableusb.help
 else
 	bootableusb.write "$1" "$2"

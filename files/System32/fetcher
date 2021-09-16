@@ -11,37 +11,17 @@
 #		Retrieve system information for use in screenshots
 ##############################################
 
-PRINT ()
-{
-	printf "%b\n" "${@}"
-}
+# shellcheck disable=SC1091
+source "${SCRIPTS}"/00-api.sh
 
-REQUIRE ()
-{
-	for arg in "${@}"; do
-		if [[ ! -x "$(which "$arg")" ]]; then
+####################################
 
-			PRINT "'${arg}' is required to run this program!"
-			exit 1
-
-		fi
-	done
-}
-
-# Check if running as root
-if [[ $EUID -eq 0 ]]; then
-
-	PROGRAM_NAME="$(basename "$0")"
-
-	PRINT "'${PROGRAM_NAME}' should not be run as root. Please try again as a normal user."
-	exit 1
-fi
+DISABLE_ROOT
 
 # Dependencies
-REQUIRE "grep" "sed" "uname" "cat"
+REQUIRE_CMD "grep" "sed" "uname" "cat"
 
-fetcher.fetch ()
-{
+fetcher.fetch() {
     # Operating System Information
     OS="$(grep '^NAME=' /etc/os-release | sed 's/NAME=//;s/"//g')"
     OS="${OS} $(grep '^VERSION=' /etc/os-release | sed 's/VERSION=//;s/"//g')"
@@ -53,27 +33,22 @@ fetcher.fetch ()
 
     # Package count
     PKGCOUNT=""
-    [[ -x "$(command -v pacman)" ]] && \
-	    PKGCOUNT="${PKGCOUNT}$(pacman -Qq | wc -l) (pacman), "
-    [[ -x "$(command -v apt)" ]] && \
-	    PKGCOUNT="${PKGCOUNT}$(apt list --installed 2>/dev/null | wc -l) (apt), "
-    [[ -x "$(command -v dnf)" ]] && \
-	    PKGCOUNT="${PKGCOUNT}$(dnf list installed | wc -l) (rpm), "
-    [[ -x "$(command -v flatpak)" ]] && \
-	    PKGCOUNT="${PKGCOUNT}$(flatpak list | wc -l) (flatpak), "
-    [[ -x "$(command -v snap)" ]] && snapCount=$(snap list | wc -l) && \
-	    PKGCOUNT="${PKGCOUNT}$snapCount (snap), "
+    CMD_EXISTS "pacman" && PKGCOUNT="${PKGCOUNT}$(pacman -Qq | wc -l) (pacman), "
+    CMD_EXISTS "apt" && PKGCOUNT="${PKGCOUNT}$(apt list --installed 2>/dev/null | wc -l) (apt), "
+    CMD_EXISTS "dnf" && PKGCOUNT="${PKGCOUNT}$(dnf list installed | wc -l) (rpm), "
+    CMD_EXISTS "flatpak" && PKGCOUNT="${PKGCOUNT}$(flatpak list | wc -l) (flatpak), "
+    CMD_EXISTS "snap" && PKGCOUNT="${PKGCOUNT}$snapCount (snap), "
 
     # Processor
-    CORES=$(grep -c processor < /proc/cpuinfo)
+    CORES=$(grep -c processor </proc/cpuinfo)
     CPUNAME=$(grep '^model name' /proc/cpuinfo -m 1 | sed -E 's|^model\sname\s*:\s||g')
 
     # Memory
     MEMTOTALKB=$(grep 'MemTotal' /proc/meminfo | sed -e 's|MemTotal:\s*||g' -e 's|\s*kB\s*||g')
     MEMFREEKB=$(grep 'MemFree' /proc/meminfo | sed -e 's|MemFree:\s*||g' -e 's|\s*kB\s*||g')
 
-    MEMFREE=$(( MEMFREEKB / 1000 ))
-    MEMTOTAL=$(( MEMTOTALKB / 1000 ))
+    MEMFREE=$((MEMFREEKB / 1000))
+    MEMTOTAL=$((MEMTOTALKB / 1000))
 
     MEMORY="$MEMFREE MB / $MEMTOTAL MB"
 
@@ -83,16 +58,15 @@ fetcher.fetch ()
     # Terminal
     case "$(ps -p $(ps -p $$ o ppid=) o args= | sed 's|.*/||')" in
 
-        *gnome-terminal* ) TERMINAL="gnome-terminal" ;;
-        *lxterminal* ) TERMINAL="lxterminal" ;;
-        *rxvt* ) TERMINAL="rxvt" ;;
+    *gnome-terminal*) TERMINAL="gnome-terminal" ;;
+    *lxterminal*) TERMINAL="lxterminal" ;;
+    *rxvt*) TERMINAL="rxvt" ;;
 
     esac
 }
 
 # Print out the information gathered
-fetcher.info()
-{
+fetcher.info() {
     PRINT "Name|${USER}@${HOST}"
     PRINT "OS|${OS}"
     PRINT "Kernel|${KERNEL}"
@@ -107,8 +81,7 @@ fetcher.info()
     [[ -n "${TERMINAL}" ]] && PRINT "Terminal|${TERMINAL}"
 }
 
-fetcher.info.neofetch()
-{
+fetcher.info.neofetch() {
     PRINT "OS|${OS}"
     PRINT "Kernel|${KERNEL}"
     PRINT "Uptime|${UPTIME}"
@@ -132,7 +105,7 @@ if [[ "$1" == "--neofetch" ]]; then
     PRINT "---------------"
     fetcher.info.neofetch | column -t -s "|"
     PRINT
-    
+
     exit 0
 
 else

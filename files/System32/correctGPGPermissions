@@ -5,25 +5,18 @@
 #   Project: correctGPGPermissions
 #   Version: 1.0
 #
-#   Usage: 
+#   Usage:
 #
 #   Description:
 #		Correct the permissions for the gnupg directory
 ##############################################
 
-PRINT()
-{
-	printf '%b\n' "$@"
-}
+# shellcheck disable=SC1091
+source "${SCRIPTS}"/00-api.sh
 
-# Check if running as root
-if [[ $EUID -eq 0 ]]; then
+####################################
 
-	PROGRAM_NAME="$(basename "$0")"
-
-	PRINT "'${PROGRAM_NAME}' should not be run as root. Please try again as a normal user."
-	exit 1
-fi
+DISABLE_ROOT
 
 chown -R $(whoami) ~/.gnupg/
 

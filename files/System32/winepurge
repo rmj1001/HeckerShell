@@ -12,38 +12,22 @@
 #		your system.
 ##############################################
 
-REQUIRE ()
-{
-	for arg in "${@}"; do
-		if [[ ! -x "$(which "$arg")" ]]; then
+# shellcheck disable=SC1091
+source "${SCRIPTS}"/00-api.sh
 
-			PRINT "'${arg}' is required to run this program!"
-			exit 1
+####################################
 
-		fi
-	done
-}
+DISABLE_ROOT
 
-# Check if running as root
-if [[ $EUID -eq 0 ]]; then
-
-	PROGRAM_NAME="$(basename "$0")"
-
-	PRINT "'${PROGRAM_NAME}' should not be run as root. Please try again as a normal user."
-	exit 1
-fi
-
-REQUIRE "wine"
+REQUIRE_CMD "wine"
 
 read -p "Uninstall wine? (y/N) " uninstall
 
 if [[ $uninstall =~ [Yy][Ee]?[Ss]? ]]; then
 
-	if [[ -x "$(command -v pacman)" ]];
-	then
+	if [[ -x "$(command -v pacman)" ]]; then
 		sudo pacman -Rnsv wine wine-gecko wine-mono winetricks wine-staging
-	elif [[ -x "$(command -v apt)" ]];
-	then
+	elif [[ -x "$(command -v apt)" ]]; then
 		sudo apt remove wine-stable-amd wine-stable-i386 wine-stable
 		sudo apt autoremove
 	fi

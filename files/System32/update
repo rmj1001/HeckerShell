@@ -11,54 +11,38 @@
 #	linux PC.
 ##############################################
 
-PRINT()
-{
-	printf "%b\n" "$@"
-}
+# shellcheck disable=SC1091
+source "${SCRIPTS}"/00-api.sh
 
-PAUSE ()
-{
-    PRINT
-    read -r -p "Press <ENTER> to continue..."
+####################################
 
-    PRINT
+DISABLE_ROOT
 
-    return 0
-}
-
-UPDATER()
-{
+UPDATER() {
 	req="${1}"
 	cmd="${2}"
 
-	if [[ -x "$(command -v "${req}")" ]]; then
+	if CMD_EXISTS "${req}"; then
 
 		clear
 
-		read -p "Update "${req}"? (Y/n) " confirmation
+		read -rp "Update \"${req}\"? (Y/n) " confirmation
 
-		if [[ ${confirmation} =~ [yY][eE]?[sS]? ]] \
-			|| [[ -z "${confirmation}" ]]; then
+		if CHECK_YES "${confirmation}"; then
 
 			PRINT "Updating ${req}...\n"
 			eval "${cmd}"
+
 		else
+
 			PRINT "Skipped updating ${req}...\n"
+
 		fi
 
 		PAUSE
 
 	fi
 }
-
-# Check if running as root
-if [[ $EUID -eq 0 ]]; then
-
-	PROGRAM_NAME="$(basename "$0")"
-
-	PRINT "'${PROGRAM_NAME}' should not be run as root. Please try again as a normal user."
-	exit 1
-fi
 
 UPDATER "flatpak" "flatpak update"
 UPDATER "snap" "sudo snap refresh"

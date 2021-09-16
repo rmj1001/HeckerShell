@@ -4,57 +4,22 @@
 #	Author: Nidia Achrys
 #	Project: emojictl
 #	Version: 1.0
-# 
+#
 #	Usage: emojictl [command] [args]
-# 
+#
 #	Description:
 #		Install/uninstall Noto Color Emoji on Linux
 ##############################################
 
-PRINT()
-{
-	printf "%b\n" "${@}"
-}
+# shellcheck disable=SC1091
+source "${SCRIPTS}"/00-api.sh
 
-REQUIRE ()
-{
-	for arg in "${@}"; do
-		if [[ ! -x "$(which "$arg")" ]]; then
+####################################
 
-			PRINT "'${arg}' is required to run this program!"
-			exit 1
-
-		fi
-	done
-}
-
-PAUSE()
-{
-	read -r -p "Press <ENTER> to continue..."
-
-	return 0
-}
-
-LOWER()
-{
-	printf "%b" "$@" | tr '[:upper:]' '[:lower:]'
-}
-
-#############
-# Core Code #
-#############
+DISABLE_ROOT
 
 # Dependencies
-REQUIRE "wget" "unzip" "fc-cache"
-
-# Check if running as root
-if [[ $EUID -eq 0 ]]; then
-
-	PROGRAM_NAME="$(basename "$0")"
-
-	PRINT "'${PROGRAM_NAME}' should not be run as root. Please try again as a normal user."
-	exit 1
-fi
+REQUIRE_CMD "wget" "unzip" "fc-cache"
 
 # Noto Emoji package link
 EMOJIPKG="https://noto-website-2.storage.googleapis.com/pkgs/NotoColorEmoji-unhinted.zip"
@@ -63,9 +28,9 @@ CONFLINK="https://raw.githubusercontent.com/rmj1001/dotfiles/main/files/.config/
 
 # Fontconfig file links
 FONTCONFIGS=(
-"${CONFLINK}/01-dejavu.conf"
-"${CONFLINK}/02-mozilla.conf"
-"${CONFLINK}/03-emoji.conf"
+	"${CONFLINK}/01-dejavu.conf"
+	"${CONFLINK}/02-mozilla.conf"
+	"${CONFLINK}/03-emoji.conf"
 )
 
 # Directories
@@ -78,8 +43,7 @@ FILE=${FONTS}/NotoColorEmoji.ttf
 # cmd
 cmd=""
 
-emojictl.prepare ()
-{
+emojictl.prepare() {
 	# Make the config directory and move to it
 	[ ! -d "$CONFDIR" ] && mkdir -p "$CONFDIR"
 	[ ! -d "$FONTS" ] && mkdir -p "$FONTS"
@@ -88,8 +52,7 @@ emojictl.prepare ()
 	[ -f "$NOTOPKG" ] && rm -f "$NOTOPKG"
 }
 
-emojictl.emojis.install ()
-{
+emojictl.emojis.install() {
 	clear
 
 	# Make the config directory and move to it
@@ -112,7 +75,7 @@ emojictl.emojis.install ()
 	mv NotoColorEmoji.ttf "$FONTS"
 	fc-cache -fv
 	rm -rf "$TEMP"
-	
+
 	# Post
 	clear
 	PRINT
@@ -122,8 +85,7 @@ emojictl.emojis.install ()
 	clear
 }
 
-emojictl.emojis.uninstall ()
-{
+emojictl.emojis.uninstall() {
 	clear
 	emojictl.prepare
 
@@ -138,7 +100,7 @@ emojictl.emojis.uninstall ()
 
 	# Reload the font cache
 	fc-cache -fv
-	
+
 	# Post
 	clear
 	PRINT
@@ -148,11 +110,9 @@ emojictl.emojis.uninstall ()
 	clear
 }
 
-emojictl.help ()
-{
+emojictl.help() {
 
-	emojictl.help.commands ()
-	{
+	emojictl.help.commands() {
 		PRINT "Command|Arguments|Description"
 		PRINT "(i) install||Install emojis"
 		PRINT "(u) uninstall||Remove emojis"
@@ -168,24 +128,24 @@ emojictl.help ()
 	emojictl.help.commands | column -t -s "|"
 }
 
-cmd="$(LOWER "${1}")"
+cmd="$(LOWERCASE "${1}")"
 
 case "${cmd}" in
 
-	install | i )
-		emojictl.emojis.install
-		exit 0
-		;;
-	uninstall | u )
-		emojictl.emojis.uninstall
-		exit 0
-		;;
-	help | h | \? )
-		emojictl.help
-		exit 0
-		;;
-	* )
-		[ -z "${cmd}" ] && emojictl.help || PRINT "Invalid command '${1}'." && exit 1
-		;;
+install | i)
+	emojictl.emojis.install
+	exit 0
+	;;
+uninstall | u)
+	emojictl.emojis.uninstall
+	exit 0
+	;;
+help | h | \?)
+	emojictl.help
+	exit 0
+	;;
+*)
+	[ -z "${cmd}" ] && emojictl.help || PRINT "Invalid command '${1}'." && exit 1
+	;;
 
 esac

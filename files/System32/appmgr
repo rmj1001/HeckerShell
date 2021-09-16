@@ -5,67 +5,31 @@
 #   Project: appmgr
 #   Version: 1.0
 #
-#   Usage: 
+#   Usage:
 #
 #   Description:
 #		Appmenu, App switcher, etc.
 ##############################################
 
-PRINT()
-{
-	printf '%b\n' "$@"
-}
-
-# Description: Converts a string to all api.std.failMsg characters
-#
-# Usage: name="$(LOWERCASE $name)"
-LOWERCASE ()
-{
-	printf "%b" "${1}" | tr "[:upper:]" "[:lower:]"
-	return 0
-}
-
-# Description: Checks for a filename in $PATH (commands), if not found then exit with an error
-#
-# Usage: REQUIRE_CMD "7z" "tar"
-REQUIRE_CMD ()
-{
-	NEEDED=()
-
-	for arg in "${@}"; do
-		if [[ ! -x "$(which "$arg")" ]]; then
-
-			NEEDED+=("${arg}")
-
-		fi
-	done
-
-	if [[ ${#NEEDED[@]} -gt 0 ]]; then
-		printf "%b\n" "The following programs are required to run this program:"
-		printf "%b\n" "${NEEDED[@]}"
-		
-		exit 1
-	fi
-}
+# shellcheck disable=SC1091
+source "${SCRIPTS}"/00-api.sh
 
 ####################################
 
+DISABLE_ROOT
+
 REQUIRE_CMD "rofi"
 
-appmgr.menu ()
-{
+appmgr.menu() {
 	rofi -show drun -scroll-method 1 -show-icons -columns 2 -disable-history -sorting-method 'fzf'
 }
 
-appmgr.switcher ()
-{
+appmgr.switcher() {
 	rofi -show window -window-icon -window-format "{c}    {t}"
 }
 
-appmgr.help()
-{
-	appmgr.help.commands()
-	{
+appmgr.help() {
+	appmgr.help.commands() {
 		PRINT "Command|Arguments|Description"
 		PRINT "menu||Application Menu"
 		PRINT "switcher||Switch between running apps"
@@ -82,15 +46,15 @@ appmgr.help()
 	appmgr.help.commands | column -t -s "|"
 }
 
-cmd="$(LOWERCASE $1)"
+cmd="$(LOWERCASE "$1")"
 
 case "${cmd}" in
 
-	menu ) 		appmgr.menu ;;
-	switcher ) 	appmgr.switcher ;;
-	help ) 		appmgr.help ;;
+menu) appmgr.menu ;;
+switcher) appmgr.switcher ;;
+help) appmgr.help ;;
 
-	* ) [[ -z "${cmd}" ]] && appmgr.help && exit 0 || \
-		PRINT "Invalid command '${cmd}'." && exit 1
+*) [[ -z "${cmd}" ]] && appmgr.help && exit 0 ||
+	PRINT "Invalid command '${cmd}'." && exit 1 ;;
 
 esac

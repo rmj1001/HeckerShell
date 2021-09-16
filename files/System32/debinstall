@@ -11,21 +11,14 @@
 #		Change this
 ##############################################
 
-PRINT()
-{
-	printf "%b\n" "${1}"
-}
+# shellcheck disable=SC1091
+source "${SCRIPTS}"/00-api.sh
 
-# Check if running as root
-if [[ $EUID -eq 0 ]]; then
+####################################
 
-	PROGRAM_NAME="$(basename "$0")"
+DISABLE_ROOT
 
-	PRINT "'${PROGRAM_NAME}' should not be run as root. Please try again as a normal user."
-	exit 1
-fi
-
-[[ ! -x "$(which apt)" ]] && PRINT "This command requires 'apt'\!" && exit 1
+CMD_EXISTS "apt" || PRINT "This command requires 'apt'\!" && exit 1
 
 if [[ $# -lt 1 ]]; then
 	PRINT "Install debian packages\n"
@@ -43,10 +36,10 @@ if [[ ! "${name##*.}" == "deb" ]]; then
 fi
 
 PRINT "\n\nInstalling '${name}'..."
-sudo apt install "${1}" > /dev/null 2>&1
+sudo apt install "${1}" >/dev/null 2>&1
 
 code=$?
 
-[[ $code -eq 0 ]] && \
-	PRINT "Installed '${name}'.\n" && exit 0 || \
+[[ $code -eq 0 ]] &&
+	PRINT "Installed '${name}'.\n" && exit 0 ||
 	PRINT "Install failed.\n" && exit 1

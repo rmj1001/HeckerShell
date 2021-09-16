@@ -11,32 +11,12 @@
 #		This utility manages your trash bin.
 ##############################################
 
-PRINT()
-{
-	printf "%b\n" "${@}"
-}
+# shellcheck disable=SC1091
+source "${SCRIPTS}"/00-api.sh
 
-PAUSE ()
-{
-	read -p "Press <ENTER> to continue..."
+####################################
 
-	return 0
-}
-
-LOWERCASE ()
-{
-	printf "${1}" | tr "[:upper:]" "[:lower:]"
-	return 0
-}
-
-# Check if running as root
-if [[ $EUID -eq 0 ]]; then
-
-	PROGRAM_NAME="$(basename "$0")"
-
-	PRINT "'${PROGRAM_NAME}' should not be run as root. Please try again as a normal user."
-	exit 1
-fi
+DISABLE_ROOT
 
 declare -- TRASHINFO
 declare -- FILENAME
@@ -51,43 +31,37 @@ TRASHDIRS=$HOME/.local/share/Trash
 TRASHINFO=$TRASHDIRS/info
 [ -z "$TRASH" ] && TRASH=$TRASHDIRS/files
 
-trash.file.check()
-{
-  if [ -n "$1" ];
-  then
+trash.file.check() {
+  if [ -n "$1" ]; then
     FILE="$1"
   else
     PRINT "You must specify a FILE." && exit 1
   fi
 }
 
-trash.getPath()
-{
+trash.getPath() {
   confFile="${1}"
   PRINT "$(grep -m 1 Path= ${confFile} | sed 's|Path=||')"
 }
 
-trash.getDate()
-{
+trash.getDate() {
   confFile="${1}"
   PRINT "$(grep -m 1 DeletionDate= ${confFile} | sed 's|DeletionDate=||')"
 }
 
-trash.files.add()
-{
+trash.files.add() {
   trash.file.check "$1"
-  if [ -e "${FILE}" ];
-  then
+  if [ -e "${FILE}" ]; then
     FILENAME="$(basename ${FILE})"
     DELFILE="${TRASHINFO}/${FILE}.trashinfo"
     DELPATH=$(readlink -f ${FILE})
     DELDATE=$(date +"%Y-%m-%dT%H:%M:%S")
 
-    PRINT "[Trash Info]" > "${TRASHINFO}/${FILENAME}.trashinfo"
-    PRINT "Path=${DELPATH}" >> "${TRASHINFO}/${FILENAME}.trashinfo"
-    PRINT "DeletionDate=${DELDATE}" >> "${TRASHINFO}/${FILENAME}.trashinfo"
+    PRINT "[Trash Info]" >"${TRASHINFO}/${FILENAME}.trashinfo"
+    PRINT "Path=${DELPATH}" >>"${TRASHINFO}/${FILENAME}.trashinfo"
+    PRINT "DeletionDate=${DELDATE}" >>"${TRASHINFO}/${FILENAME}.trashinfo"
     mv ${FILE} ${TRASH}
-    
+
     PRINT "Moved ${FILE} to the trash!"
     exit 0
   else
@@ -95,17 +69,15 @@ trash.files.add()
   fi
 }
 
-trash.files.restore()
-{
+trash.files.restore() {
   trash.file.check "$1"
 
   FILEPATH="${TRASH}/${FILE}"
   FILEINFO="${TRASHINFO}/${FILE}.trashinfo"
 
-  if [ -f "${FILEINFO}" ] && [ -e "${FILEPATH}" ];
-  then
+  if [ -f "${FILEINFO}" ] && [ -e "${FILEPATH}" ]; then
     RESTOREPATH="$(trash.getPath ${FILEINFO})"
-    
+
     mv "${FILEPATH}" "${RESTOREPATH}"
     rm -f "${FILEINFO}"
 
@@ -116,36 +88,32 @@ trash.files.restore()
   fi
 }
 
-trash.files.empty()
-{
+trash.files.empty() {
   local files=()
 
   # Create a list of all files in the trash, hidden and not hidden
-  files=(`find ${TRASH} -maxdepth 1`)
+  files=($(find ${TRASH} -maxdepth 1))
   unset files[0]
 
   # Fail if there are no files in the trash
   [ ${#files[@]} -eq 0 ] && PRINT "There are no files in the trash!" && exit 1
 
   # Remove all files from the trash
-  for file in ${files[@]}
-  do
+  for file in ${files[@]}; do
     rm -rf $file
   done
-  
+
   # Confirmation
   PRINT "Emptied the trash!"
   exit 0
 }
 
-trash.files.information()
-{
+trash.files.information() {
   trash.file.check "$1"
 
   FILEINFO=$TRASHINFO/"${FILE}.trashinfo"
-  
-  if [ -e "${FILEINFO}" ];
-  then
+
+  if [ -e "${FILEINFO}" ]; then
     cat "${FILEINFO}"
     exit 0
   else
@@ -153,11 +121,9 @@ trash.files.information()
   fi
 }
 
-trash.help()
-{
+trash.help() {
 
-  trash.help.commands()
-  {
+  trash.help.commands() {
     PRINT "Command|Arguments|Description"
     PRINT "(a) add|<file>|Add a file to the trash"
     PRINT "(r) restore|<file>|Restore a file from the trash"
@@ -172,33 +138,33 @@ trash.help()
   PRINT
   PRINT "Usage:\t\ttrashr [command] <args?[]>"
   PRINT "Example:\ttrashr add \$HOME/Documents/file.docx"
-  PRINT 
+  PRINT
   trash.help.commands | column -t -s "|"
 }
 
 cmd="$(LOWERCASE ${1})"
 
 case "${cmd}" in
-  a | add )
-    trash.files.add "${2}"
-    ;;
-  r | restore)
-    trash.files.restore "${2}"
-    ;;
-  e | empty )
-    trash.files.empty
-    ;;
-  l | list )
-    ls --color=auto -AlvhF --group-directories-first $TRASH
-    exit 0
-    ;;
-  i | info )
-    trash.files.information "${2}"
-    ;;
-  \? | h | help )
-    trash.help
-    ;;
-  * )
-  	[ -z "${cmd}" ] && trash.help || PRINT "Invalid command!" && exit 1
-    ;;
+a | add)
+  trash.files.add "${2}"
+  ;;
+r | restore)
+  trash.files.restore "${2}"
+  ;;
+e | empty)
+  trash.files.empty
+  ;;
+l | list)
+  ls --color=auto -AlvhF --group-directories-first $TRASH
+  exit 0
+  ;;
+i | info)
+  trash.files.information "${2}"
+  ;;
+\? | h | help)
+  trash.help
+  ;;
+*)
+  [ -z "${cmd}" ] && trash.help || PRINT "Invalid command!" && exit 1
+  ;;
 esac

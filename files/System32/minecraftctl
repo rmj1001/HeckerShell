@@ -11,35 +11,20 @@
 #		Manage minecraft installations
 ##############################################
 
-PRINT ()
-{
-	printf "%b\n" "${@}"
-	return $?
-}
+# shellcheck disable=SC1091
+source "${SCRIPTS}"/00-api.sh
 
-PAUSE ()
-{
-	read -r -p "Press ENTER to continue..."
-	return 0
-}
+####################################
 
-# Check if running as root
-if [[ $EUID -eq 0 ]]; then
-
-	PROGRAM_NAME="$(basename "$0")"
-
-	PRINT "'${PROGRAM_NAME}' should not be run as root. Please try again as a normal user."
-	exit 1
-fi
+DISABLE_ROOT
 
 desktopEntry="/usr/share/applications/minecraft-launcher.desktop"
 downloadLink="https://launcher.mojang.com/download/Minecraft.deb"
 launcherPath1="/opt/minecraft-launcher"
 launcherPath2="/opt/minecraft"
 
-minecraftctl.install()
-{
-	# Clear Screen	
+minecraftctl.install() {
+	# Clear Screen
 	clear
 
 	# Variables
@@ -48,16 +33,18 @@ minecraftctl.install()
 
 	# Download
 	cd "$HOME"/Downloads || return 1
-	if [[ -f "Minecraft.deb" ]]
-	then
+	if [[ -f "Minecraft.deb" ]]; then
 		read -r -p "Do you want to remove the old Minecraft debfile (y/N)? " ans
 		ans="$(printf '%b' "${ans}" | tr '[:upper:]' '[:lower:]')"
 
 		case "${ans}" in
 
-			y | yes ) clear; rm -f ./Minecraft.deb && wget "${link}" ;;
+		y | yes)
+			clear
+			rm -f ./Minecraft.deb && wget "${link}"
+			;;
 
-			* ) PRINT "Not removing deb file." ;;
+		*) PRINT "Not removing deb file." ;;
 
 		esac
 	else
@@ -85,8 +72,7 @@ minecraftctl.install()
 	clear
 }
 
-minecraftctl.remove()
-{
+minecraftctl.remove() {
 	# Clear screen
 	clear
 
@@ -103,17 +89,14 @@ minecraftctl.remove()
 	clear
 }
 
-minecraftctl.update()
-{
+minecraftctl.update() {
 	minecraftctl.remove
 	minecraftctl.install
 }
 
-minecraftctl.help()
-{
+minecraftctl.help() {
 
-	minecraftctl.help.commands()
-	{
+	minecraftctl.help.commands() {
 		PRINT "Command|Arguments|Description"
 		PRINT "(i) install||Install minecraft"
 		PRINT "(r) remove||Uninstall minecraft"
@@ -133,19 +116,19 @@ minecraftctl.help()
 cmd="$(printf '%b' "$1" | tr '[:upper:]' '[:lower:]')"
 
 case "${cmd}" in
-	i | install )
-		minecraftctl.install
-		;;
-	r | remove )
-		minecraftctl.remove
-		;;
-	u | update )
-		minecraftctl.update
-		;;
-	\? | h | help )
-		minecraftctl.help
-		;;
-	* )
-		if [[ -z "${cmd}" ]]; then minecraftctl.help; else PRINT "'${1}' is an invalid subcommand!"; fi
-		;;
+i | install)
+	minecraftctl.install
+	;;
+r | remove)
+	minecraftctl.remove
+	;;
+u | update)
+	minecraftctl.update
+	;;
+\? | h | help)
+	minecraftctl.help
+	;;
+*)
+	if [[ -z "${cmd}" ]]; then minecraftctl.help; else PRINT "'${1}' is an invalid subcommand!"; fi
+	;;
 esac
