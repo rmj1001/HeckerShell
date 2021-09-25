@@ -1,45 +1,69 @@
 #!/bin/zsh
 
-# File Lists
-files=()
-
 # ZSH folder
 export zshrc="${HOME}/.zshrc"
 export zfiles="${HOME}/.zsh"
 export zPluginsPath="${zfiles}/plugins"
 export zSettingsPath="${zfiles}/settings"
 export zSourcesPath="${zfiles}/sources"
-export zsettings=( ${zSettingsPath}/* ); [[ ${#zsettings[@]} -gt 0 ]] && files+=( ${zsettings[@]} )
-export zsources=( ${zSourcesPath}/* ); [[ ${#zsources[@]} -gt 0 ]] && files+=( ${zsources[@]} )
 
-# Load all files
-for file in ${files[@]}
-do
-	. "${file}"
-done
+### Settings Loading
+# usage: zsh.load_settings
+zsh.load_settings()
+{
+	for file in ${zSettingsPath}/*
+	do
+		. "${file}"
+	done
+}
 
-# Remove 'files' array
-unset files
+### Sources Loading
+# usage: zsh.load_sources
+zsh.load_sources()
+{
+	for file in ${zSourcesPath}/*
+	do
+		. "${file}"
+	done
+}
 
-# Plugin Loading (Enable in '$HOME/.zsh/settings/01-zsh.zsh')
-for plugin in ${plugins[@]}; do
+### Plugin Loading (Enable in '$HOME/.zsh/settings/01-zsh.zsh')
+# usage: zsh.load_plugins
+zsh.load_plugins()
+{
+	for plugin in ${plugins[@]}; do
 
-	plugPath="${zPluginsPath}/${plugin}.zsh"
+		plugPath="${zPluginsPath}/${plugin}.zsh"
 
-	if [[ -f "${plugPath}" ]]
-	then
-		. "${plugPath}"
-	else
-		echo "zshrc: Plugin '${plugin}' not valid. Please edit '${HOME}/.zsh/settings/01-zsh.zsh'."
-	fi
+		if [[ -f "${plugPath}" ]]
+		then
+			. "${plugPath}"
+		else
+			echo "zshrc: Plugin '${plugin}' not valid. Please edit '${HOME}/.zsh/settings/01-zsh.zsh'."
+		fi
 
-done
+	done
+}
 
-# Header 
-# motd || fetcher || neofetch || printf "%b" ""
-# neofetch || fetcher || motd || printf "%b" ""
-# fetcher || neofetch || motd || printf "%b" ""
-motd
+### Message of the Day
+# usage: motd
+zsh.motd ()
+{
+    local motdFile="${zfiles}/.motd.txt"
+
+    [[ -f "${motdFile}" ]] || return 0
+
+    [[ "$1" == '--lolcat' ]] && SILENTRUN command -v lolcat && lolcat ${motdFile} && return 0
+    [[ "$1" == '--edit' ]] && ${EDITOR} ${motdFile} && return 0
+
+    cat ${motdFile}
+}
+
+# Load everything
+zsh.load_settings
+zsh.load_sources
+zsh.load_plugins
+zsh.motd
 
 function precmd()
 {

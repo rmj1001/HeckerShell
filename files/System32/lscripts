@@ -1,27 +1,22 @@
-#!/usr/bin/env python3
+#!/usr/bin/env bash
 
-from genericpath import isfile
-from pathlib import Path
-from sys import argv
-from os import environ, geteuid, listdir, path
+##############################################
+#   Author: Roy Conn
+#   Project: lscripts.sh
+#   Version: 1.0
+#
+#   Usage:
+#
+#   Description:
+#		List all scripts in the ${SCRIPTS} directory
+##############################################
 
-# Check if running as root
-if geteuid() == 0:
-    print("This script should not be run as root. Please run as a normal user.")
-    exit(1)
+# shellcheck disable=SC1091
+source "${SCRIPTS}"/00-api.sh
 
-# Establish scripts folder
-if not Path.exists(Path(environ['SCRIPTS'])):
-    scriptsPath = Path(f"{environ['HOME']}{path.sep}.local{path.sep}bin")
-else:
-    scriptsPath = Path(environ['SCRIPTS'])
+####################################
 
-scripts = listdir(scriptsPath)
+DISABLE_ROOT
 
-scripts.sort()
+cd ${SCRIPTS}; find . -maxdepth 1 -type f -executable -exec echo "{}" \; | sed 's|\./||g'
 
-for scriptName in scripts:
-    if path.isfile(f"{scriptsPath}{path.sep}{scriptName}"):
-        print(scriptName)
-
-print()

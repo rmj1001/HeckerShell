@@ -30,20 +30,6 @@ LOWERCASE() { NPRINT "$1" | tr '[:upper:]' '[:lower:]' }
 # usage: random <number?>
 random() { NPRINT "$(( 1 + ${RANDOM} % ${1:-100} ))" }
 
-### Message of the Day
-# usage: motd
-motd ()
-{
-    local motdFile="${HOME}/.zsh/.motd.txt"
-
-    [[ -f "${motdFile}" ]] || return 0
-
-    [[ "$1" == '--lolcat' ]] && SILENTRUN command -v lolcat && lolcat ${motdFile} && return 0
-    [[ "$1" == '--edit' ]] && ${EDITOR} ${motdFile} && return 0
-
-    cat ${motdFile}
-}
-
 ### Download youtube videos
 # usage: downloadYTVideo <video url>[]
 downloadYTVideo ()
@@ -138,12 +124,6 @@ alias update-gaming="pip3 install LibreGaming -U; PRINT '\n\nRun \"LibreGaming -
 
 # Home
 alias home="cd ${HOME}"
-
-# ZSH management
-alias zreload="clear; exec ${SHELL}"
-alias zmanage="cd ${HOME}.zsh"
-alias zshrc="${EDITOR} ${ZSHRC} && echo 'Run \'zreload\' when you finish editing.'"
-alias zaliases="${EDITOR} ${HOME}/.zsh/settings/02-aliases.zsh && echo 'Run \'zreload\' when you finish editing.'"
 
 # Pipewire
 alias restart-pipewire="systemctl restart --user pipewire; systemctl restart --user pipewire-pulse; systemctl restart --user bluetooth"

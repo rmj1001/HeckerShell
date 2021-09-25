@@ -1,43 +1,64 @@
-#!/usr/bin/env python3
+#!/usr/bin/env bash
 
-from random import randint
-from sys import argv
-from os import geteuid
+##############################################
+#   Author: Roy Conn
+#   Project: dice
+#   Version: 1.0
+#
+#   Usage: dice <int[]>
+#
+#   Description:
+#		Generate random number(s)
+##############################################
 
-# Variables
-nums = []
-minoutput = False
+# shellcheck disable=SC1091
+source "${SCRIPTS}"/00-api.sh
 
+####################################
 
-if __name__ == "__main__":
+DISABLE_ROOT
 
-    # Check if running as root
-    if geteuid() == 0:
-        print("This script should not be run as root. Please run as a normal user.")
-        exit(1)
+RAW=1
+ONELINE=1
+NUMBERS=()
+RESULTS=()
 
-    # Check argv length
-        if len(argv) == 1:
-            print("You must give arguments for this script!")
-            exit(1)
+for arg in "$@"; do
 
-    for arg in argv:
+	# if arg is not a int, look for '--raw' flag or continue; else add to NUMBERS array
+	if (( $arg > 0 )); then
 
-        if arg == '-r' or arg == '--raw':
+		NUMBERS+=("$arg")
+		RESULTS+=("$(( $RANDOM % $arg + 1 ))")
 
-            minoutput = True
-            continue
+	else
 
-        if arg.isdigit():
+		[[ "$arg" == "--raw" ]] && RAW=0
+		[[ "$arg" == "--oneline" ]] && ONELINE=0
 
-            nums.append(int(arg))
-            continue
+	fi
 
-    for num in nums:
+done
 
-        result = randint(1, int(num))
+# if the '--oneline' flag is used, print all results on a new line.
+if [[ $ONELINE -eq 0 ]]; then
 
-        if minoutput is False:
-            print(f"d{num}: {result}")
-        else:
-            print(f"{result}")
+	for result in "${RESULTS[@]}"; do
+
+		NPRINT "${result} "
+
+	done
+
+	PRINT
+
+	exit 0
+
+fi
+
+# print the results on new lines; default format is 'd0: 0'; '--raw' prints format as '0'.
+for (( i=0 ; i < ${#RESULTS[@]} ; i++ )); do
+
+	[[ $RAW -eq 1 ]] && PRINT "d${NUMBERS[i]}: ${RESULTS[i]}" || PRINT "${RESULTS[i]}"
+
+done
+

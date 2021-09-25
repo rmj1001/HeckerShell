@@ -54,10 +54,12 @@ _template="#!/usr/bin/env bash
 #		${description}
 ##############################################
 
-PRINT()
-{
-	printf '%b\\\n' \"\$@\"
-}
+# shellcheck disable=SC1091
+source \"\${SCRIPTS}\"/00-api.sh
+
+####################################
+
+DISABLE_ROOT
 "
 
 PRINT "${_template}" >"${FILE}"

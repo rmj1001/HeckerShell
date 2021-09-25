@@ -22,8 +22,12 @@ LOWERCASE()
 	local text="$1"
 	printf "%b\n" "$text" | tr '[:upper:]' '[:lower:]'
 }
+
 _install()
 {
+	local linkRef;
+	local sym;
+
 	PRINT
 
 	# Scripts
@@ -37,9 +41,6 @@ _install()
 
 	# Configs
 	PRINT "Installing miscellaneous configs..."
-
-	local linkRef;
-	local sym;
 
 	for folder in $DOTFILES/.config/*
 	do

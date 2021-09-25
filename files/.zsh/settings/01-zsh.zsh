@@ -48,4 +48,5 @@ autoload -U compinit && compinit
 export plugins=(
     sudo
     backstreet
+    zmanage
 )
