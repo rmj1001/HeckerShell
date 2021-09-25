@@ -3,8 +3,8 @@
 # Default Editor (checks for each editor, if proceeding editor exists then default is changed)
 [[ -f "$(command -v nano)" ]] && export EDITOR="$(command -v nano)"
 [[ -f "$(command -v nvim)" ]] && export EDITOR="$(command -v nvim)"
-[[ -f "$(command -v micro)" ]] && export EDITOR="$(command -v micro)"
 [[ -f "$(command -v code)" ]] && export EDITOR="$(command -v code)"
+[[ -f "$(command -v micro)" ]] && export EDITOR="$(command -v micro)"
 
 # Default Browser
 [[ -x "$(command -v firefox)" ]] && export BROWSER="$(command -v firefox)"

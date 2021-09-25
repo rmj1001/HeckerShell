@@ -1,3 +1,4 @@
+#!/usr/bin/env zsh
 #
 # Plugin Name: backstreet
 # Description: Tell my why by backstreet boys

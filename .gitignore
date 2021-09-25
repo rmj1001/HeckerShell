@@ -1,5 +1,5 @@
-files/.zsh/.oh-my-zsh
-files/System32/.vscode
+files/.zsh/.syntaxhighlighting
 files/System32/*.py
 
+*.vscode
 *.gitignore

@@ -1,3 +1,4 @@
+#!/usr/bin/env zsh
 #
 # Plugin Name: doas
 # Description: doas or rootedit will be inserted before the command

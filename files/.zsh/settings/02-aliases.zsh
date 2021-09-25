@@ -44,11 +44,26 @@ motd ()
     cat ${motdFile}
 }
 
-### Download youtube video
-# usage: downloadYTVideo <video url>
+### Download youtube videos
+# usage: downloadYTVideo <video url>[]
 downloadYTVideo ()
 {
-    youtube-dl --format mp4 -o "$HOME/Downloads/VideoDownloader/%(title)s.%(ext)s" "${1}"
+	# Preparations
+	DIR=$HOME/Downloads/VideoDownloader; [[ -d "$DIR" ]] || mkdir "$DIR" ; cd "$DIR"
+
+    youtube-dl --format mp4 -o "%(title)s.%(ext)s" "${@}"
+}
+
+### Download youtube videos as MP3 sound files
+# usage: mp3dl <video url>[]
+mp3dl ()
+{
+	# Preparations
+	DIR=$HOME/Downloads/Music; [[ -d "$DIR" ]] || mkdir "$DIR" ; cd "$DIR"
+
+	# Download
+	youtube-dl --prefer-ffmpeg --add-metadata --output '%(title)s.%(ext)s' \
+		--extract-audio --audio-format mp3 "${@}"
 }
 
 ### Create plugin (zplugmake <name>)
@@ -112,9 +127,14 @@ mkcd () { mkdir "${1}" && cd "${1}" }
 # File Permissions (Exec/Non-exec)
 alias mke="chmod +x"
 alias rme="chmod 644"
+alias correctGPGperms="chown -R $(whoami) ~/.gnupg/; chmod 600 ~/.gnupg/*; chmod 700 ~/.gnupg"
 
 # Update software from source
 alias makeupdate="git pull && sudo make uninstall && make clean && make && sudo make install"
+
+# Install gaming software
+alias install-gaming="pip3 install LibreGaming; PRINT '\n\nRun \"LibreGaming --tui\" to install gaming software.'"
+alias update-gaming="pip3 install LibreGaming -U; PRINT '\n\nRun \"LibreGaming --tui\" to install gaming software.'"
 
 # Home
 alias home="cd ${HOME}"

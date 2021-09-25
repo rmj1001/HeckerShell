@@ -1,7 +1,14 @@
 #!/usr/bin/env zsh
 
+# Install syntax highlighting if the ~/.zsh/.syntaxhighlighting folder is missing
+[[ ! -d ${HOME}/.zsh/.syntaxhighlighting ]] && \
+	printf "%b\n" "Installing ZSH syntax highlighting...\n" && \
+	git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${HOME}/.zsh/.syntaxhighlighting && \
+	printf "%b\n" "" && read -s -k "?Press ENTER to continue." && clear
+
 # Prompt
-export PS1='C:$(pwd | tr "////" "\\\\" ) > '
+#export PS1='C:$(pwd | tr "////" "\\\\" ) > '
+export PS1='C:${PWD//\//\\} > '
 export RPS1='$HOSTNAME'
 
 # History

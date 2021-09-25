@@ -1,3 +1,4 @@
+#!/usr/bin/env zsh
 #
 # Plugin Name: sudo
 # Description: sudo or rootedit will be inserted before the command
