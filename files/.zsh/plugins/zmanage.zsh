@@ -19,7 +19,7 @@ zmanage ()
 
 			[[ -f "${file}" ]] && PRINT "Plugin exists!" && return 1 || touch ${file}
 
-			PRINT "#\n# Plugin Name: \n# Description: \n# Author(s): \n#\n\n" > ${file}
+			PRINT "#!/usr/bin/env zsh\n#\n# Plugin Name: \n# Description: \n# Author(s): \n#\n\n" > ${file}
 
 			edit ${file}
 
@@ -45,7 +45,7 @@ zmanage ()
 
 			[[ -f "${file}" ]] && PRINT "Source file exists!" && return 1 || touch ${file}
 
-			PRINT "#\n# Source Name: \n# Description: \n# Author(s): \n#\n\n" > ${file}
+			PRINT "#!/usr/bin/env zsh\n#\n# Source Name: \n# Description: \n# Author(s): \n#\n\n" > ${file}
 
 			edit ${file}
 
@@ -71,7 +71,7 @@ zmanage ()
 
 			[[ -f "${file}" ]] && PRINT "Settings file exists!" && return 1 || touch ${file}
 
-			PRINT "#\n# Settings Name: \n# Description: \n# Author(s): \n#\n\n" > ${file}
+			PRINT "#!/usr/bin/env zsh\n#\n# Settings Name: \n# Description: \n# Author(s): \n#\n\n" > ${file}
 
 			edit ${file}
 
