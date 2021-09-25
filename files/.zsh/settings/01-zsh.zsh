@@ -49,4 +49,5 @@ export plugins=(
     sudo
     backstreet
     zmanage
+    curlapps
 )
