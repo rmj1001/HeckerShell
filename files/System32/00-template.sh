@@ -36,13 +36,17 @@ _help () {
 	_flags | column -t -s'|'
 }
 
+# If no arguments are give, just show help prompt.
+[[ $# -eq 0 ]] && _help && exit 0
+
+# Iterate over all arguments and evaluate them
 while test $# -gt 0; do
 
 	case $(LOWERCASE ${1}) in
 
 		\? | -h | --help ) shift; _help; exit 0 ;;
 
-		* ) [[ -z "${1}" ]] && _help && exit 0; PRINT "script: Invalid argument '${1}'" ;;
+		* ) PRINT "script: Invalid argument '${1}'" ;;
 
 	esac
 

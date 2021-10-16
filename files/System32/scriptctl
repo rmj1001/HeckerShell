@@ -28,6 +28,7 @@ _help () {
 		PRINT "-------------|------|---------------------|"
 		PRINT "-ls, --list|n/a|List all user scripts"
 		PRINT "-mk, --create|<name>|Create a new script"
+		PRINT "-ed, --edit|<name>|Edit an existing script"
 		PRINT "-rm, --delete|<name>|Delete a script"
 		PRINT "|||"
 		PRINT "-h, --help|n/a|Show this prompt"
@@ -48,26 +49,53 @@ _ls () {
 }
 
 _mk () {
-	PRINT
+	[[ -z "${1}" ]] && PRINT "You must specify a script name!" && exit 1
+	[[ -e ${SCRIPTS}/${1} ]] && PRINT "Script '${1}' already exists!" && return 1
+
+	cp ${SCRIPTS}/00-template.sh ${SCRIPTS}/${1} \
+		chmod +x ${SCRIPTS}/${1} && ${EDITOR:=nano} ${SCRIPTS}/${1} \
+		PRINT "scriptctl: Created '${1}'."
+}
+
+_ed () {
+	[[ -z "${1}" ]] && PRINT "You must specify a script name!" && return 1
+	[[ ! -e ${SCRIPTS}/${1} ]] && PRINT "Script '${1}' doesn't exist!" && return 1
+
+	${EDITOR:=nano} ${SCRIPTS}/${1} && \
+		PRINT "scriptctl: Edited '${1}'."
 }
 
 _rm () {
-	PRINT
+	[[ -z "${1}" ]] && PRINT "You must specify a script name!" && return 1
+	[[ ! -e ${SCRIPTS}/${1} ]] && PRINT "Script '${1}' doesn't exist!" && return 1
+
+	read -r -p "Are you sure you want to delete '${1}'? (y/N) " confirm
+
+	[[ ! "$(LOWERCASE $confirm)" == "yes" ]] && PRINT "Cancelled." && return 1
+
+	rm -f ${SCRIPTS}/${1} && \
+		PRINT "scriptctl: Removed '${1}'."
 }
 
+# If no arguments are give, just show help prompt.
+[[ $# -eq 0 ]] && _help && exit 0
+
+# Iterate over all arguments and evaluate them
 while test $# -gt 0; do
 
-	case $(LOWERCASE ${1}) in
+	case "$(LOWERCASE ${1})" in
 
-		\? | -h | --help ) shift; _help; exit 0 ;;
+		\? | -h | --help ) shift; _help; exit $? ;;
 
-		-ls | --list ) shift; _ls; exit 0 ;;
+		-ls | --list ) shift; _ls; exit $? ;;
 
-		-mk | --create ) shift; _mk $@; exit 0 ;;
+		-mk | --create ) shift; _mk $@; exit $? ;;
 
-		-rm | --delete ) shift; _rm $@; exit 0 ;;
+		-ed | --edit ) shift; _ed $@; exit $? ;;
 
-		* ) [[ -z "${1}" ]] && _help && exit 0; PRINT "scriptctl: Invalid argument '${1}'" && exit 1 ;;
+		-rm | --delete ) shift; _rm $@; exit $? ;;
+
+		* ) PRINT "scriptctl: Invalid argument '${1}'" && exit 1 ;;
 
 	esac
 
