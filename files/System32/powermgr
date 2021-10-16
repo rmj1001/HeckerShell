@@ -1,10 +1,20 @@
 #!/usr/bin/env bash
 
+##############################################
+#   Author: Roy Conn
+#   Project: powermgr
+#   Version: 1.0
+#
+#   Usage: [flags]
+#
+#   Description:
+#	Shutdown, reboot, logout, lock, etc.
+##############################################
+
 # shellcheck disable=SC1091
-source "${SCRIPTS}"/00-api.sh
+source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
 
-####################################
-
+# Preprocessor flags
 DISABLE_ROOT
 
 ####################################

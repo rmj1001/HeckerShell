@@ -11,6 +11,14 @@
 #		Create a matrix screen
 ##############################################
 
+# shellcheck disable=SC1091
+source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
+
+# Preprocessor flags
+DISABLE_ROOT
+
+####################################
+
 trap 'clear; exit' SIGTERM SIGINT
 
 ### Customization:

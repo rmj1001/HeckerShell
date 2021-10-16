@@ -1,11 +1,23 @@
 #!/usr/bin/env bash
 
+##############################################
+#   Author: Roy Conn
+#   Project: backup
+#   Version: 1.0
+#
+#   Usage:
+#
+#   Description:
+#		Backup files
+##############################################
+
 # shellcheck disable=SC1091
-source "${SCRIPTS}"/00-api.sh
+source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
+
+# Preprocessor flags
+DISABLE_ROOT
 
 ####################################
-
-DISABLE_ROOT
 
 ### Variables ###
 exclusions="${HOME}/.backup_exclusions"

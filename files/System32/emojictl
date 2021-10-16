@@ -12,14 +12,13 @@
 ##############################################
 
 # shellcheck disable=SC1091
-source "${SCRIPTS}"/00-api.sh
+source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
+
+# Preprocessor flags
+DISABLE_ROOT
+REQUIRE_CMD "wget" "unzip" "fc-cache"
 
 ####################################
-
-DISABLE_ROOT
-
-# Dependencies
-REQUIRE_CMD "wget" "unzip" "fc-cache"
 
 # Noto Emoji package link
 EMOJIPKG="https://noto-website-2.storage.googleapis.com/pkgs/NotoColorEmoji-unhinted.zip"

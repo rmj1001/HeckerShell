@@ -8,15 +8,16 @@
 #   Usage: [flags]
 #
 #   Description:
-#		Browse installed pacman packages
+#	Browse installed pacman packages
 ##############################################
 
 # shellcheck disable=SC1091
-source "${SCRIPTS}"/00-api.sh
+source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
+
+# Preprocessor flags
+DISABLE_ROOT
 
 ####################################
-
-DISABLE_ROOT
 
 _browse() {
 	trap 'exit 0' SIGINT SIGHUP

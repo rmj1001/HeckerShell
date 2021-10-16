@@ -12,13 +12,13 @@
 ##############################################
 
 # shellcheck disable=SC1091
-source "${SCRIPTS}"/00-api.sh
+source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
+
+# Preprocessor flags
+DISABLE_ROOT
+REQUIRE_CMD "rofi"
 
 ####################################
-
-DISABLE_ROOT
-
-REQUIRE_CMD "rofi"
 
 appmgr.menu() {
 	rofi -show drun -scroll-method 1 -show-icons -columns 2 -disable-history -sorting-method 'fzf'

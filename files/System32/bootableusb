@@ -12,9 +12,11 @@
 #		ISO file
 ##############################################
 
-# shellcheck disable=SC1091
-source "${SCRIPTS}"/00-api.sh
 
+# shellcheck disable=SC1091
+source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
+
+# Preprocessor flags
 DISABLE_ROOT
 REQUIRE_CMD "pv"
 

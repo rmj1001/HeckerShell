@@ -13,13 +13,13 @@
 ##############################################
 
 # shellcheck disable=SC1091
-source "${SCRIPTS}"/00-api.sh
+source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
+
+# Preprocessor flags
+DISABLE_ROOT
+REQUIRE_CMD "wine"
 
 ####################################
-
-DISABLE_ROOT
-
-REQUIRE_CMD "wine"
 
 read -p "Uninstall wine? (y/N) " uninstall
 

@@ -14,13 +14,13 @@
 ##############################################
 
 # shellcheck disable=SC1091
-source "${SCRIPTS}"/00-api.sh
+source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
+
+# Preprocessor flags
+DISABLE_ROOT
+REQUIRE_CMD "pactl"
 
 ####################################
-
-DISABLE_ROOT
-
-REQUIRE "pactl"
 
 golive.setup() {
 	pactl list short modules | grep -q 'Virtual_Sink' && return

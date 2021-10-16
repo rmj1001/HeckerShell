@@ -8,16 +8,17 @@
 #   Usage: mkscript <name>
 #
 #   Description:
-#		Make new scripts and set the files as
-#		executable.
+#	Make new scripts and set the files as
+#	executable.
 ##############################################
 
 # shellcheck disable=SC1091
-source "${SCRIPTS}"/00-api.sh
+source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
+
+# Preprocessor flags
+DISABLE_ROOT
 
 ####################################
-
-DISABLE_ROOT
 
 # Variables
 EDITOR="${EDITOR:-nano}"

@@ -12,13 +12,13 @@
 ##############################################
 
 # shellcheck disable=SC1091
-source "${SCRIPTS}"/00-api.sh
+source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
+
+# Preprocessor flags
+DISABLE_ROOT
+REQUIRE_CMD "rofi" "zathura" "ps2pdf"
 
 ####################################
-
-DISABLE_ROOT
-
-REQUIRE_CMD "rofi" "zathura" "ps2pdf"
 
 function menu() {
 	rofi -dmenu -columns 3 -disable-history -p "Manpage" -mesg "Pick the manpage you want to view in Zathura."
