@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+
+##############################################
+#   Author: Roy Conn
+#   Project: scriptctl
+#   Version: 1.0
+#
+#   Usage:
+#
+#   Description:
+#		Manage user scripts
+##############################################
+
+# shellcheck disable=SC1091
+source "${SCRIPTS}"/00-api.sh
+
+# Preprocessing flags
+DISABLE_ROOT
+
+####################################
+
+SCRIPTS="${SCRIPTS:=$HOME/.local/bin}"
+
+_help () {
+	_flags () {
+		PRINT "-------------|------|---------------------|"
+		PRINT "Flag|Args|Description"
+		PRINT "-------------|------|---------------------|"
+		PRINT "-ls, --list|n/a|List all user scripts"
+		PRINT "-mk, --create|<name>|Create a new script"
+		PRINT "-rm, --delete|<name>|Delete a script"
+		PRINT "|||"
+		PRINT "-h, --help|n/a|Show this prompt"
+	}
+
+	PRINT "scriptctl - Manage user scripts"
+	PRINT
+	PRINT "Usage:\t\tscriptctl <flag> <args?>"
+	PRINT "Example:\tscriptctl --list"
+	PRINT
+	_flags | column -t -s'|'
+}
+
+_ls () {
+	dir="${PWD}"
+	cd ${SCRIPTS}; ls -alvhF --group-directories-first
+	cd ${dir}
+}
+
+_mk () {
+	PRINT
+}
+
+_rm () {
+	PRINT
+}
+
+while test $# -gt 0; do
+
+	case $(LOWERCASE ${1}) in
+
+		\? | -h | --help ) shift; _help; exit 0 ;;
+
+		-ls | --list ) shift; _ls; exit 0 ;;
+
+		-mk | --create ) shift; _mk $@; exit 0 ;;
+
+		-rm | --delete ) shift; _rm $@; exit 0 ;;
+
+		* ) [[ -z "${1}" ]] && _help && exit 0; PRINT "scriptctl: Invalid argument '${1}'" && exit 1 ;;
+
+	esac
+
+done
+

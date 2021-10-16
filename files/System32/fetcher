@@ -12,11 +12,12 @@
 ##############################################
 
 # shellcheck disable=SC1091
-source "${SCRIPTS}"/00-api.sh
+source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
+
+# Preprocessor flags
+DISABLE_ROOT
 
 ####################################
-
-DISABLE_ROOT
 
 # Dependencies
 REQUIRE_CMD "grep" "sed" "uname" "cat"
@@ -35,7 +36,7 @@ fetcher.fetch() {
     PKGCOUNT=""
     CMD_EXISTS "pacman" && PKGCOUNT="${PKGCOUNT}$(pacman -Qq | wc -l) (pacman), "
     CMD_EXISTS "apt" && PKGCOUNT="${PKGCOUNT}$(apt list --installed 2>/dev/null | wc -l) (apt), "
-    CMD_EXISTS "dnf" && PKGCOUNT="${PKGCOUNT}$(dnf list installed | wc -l) (rpm), "
+    CMD_EXISTS "rpm" && PKGCOUNT="${PKGCOUNT}$(rpm -qa | wc -l) (rpm), "
     CMD_EXISTS "flatpak" && PKGCOUNT="${PKGCOUNT}$(flatpak list | wc -l) (flatpak), "
     CMD_EXISTS "snap" && PKGCOUNT="${PKGCOUNT}$snapCount (snap), "
 

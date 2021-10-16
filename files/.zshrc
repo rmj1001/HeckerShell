@@ -45,6 +45,15 @@ zsh.load_plugins()
 	done
 }
 
+### Load everything
+# usage: zsh.load_all
+zsh.load_all ()
+{
+zsh.load_settings
+zsh.load_sources
+zsh.load_plugins
+}
+
 ### Message of the Day
 # usage: motd
 zsh.motd ()
@@ -59,10 +68,7 @@ zsh.motd ()
     cat ${motdFile}
 }
 
-# Load everything
-zsh.load_settings
-zsh.load_sources
-zsh.load_plugins
+zsh.load_all
 zsh.motd
 
 function precmd()
@@ -73,3 +79,4 @@ function precmd()
 
 	printf "%b\n" ""
 }
+

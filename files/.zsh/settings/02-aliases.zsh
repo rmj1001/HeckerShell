@@ -52,19 +52,16 @@ mp3dl ()
 		--extract-audio --audio-format mp3 "${@}"
 }
 
-### Create plugin (zplugmake <name>)
-# usage: zplugmake <name>
-zplugmake()
+### Add sound clips to soundfx folder
+# usage: soundfx <video url>[]
+soundfx ()
 {
-    file="${zPluginsPath}/${1}.zsh"
-    
-    [[ -f "${file}" ]] && PRINT "Plugin exists!" && return 1 || touch ${file}
+	# Preparations
+	DIR=$HOME/Music/SoundFX; [[ -d "$DIR" ]] || mkdir "$DIR" ; cd "$DIR"
 
-    PRINT "#\n# Plugin Name: \n# Description: \n# Author(s): \n#\n\n" > ${file}
-    
-    ${EDITOR} ${file}
-
-    PRINT "zsh: Created plugin '${1}'!"
+	# Download
+	youtube-dl --prefer-ffmpeg --add-metadata --output '%(title)s.%(ext)s' \
+		--extract-audio --audio-format mp3 "${@}"
 }
 
 ############################## SHELL ALIASES ##############################
