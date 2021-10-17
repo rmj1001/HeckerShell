@@ -19,20 +19,10 @@ DISABLE_ROOT
 
 ####################################
 
-extract.valid() {
-	if [[ ! -f "${1}" ]]; then
-		PRINT "'${1}' is not a file."
-		exit 1
-	elif [[ -f "${1}" ]]; then
-		return 0
-	else
-		PRINT "Unknown error"
-		exit 1
-	fi
-}
-
 extract.help() {
 	PRINT "extract - Extract various archive files"
+	PRINT
+	PRINT "Usage: extract <archive1> <archive2> ..."
 	PRINT
 	PRINT "Supported file types:"
 	PRINT "- tar.bz2"
@@ -50,88 +40,98 @@ extract.help() {
 	PRINT "- tar.xz"
 	PRINT "- tar.zst"
 	PRINT
-	return 0
+	exit 0
 }
 
-case "${1}" in
-*.tar.bz2)
-	REQUIRE_CMD "tar"
-	extract.valid "${1}"
-	tar xjf "${1}"
-	;;
-*.tar.gz)
-	REQUIRE_CMD "tar"
-	extract.valid "${1}"
-	tar xzf "${1}"
-	;;
-*.bz2)
-	REQUIRE_CMD "bunzip"
-	extract.valid "${1}"
-	bunzip "${1}"
-	;;
-*.rar)
-	REQUIRE_CMD "unrar"
-	extract.valid "${1}"
-	unrar x "${1}"
-	;;
-*.gz)
-	REQUIRE_CMD "gunzip"
-	extract.valid "${1}"
-	gunzip "${1}"
-	;;
-*.tar)
-	REQUIRE_CMD "tar"
-	extract.valid "${1}"
-	tar xf "${1}"
-	;;
-*.tbz2)
-	REQUIRE_CMD "tar"
-	extract.valid "${1}"
-	tar xjf "${1}"
-	;;
-*.tgz)
-	REQUIRE_CMD "tar"
-	extract.valid "${1}"
-	tar xzf "${1}"
-	;;
-*.zip)
-	REQUIRE_CMD "unzip"
-	extract.valid "${1}"
-	unzip "${1}"
-	;;
-*.Z)
-	REQUIRE_CMD "uncompress"
-	extract.valid "${1}"
-	uncompress "${1}"
-	;;
-*.7z)
-	REQUIRE_CMD "7z"
-	extract.valid "${1}"
-	7z x "${1}"
-	;;
-*.deb)
-	REQUIRE_CMD "ar"
-	extract.valid "${1}"
-	ar x "${1}"
-	;;
-*.tar.xz)
-	REQUIRE_CMD "tar"
-	extract.valid "${1}"
-	tar xf "${1}"
-	;;
-*.tar.zst)
-	REQUIRE_CMD "unzstd"
-	extract.valid "${1}"
-	unzstd "${1}"
-	;;
-\? | h | help)
-	extract.help
-	;;
-*)
-	if [[ -z "${1}" ]]; then
-		extract.help
-	else
-		PRINT "'${1}' cannot be extracted." && exit 1
-	fi
-	;;
-esac
+# Determine if an argument is a file (not symlink, folder, etc.)
+extract.isFile() {
+	[[ ! -f "${1}" ]] && PRINT "'${1}' is not a file." && return 1
+
+	[[ -f "${1}" ]] && return 0
+
+	PRINT "Unknown error" && return 1
+}
+
+# Show help prompt and exit script if no args are given or '?', '-h', or '--help' are present anywhere in arguments.
+test $# -eq 0 && extract.help && exit 0
+
+while test $# -gt 0; do
+
+	case "${1}" in
+
+		\? | -h | --help ) extract.help && exit 0 ;;
+
+	esac
+
+done
+
+# For every argument, determine if argument is file, and extract if it is.
+# If an argument isn't a file or doesn't match an extension, throw an error.
+while test $# -gt 0; do
+
+	case "${1}" in
+		*.tar.bz2)
+			REQUIRE_CMD "tar"
+			extract.isFile "${1}" && tar xjf "${1}"
+			;;
+		*.tar.gz)
+			REQUIRE_CMD "tar"
+			extract.isFile "${1}" && tar xzf "${1}"
+			;;
+		*.bz2)
+			REQUIRE_CMD "bunzip"
+			extract.isFile "${1}" && bunzip "${1}"
+			;;
+		*.rar)
+			REQUIRE_CMD "unrar"
+			extract.isFile "${1}" && unrar x "${1}"
+			;;
+		*.gz)
+			REQUIRE_CMD "gunzip"
+			extract.isFile "${1}" && gunzip "${1}"
+			;;
+		*.tar)
+			REQUIRE_CMD "tar"
+			extract.isFile "${1}" && tar xf "${1}"
+			;;
+		*.tbz2)
+			REQUIRE_CMD "tar"
+			extract.isFile "${1}" && tar xjf "${1}"
+			;;
+		*.tgz)
+			REQUIRE_CMD "tar"
+			extract.isFile "${1}" && tar xzf "${1}"
+			;;
+		*.zip)
+			REQUIRE_CMD "unzip"
+			extract.isFile "${1}" && unzip "${1}"
+			;;
+		*.Z)
+			REQUIRE_CMD "uncompress"
+			extract.isFile "${1}" && uncompress "${1}"
+			;;
+		*.7z)
+			REQUIRE_CMD "7z"
+			extract.isFile "${1}" && 7z x "${1}"
+			;;
+		*.deb)
+			REQUIRE_CMD "ar"
+			extract.isFile "${1}" && ar x "${1}"
+			;;
+		*.tar.xz)
+			REQUIRE_CMD "tar"
+			extract.isFile "${1}" && tar xf "${1}"
+			;;
+		*.tar.zst)
+			REQUIRE_CMD "unzstd"
+			extract.isFile "${1}" && unzstd "${1}"
+			;;
+		*)
+			PRINT "'${1}' cannot be extracted." && exit 1
+			;;
+	esac
+
+	shift
+
+done
+

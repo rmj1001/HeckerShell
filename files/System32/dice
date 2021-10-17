@@ -24,37 +24,20 @@ ONELINE=1
 NUMBERS=()
 RESULTS=()
 
-for arg in "$@"; do
+while test $# -gt 0; do
 
-	# if arg is not a int, look for '--raw' flag or continue; else add to NUMBERS array
-	if (( $arg > 0 )); then
+	case "$(LOWERCASE ${1})" in
 
-		NUMBERS+=("$arg")
-		RESULTS+=("$(( $RANDOM % $arg + 1 ))")
+		--raw ) shift; RAW=0 ;;
+		--oneline ) shift; ONELINE=0 ;;
+		* ) [[ $1 -gt 0 ]] && NUMBERS+=("$1") && RESULTS+=("$(( $RANDOM % $1 + 1 ))"); shift ;;
 
-	else
-
-		[[ "$arg" == "--raw" ]] && RAW=0
-		[[ "$arg" == "--oneline" ]] && ONELINE=0
-
-	fi
-
+	esac
 done
 
 # if the '--oneline' flag is used, print all results on a new line.
-if [[ $ONELINE -eq 0 ]]; then
-
-	for result in "${RESULTS[@]}"; do
-
-		NPRINT "${result} "
-
-	done
-
-	PRINT
-
-	exit 0
-
-fi
+[[ $ONELINE -eq 0 ]] && \
+	(for result in "${RESULTS[@]}"; do NPRINT "${result} "; done) && PRINT && exit 0
 
 # print the results on new lines; default format is 'd0: 0'; '--raw' prints format as '0'.
 for (( i=0 ; i < ${#RESULTS[@]} ; i++ )); do

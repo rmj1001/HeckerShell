@@ -148,9 +148,20 @@ CMD_EXISTS() {
 # Description: Check to see if input is 'yes' or empty
 #
 # Usage: CHECK_YES <var>
-# Returns: return code
+# Returns: return code (1 for yes/empty, 1 for no)
 CHECK_YES() {
 	[[ $1 =~ [yY][eE]?[sS]? ]] && return 0
 	[[ -z "$1" ]] && return 0
 	return 1
 }
+
+# Description: Check to see if input is 'no' or empty
+#
+# Usage: CHECK_NO <var>
+# Returns: return code (0 for no/empty, 1 for yes)
+CHECK_NO() {
+	[[ $1 =~ [nN][oO]? ]] && return 0
+	[[ -z "$1" ]] && return 0
+	return 1
+}
+

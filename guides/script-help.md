@@ -14,7 +14,7 @@ should be familiar with case statements & for loops.
 #!/usr/bin/env bash
 
 # Command evaluation
-case "$1" in
+case "${1}" in
 
     v | version )
 
@@ -31,23 +31,25 @@ esac
 ```bash
 #!/usr/bin/env bash
 
-ARGUMENTS="$@"
-
 # Flag evaluation
-# Loops over all subtext after a command to find flags
-for ((i = 0 ; i < ${#ARGUMENTS[@]} ; i++)); do
+# Shift once for every flag, shift again for each argument for that flag.
 
-    j=$((i + 1))
-    arg=${ARGUMENTS[@]}
+# Note: If you want to show a help prompt when the program is called with 0 args,
+#       test for it outside the while loop.
 
-    case ${ARGUMENTS[i]} in
+while test $# -gt 0; do
 
-        -f | --flag )
-
-        FLAG="$arg"
-        ;;
-
+    case "${1}" in
+    
+        --install ) shift; _install $1; shift ;;
+    
+        \? | -h | --help ) _help; exit 0 ;;
+        
+        * ) echo "Invalid subcommand '${1}'"; shift ;;
+        
     esac
 
 done
+
 ```
+

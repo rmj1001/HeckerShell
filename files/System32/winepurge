@@ -23,7 +23,7 @@ REQUIRE_CMD "wine"
 
 read -p "Uninstall wine? (y/N) " uninstall
 
-if [[ $uninstall =~ [Yy][Ee]?[Ss]? ]]; then
+if CHECK_NO "$uninstall"; then
 
 	if [[ -x "$(command -v pacman)" ]]; then
 		sudo pacman -Rnsv wine wine-gecko wine-mono winetricks wine-staging

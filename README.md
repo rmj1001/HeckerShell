@@ -19,11 +19,20 @@ All scripts are licensed under the BSD 3 Clause license.
 
 Scripts can be self-dependent, but we have also provided an API
 to make developing shell scripts easier. To source the API, just
-add the following lines to the beginning of a script.
+add the following lines to the beginning of a script. It's also
+recommended to add any preprocessing (require/disable root, 
+require commands, etc.) before the rest of the script.
 
 ```bash
+
 # shellcheck disable=SC1091
-source "${SCRIPTS}"/00-api.sh
+source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
+
+# Preprocessor flags
+DISABLE_ROOT
+
+####################################
+
 ```
 
 ## ZSH Plugins
@@ -39,3 +48,4 @@ and must be named as `<plugin>.zsh`. Plugins can be sourced in `files/.zsh/setti
 4. Functions should have comments with a description and usage example.
 5. If functions assume global variables exist, make sure to include a default value if the variable is empty.
 Example: `${version:=1.0}`, where 1.0 is the default
+
