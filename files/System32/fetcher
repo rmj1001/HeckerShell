@@ -16,11 +16,12 @@ source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
 
 # Preprocessor flags
 DISABLE_ROOT
+REQUIRE_CMD "grep" "sed" "uname" "cat" || exit 1
 
 ####################################
 
-# Dependencies
-REQUIRE_CMD "grep" "sed" "uname" "cat"
+CLEAR=0
+NEOFETCH=0
 
 fetcher.fetch() {
     # Operating System Information
@@ -54,7 +55,7 @@ fetcher.fetch() {
     MEMORY="$MEMFREE MB / $MEMTOTAL MB"
 
     # Resolution
-    RESOLUTION="$(xrandr -q | grep current | sed -e 's|.*current\s||g' -e 's|,.*||g')"
+    CMD_EXISTS "xrandr" && RESOLUTION="$(xrandr -q | grep current | sed -e 's|.*current\s||g' -e 's|,.*||g')"
 
     # Terminal
     case "$(ps -p $(ps -p $$ o ppid=) o args= | sed 's|.*/||')" in
@@ -76,7 +77,7 @@ fetcher.info() {
     PRINT "Shell|${SHELL}"
     PRINT "Processor|${CPUNAME}"
     PRINT "Cores|${CORES}"
-    PRINT "Resolution|${RESOLUTION}"
+    CMD_EXISTS "xrandr" && PRINT "Resolution|${RESOLUTION}"
     PRINT "Display Server|${XDG_SESSION_TYPE}"
     PRINT "Memory|${MEMORY}"
     [[ -n "${TERMINAL}" ]] && PRINT "Terminal|${TERMINAL}"
@@ -88,41 +89,48 @@ fetcher.info.neofetch() {
     PRINT "Uptime|${UPTIME}"
     PRINT "Packages|${PKGCOUNT/%, /}"
     PRINT "Shell|${SHELL}"
-    PRINT "Resolution|${RESOLUTION}"
+    CMD_EXISTS "xrandr" && PRINT "Resolution|${RESOLUTION}"
     PRINT "Display Server|${XDG_SESSION_TYPE}"
     PRINT "Memory|${MEMORY}"
     [[ -n "${TERMINAL}" ]] && PRINT "Terminal|${TERMINAL}"
 }
 
-# Retrieve
-fetcher.fetch
+fetcher.neofetch() {
+	fetcher.fetch
 
-[[ "$1" == "--clear" ]] && clear
+	PRINT "\n${USER}@${HOST}" && \
+    PRINT "---------------" && \
+    fetcher.info.neofetch | column -t -s'|' && \
+    PRINT && exit 0
+}
 
-if [[ "$1" == "--neofetch" ]]; then
+fetcher.normal() {
+	fetcher.fetch
+	# Header
+	PRINT "---------------------------------------------------------"
+	PRINT "|                        Fetcher                        |"
+	PRINT "---------------------------------------------------------"
 
-    PRINT
-    PRINT "${USER}@${HOST}"
-    PRINT "---------------"
-    fetcher.info.neofetch | column -t -s "|"
-    PRINT
+	# Print
+	PRINT
+	fetcher.info | column -t -s "|"
+	PRINT
+}
 
-    exit 0
+# Iterate over all arguments and evaluate them
+while test $# -gt 0; do
 
-else
+	case "$(LOWERCASE ${1})" in
 
-    line="---------------------------------------------------------"
+		--clear ) shift; CLEAR=1 ;;
+		--neofetch ) shift; NEOFETCH=1 ;;
 
-    # Header
-    PRINT $line
-    PRINT "|                        Fetcher                        |"
-    PRINT $line
+	esac
 
-    # Print
-    PRINT
-    fetcher.info | column -t -s "|"
-    PRINT
+done
 
-    exit 0
+[[ $CLEAR -eq 1 ]] && clear
+[[ $NEOFETCH -eq 1 ]] && fetcher.neofetch && exit 0
 
-fi
+fetcher.normal
+
