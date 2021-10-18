@@ -88,6 +88,14 @@ TRIM() {
 	printf '%s' "$var"
 }
 
+# Description: Return the name of the script
+#
+# Usage: SCRIPTNAME
+# Returns: string
+SCRIPTNAME() {
+	printf "%b" "$(basename $(readlink -nf $0))"
+}
+
 # Description: Checks for a filename in $PATH (commands), if not found then exit with an error
 #
 # Usage: REQUIRE_CMD "7z" "tar"
