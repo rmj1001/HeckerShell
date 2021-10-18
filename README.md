@@ -48,6 +48,12 @@ DISABLE_ROOT
 
 ```
 
+## Postinstaller Scripts
+
+There are post-install scripts for various distros in `files/System32/postinstalls`. These scripts
+install common repositories and software for development, gaming, media (codecs), and more. These scripts
+will source the api since they need certain common functions. 
+
 ## ZSH Plugins
 
 Any optional ZSH functionality should be made into a plugin. All plugins must be stored in `files/.zsh/plugins`,
