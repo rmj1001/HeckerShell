@@ -24,46 +24,49 @@ REQUIRE_CMD "pv" || exit 1
 
 FORMAT=0
 
-bootableusb.format() {
+_format() {
 	sudo dd if=/dev/zero of=${DISK} bs=512 count=1
 	sync
 }
 
-bootableusb.write() {
+_write() {
 	sudo -- bash -c "cat ${ISO} | pv > ${DISK}"
 	sync
 }
 
-bootableusb.help() {
-	PRINT
-	PRINT "Create a bootable USB drive"
-	PRINT
-	PRINT "Usage:\t\t\tbootableusb <options[]>"
-	PRINT "Example:\t\tbootableusb --iso <iso> --drive <drive>"
-	PRINT "Example:\t\tbootableusb -i ubuntu.iso -i /dev/sdb"
-	PRINT
-	PRINT "Flags:"
-	PRINT " -f | --format\t\tFormat the drive as FAT32"
-	PRINT " -i | --iso\t\tThe ISO to burn (required)"
-	PRINT " -d | --disk\t\tThe usb to make bootable (required)"
-	PRINT
-	PRINT " -h | --help\t\tShow this prompt"
-	PRINT
+_help () {
+	_flags () {
+		PRINT "-------------|------|---------------------"
+		PRINT "Flag|Args|Description"
+		PRINT "-------------|------|---------------------"
+		PRINT "||"
+		PRINT "-f, --format|n/a|Format the drive as FAT32"
+		PRINT "-i, --iso|<iso file>|The ISO to burn (required)"
+		PRINT "-d, --disk|<usb>|The usb to make bootable (required)"
+		PRINT "||"
+		PRINT "-h, --help|n/a|Show this prompt"
+	}
 
-	exit 0
+	PRINT "$(SCRIPTNAME) - Create a bootable USB drive"
+	PRINT
+	PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"
+	PRINT "Example:\t\t$(SCRIPTNAME) --iso <iso> --drive <drive>"
+	PRINT "Example:\t\t$(SCRIPTNAME) -i ubuntu.iso -i /dev/sdb"
+	PRINT
+	_flags | column -t -s'|'
 }
 
 while test $# -gt 0; do
 	case "$1" in
 		-h | --help | \? )
 		    shift
-		    bootableusb.help
+		    _help
 		    shift
 		    ;;
 		-i | --iso )
 		    shift
 
-		    [[ -z "${1}" ]] && PRINT "bootableusb: You must provide an ISO path. Use '--help' for more info." && continue
+		    [[ -z "${1}" ]] && PRINT "$(SCRIPTNAME): You must provide an ISO path. Use '--help' for more info." && continue
 		    ISO="$(realpath ${1})"
 
 		    shift
@@ -71,7 +74,7 @@ while test $# -gt 0; do
 		-d | --disk )
 			shift
 
-			[[ -z "${1}" ]] && PRINT "bootableusb: You must provide a disk path. Use '--help' for more info." && continue
+			[[ -z "${1}" ]] && PRINT "$(SCRIPTNAME): You must provide a disk path. Use '--help' for more info." && continue
 			DISK="$(realpath ${1})"
 
 			shift
@@ -81,14 +84,14 @@ while test $# -gt 0; do
 			FORMAT=1
 			;;
 		*)
-		   PRINT "bootableusb: '$1' is not a recognized flag!"
+		   PRINT "$(SCRIPTNAME): '$1' is not a recognized flag!"
 		   exit 1
 		   ;;
 	esac
 done
 
 # Detect if ISO or disk are provided
-[[ -z "${ISO}" ]] || [[ -z "${DISK}" ]] && PRINT "bootableusb: You must provide both an ISO and disk. See '--help' for more info." && exit 1
+[[ -z "${ISO}" || -z "${DISK}" ]] && PRINT "$(SCRIPTNAME): You must provide both an ISO and disk. See '--help' for more info." && exit 1
 
 # Grab ISO path, determine if it's valid, exit if not.
 [[ ! ${ISO} =~ .*\.iso ]] && PRINT "Invalid ISO" && exit 1
@@ -100,5 +103,6 @@ done
 
 # Unmount, format (if specified), write
 sudo umount -R ${DISK}
-[[ $FORMAT -eq 1 ]] && bootableusb.format
-bootableusb.write
+[[ $FORMAT -eq 1 ]] && _format
+_write
+
