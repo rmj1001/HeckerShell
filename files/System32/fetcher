@@ -117,6 +117,27 @@ fetcher.normal() {
 	PRINT
 }
 
+_help () {
+	_flags () {
+		PRINT "-------------|------|---------------------"
+		PRINT "Flag|Args|Description"
+		PRINT "-------------|------|---------------------"
+		PRINT "||"
+		PRINT "--clear|n/a|Clear the screen"
+		PRINT "--neofetch|n/a|Show a neofetch-esque output"
+		PRINT "||"
+		PRINT "-h, --help|n/a|Show this prompt"
+	}
+
+	PRINT "$(SCRIPTNAME) - Show system information for screenshots :)"
+	PRINT
+	PRINT "Usage:\t\t$(SCRIPTNAME) <flag?> <args?> ..."
+	PRINT "Example:\t$(SCRIPTNAME)\t\t\t\t# Default fetcher output"
+	PRINT "Example:\t$(SCRIPTNAME) --clear --neofetch\t# Clear screen, show neofetch output"
+	PRINT
+	_flags | column -t -s'|'
+}
+
 # Iterate over all arguments and evaluate them
 while test $# -gt 0; do
 
@@ -124,6 +145,10 @@ while test $# -gt 0; do
 
 		--clear ) shift; CLEAR=1 ;;
 		--neofetch ) shift; NEOFETCH=1 ;;
+
+		\? | -h | --help ) shift; _help; exit 0 ;;
+
+		* ) PRINT "$(SCRIPTNAME): Invalid flag '${1}'." && exit 1
 
 	esac
 
