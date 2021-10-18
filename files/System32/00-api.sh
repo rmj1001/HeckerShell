@@ -144,6 +144,15 @@ DISABLE_ROOT() {
 	fi
 }
 
+# Description: Run code silently
+#
+# Usage: SILENTRUN <command>
+# Returns: return exit code
+SILENTRUN() {
+	$@ >/dev/null 2>&1
+	return $?
+}
+
 # Description: Check to see if command exists
 #
 # Usage: CMD_EXISTS <command>
