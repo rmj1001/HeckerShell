@@ -5,7 +5,7 @@
 #	Project: golive
 #	Version: 1.0
 #
-#	Usage: golive [command] [args]
+#	Usage: golive
 #
 #	Description:
 #		Force pulseaudio to use settings that allows
@@ -58,49 +58,13 @@ golive.cleanup() {
 	pactl list short modules | grep -E 'Virtual_(Sink|Output)' | awk '{print $1;}' | xargs -L1 pactl unload-module
 }
 
-golive.run() {
-	golive.setup
-	PRINT ">> Your virtual mix is currently active! Feel free to open e.g. 'pavucontrol' now."
-	PRINT
-	PRINT ">> For software that should have their audio included in the mix, move them"
-	PRINT "   to the 'Virtual_Sink' under the 'Playback' tab."
-	PRINT ">> For software that should capture the mixed audio, head to the 'Recording'"
-	PRINT "   tab and make the software use 'Monitor of Virtual_Output' as their input."
-	PRINT
-	golive.cleanup
-}
+golive.setup
+PRINT ">> Your virtual mix is currently active! Feel free to open e.g. 'pavucontrol' now."
+PRINT
+PRINT ">> For software that should have their audio included in the mix, move them"
+PRINT "   to the 'Virtual_Sink' under the 'Playback' tab."
+PRINT ">> For software that should capture the mixed audio, head to the 'Recording'"
+PRINT "   tab and make the software use 'Monitor of Virtual_Output' as their input."
+PRINT
+golive.cleanup
 
-golive.help() {
-
-	golive.help.commands() {
-		PRINT "Commands|Arguments|Description"
-		PRINT "(s) start||Start golive"
-		PRINT "(h) help||Show this prompt"
-	}
-
-	PRINT
-	PRINT "Enable/disable sound settings for discord golive"
-	PRINT
-	PRINT "Usage:\t\tgolive [command] <args?[]>"
-	PRINT "Example:\tgolive start"
-	PRINT
-	golive.help.commands | column -t -s "|"
-}
-
-cmd="$(LOWERCASE "${1}")"
-
-case "${cmd}" in
-s | start)
-	golive.run
-	;;
-\? | h | help)
-	golive.help
-	;;
-*)
-	if [ -z "${cmd}" ]; then
-		golive.help
-	else
-		PRINT "Invalid command '${cmd}'" && exit 1
-	fi
-	;;
-esac
