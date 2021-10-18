@@ -16,15 +16,16 @@ source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
 
 # Preprocessing flags
 DISABLE_ROOT
+REQUIRE_CMD "" || exit 1
 
 ####################################
 
 _help () {
 	_flags () {
-		PRINT "-------------|------|---------------------|"
+		PRINT "-------------|------|---------------------"
 		PRINT "Flag|Args|Description"
-		PRINT "-------------|------|---------------------|"
-		PRINT "|||"
+		PRINT "-------------|------|---------------------"
+		PRINT "||"
 		PRINT "-h, --help|n/a|Show this prompt"
 	}
 

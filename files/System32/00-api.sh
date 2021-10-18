@@ -98,7 +98,7 @@ SCRIPTNAME() {
 
 # Description: Checks for a filename in $PATH (commands), if not found then exit with an error
 #
-# Usage: REQUIRE_CMD "7z" "tar"
+# Usage: REQUIRE_CMD "7z" "tar" || exit 1
 # Returns: string
 REQUIRE_CMD() {
 	NEEDED=()
@@ -115,7 +115,7 @@ REQUIRE_CMD() {
 		printf "%b\n" "The following programs are required to run this program:"
 		printf "%b\n" "${NEEDED[@]}"
 
-		exit 1
+		return 1
 	fi
 }
 
