@@ -30,7 +30,7 @@ while test $# -gt 0; do
 
 		--raw ) shift; RAW=0 ;;
 		--oneline ) shift; ONELINE=0 ;;
-		* ) [[ $1 -gt 0 ]] && NUMBERS+=("$1") && RESULTS+=("$(( $RANDOM % $1 + 1 ))"); shift ;;
+		* ) (( $1 > 0 )) && NUMBERS+=("$1") && RESULTS+=("$(( $RANDOM % $1 + 1 ))"); shift ;;
 
 	esac
 done
