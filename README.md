@@ -21,9 +21,22 @@ Scripts can be self-dependent, but we have also provided an API
 to make developing shell scripts easier. To source the API, just
 add the following lines to the beginning of a script. It's also
 recommended to add any preprocessing (require/disable root, 
-require commands, etc.) before the rest of the script.
+require commands, etc.) before the rest of the script. It's also 
+recommended to add a commented header with author & basic script information.
 
 ```bash
+#!/usr/bin/env bash
+
+##############################################
+#   Author: 
+#   Project: 
+#   Version: 1.0
+#
+#   Usage: 
+#
+#   Description:
+#
+##############################################
 
 # shellcheck disable=SC1091
 source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
