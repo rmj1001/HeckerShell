@@ -1,36 +1,58 @@
 #!/usr/bin/env bash
 
 ##############################################
-#	Author: Nidia Achrys
-#	Project: volume
-#	Version: 1.0
+#   Author: Roy Conn
+#   Project: volume
+#   Version: 1.0
 #
-#	Usage: volume [command] [args]
+#   Usage: volume [flag] [args]...
 #
-#	Description:
-#		Control volume from the terminal
+#   Description:
+#		Control your system's volume
 ##############################################
 
 # shellcheck disable=SC1091
 source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
 
-# Preprocessor flags
+# Preprocessing flags
 DISABLE_ROOT
 
 ####################################
 
+_help () {
+	_flags () {
+		PRINT "-------------|------|---------------------|"
+		PRINT "Flag|Args|Description"
+		PRINT "-------------|------|---------------------|"
+		PRINT "|||"
+		PRINT "-u, --up|%|Turn up volume"
+		PRINT "-d, --down|%|Turn down volume|"
+		PRINT "-m, --mute|n/a|Turn off volume|"
+		PRINT "-v, --view|n/a|View current volume|"
+		PRINT "|||"
+		PRINT "-h, --help|n/a|Show this prompt"
+	}
+
+	PRINT "$(SCRIPTNAME) - description"
+	PRINT
+	PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"
+	PRINT "Example:\t$(SCRIPTNAME) --help"
+	PRINT
+	_flags | column -t -s'|'
+}
+
 _up() {
 	percent=${1:-15}
-	amixer sset Master "${percent}%+" >/dev/null 2>&1
+	SILENTRUN amixer sset Master "${percent}%+"
 }
 
 _down() {
 	percent=${1:-15}
-	amixer sset Master "${percent}%-" >/dev/null 2>&1
+	SILENTRUN amixer sset Master "${percent}%-"
 }
 
 _mute() {
-	amixer sset Master toggle >/dev/null 2>&1
+	SILENTRUN amixer sset Master toggle
 }
 
 _view() {
@@ -41,52 +63,27 @@ _view() {
 	PRINT "${volume}"
 }
 
-_help() {
+# If no arguments are give, just show help prompt.
+[[ $# -eq 0 ]] && _help && exit 0
 
-	_commands() {
-		PRINT "Commands|Arguments|Description"
-		PRINT "(u) up|[%]|Increase volume"
-		PRINT "(d) down|[%]|Decrease volume"
-		PRINT "(m) mute||Toggle mute"
-		PRINT "(v) view||View the current volume"
-		PRINT "(h) help||Show this help menu"
-	}
+# Iterate over all arguments and evaluate them
+while test $# -gt 0; do
 
-	PRINT
-	PRINT "Control volume from the terminal"
-	PRINT
-	PRINT "Usage:   volume [command] <args?[]>"
-	PRINT "Example: volume up 5"
-	PRINT
-	_commands | column -t -s "|"
-	return 0
-}
+	case "$(LOWERCASE ${1})" in
 
-cmd="$(printf '%b' "${1}" | tr '[:upper:]' '[:lower:]')"
+		-u | --up ) shift; _up $1; shift ;;
 
-case "${cmd}" in
+		-d | --down ) shift; _down $1; shift ;;
 
-	u | up)
-		_up "$2"
-		;;
+		-m | --mute ) shift; _mute ;;
 
-	d | down)
-		_down "$2"
-		;;
+		-v | --view ) shift; _view ;;
 
-	m | mute)
-		_mute
-		;;
+		\? | -h | --help ) shift; _help; exit 0 ;;
 
-	v | view)
-		_view
-		;;
+		* ) PRINT "$(SCRIPTNAME): Invalid argument '${1}'" && exit 1 ;;
 
-	\? | h | help)
-		_help
-		;;
+	esac
 
-	*)
-		[ -z "${1}" ] && _help || PRINT "Invalid command '${1}'!" && exit 1
-		;;
-esac
+done
+
