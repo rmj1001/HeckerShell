@@ -66,27 +66,27 @@ cmd="$(printf '%b' "${1}" | tr '[:upper:]' '[:lower:]')"
 
 case "${cmd}" in
 
-u | up)
-	_up "$2"
-	;;
+	u | up)
+		_up "$2"
+		;;
 
-d | down)
-	_down "$2"
-	;;
+	d | down)
+		_down "$2"
+		;;
 
-m | mute)
-	_mute
-	;;
+	m | mute)
+		_mute
+		;;
 
-v | view)
-	_view
-	;;
+	v | view)
+		_view
+		;;
 
-\? | h | help)
-	_help
-	;;
+	\? | h | help)
+		_help
+		;;
 
-*)
-	[ -z "${1}" ] && _help || PRINT "Invalid command '${1}'!" && exit 1
-	;;
+	*)
+		[ -z "${1}" ] && _help || PRINT "Invalid command '${1}'!" && exit 1
+		;;
 esac

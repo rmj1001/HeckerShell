@@ -55,9 +55,9 @@ extract.isFile() {
 # Show help prompt and exit script if no args are given or '?', '-h', or '--help' are present anywhere in arguments.
 test $# -eq 0 && extract.help && exit 0
 
-while test $# -gt 0; do
+for arg in $@; do
 
-	case "${1}" in
+	case "${arg}" in
 
 		\? | -h | --help ) extract.help && exit 0 ;;
 

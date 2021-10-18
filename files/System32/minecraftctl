@@ -16,6 +16,7 @@ source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
 
 # Preprocessor flags
 DISABLE_ROOT
+REQUIRE_CMD "wget" "tar" "ar"
 
 ####################################
 
@@ -34,23 +35,10 @@ minecraftctl.install() {
 
 	# Download
 	cd "$HOME"/Downloads || return 1
-	if [[ -f "Minecraft.deb" ]]; then
-		read -r -p "Do you want to remove the old Minecraft debfile (y/N)? " ans
-		ans="$(printf '%b' "${ans}" | tr '[:upper:]' '[:lower:]')"
 
-		case "${ans}" in
-
-		y | yes)
-			clear
-			rm -f ./Minecraft.deb && wget "${link}"
-			;;
-
-		*) PRINT "Not removing deb file." ;;
-
-		esac
-	else
-		wget "${link}"
-	fi
+	# If deb file exists, delete and download new one, otherwise just download
+	[[ -f "Minecraft.deb" ]] && clear && rm -f ./Minecraft.deb
+	wget "${link}"
 
 	PRINT "Installing Minecraft..."
 
@@ -77,59 +65,60 @@ minecraftctl.remove() {
 	# Clear screen
 	clear
 
-	# Remove files
-	sudo rm -rf ${launcherPath1} && sudo rm -rf ${launcherPath2} && PRINT "Removed Launcher."
-	sleep 1.5
+	local launcherExisted=0 # Tracks existence of launcher directories
+	local filesExisted=0	# Tracks existence of any files from minecraftctl.
 
-	sudo rm -f ${desktopEntry} && PRINT "Removed desktop entry."
-	sleep 1.5
+	# Remove launcher files
+	[[ -e "${launcherPath1}" ]] && launcherExisted=1 && sudo rm -rf ${launcherPath1} && sleep 1.5
+	[[ -e "${launcherPath2}" ]] && launcherExisted=1 && sudo rm -rf ${launcherPath2} && sleep 1.5
+	[[ ${launcherExisted} -eq 1 ]] && filesExisted=1 && PRINT "Removed launcher."
+
+	# Remove desktop entry
+	[[ -e "${desktopEntry}" ]] && filesExisted=1 \
+		&& sudo rm -f ${desktopEntry} && PRINT "Removed desktop entry." && sleep 1.5
 
 	# Confirmation
-	PRINT "Uninstallation finished."
+	[[ ${filesExisted} -eq 1 ]] && PRINT "Uninstallation finished." || PRINT "Minecraft is not installed."
 	PAUSE
 	clear
-}
-
-minecraftctl.update() {
-	minecraftctl.remove
-	minecraftctl.install
 }
 
 minecraftctl.help() {
 
 	minecraftctl.help.commands() {
-		PRINT "Command|Arguments|Description"
-		PRINT "(i) install||Install minecraft"
-		PRINT "(r) remove||Uninstall minecraft"
-		PRINT "(u) update||Update minecraft"
-		PRINT "(h) help||Show this help menu"
+		PRINT "Flag|Arguments|Description"
+		PRINT "(-i) --install||Install minecraft"
+		PRINT "(-r) --remove||Uninstall minecraft"
+		PRINT "(-u) --update||Update minecraft"
+		PRINT "(-h) --help||Show this help menu"
 	}
 
 	PRINT
 	PRINT "Manage your minecraft installation"
 	PRINT
-	PRINT "Usage:\t\tminecraftctl [command] <args?[]>"
-	PRINT "Example:\tminecraftctl install"
+	PRINT "Usage:\t\tminecraftctl [flag] <args?[]>"
+	PRINT "Example:\tminecraftctl --install"
 	PRINT
 	minecraftctl.help.commands | column -t -s "|"
 }
 
-cmd="$(printf '%b' "$1" | tr '[:upper:]' '[:lower:]')"
+[[ $# -eq 0 ]] && minecraftctl.help && exit 0
 
-case "${cmd}" in
-i | install)
-	minecraftctl.install
-	;;
-r | remove)
-	minecraftctl.remove
-	;;
-u | update)
-	minecraftctl.update
-	;;
-\? | h | help)
-	minecraftctl.help
-	;;
-*)
-	if [[ -z "${cmd}" ]]; then minecraftctl.help; else PRINT "'${1}' is an invalid subcommand!"; fi
-	;;
+case "$(LOWERCASE ${1})" in
+	-i | --install)
+		minecraftctl.install
+		;;
+	-r | --remove)
+		minecraftctl.remove
+		;;
+	-u | --update)
+		minecraftctl.remove && minecraftctl.install
+		;;
+	\? | -h | --help)
+		minecraftctl.help
+		;;
+	*)
+		PRINT "'${1}' is an invalid subcommand!"
+		;;
 esac
+

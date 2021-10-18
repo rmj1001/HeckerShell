@@ -131,12 +131,12 @@ fi
 
 # Evaluate commands
 case "$(LOWERCASE ${cmd})" in
-shutdown) powermgr.shutoff ;;
-reboot) powermgr.restart ;;
-logout) powermgr.logout ;;
-lock) powermgr.lock ;;
-unlock) powermgr.unlock ;;
-cancel) zenity --info --text="Cancelled." && exit 1 ;;
-help) powermgr.help ;;
-*) zenity --warning --text="Invalid command." && exit 1 ;;
+	shutdown) powermgr.shutoff ;;
+	reboot) powermgr.restart ;;
+	logout) powermgr.logout ;;
+	lock) powermgr.lock ;;
+	unlock) powermgr.unlock ;;
+	cancel) zenity --info --text="Cancelled." && exit 1 ;;
+	help) powermgr.help ;;
+	*) zenity --warning --text="Invalid command." && exit 1 ;;
 esac

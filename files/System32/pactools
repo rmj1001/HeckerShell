@@ -67,19 +67,19 @@ _help() {
 
 case "$(LOWERCASE "$1")" in
 
-browse) _browse ;;
+	browse) _browse ;;
 
-refresh-mirrors) _refresh_mirrors ;;
+	refresh-mirrors) _refresh_mirrors ;;
 
-list-orphans) _list_orphans ;;
+	list-orphans) _list_orphans ;;
 
-remove-orphans) _remove_orphans ;;
+	remove-orphans) _remove_orphans ;;
 
-help) _help ;;
+	help) _help ;;
 
-*)
-	[[ -z "$1" ]] && _help && exit 0
-	PRINT "Invalid command '$1'!" && exit 1
-	;;
+	*)
+		[[ -z "$1" ]] && _help && exit 0
+		PRINT "Invalid command '$1'!" && exit 1
+		;;
 
 esac
