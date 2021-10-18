@@ -104,11 +104,7 @@ REQUIRE_CMD() {
 	NEEDED=()
 
 	for arg in "${@}"; do
-		if [[ ! -x "$(which "$arg")" ]]; then
-
-			NEEDED+=("${arg}")
-
-		fi
+		command -v "${arg}" >/dev/null 2>&1 || NEEDED+=("${arg}")
 	done
 
 	if [[ ${#NEEDED[@]} -gt 0 ]]; then
