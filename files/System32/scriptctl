@@ -55,8 +55,9 @@ _mk () {
 	# Check if script exists
 	[[ -e ${SCRIPTS}/${1} ]] && PRINT "Script '${1}' already exists!" && return 1
 
-	cp ${SCRIPTS}/00-template.sh ${SCRIPTS}/${1} \
-		chmod +x ${SCRIPTS}/${1} && ${EDITOR:=nano} ${SCRIPTS}/${1} \
+	cp ${SCRIPTS}/00-template.sh ${SCRIPTS}/${1}.sh && \
+		mv ${SCRIPTS}/${1}.sh ${SCRIPTS}/${1} && \
+		chmod +x ${SCRIPTS}/${1} && ${EDITOR:=nano} ${SCRIPTS}/${1} && \
 		PRINT "scriptctl: Created '${1}'."
 }
 

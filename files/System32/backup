@@ -101,14 +101,14 @@ backup.restore() {
 	# Cleanly exit backup process
 	trap 'clear; PRINT "Backup Terminated."; PAUSE; clear; exit 0' SIGTERM SIGINT
 
-	if [[ -f "${target}" ]] && [[ "${target}" =~ ^*.tar.gz$ ]]; then
+	if [[ -f "${target}"  && "${target}" =~ ^*.tar.gz$ ]]; then
 
 		# tar
 		PRINT "Restoring tarball..."
 
 		tar -xvf "${target}" -C "${HOME}"
 
-	elif [[ -d "${target}" ]] && [[ -x "$(which rsync)" ]]; then
+	elif [[ -d "${target}" && -x "$(which rsync)" ]]; then
 
 		# rsync
 		PRINT "Restoring backup..."
@@ -210,27 +210,27 @@ cmd="$(LOWER "${ARGS[0]}")"
 
 case "${cmd}" in
 
-c | create)
+	c | create)
 
-	backup.create "${ARGS[1]}"
-	;;
+		backup.create "${ARGS[1]}"
+		;;
 
-r | restore)
+	r | restore)
 
-	backup.restore "${ARGS[1]}"
-	;;
+		backup.restore "${ARGS[1]}"
+		;;
 
-e | exclusions)
+	e | exclusions)
 
-	backup.exclusions
-	;;
+		backup.exclusions
+		;;
 
-\? | h | help)
-	backup.help
-	;;
+	\? | h | help)
+		backup.help
+		;;
 
-*)
+	*)
 
-	[[ $# -eq 0 ]] && backup.help || PRINT "Invalid command!" && exit 1
-	;;
+		[[ $# -eq 0 ]] && backup.help || PRINT "Invalid command!" && exit 1
+		;;
 esac

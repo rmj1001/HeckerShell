@@ -16,7 +16,7 @@ source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
 
 # Preprocessor flags
 DISABLE_ROOT
-REQUIRE_CMD "rofi"
+REQUIRE_CMD "rofi" || exit 1
 
 ####################################
 

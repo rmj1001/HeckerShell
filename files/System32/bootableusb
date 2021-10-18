@@ -18,7 +18,7 @@ source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
 
 # Preprocessor flags
 DISABLE_ROOT
-REQUIRE_CMD "pv"
+REQUIRE_CMD "pv" || exit 1
 
 ####################################
 
