@@ -5,6 +5,7 @@
 - [Table of Contents](#table-of-contents)
 - [Warranty](#warranty)
 - [Scripts](#scripts)
+- [Postinstallers](#postinstaller-scripts)
 - [ZSH Plugins](#zsh-plugins)
 - [Development Guidelines](#development-guidelines)
 
