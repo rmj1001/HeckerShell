@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 ##############################################
-#	Author: Dark Lord Meowron
+#	Author: Roy Conn
 #	Library: api.sh
 #	Version: 1.0
 #

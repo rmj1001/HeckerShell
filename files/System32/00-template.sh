@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 ##############################################
-#   Author:
+#   Author: Roy Conn
 #   Project:
 #   Version: 1.0
 #
