@@ -16,6 +16,7 @@ source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
 
 # Preprocessing flags
 DISABLE_ROOT
+REQUIRE_CMD "apt" || exit 1
 
 ####################################
 
