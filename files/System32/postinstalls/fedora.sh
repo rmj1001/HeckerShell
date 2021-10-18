@@ -23,9 +23,9 @@ REBOOT=0
 
 _help () {
 	_flags () {
-		PRINT "----|----|-----------|"
+		PRINT "-------------|------|---------------------|"
 		PRINT "Flag|Args|Description"
-		PRINT "----|----|-----------|"
+		PRINT "-------------|------|---------------------|"
 		PRINT "|||"
 		PRINT "-r, --repos|n/a|Install common repositories"
 		PRINT "-d, --development|n/a|Install developer libraries"
