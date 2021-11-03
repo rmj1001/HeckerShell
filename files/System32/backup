@@ -38,10 +38,9 @@ backup.create() {
 	case "${method}" in
 	tar)
 		target="${1}/${USER}_$(date +m%m-d%d-y%y).tar.gz"
-		[[ -f "${target}" ]] && rm -rf "${target}"
 
 		# Check if tar exists
-		REQUIRE_CMD "tar"
+		REQUIRE_CMD "tar" || return 1
 
 		# Remove duplicate backup
 		[[ -f "${target}" ]] && PRINT "Removing duplicate backup..." && rm -rf "${target}"
@@ -101,40 +100,26 @@ backup.restore() {
 	# Cleanly exit backup process
 	trap 'clear; PRINT "Backup Terminated."; PAUSE; clear; exit 0' SIGTERM SIGINT
 
-	if [[ -f "${target}"  && "${target}" =~ ^*.tar.gz$ ]]; then
+	# If target isn't a file/tarball, or it's not a directory, print error and exit
+	[[ ! -f "${target}" && ! "${target}" =~ ^*.tar.gz$ && ! -d "${target}" ]] && \
+		PRINT "Invalid backup target!" && return 1
 
-		# tar
-		PRINT "Restoring tarball..."
+	# Tarball
+	[[ -f "${target}"  && "${target}" =~ ^*.tar.gz$ ]] && PRINT "Restoring tarball..." && \
+		tar -xvf "${target}" -C "${HOME}" && PRINT "\n\nRestore Finished.\n" && return 0 || \
+		return 1
 
-		tar -xvf "${target}" -C "${HOME}"
+	# Directory, use rsync if exists
+	[[ -d "${target}" ]] && REQUIRE_CMD "rsync" >/dev/null 2>&1 && PRINT "Restoring backup" && \
+		rsync -auv "${target}" "${HOME}" && PRINT "\n\nRestore Finished.\n" && return 0 || \
+		return 1
 
-	elif [[ -d "${target}" && -x "$(which rsync)" ]]; then
+	# Directory, use cp if rsync is missing
+	[[ -d "${target}" ]] && REQUIRE_CMD "cp" >/dev/null 2>&1 && PRINT "Restoring backup..." && \
+		cp -vR "${target}" "${HOME}" && PRINT "\n\nRestore Finished.\n" && return 0 || \
+		return 1
 
-		# rsync
-		PRINT "Restoring backup..."
-
-		rsync -auv "${target}" "${HOME}"
-
-	elif [[ -d "${target}" ]]; then
-
-		# cp
-		PRINT "Restoring backup..."
-
-		cp -vR "${target}" "${HOME}"
-
-	else
-
-		# Error
-		PRINT "Invalid target!"
-		exit 1
-
-	fi
-
-	PRINT
-	PRINT
-	PRINT "Restore Finished"
-	PAUSE
-	clear
+	PRINT "Error restoring backup..." && return 1
 }
 
 # Create/edit the exclusions file
@@ -187,7 +172,7 @@ backup.help() {
 
 ### Flags ###
 for arg in "$@"; do
-	case "$(LOWER "$arg")" in
+	case "$(LOWERCASE "$arg")" in
 	-r | --rsync)
 		method="rsync"
 		;;
@@ -206,27 +191,27 @@ for arg in "$@"; do
 done
 
 ### Argument Handling ###
-cmd="$(LOWER "${ARGS[0]}")"
+cmd="$(LOWERCASE "${ARGS[0]}")"
 
 case "${cmd}" in
 
 	c | create)
 
-		backup.create "${ARGS[1]}"
+		backup.create "${ARGS[1]}" && exit 0 || exit 1
 		;;
 
 	r | restore)
 
-		backup.restore "${ARGS[1]}"
+		backup.restore "${ARGS[1]}" && exit 0 || exit 1
 		;;
 
 	e | exclusions)
 
-		backup.exclusions
+		backup.exclusions && exit 0 || exit 1
 		;;
 
 	\? | h | help)
-		backup.help
+		backup.help; exit 0
 		;;
 
 	*)
