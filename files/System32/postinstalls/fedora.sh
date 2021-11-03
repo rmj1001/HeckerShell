@@ -22,24 +22,25 @@ REQUIRE_CMD "dnf" || exit 1
 
 REBOOT=0
 
-_help () {
-	_flags () {
+_help ()
+{
+	_flags ()
+	{
 		PRINT "-------------|------|---------------------|"
 		PRINT "Flag|Args|Description"
 		PRINT "-------------|------|---------------------|"
 		PRINT "|||"
 		PRINT "-r, --repos|n/a|Install common repositories"
-		PRINT "-d, --development|n/a|Install developer libraries"
-		PRINT "-g, --games|n/a|Install games/supporting software"
-		PRINT "-m, --media|n/a|Install media codecs"
-		PRINT "-s, --snapd|n/a|Install snapd"
-		PRINT "-a, --all|n/a|Install all software"
+		PRINT "-s, --software|n/a|Install common software"
+		PRINT "-c, --config|n/a|Apply common configurations"
+		PRINT "-a, --all|n/a|Do all the things"
 		PRINT "--reboot|n/a|Reboot the computer after installation"
 		PRINT "|||"
 		PRINT "-h, --help|n/a|Show this prompt"
 	}
 
-	PRINT "$(SCRIPTNAME) - Install common fedora software after install"
+	PRINT "$(SCRIPTNAME) - Install common fedora software"
+	PRINT "Note: it's recommended to install repositories, software, and configs in that order."
 	PRINT
 	PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"
 	PRINT "Example:\t$(SCRIPTNAME) --help"
@@ -47,7 +48,8 @@ _help () {
 	_flags | column -t -s'|'
 }
 
-_repos () {
+_repos ()
+{
 	# RPM Fusion
 	sudo dnf install \
 		https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
@@ -57,32 +59,79 @@ _repos () {
 
 	# Flathub
 	flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+	flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 }
 
-_development () {
+_software ()
+{
+	# Development
 	sudo dnf update
 	sudo dnf groupinstall "Development Tools" "Development Libraries"
 
-}
+	# Homebrew
+	bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-_games () {
+	# Gaming
 	sudo dnf install lutris
-	flatpak install flathub io.gdevs.GDLauncher
-}
 
-_media () {
-	# Install multimedia codecs
+	# Multimedia codecs & libdvdcss
 	sudo dnf groupupdate multimedia --setop="install_weak_deps=False" --exclude=PackageKit-gstreamer-plugin
 	sudo dnf groupupdate sound-and-video
-
-	# Install libdvdcss
 	sudo dnf install rpmfusion-free-release-tainted
 	sudo dnf install libdvdcss
-}
 
-_snapd () {
+	# Snaps
 	sudo dnf install snapd fuse squashfuse kernel-modules
 	sudo ln -s /var/lib/snapd/snap /snap
+
+	# Miscellaneous RPMs
+	sudo dnf install xclip cronie
+
+	# Zap Appimage PM
+	curl https://raw.githubusercontent.com/srevinsaju/zap/main/install.sh | bash -s
+	zap init
+	zap daemon --install
+
+	# Common flatpaks
+	flatpak install --user --noninteractive --or-update flathub \
+		org.cvfosammmm.Setzer \
+		org.gnome.seahorse.Application \
+		io.gdevs.GDLauncher \
+		org.gnome.TextEditor \
+		org.gnome.Polari \
+		org.gnome.Podcasts \
+		org.gnome.DejaDup \
+		org.gnome.Builder \
+		org.gnome.Extensions \
+		io.github.seadve.Kooha \
+		com.github.maoschanz.drawing \
+		com.github.bleakgrey.tootle \
+		de.haeckerfelix.Fragments \
+		org.gimp.GIMP \
+		org.inkscape.Inkscape \
+		org.libreoffice.LibreOffice \
+		com.valvesoftware.Steam \
+		com.discordapp.Discord \
+		org.videolan.VLC \
+		org.videolan.VLC.Plugin.makemkv \
+		org.videolan.VLC.Plugin.fdkaac
+}
+
+_configs ()
+{
+	# DNF
+	PRINT "fastestmirror=True" | sudo tee -a /etc/dnf/dnf.conf
+	PRINT "max_parallel_downloads=20" | sudo tee -a /etc/dnf/dnf.conf
+	PRINT "deltarpm=True" | sudo tee -a /etc/dnf/dnf.conf
+	PRINT "defaultyes=True" | sudo tee -a /etc/dnf/dnf.conf
+
+	# Enable cronie
+	systemctl enable crond
+}
+
+_all ()
+{
+	_repos; _development; _games; _media; _snapd; _configs
 }
 
 # If no arguments are give, just show help prompt.
@@ -94,11 +143,9 @@ while test $# -gt 0; do
 	case "$(LOWERCASE ${1})" in
 
 		-r | --repos ) shift; _repos ;;
-		-d | --development ) shift; _development ;;
-		-g | --games ) shift; _games ;;
-		-m | --media ) shift; _media ;;
-		-s | --snapd ) shift; _snapd ;;
-		-a | --all ) shift; _repos; _development; _games; _media; _snapd ;;
+		-s | --software ) shift; _software ;;
+		-c | --config ) shift; _configs ;;
+		-a | --all ) shift; _all; exit ;;
 		--reboot ) REBOOT=1 ;;
 
 		\? | -h | --help ) shift; _help; exit 0 ;;
