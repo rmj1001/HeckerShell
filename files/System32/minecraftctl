@@ -22,8 +22,8 @@ REQUIRE_CMD "wget" "tar" "ar" || exit 1
 
 desktopEntry="/usr/share/applications/minecraft-launcher.desktop"
 downloadLink="https://launcher.mojang.com/download/Minecraft.deb"
-launcherPath1="/opt/minecraft-launcher"
-launcherPath2="/opt/minecraft"
+binary="/usr/bin/minecraft-launcher"
+desktopEntry="/usr/share/applications/minecraft.desktop"
 
 minecraftctl.install() {
 	# Clear Screen
@@ -34,7 +34,7 @@ minecraftctl.install() {
 	local dentry="${desktopEntry}"
 
 	# Download
-	cd "$HOME"/Downloads || return 1
+	cd "${HOME}/Downloads" || return 1
 
 	# If deb file exists, delete and download new one, otherwise just download
 	[[ -f "Minecraft.deb" ]] && clear && rm -f ./Minecraft.deb
@@ -43,15 +43,17 @@ minecraftctl.install() {
 	PRINT "Installing Minecraft..."
 
 	# Install the deb file
-	sudo ar xf Minecraft.deb
-	sudo tar xf data.tar.xz -C /
+	sudo ar xvf Minecraft.deb
+	sudo tar xvf data.tar.xz -C /
 	sudo rm control.tar.gz data.tar.xz debian-binary
 
 	# Desktop Entry
-	entryText="Exec=env JAVA_HOME=/usr/lib64/openjdk-8 ${launcherPath1}/minecraft-launcher"
+	entryText="Exec=env JAVA_HOME=/usr/lib64/openjdk-8 ${binary}"
 
 	# Create the desktop entry
 	PRINT "${entryText}" | sudo tee -a "${dentry}"
+	PRINT "Icon=/usr/share/icons/hicolor/symbolic/apps/minecraft-launcher.svg" | sudo tee -a "${dentry}"
+	PAUSE
 
 	# Confirmation
 	clear
@@ -69,16 +71,14 @@ minecraftctl.remove() {
 	local filesExisted=0	# Tracks existence of any files from minecraftctl.
 
 	# Remove launcher files
-	[[ -e "${launcherPath1}" ]] && launcherExisted=1 && sudo rm -rf ${launcherPath1} && sleep 1.5
-	[[ -e "${launcherPath2}" ]] && launcherExisted=1 && sudo rm -rf ${launcherPath2} && sleep 1.5
-	[[ ${launcherExisted} -eq 1 ]] && filesExisted=1 && PRINT "Removed launcher."
+	[[ -e "${binary}" ]] && launcherExisted=1 && sudo rm -rf ${binary} && sleep 1.5
+	[[ -e "${desktopEntry}" ]] && launcherExisted=1 && sudo rm -rf ${desktopEntry} \
+		&& PRINT "Removed desktop entry." && sleep 1.5
 
-	# Remove desktop entry
-	[[ -e "${desktopEntry}" ]] && filesExisted=1 \
-		&& sudo rm -f ${desktopEntry} && PRINT "Removed desktop entry." && sleep 1.5
+	[[ ${launcherExisted} -eq 1 ]] && filesExisted=1 && PRINT "Removed launcher."
+	[[ ${filesExisted} -eq 1 ]] && PRINT "Uninstallation finished." || PRINT "Minecraft is not installed."
 
 	# Confirmation
-	[[ ${filesExisted} -eq 1 ]] && PRINT "Uninstallation finished." || PRINT "Minecraft is not installed."
 	PAUSE
 	clear
 }
