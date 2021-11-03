@@ -122,8 +122,9 @@ alias update-gaming="pip3 install LibreGaming -U; PRINT '\n\nRun \"LibreGaming -
 # Home
 alias home="cd ${HOME}"
 
-# Pipewire
+# Audio
 alias restart-pipewire="systemctl restart --user pipewire; systemctl restart --user pipewire-pulse; systemctl restart --user bluetooth"
+alias restart-bluetooth="systemctl restart bluetooth.service"
 
 # Default apps
 alias terminal="${TERMINAL}"
