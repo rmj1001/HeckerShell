@@ -20,42 +20,55 @@ DISABLE_ROOT
 ####################################
 
 UPDATER() {
-	req="${1}"
-	cmd="${2}"
 
-	if CMD_EXISTS "${req}"; then
+	while test $# -gt 0; do
+
+		# Required command and command to eval
+		req="${1}" cmd="${2}"; shift; shift
+
+		# If cmd does not exist, return with error code 1
+		CMD_EXISTS "${req}" || continue
 
 		clear
 
-		read -rp "Update \"${req}\"? (Y/n) " confirmation
+		read -rp "Update \"${req}\"? (Y/n) " confirm
 
-		if CHECK_YES "${confirmation}"; then
+		CHECK_YES "${confirm}" && PRINT "Updating ${req}...\n" && eval "${cmd}" && PAUSE && continue
+		PRINT "Skipped updating \"${req}\"" && PAUSE && continue
 
-			PRINT "Updating ${req}...\n"
-			eval "${cmd}"
-
-		else
-
-			PRINT "Skipped updating ${req}...\n"
-
-		fi
-
-		PAUSE
-
-	fi
+	done
 }
 
-UPDATER "flatpak" "flatpak update"
-UPDATER "snap" "sudo snap refresh"
-UPDATER "brew" "brew upgrade"
-UPDATER "apt" "sudo apt update && sudo apt upgrade"
-UPDATER "dnf" "sudo dnf update"
-UPDATER "rpm-ostree" "rpm-ostree upgrade"
-UPDATER "pacman" "sudo pacman -Syu --noconfirm"
-UPDATER "yay" "yay -Sua --noconfirm"
-UPDATER "paru" "paru -Sua --noconfirm"
+UPDATER \
+	"flatpak" "flatpak update" \
+	"snap" "sudo snap refresh" \
+	"brew" "brew upgrade" \
+	"apt" "sudo apt update && sudo apt upgrade" \
+	"dnf" "sudo dnf update" \
+	"rpm-ostree" "rpm-ostree upgrade" \
+	"pacman" "sudo pacman -Syu --noconfirm" \
+	"yay" "yay -Sua --noconfirm" \
+	"paru" "paru -Sua --noconfirm" \
+
+#########################################################
+# Below is the old method for using the UPDATER function.
+# it's still valid syntax, but it would introduce too
+# many 'while' loops.
+#
+# UPDATER "flatpak" "flatpak update"
+# UPDATER "snap" "sudo snap refresh"
+# UPDATER "brew" "brew upgrade"
+# UPDATER "apt" "sudo apt update && sudo apt upgrade"
+# UPDATER "dnf" "sudo dnf update"
+# UPDATER "rpm-ostree" "rpm-ostree upgrade"
+# UPDATER "pacman" "sudo pacman -Syu --noconfirm"
+# UPDATER "yay" "yay -Sua --noconfirm"
+# UPDATER "paru" "paru -Sua --noconfirm"
+#
+#########################################################
 
 clear
 PRINT "Updates finished."
 PAUSE
 clear
+
