@@ -20,41 +20,52 @@ REQUIRE_CMD "rofi" || exit 1
 
 ####################################
 
-appmgr.menu() {
+_menu() {
 	rofi -show drun -scroll-method 1 -show-icons -columns 2 -disable-history -sorting-method 'fzf'
 }
 
-appmgr.switcher() {
+_switcher() {
 	rofi -show window -window-icon -window-format "{c}    {t}"
 }
 
-appmgr.help() {
-	appmgr.help.commands() {
-		PRINT "Command|Arguments|Description"
-		PRINT "menu||Application Menu"
-		PRINT "switcher||Switch between running apps"
-		PRINT "|||"
-		PRINT "help||Show this help menu"
+_help () {
+	_flags () {
+		PRINT "-------------|------|---------------------"
+		PRINT "Flag|Args|Description"
+		PRINT "-------------|------|---------------------"
+		PRINT "||"
+		PRINT "--menu|n/a|Application Menu"
+		PRINT "--switcher|n/a|Switch between running apps"
+		PRINT "||"
+		PRINT "-h, --help|n/a|Show this prompt"
 	}
 
+	PRINT "$(SCRIPTNAME) - Invoke common app management programs"
 	PRINT
-	PRINT "Invoke common application management programs"
+	PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"
+	PRINT "Example:\t$(SCRIPTNAME) --menu"
 	PRINT
-	PRINT "Usage:\t\tappmgr [command]"
-	PRINT "Example:\tappmgr menu"
-	PRINT
-	appmgr.help.commands | column -t -s "|"
+	_flags | column -t -s'|'
 }
 
-cmd="$(LOWERCASE "$1")"
 
-case "${cmd}" in
+# If no arguments are give, just show help prompt.
+[[ $# -eq 0 ]] && _help && exit 0
 
-menu) appmgr.menu ;;
-switcher) appmgr.switcher ;;
-help) appmgr.help ;;
+# Iterate over all arguments and evaluate them
+while test $# -gt 0; do
 
-*) [[ -z "${cmd}" ]] && appmgr.help && exit 0 ||
-	PRINT "Invalid command '${cmd}'." && exit 1 ;;
+	case "$(LOWERCASE ${1})" in
 
-esac
+		-m | --menu ) shift; _menu; exit $? ;;
+
+		-s | --switcher ) shift; _switcher; exit $? ;;
+
+		\? | -h | --help ) shift; _help; exit 0 ;;
+
+		* ) PRINT "$(SCRIPTNAME): Invalid argument '${1}'" && exit 1 ;;
+
+	esac
+
+done
+
