@@ -22,19 +22,15 @@ DISABLE_ROOT
 _browse() {
 	trap 'exit 0' SIGINT SIGHUP
 
-	[[ ! -x "$(which pacman)" ]] && PRINT "This can only be run on Arch linux!" && exit 1
+	REQUIRE_CMD "pacman" || return 1
 
 	pacman -Qq | fzf --preview 'pacman -Qil {}' --layout=reverse --bind 'enter:execute(pacman -Qil {} | less)'
-
-	exit 0
 }
 
 _refresh_mirrors() {
-	[[ -x "$(which reflector)" ]] || exit 1
+	REQUIRE_CMD "reflector" || return 1
 
 	sudo reflector --latest 100 --protocol https --sort rate --verbose --save /etc/pacman.d/mirrorlist
-
-	exit 0
 }
 
 _list_orphans() {
