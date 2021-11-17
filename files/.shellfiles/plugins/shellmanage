@@ -92,10 +92,10 @@ zmanage() {
 	_reload() {
 		case "$(LOWERCASE $2)" in
 
-		all) zsh.load_all && PRINT "\nReloaded all configs." ;;
-		settings) zsh.load_settings && PRINT "\nReloaded settings." ;;
-		plugins) zsh.load_plugins && PRINT "\nReloaded plugins." ;;
-		sources) zsh.load_sources && PRINT "\nReloaded sources." ;;
+		all) shell.load_all && PRINT "\nReloaded all configs." ;;
+		settings) shell.load_settings && PRINT "\nReloaded settings." ;;
+		plugins) shell.load_plugins && PRINT "\nReloaded plugins." ;;
+		sources) shell.load_sources && PRINT "\nReloaded sources." ;;
 		shell)
 			clear
 			exec ${SHELL}

@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+##############################################
+#   Author: Roy Conn
+#   Project:
+#   Version: 1.0
+#
+#   Usage:
+#
+#   Description:
+#
+##############################################
+
+# shellcheck disable=SC1091
+source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
+
+# Preprocessing flags
+DISABLE_ROOT
+REQUIRE_CMD "tr" "fold" "head" || exit 1
+
+####################################
+
+chars="16"
+[[ -n "${1}" ]] && chars="${1}"
+
+tr -cd '[:alnum:]' < /dev/urandom | fold -w${chars} | head -n 1
+

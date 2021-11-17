@@ -178,3 +178,29 @@ CHECK_NO() {
 	return 1
 }
 
+# Description: Read config file using ini-esque format
+#
+# Usage: READ_CONF <file>
+# Returns: void (reads file and inits variables in script from file)
+READ_CONF() {
+
+	local file="${1}"
+	local section, var, val
+
+	[[ ! -f "${file}" ]] && printf '%b\n' "$(SCRIPTNAME): Invalid file ${file}." && return 1
+
+	while read line; do
+
+		line="$(TRIM ${line})"
+
+		[[ $line =~ ^#.* ]] && continue
+		[[ "${line}" =~ ^\[[a-z]+\]$ ]] && section="$(printf '%b' "${line}" | sed -e 's|\[\([a-z]\+\)\]|\1|')" && continue
+		[[ "${line}" =~ ^[a-z]+\=\"?\'?.*\"?\'?$ ]] \
+		    && var="$(printf '%b' "${line}" | sed -e 's|\([a-z]\+\)\=.*|\1|')" \
+		    # TODO: the line below needs fixing
+		    #&& val="$(printf '%b' "${line}" | sed -e 's|.*\=\x27?\x22?\(.*\)\x27?\x22?|\1|')" \
+			|| continue
+
+	done < ${file}
+}
+

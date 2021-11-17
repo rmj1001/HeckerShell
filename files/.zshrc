@@ -1,82 +1,86 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
 
-# ZSH folder
-export zshrc="${HOME}/.zshrc"
-export zfiles="${HOME}/.zsh"
-export zPluginsPath="${zfiles}/plugins"
-export zSettingsPath="${zfiles}/settings"
-export zSourcesPath="${zfiles}/sources"
-
-### Settings Loading
-# usage: zsh.load_settings
-zsh.load_settings()
+zsh.load()
 {
-	for file in ${zSettingsPath}/*
-	do
-		. "${file}"
-	done
-}
+	clear
 
-### Sources Loading
-# usage: zsh.load_sources
-zsh.load_sources()
-{
-	for file in ${zSourcesPath}/*
-	do
-		. "${file}"
-	done
-}
+	SHELLFILES="${HOME}/.shellfiles"
 
-### Plugin Loading (Enable in '$HOME/.zsh/settings/01-zsh.zsh')
-# usage: zsh.load_plugins
-zsh.load_plugins()
-{
-	for plugin in ${plugins[@]}; do
+	# Syntax Highlighting
+	export SYNTAXHIGH="${SHELLFILES}/.syntaxhighlighting"
 
-		plugPath="${zPluginsPath}/${plugin}.zsh"
+	# Install syntax highlighting if the ~/.zsh/.syntaxhighlighting folder is missing
+	[[ ! -d ${SYNTAXHIGH} ]] && \
+		printf "%b\n" "Installing syntax highlighting...\n" && \
+		git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${SYNTAXHIGH} && \
+		printf "%b\n" "" && read -s -k "?Press ENTER to continue." && clear
 
-		if [[ -f "${plugPath}" ]]
-		then
-			. "${plugPath}"
-		else
-			echo "zshrc: Plugin '${plugin}' not valid. Please edit '${HOME}/.zsh/settings/01-zsh.zsh'."
-		fi
+	# Source syntax highlighting
+	source ${SYNTAXHIGH}/zsh-syntax-highlighting.zsh
 
-	done
-}
+	# Prompt
+	#export PS1='C:$(pwd | tr "////" "\\\\" ) > '
+	export PS1='[ ${USER}@${HOSTNAME} ] ${PWD} > '
+	export RPS1='$(date -u +"%m-%d-%Y %H:%M:%S")'
 
-### Load everything
-# usage: zsh.load_all
-zsh.load_all ()
-{
-zsh.load_settings
-zsh.load_sources
-zsh.load_plugins
-}
+	# History
+	export HISTFILE="${HOME}/.zsh-history"
+	export HISTSIZE=1000
+	export SAVEHIST=1000
 
-### Message of the Day
-# usage: motd
-zsh.motd ()
-{
-    local motdFile="${zfiles}/.motd.txt"
+	# ZSH Options
+	setopt +o nomatch
+	setopt NO_HUP
+	setopt AUTO_CD
+	setopt AUTO_MENU
+	#setopt LIST_ROWS_FIRST
+	setopt SHARE_HISTORY
+	setopt EXTENDED_HISTORY
+	setopt PROMPT_SUBST
 
-    [[ -f "${motdFile}" ]] || return 0
+	# Ctrl ->
+	bindkey ';5C' forward-word
 
-    [[ "$1" == '--lolcat' ]] && SILENTRUN command -v lolcat && lolcat ${motdFile} && return 0
-    [[ "$1" == '--edit' ]] && ${EDITOR} ${motdFile} && return 0
+	# Ctrl <-
+	bindkey ';5D' backward-word
 
-    cat ${motdFile}
-}
+	zstyle ':completion:*' rehash true
+	zstyle ':completion:*' menu select
 
-zsh.load_all
-zsh.motd
+	fpath=($HOME/.local/share/zsh-completions/src $fpath)
+	autoload -U compinit && compinit
 
-function precmd()
-{
-	for ((i = 0; i < $COLUMNS; ++i)); do
-	printf -
+	# Source shellrc (common settings between bash and zsh)
+	source ${SHELLFILES}/.shellrc
+
+	# Plugins
+	export plugins=(
+		sudo
+		backstreet
+		curlapps
+	)
+
+	for plug in "${plugins[@]}"; do
+
+		plugin="${SHELLFILES}/plugins/${plug}"
+
+		[[ -f "${plugin}" ]] && source ${plugin} || PRINT "zsh: Plugin '${plug}' does not exist."
+
 	done
 
-	printf "%b\n" ""
+	# Print MOTD
+	cat ${SHELLFILES}/.motd.txt
+	printf "%b\n"
+
+	function precmd()
+	{
+		for ((i = 0; i < $COLUMNS; ++i)); do
+		printf -
+		done
+
+		printf "%b\n" ""
+	}
 }
+
+zsh.load
 

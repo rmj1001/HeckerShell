@@ -90,23 +90,10 @@ trash.files.restore() {
 }
 
 trash.files.empty() {
-  local files=()
+	cd ${TRASH} && SILENTRUN rm -rf ./*
+	cd ${TRASHINFO} && SILENTRUN rm -rf ./*
 
-  # Create a list of all files in the trash, hidden and not hidden
-  files=($(find ${TRASH} -maxdepth 1))
-  unset files[0]
-
-  # Fail if there are no files in the trash
-  [ ${#files[@]} -eq 0 ] && PRINT "There are no files in the trash!" && exit 1
-
-  # Remove all files from the trash
-  for file in ${files[@]}; do
-    rm -rf $file
-  done
-
-  # Confirmation
-  PRINT "Emptied the trash!"
-  exit 0
+	PRINT "Trash emptied!"
 }
 
 trash.files.information() {

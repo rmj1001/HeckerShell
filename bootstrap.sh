@@ -4,12 +4,14 @@ DOTFILES="$(dirname "$(readlink -f "$0")")/files"
 
 # OG Paths
 SYM_ZSHRC="$DOTFILES/.zshrc"
-SYM_ZSH="$DOTFILES/.zsh"
+SYM_BASHRC="$DOTFILES/.bashrc"
+SYM_SHELLFILES="$DOTFILES/.shellfiles"
 SYM_SCRIPTS="$DOTFILES/System32"
 
 # Paths
 ZSHRC="$HOME/.zshrc"
-ZSH="$HOME/.zsh"
+BASHRC="$HOME/.bashrc"
+SHELLFILES="$HOME/.shellfiles"
 SCRIPTS="$HOME/System32"
 
 PRINT()
@@ -35,9 +37,10 @@ _install()
 	[[ -h "$SYM_SCRIPTS" ]] || ln -s $SYM_SCRIPTS $SCRIPTS
 
 	# ZSH
-	PRINT "Installing ZSH config..."
+	PRINT "Installing shell configs..."
 	[[ -h "$SYM_ZSHRC" ]] || ln -s $SYM_ZSHRC $ZSHRC
-	[[ -h "$SYM_ZSH" ]] || ln -s $SYM_ZSH $ZSH
+	[[ -h "$SYM_BASHRC" ]] || ln -s $SYM_BASHRC $BASHRC
+	[[ -h "$SYM_SHELLFILES" ]] || ln -s $SYM_SHELLFILES $SHELLFILES
 
 	# Configs
 	PRINT "Installing miscellaneous configs..."
@@ -64,9 +67,10 @@ _remove()
 	[[ -h "$SYM_SCRIPTS" ]] && rm $SYM_SCRIPTS
 
 	# ZSH
-	PRINT "Removing ZSH config symlinks..."
-	[[ -h "$SYM_ZSHRC" ]] && rm $SYM_ZSHRC
-	[[ -h "$SYM_ZSH" ]] && rm $SYM_ZSH
+	PRINT "Removing shell config symlinks..."
+	[[ -h "$SYM_ZSHRC" ]] && rm $SYM_ZSHRC $ZSHRC
+	[[ -h "$SYM_BASHRC" ]] && rm $SYM_BASHRC $BASHRC
+	[[ -h "$SYM_SHELLFILES" ]] && rm $SYM_SHELLFILES $SHELLFILES
 
 	# Configs
 	PRINT "Removing miscellaneous configs..."
@@ -124,3 +128,4 @@ case "$(LOWERCASE $1)" in
 		&& exit 1
 
 esac
+
