@@ -185,22 +185,36 @@ CHECK_NO() {
 READ_CONF() {
 
 	local file="${1}"
-	local section, var, val
+	local section=""
+	local var=""
+	local val=""
 
-	[[ ! -f "${file}" ]] && printf '%b\n' "$(SCRIPTNAME): Invalid file ${file}." && return 1
+	# If file doesn't exist, return with error.
+	[[ ! -f "${file}" ]] && PRINT "$(SCRIPTNAME): Invalid file ${file}." && return 1
 
+	# Read file line-by-line
 	while read line; do
 
 		line="$(TRIM ${line})"
 
+		# Continue to next line if commented
 		[[ $line =~ ^#.* ]] && continue
-		[[ "${line}" =~ ^\[[a-z]+\]$ ]] && section="$(printf '%b' "${line}" | sed -e 's|\[\([a-z]\+\)\]|\1|')" && continue
+
+		# If line is a section, set `$section` variable and continue to next line
+		[[ "${line}" =~ ^\[[a-z]+\]$ ]] && section="$(NPRINT "${line}" | sed -e 's|\[\([a-z]\+\)\]|\1|')" && continue
+
+		# If line is a key=value pair, then set `var` and `val` accordingly, else continue to next line.
 		[[ "${line}" =~ ^[a-z]+\=\"?\'?.*\"?\'?$ ]] \
-		    && var="$(printf '%b' "${line}" | sed -e 's|\([a-z]\+\)\=.*|\1|')" \
-		    # TODO: the line below needs fixing
-		    #&& val="$(printf '%b' "${line}" | sed -e 's|.*\=\x27?\x22?\(.*\)\x27?\x22?|\1|')" \
+		    && var="$(NPRINT "${line}" | sed 's|\([a-z]\+\)\=.*|\1|')" \
+		    && val="$(NPRINT "${line}" | sed 's|.*\=||g' | cut -d\" -f2 | cut -d\' -f2)" \
 			|| continue
 
-	done < ${file}
+		# If no section, import as `var="val"`
+		[[ -z "${section}" ]] && eval ${var}=\"${val}\" && continue
+
+		# If section, import as `section.var="val"`
+		eval ${section}_${var}=\"${val}\"
+
+	done < ${file};
 }
 
