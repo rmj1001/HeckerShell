@@ -3,6 +3,13 @@
 bash.load()
 {
 	clear
+
+	# Source global definitions
+	[[ -f /etc/bashrc ]] && source /etc/bashrc
+
+	# Uncomment the following line if you don't like systemctl's auto-paging feature:
+	# export SYSTEMD_PAGER=
+
 	# Source shellrc (common settings between bash and zsh)
 	SHELLFILES="${HOME}/.shellfiles"
 	source ${SHELLFILES}/.shellrc
