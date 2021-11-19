@@ -55,10 +55,10 @@ There are post-install scripts for various distros in `files/System32/postinstal
 install common repositories and software for development, gaming, media (codecs), and more. These scripts
 will source the api since they need certain common functions. 
 
-## ZSH Plugins
+## Shell Plugins
 
-Any optional ZSH functionality should be made into a plugin. All plugins must be stored in `files/.zsh/plugins`,
-and must be named as `<plugin>.zsh`. Plugins can be sourced in `files/.zsh/settings/01-zsh.zsh`.
+Any optional shell functionality should be made into a plugin. All plugins must be stored in `files/.shellfiles/plugins`,
+and must be named as `plugin`. Plugins can be sourced in the applicable shell config file.
 
 ## Development Guidelines
 
