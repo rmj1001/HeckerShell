@@ -40,13 +40,13 @@ aboutpc.fetch() {
     CMD_EXISTS "rpm" && PKGCOUNT="${PKGCOUNT}$(rpm -qa | wc -l) (rpm), "
     CMD_EXISTS "flatpak" && PKGCOUNT="${PKGCOUNT}$(flatpak list | wc -l) (flatpak), "
     CMD_EXISTS "snap" && PKGCOUNT="${PKGCOUNT}$(snap list | wc -l) (snap), "
+    PKGCOUNT="${PKGCOUNT/%, /}"
 
     # Processor
     CORES=$(grep -c processor </proc/cpuinfo)
     CPUNAME=$(grep '^model name' /proc/cpuinfo -m 1 | sed -E 's|^model\sname\s*:\s||g')
 
     # Memory
-    #
     MEMFREE=$(( $(grep 'MemFree' /proc/meminfo | sed -e 's|MemFree:\s*||g' -e 's|\s*kB\s*||g') / 1000))
     MEMTOTAL=$(( $(grep 'MemTotal' /proc/meminfo | sed -e 's|MemTotal:\s*||g' -e 's|\s*kB\s*||g') / 1000))
 
@@ -61,28 +61,13 @@ aboutpc.zenity() {
 
 	aboutpc.fetch
 
-	# (
-	# 	PRINT " User@Host\t\t${USER}@${HOST}"
-	# 	PRINT " OS\t\t${OS}"
-	# 	PRINT " Kernel\t\t${KERNEL}"
-	# 	PRINT " Uptime\t\t${UPTIME}"
-	# 	PRINT " Packages\t\t${PKGCOUNT/%, /}"
-	# 	PRINT " Shell\t\t${SHELL}"
-	# 	PRINT " Processor\t\t${CPUNAME}"
-	# 	PRINT " Cores\t\t${CORES}"
-	# 	CMD_EXISTS "xrandr" && PRINT " Resolution\t\t${RESOLUTION}"
-	# 	PRINT " Display Server\t\t${XDG_SESSION_TYPE}"
-	# 	PRINT " Memory\t\t${MEMORY}"
-	# 	[[ -n "${TERMINAL}" ]] && PRINT " Terminal\t\t${TERMINAL}"
-	# ) | zenity --text-info --height=500 --width=500 --no-markup --title="About PC"
-
 	zenity --title "About PC" --height 500 --width 450 --list \
 		--column "Category" --column "Information" \
 		"User@Host" "${USER}@${HOST}" \
 		"OS" "${OS}" \
 		"Kernel" "${KERNEL}" \
 		"Uptime" "${UPTIME}" \
-		"Packages" "${PKGCOUNT/%, /}" \
+		"Packages" "${PKGCOUNT}" \
 		"Shell" "${SHELL}" \
 		"Processor" "${CPUNAME}" \
 		"Cores" "${CORES}" \
@@ -102,7 +87,7 @@ aboutpc.neofetch() {
 	    PRINT " OS|${OS}"
 		PRINT " Kernel|${KERNEL}"
 		PRINT " Uptime|${UPTIME}"
-		PRINT " Packages|${PKGCOUNT/%, /}"
+		PRINT " Packages|${PKGCOUNT}"
 		PRINT " Shell|${SHELL}"
 		CMD_EXISTS "xrandr" && PRINT " Resolution|${RESOLUTION}"
 		PRINT " Display Server|${XDG_SESSION_TYPE}"
