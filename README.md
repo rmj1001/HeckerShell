@@ -20,7 +20,9 @@ All scripts are licensed under the BSD 3 Clause license.
 
 You can install these dotfiles by cloning the repository and using the
 `bootstrap.sh` script, cloning and installing files manually, or by
-using the webinstall script.
+using the webinstall script. **WARNING:** Installing via the webinstaller
+**WILL** replace your `.bashrc`, `.zshrc`, and possibly other config files with symlinks.
+Make sure to back them up.
 
 Using `wget`:
 
