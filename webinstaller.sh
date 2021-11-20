@@ -32,7 +32,9 @@ git pull ${DOTFILES_SITE} ${DOTFILES_DOWN_DIR}
 
 printf "%b" "$1" "Install? (Y/n) " && read confirm
 
-[[ "${confirm}" =~ ^[nN][oO]?$ ]] && printf '%b' "Downloaded but not installed.\n\nPress ENTER to continue..." && read && clear && exit 0
+[[ "${confirm}" =~ ^[nN][oO]?$ ]] && printf '%b' \
+	"Downloaded but not installed.\n\nPress ENTER to continue..." && read \
+	&& clear && exit 0
 
 PRINT
 
