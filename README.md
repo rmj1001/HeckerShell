@@ -4,10 +4,10 @@
 
 - [Table of Contents](#table-of-contents)
 - [Warranty](#warranty)
+- [Install](#install)
+- [Distro Postinstall Scripts](#distro-postinstall-scripts)
+- [Dotfiles Development](#dotfiles-development)
 - [Scripts](#scripts)
-- [Postinstallers](#postinstaller-scripts)
-- [ZSH Plugins](#zsh-plugins)
-- [Development Guidelines](#development-guidelines)
 
 ## Warranty
 
@@ -21,8 +21,8 @@ All scripts are licensed under the BSD 3 Clause license.
 You can install these dotfiles by cloning the repository and using the
 `bootstrap.sh` script, cloning and installing files manually, or by
 using the webinstall script. **WARNING:** Installing via the webinstaller
-**WILL** replace your `.bashrc`, `.zshrc`, and possibly other config files with symlinks.
-Make sure to back them up.
+**WILL** replace your `.bashrc`, `.zshrc`, and possibly other config files with 
+symlinks. Make sure to back them up.
 
 Using `wget`:
 
@@ -36,7 +36,28 @@ Using `curl`:
 bash <(curl -s https://github.com/rmj1001/dotfiles/webinstaller.sh)
 ```
 
-## Scripts
+## Distro Postinstall Scripts
+
+There are post-install scripts for various distros in 
+`files/System32/postinstalls`. These scripts install common repositories and 
+software for development, gaming, media (codecs), and more. These scripts will 
+source the api since they need certain common functions.
+
+## Dotfiles development
+
+1. Do not mark lib scripts as executable, since they are used more like headers.
+2. Do not declare global variables inside functions. Always use 
+`local <name>=""` to declare variables in functons.
+3. Function names should be uppercase.
+4. Functions should have comments with a description and usage example.
+5. If functions assume global variables exist, make sure to include a default 
+value if the variable is empty.
+Example: `${version:=1.0}`, where 1.0 is the default
+6. Optional shell functionality should be developed in a separate plugin.
+All plugins must be stored in `files/.shellfiles/plugins` and named as
+`<plugin>`. Plugins can be sourced per-shell in their config file.
+
+### Scripts
 
 Scripts can be self-dependent, but we have also provided an API
 to make developing shell scripts easier. To source the API, just
@@ -68,24 +89,3 @@ DISABLE_ROOT
 ####################################
 
 ```
-
-## Postinstaller Scripts
-
-There are post-install scripts for various distros in `files/System32/postinstalls`. These scripts
-install common repositories and software for development, gaming, media (codecs), and more. These scripts
-will source the api since they need certain common functions. 
-
-## Shell Plugins
-
-Any optional shell functionality should be made into a plugin. All plugins must be stored in `files/.shellfiles/plugins`,
-and must be named as `plugin`. Plugins can be sourced in the applicable shell config file.
-
-## Development Guidelines
-
-1. Do not mark lib scripts as executable, since they are used more like headers.
-2. Do not declare global variables inside functions. Always use `local <name>=""` to declare variables in functons.
-3. Function names should be uppercase.
-4. Functions should have comments with a description and usage example.
-5. If functions assume global variables exist, make sure to include a default value if the variable is empty.
-Example: `${version:=1.0}`, where 1.0 is the default
-
