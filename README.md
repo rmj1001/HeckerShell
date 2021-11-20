@@ -16,6 +16,24 @@ THESE COME WITH NO WARRANTY, to the fullest extent of the law.
 
 All scripts are licensed under the BSD 3 Clause license.
 
+## Install
+
+You can install these dotfiles by cloning the repository and using the
+`bootstrap.sh` script, cloning and installing files manually, or by
+using the webinstall script.
+
+Using `wget`:
+
+```bash
+bash <(wget -qO- https://github.com/rmj1001/dotfiles/webinstaller.sh)
+```
+
+Using `curl`:
+
+```bash
+bash <(curl -s https://github.com/rmj1001/dotfiles/webinstaller.sh)
+```
+
 ## Scripts
 
 Scripts can be self-dependent, but we have also provided an API
