@@ -68,15 +68,16 @@ minecraftctl.remove() {
 	clear
 
 	local launcherExisted=0 # Tracks existence of launcher directories
-	local filesExisted=0	# Tracks existence of any files from minecraftctl.
+	local filesExisted=0    # Tracks existence of any files from minecraftctl.
 
 	# Remove launcher files
 	[[ -e "${binary}" ]] && launcherExisted=1 && sudo rm -rf ${binary} && sleep 1.5
-	[[ -e "${desktopEntry}" ]] && launcherExisted=1 && sudo rm -rf ${desktopEntry} \
-		&& PRINT "Removed desktop entry." && sleep 1.5
+	[[ -e "${desktopEntry}" ]] && launcherExisted=1 && sudo rm -rf ${desktopEntry} &&
+		PRINT "Removed desktop entry." && sleep 1.5
 
 	[[ ${launcherExisted} -eq 1 ]] && filesExisted=1 && PRINT "Removed launcher."
-	[[ ${filesExisted} -eq 1 ]] && PRINT "Uninstallation finished." || PRINT "Minecraft is not installed."
+	[[ ${filesExisted} -eq 1 ]] && PRINT "Uninstallation finished."
+	[[ ${filesExisted} -ne 1 ]] && PRINT "Minecraft is not installed."
 
 	# Confirmation
 	PAUSE
@@ -104,21 +105,20 @@ minecraftctl.help() {
 
 [[ $# -eq 0 ]] && minecraftctl.help && exit 0
 
-case "$(LOWERCASE ${1})" in
-	-i | --install)
-		minecraftctl.install
-		;;
-	-r | --remove)
-		minecraftctl.remove
-		;;
-	-u | --update)
-		minecraftctl.remove && minecraftctl.install
-		;;
-	\? | -h | --help)
-		minecraftctl.help
-		;;
-	*)
-		PRINT "'${1}' is an invalid subcommand!"
-		;;
+case "$(LOWERCASE "${1}")" in
+-i | --install)
+	minecraftctl.install
+	;;
+-r | --remove)
+	minecraftctl.remove
+	;;
+-u | --update)
+	minecraftctl.remove && minecraftctl.install
+	;;
+\? | -h | --help)
+	minecraftctl.help
+	;;
+*)
+	PRINT "'${1}' is an invalid subcommand!"
+	;;
 esac
-

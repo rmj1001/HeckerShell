@@ -54,7 +54,8 @@ golive.cleanup() {
 	[ -z "$virtual_sink" ] && return
 	read -r -p '>> Press enter to unload PulseAudio modules for the virtual mix...'
 
-	[ ! -z "$MIX_LOOPBACK" ] && pactl unload-module "$MIX_LOOPBACK" || pactl unload-module module-loopback
+	[ -n "$MIX_LOOPBACK" ] && pactl unload-module "$MIX_LOOPBACK"
+	[ -z "${MIX_LOOPBACK}" ] && pactl unload-module module-loopback
 	pactl list short modules | grep -E 'Virtual_(Sink|Output)' | awk '{print $1;}' | xargs -L1 pactl unload-module
 }
 
@@ -67,4 +68,3 @@ PRINT ">> For software that should capture the mixed audio, head to the 'Recordi
 PRINT "   tab and make the software use 'Monitor of Virtual_Output' as their input."
 PRINT
 golive.cleanup
-

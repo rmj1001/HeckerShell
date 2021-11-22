@@ -26,13 +26,13 @@ powermgr.gui() {
 	REQUIRE_CMD "zenity" "rofi" || return 1
 
 	# If no display then disallow GUI use.
-	[[ -z "$DISPLAY" ]] && PRINT "No valid display!" && return 1 1
+	[[ -z "$DISPLAY" ]] && PRINT "No valid display!" && return 1
 
 	# Turns on zenity dialogs
 	GUI=1
 
 	# Receive command from rofi
-	cmd="$(LOWERCASE $(PRINT 'Shutdown\nReboot\nLock\nLogout\nCancel' | rofi -dmenu -i -window-title "Power Manager" -prompt "Option: "))"
+	cmd="$(LOWERCASE "$(PRINT 'Shutdown\nReboot\nLock\nLogout\nCancel' | rofi -dmenu -i -window-title "Power Manager" -prompt "Option: ")")"
 
 	# Show message 'cancelled' if cmd is empty (exit from rofi)
 	[[ "${cmd}" == "" ]] && zenity --info --text="Cancelled." && return 1
@@ -56,7 +56,7 @@ powermgr.restart() {
 powermgr.logout() {
 	[[ $GUI -eq 1 ]] && zenity --info --text="Logging out..."
 
-	killall -u $USER
+	killall -u "$USER"
 }
 
 # Screen locker
@@ -67,16 +67,16 @@ powermgr.lock() {
 	CMD_EXISTS "dm-tool" && dm-tool lock && return 0
 
 	# Systemd lock command (doesn't work with lightdm)
-	SESSIONS=($(loginctl list-sessions | grep $(whoami) | awk '{print $1}' | tr '\n' ' '))
-	loginctl lock-session ${SESSIONS[@]}
+	SESSIONS=("$(loginctl list-sessions | grep "$(whoami)" | awk '{print $1}' | tr '\n' ' ')")
+	loginctl lock-session "${SESSIONS[@]}"
 }
 
 # Unlock available for KDE connect (CLI/Phone only)
 # Does not work with Lightdm
 powermgr.unlock() {
 	# Systemd unlock command (doesn't work with lightdm)
-	SESSIONS=($(loginctl list-sessions | grep $(whoami) | awk '{print $1}' | tr '\n' ' '))
-	loginctl unlock-session ${SESSIONS[@]}
+	SESSIONS=("$(loginctl list-sessions | grep "$(whoami)" | awk '{print $1}' | tr '\n' ' ')")
+	loginctl unlock-session "${SESSIONS[@]}"
 }
 
 # Help prompt (CLI only)
@@ -105,18 +105,17 @@ powermgr.help() {
 
 test $# -eq 0 && powermgr.help && exit 0
 [[ "${1}" == "gui" ]] && powermgr.gui
-[[ "${1}" != "gui" ]] && cmd="$(LOWERCASE ${1})"
+[[ "${1}" != "gui" ]] && cmd="$(LOWERCASE "${1}")"
 
 # Evaluate commands
 case "${cmd}" in
-	shutdown) powermgr.shutoff ;;
-	reboot) powermgr.restart ;;
-	logout) powermgr.logout ;;
-	lock) powermgr.lock ;;
-	unlock) powermgr.unlock ;;
-	help) powermgr.help ;;
-	helpgui) zenity --info --height=800 --width=800 --text="$(powermgr.help)" ;;
-	cancel) zenity --info --text="Cancelled." && exit 1 ;;
-	*) zenity --warning --text="Invalid command '${cmd}'." && exit 1 ;;
+shutdown) powermgr.shutoff ;;
+reboot) powermgr.restart ;;
+logout) powermgr.logout ;;
+lock) powermgr.lock ;;
+unlock) powermgr.unlock ;;
+help) powermgr.help ;;
+helpgui) zenity --info --height=800 --width=800 --text="$(powermgr.help)" ;;
+cancel) zenity --info --text="Cancelled." && exit 1 ;;
+*) zenity --warning --text="Invalid command '${cmd}'." && exit 1 ;;
 esac
-

@@ -20,8 +20,8 @@ REQUIRE_CMD "" || exit 1
 
 ####################################
 
-_help () {
-	_flags () {
+_help() {
+	_flags() {
 		PRINT "-------------|------|---------------------"
 		PRINT "Flag|Args|Description"
 		PRINT "-------------|------|---------------------"
@@ -43,13 +43,16 @@ _help () {
 # Iterate over all arguments and evaluate them
 while test $# -gt 0; do
 
-	case "$(LOWERCASE ${1})" in
+	case "$(LOWERCASE "${1}")" in
 
-		\? | -h | --help ) shift; _help; exit 0 ;;
+	\? | -h | --help)
+		shift
+		_help
+		exit 0
+		;;
 
-		* ) PRINT "$(SCRIPTNAME): Invalid argument '${1}'" && exit 1 ;;
+	*) PRINT "$(SCRIPTNAME): Invalid argument '${1}'" && exit 1 ;;
 
 	esac
 
 done
-

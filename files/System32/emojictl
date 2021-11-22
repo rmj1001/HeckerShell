@@ -44,11 +44,12 @@ cmd=""
 
 emojictl.prepare() {
 	# Make the config directory and move to it
-	[ ! -d "$CONFDIR" ] && mkdir -p "$CONFDIR"
-	[ ! -d "$FONTS" ] && mkdir -p "$FONTS"
-	[ -d "$TEMP" ] && rm -rf "$TEMP/*" || mkdir "$TEMP"
-	[ -f "$FILE" ] && rm -rf "$FILE"
-	[ -f "$NOTOPKG" ] && rm -f "$NOTOPKG"
+	[[ ! -d "${CONFDIR}" ]] && mkdir -p "${CONFDIR}"
+	[[ ! -d "${FONTS}" ]] && mkdir -p "${FONTS}"
+	[[ ! -d "${TEMP}" ]] || mkdir "${TEMP}"
+	[[ -d "${TEMP}" ]] && rm -rf "${TEMP:?}/*"
+	[[ -f "${FILE}" ]] && rm -rf "${FILE}"
+	[[ -f "${NOTOPKG}" ]] && rm -f "${NOTOPKG}"
 }
 
 emojictl.emojis.install() {
@@ -131,21 +132,20 @@ cmd="$(LOWERCASE "${1}")"
 
 case "${cmd}" in
 
-	install | i)
-		emojictl.emojis.install
-		exit 0
-		;;
-	uninstall | u)
-		emojictl.emojis.uninstall
-		exit 0
-		;;
-	help | h | \?)
-		emojictl.help
-		exit 0
-		;;
-	*)
-		[ -z "${cmd}" ] && emojictl.help || PRINT "Invalid command '${1}'." && exit 1
-		;;
+install | i)
+	emojictl.emojis.install
+	exit 0
+	;;
+uninstall | u)
+	emojictl.emojis.uninstall
+	exit 0
+	;;
+help | h | \?)
+	emojictl.help
+	exit 0
+	;;
+*)
+	[ -z "${cmd}" ] && emojictl.help || PRINT "Invalid command '${1}'." && exit 1
+	;;
 
 esac
-

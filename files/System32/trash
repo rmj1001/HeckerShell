@@ -54,7 +54,6 @@ trash.files.add() {
   trash.file.check "$1"
   if [ -e "${FILE}" ]; then
     FILENAME="$(basename ${FILE})"
-    DELFILE="${TRASHINFO}/${FILE}.trashinfo"
     DELPATH=$(readlink -f ${FILE})
     DELDATE=$(date +"%Y-%m-%dT%H:%M:%S")
 
@@ -90,10 +89,10 @@ trash.files.restore() {
 }
 
 trash.files.empty() {
-	cd ${TRASH} && SILENTRUN rm -rf ./*
-	cd ${TRASHINFO} && SILENTRUN rm -rf ./*
+  cd ${TRASH} && SILENTRUN rm -rf ./*
+  cd ${TRASHINFO} && SILENTRUN rm -rf ./*
 
-	PRINT "Trash emptied!"
+  PRINT "Trash emptied!"
 }
 
 trash.files.information() {
@@ -133,27 +132,26 @@ trash.help() {
 cmd="$(LOWERCASE ${1})"
 
 case "${cmd}" in
-	a | add)
-		trash.files.add "${2}"
-		;;
-	r | restore)
-		trash.files.restore "${2}"
-		;;
-	e | empty)
-		trash.files.empty
-		;;
-	l | list)
-		ls --color=auto -AlvhF --group-directories-first $TRASH
-		exit 0
-	;;
-	i | info)
-		trash.files.information "${2}"
-		;;
-	\? | h | help)
-		trash.help
-		;;
-	*)
-		[ -z "${cmd}" ] && trash.help || PRINT "Invalid command!" && exit 1
-	;;
+a | add)
+  trash.files.add "${2}"
+  ;;
+r | restore)
+  trash.files.restore "${2}"
+  ;;
+e | empty)
+  trash.files.empty
+  ;;
+l | list)
+  ls --color=auto -AlvhF --group-directories-first $TRASH
+  exit 0
+  ;;
+i | info)
+  trash.files.information "${2}"
+  ;;
+\? | h | help)
+  trash.help
+  ;;
+*)
+  [ -z "${cmd}" ] && trash.help || PRINT "Invalid command!" && exit 1
+  ;;
 esac
-

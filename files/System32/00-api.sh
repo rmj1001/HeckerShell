@@ -93,7 +93,7 @@ TRIM() {
 # Usage: SCRIPTNAME
 # Returns: string
 SCRIPTNAME() {
-	printf "%b" "$(basename $(readlink -nf $0))"
+	printf "%b" "$(basename "$(readlink -nf "$0")")"
 }
 
 # Description: Checks for a filename in $PATH (commands), if not found then exit with an error
@@ -145,7 +145,7 @@ DISABLE_ROOT() {
 # Usage: SILENTRUN <command>
 # Returns: return exit code
 SILENTRUN() {
-	$@ >/dev/null 2>&1
+	"$@" >/dev/null 2>&1
 	return $?
 }
 
@@ -193,9 +193,9 @@ READ_CONF() {
 	[[ ! -f "${file}" ]] && PRINT "$(SCRIPTNAME): Invalid file ${file}." && return 1
 
 	# Read file line-by-line
-	while read line; do
+	while read -r line; do
 
-		line="$(TRIM ${line})"
+		line="$(TRIM "${line}")"
 
 		# Continue to next line if commented
 		[[ $line =~ ^#.* ]] && continue
@@ -204,17 +204,16 @@ READ_CONF() {
 		[[ "${line}" =~ ^\[[a-z]+\]$ ]] && section="$(NPRINT "${line}" | sed -e 's|\[\([a-z]\+\)\]|\1|')" && continue
 
 		# If line is a key=value pair, then set `var` and `val` accordingly, else continue to next line.
-		[[ "${line}" =~ ^[a-z]+\=\"?\'?.*\"?\'?$ ]] \
-		    && var="$(NPRINT "${line}" | sed 's|\([a-z]\+\)\=.*|\1|')" \
-		    && val="$(NPRINT "${line}" | sed 's|.*\=||g' | cut -d\" -f2 | cut -d\' -f2)" \
-			|| continue
+		[[ "${line}" =~ ^[a-z]+\=\"?\'?.*\"?\'?$ ]] || continue
+		[[ "${line}" =~ ^[a-z]+\=\"?\'?.*\"?\'?$ ]] &&
+			var="$(NPRINT "${line}" | sed 's|\([a-z]\+\)\=.*|\1|')" &&
+			val="$(NPRINT "${line}" | sed 's|.*\=||g' | cut -d\" -f2 | cut -d\' -f2)"
 
 		# If no section, import as `var="val"`
-		[[ -z "${section}" ]] && eval ${var}=\"${val}\" && continue
+		[[ -z "${section}" ]] && eval "${var}=\"${val}\"" && continue
 
 		# If section, import as `section.var="val"`
-		eval ${section}_${var}=\"${val}\"
+		eval "${section}_${var}=\"${val}\""
 
-	done < ${file};
+	done <"${file}"
 }
-

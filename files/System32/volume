@@ -19,8 +19,8 @@ DISABLE_ROOT
 
 ####################################
 
-_help () {
-	_flags () {
+_help() {
+	_flags() {
 		PRINT "-------------|------|---------------------|"
 		PRINT "Flag|Args|Description"
 		PRINT "-------------|------|---------------------|"
@@ -69,21 +69,38 @@ _view() {
 # Iterate over all arguments and evaluate them
 while test $# -gt 0; do
 
-	case "$(LOWERCASE ${1})" in
+	case "$(LOWERCASE "${1}")" in
 
-		-u | --up ) shift; _up $1; shift ;;
+	-u | --up)
+		shift
+		_up "${1}"
+		shift
+		;;
 
-		-d | --down ) shift; _down $1; shift ;;
+	-d | --down)
+		shift
+		_down "${1}"
+		shift
+		;;
 
-		-m | --mute ) shift; _mute ;;
+	-m | --mute)
+		shift
+		_mute
+		;;
 
-		-v | --view ) shift; _view ;;
+	-v | --view)
+		shift
+		_view
+		;;
 
-		\? | -h | --help ) shift; _help; exit 0 ;;
+	\? | -h | --help)
+		shift
+		_help
+		exit 0
+		;;
 
-		* ) PRINT "$(SCRIPTNAME): Invalid argument '${1}'" && exit 1 ;;
+	*) PRINT "$(SCRIPTNAME): Invalid argument '${1}'" && exit 1 ;;
 
 	esac
 
 done
-

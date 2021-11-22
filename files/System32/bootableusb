@@ -12,7 +12,6 @@
 #		ISO file
 ##############################################
 
-
 # shellcheck disable=SC1091
 source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
 
@@ -25,7 +24,7 @@ REQUIRE_CMD "pv" || exit 1
 FORMAT=0
 
 _format() {
-	sudo dd if=/dev/zero of=${DISK} bs=512 count=1
+	sudo dd if=/dev/zero of="${DISK}" bs=512 count=1
 	sync
 }
 
@@ -34,8 +33,8 @@ _write() {
 	sync
 }
 
-_help () {
-	_flags () {
+_help() {
+	_flags() {
 		PRINT "-------------|------|---------------------"
 		PRINT "Flag|Args|Description"
 		PRINT "-------------|------|---------------------"
@@ -58,35 +57,35 @@ _help () {
 
 while test $# -gt 0; do
 	case "$1" in
-		-h | --help | \? )
-		    shift
-		    _help
-		    shift
-		    ;;
-		-i | --iso )
-		    shift
+	-h | --help | \?)
+		shift
+		_help
+		shift
+		;;
+	-i | --iso)
+		shift
 
-		    [[ -z "${1}" ]] && PRINT "$(SCRIPTNAME): You must provide an ISO path. Use '--help' for more info." && continue
-		    ISO="$(realpath ${1})"
+		[[ -z "${1}" ]] && PRINT "$(SCRIPTNAME): You must provide an ISO path. Use '--help' for more info." && continue
+		ISO="$(realpath "${1}")"
 
-		    shift
-		    ;;
-		-d | --disk )
-			shift
+		shift
+		;;
+	-d | --disk)
+		shift
 
-			[[ -z "${1}" ]] && PRINT "$(SCRIPTNAME): You must provide a disk path. Use '--help' for more info." && continue
-			DISK="$(realpath ${1})"
+		[[ -z "${1}" ]] && PRINT "$(SCRIPTNAME): You must provide a disk path. Use '--help' for more info." && continue
+		DISK="$(realpath "${1}")"
 
-			shift
-			;;
-		-f | --format )
-			shift
-			FORMAT=1
-			;;
-		*)
-		   PRINT "$(SCRIPTNAME): '$1' is not a recognized flag!"
-		   exit 1
-		   ;;
+		shift
+		;;
+	-f | --format)
+		shift
+		FORMAT=1
+		;;
+	*)
+		PRINT "$(SCRIPTNAME): '$1' is not a recognized flag!"
+		exit 1
+		;;
 	esac
 done
 
@@ -102,7 +101,6 @@ done
 [[ ! -e "${DISK}" ]] && PRINT "Disk '${2}' does not exist." && exit 1
 
 # Unmount, format (if specified), write
-sudo umount -R ${DISK}
+sudo umount -R "${DISK}"
 [[ $FORMAT -eq 1 ]] && _format
 _write
-

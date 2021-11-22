@@ -24,36 +24,36 @@ CLEAR=0
 NEOFETCH=0
 
 aboutpc.fetch() {
-    # Operating System Information
-    OS="$(grep '^NAME=' /etc/os-release | sed 's/NAME=//;s/"//g')"
-    OS="${OS} $(grep '^VERSION=' /etc/os-release | sed 's/VERSION=//;s/"//g')"
+	# Operating System Information
+	OS="$(grep '^NAME=' /etc/os-release | sed 's/NAME=//;s/"//g')"
+	OS="${OS} $(grep '^VERSION=' /etc/os-release | sed 's/VERSION=//;s/"//g')"
 
-    # Host, Kernel, and Uptime Information
-    HOST="$(uname -n)"
-    KERNEL="$(uname -r)"
-    UPTIME=$(uptime --pretty | sed 's|^up\s||')
+	# Host, Kernel, and Uptime Information
+	HOST="$(uname -n)"
+	KERNEL="$(uname -r)"
+	UPTIME=$(uptime --pretty | sed 's|^up\s||')
 
-    # Package count
-    PKGCOUNT=""
-    CMD_EXISTS "pacman" && PKGCOUNT="${PKGCOUNT}$(pacman -Qq | wc -l) (pacman), "
-    CMD_EXISTS "apt" && PKGCOUNT="${PKGCOUNT}$(apt list --installed 2>/dev/null | wc -l) (apt), "
-    CMD_EXISTS "rpm" && PKGCOUNT="${PKGCOUNT}$(rpm -qa | wc -l) (rpm), "
-    CMD_EXISTS "flatpak" && PKGCOUNT="${PKGCOUNT}$(flatpak list | wc -l) (flatpak), "
-    CMD_EXISTS "snap" && PKGCOUNT="${PKGCOUNT}$(snap list | wc -l) (snap), "
-    PKGCOUNT="${PKGCOUNT/%, /}"
+	# Package count
+	PKGCOUNT=""
+	CMD_EXISTS "pacman" && PKGCOUNT="${PKGCOUNT}$(pacman -Qq | wc -l) (pacman), "
+	CMD_EXISTS "apt" && PKGCOUNT="${PKGCOUNT}$(apt list --installed 2>/dev/null | wc -l) (apt), "
+	CMD_EXISTS "rpm" && PKGCOUNT="${PKGCOUNT}$(rpm -qa | wc -l) (rpm), "
+	CMD_EXISTS "flatpak" && PKGCOUNT="${PKGCOUNT}$(flatpak list | wc -l) (flatpak), "
+	CMD_EXISTS "snap" && PKGCOUNT="${PKGCOUNT}$(snap list | wc -l) (snap), "
+	PKGCOUNT="${PKGCOUNT/%, /}"
 
-    # Processor
-    CORES=$(grep -c processor </proc/cpuinfo)
-    CPUNAME=$(grep '^model name' /proc/cpuinfo -m 1 | sed -E 's|^model\sname\s*:\s||g')
+	# Processor
+	CORES=$(grep -c processor </proc/cpuinfo)
+	CPUNAME=$(grep '^model name' /proc/cpuinfo -m 1 | sed -E 's|^model\sname\s*:\s||g')
 
-    # Memory
-    MEMFREE=$(( $(grep 'MemFree' /proc/meminfo | sed -e 's|MemFree:\s*||g' -e 's|\s*kB\s*||g') / 1000))
-    MEMTOTAL=$(( $(grep 'MemTotal' /proc/meminfo | sed -e 's|MemTotal:\s*||g' -e 's|\s*kB\s*||g') / 1000))
+	# Memory
+	MEMFREE=$(($(grep 'MemFree' /proc/meminfo | sed -e 's|MemFree:\s*||g' -e 's|\s*kB\s*||g') / 1000))
+	MEMTOTAL=$(($(grep 'MemTotal' /proc/meminfo | sed -e 's|MemTotal:\s*||g' -e 's|\s*kB\s*||g') / 1000))
 
-    MEMORY="${MEMFREE} MB / ${MEMTOTAL} MB"
+	MEMORY="${MEMFREE} MB / ${MEMTOTAL} MB"
 
-    # Resolution
-    CMD_EXISTS "xrandr" && RESOLUTION="$(xrandr -q | grep current | sed -e 's|.*current\s||g' -e 's|,.*||g')"
+	# Resolution
+	CMD_EXISTS "xrandr" && RESOLUTION="$(xrandr -q | grep current | sed -e 's|.*current\s||g' -e 's|,.*||g')"
 }
 
 aboutpc.zenity() {
@@ -80,22 +80,21 @@ aboutpc.neofetch() {
 	aboutpc.fetch
 
 	# Header
-	PRINT "\n${USER}@${HOST}" && \
-    PRINT "---------------------------------------------------------" && \
+	PRINT "\n${USER}@${HOST}" &&
+		PRINT "---------------------------------------------------------" &&
+		(
+			PRINT " OS|${OS}"
+			PRINT " Kernel|${KERNEL}"
+			PRINT " Uptime|${UPTIME}"
+			PRINT " Packages|${PKGCOUNT}"
+			PRINT " Shell|${SHELL}"
+			CMD_EXISTS "xrandr" && PRINT " Resolution|${RESOLUTION}"
+			PRINT " Display Server|${XDG_SESSION_TYPE}"
+			PRINT " Memory|${MEMORY}"
+			[[ -n "${TERMINAL}" ]] && PRINT " Terminal|${TERMINAL}"
+		) | column -t -s'|'
 
-    (
-	    PRINT " OS|${OS}"
-		PRINT " Kernel|${KERNEL}"
-		PRINT " Uptime|${UPTIME}"
-		PRINT " Packages|${PKGCOUNT}"
-		PRINT " Shell|${SHELL}"
-		CMD_EXISTS "xrandr" && PRINT " Resolution|${RESOLUTION}"
-		PRINT " Display Server|${XDG_SESSION_TYPE}"
-		PRINT " Memory|${MEMORY}"
-		[[ -n "${TERMINAL}" ]] && PRINT " Terminal|${TERMINAL}"
-    ) | column -t -s'|'
-
-    PRINT
+	PRINT
 }
 
 aboutpc.normal() {
@@ -119,14 +118,14 @@ aboutpc.normal() {
 		CMD_EXISTS "xrandr" && PRINT " Resolution|${RESOLUTION}"
 		PRINT " Display Server|${XDG_SESSION_TYPE}"
 		PRINT " Memory|${MEMORY}"
-    	[[ -n "${TERMINAL}" ]] && PRINT " Terminal|${TERMINAL}"
-    ) | column -t -s "|"
+		[[ -n "${TERMINAL}" ]] && PRINT " Terminal|${TERMINAL}"
+	) | column -t -s "|"
 
 	PRINT
 }
 
-_help () {
-	_flags () {
+_help() {
+	_flags() {
 		PRINT "-------------|------|---------------------"
 		PRINT "Flag|Args|Description"
 		PRINT "-------------|------|---------------------"
@@ -150,15 +149,28 @@ _help () {
 # Iterate over all arguments and evaluate them
 while test $# -gt 0; do
 
-	case "$(LOWERCASE ${1})" in
+	case "$(LOWERCASE "${1}")" in
 
-		--clear ) shift; CLEAR=1 ;;
-		--neofetch ) shift; NEOFETCH=1 ;;
-		--zenity ) shift; aboutpc.zenity && exit $? ;;
+	--clear)
+		shift
+		CLEAR=1
+		;;
+	--neofetch)
+		shift
+		NEOFETCH=1
+		;;
+	--zenity)
+		shift
+		aboutpc.zenity && exit $?
+		;;
 
-		\? | -h | --help ) shift; _help; exit 0 ;;
+	\? | -h | --help)
+		shift
+		_help
+		exit 0
+		;;
 
-		* ) PRINT "$(SCRIPTNAME): Invalid flag '${1}'." && exit 1
+	*) PRINT "$(SCRIPTNAME): Invalid flag '${1}'." && exit 1 ;;
 
 	esac
 
@@ -168,4 +180,3 @@ done
 [[ $NEOFETCH -eq 1 ]] && aboutpc.neofetch && exit 0
 
 aboutpc.normal
-

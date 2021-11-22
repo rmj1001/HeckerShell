@@ -21,8 +21,8 @@ DISABLE_ROOT
 
 SCRIPTS="${SCRIPTS:=$HOME/.local/bin}"
 
-_help () {
-	_flags () {
+_help() {
+	_flags() {
 		PRINT "-------------|------|---------------------|"
 		PRINT "Flag|Args|Description"
 		PRINT "-------------|------|---------------------|"
@@ -42,43 +42,44 @@ _help () {
 	_flags | column -t -s'|'
 }
 
-_ls () {
+_ls() {
 	dir="${PWD}"
-	cd ${SCRIPTS}; ls -alvhF --group-directories-first
-	cd ${dir}
+	cd "${SCRIPTS}" || exit
+	ls -alvhF --group-directories-first
+	cd "${dir}" || exit
 }
 
-_mk () {
+_mk() {
 	# Check for script name argument
 	[[ -z "${1}" ]] && PRINT "You must specify a script name!" && exit 1
 
 	# Check if script exists
-	[[ -e ${SCRIPTS}/${1} ]] && PRINT "Script '${1}' already exists!" && return 1
+	[[ -e "${SCRIPTS}"/"${1}" ]] && PRINT "Script '${1}' already exists!" && return 1
 
-	cp ${SCRIPTS}/00-template.sh ${SCRIPTS}/${1}.sh && \
-		mv ${SCRIPTS}/${1}.sh ${SCRIPTS}/${1} && \
-		chmod +x ${SCRIPTS}/${1} && ${EDITOR:=nano} ${SCRIPTS}/${1} && \
+	cp "${SCRIPTS}"/00-template.sh "${SCRIPTS}"/"${1}".sh &&
+		mv "${SCRIPTS}"/"${1}".sh "${SCRIPTS}"/"${1}" &&
+		chmod +x "${SCRIPTS}"/"${1}" && ${EDITOR:=nano} "${SCRIPTS}"/"${1}" &&
 		PRINT "scriptctl: Created '${1}'."
 }
 
-_ed () {
+_ed() {
 	# Check for script name argument
 	[[ -z "${1}" ]] && PRINT "You must specify a script name!" && return 1
 
 	# Check if script exists
-	[[ ! -e ${SCRIPTS}/${1} ]] && PRINT "Script '${1}' doesn't exist!" && return 1
+	[[ ! -e "${SCRIPTS}"/"${1}" ]] && PRINT "Script '${1}' doesn't exist!" && return 1
 
 	# Edit the script
-	${EDITOR:=nano} ${SCRIPTS}/${1} && \
+	${EDITOR:=nano} "${SCRIPTS}"/"${1}" &&
 		PRINT "scriptctl: Edited '${1}'."
 }
 
-_rm () {
+_rm() {
 	# Check for script name argument
 	[[ -z "${1}" ]] && PRINT "You must specify a script name!" && return 1
 
 	# Check if script exists
-	[[ ! -e ${SCRIPTS}/${1} ]] && PRINT "Script '${1}' doesn't exist!" && return 1
+	[[ ! -e "${SCRIPTS}"/"${1}" ]] && PRINT "Script '${1}' doesn't exist!" && return 1
 
 	# Confirm whether to delete script
 	read -r -p "Are you sure you want to delete '${1}'? (y/N) " confirm
@@ -87,7 +88,7 @@ _rm () {
 	CHECK_NO "$confirm" && PRINT "Cancelled." && return 1
 
 	# Delete script
-	rm -f ${SCRIPTS}/${1} && \
+	rm -f "${SCRIPTS}"/"${1}" &&
 		PRINT "scriptctl: Removed '${1}'."
 }
 
@@ -97,21 +98,40 @@ _rm () {
 # Iterate over all arguments and evaluate them
 while test $# -gt 0; do
 
-	case "$(LOWERCASE ${1})" in
+	case "$(LOWERCASE "${1}")" in
 
-		\? | -h | --help ) shift; _help; exit $? ;;
+	\? | -h | --help)
+		shift
+		_help
+		exit $?
+		;;
 
-		-ls | --list ) shift; _ls; exit $? ;;
+	-ls | --list)
+		shift
+		_ls
+		exit $?
+		;;
 
-		-mk | --create ) shift; _mk $@; exit $? ;;
+	-mk | --create)
+		shift
+		_mk "$@"
+		exit $?
+		;;
 
-		-ed | --edit ) shift; _ed $@; exit $? ;;
+	-ed | --edit)
+		shift
+		_ed "$@"
+		exit $?
+		;;
 
-		-rm | --delete ) shift; _rm $@; exit $? ;;
+	-rm | --delete)
+		shift
+		_rm "$@"
+		exit $?
+		;;
 
-		* ) PRINT "scriptctl: Invalid argument '${1}'" && exit 1 ;;
+	*) PRINT "scriptctl: Invalid argument '${1}'" && exit 1 ;;
 
 	esac
 
 done
-
