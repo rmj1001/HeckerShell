@@ -73,12 +73,13 @@ export FNM_NODE_DIST_MIRROR="https://nodejs.org/dist"
 export FNM_ARCH="x64"
 
 # Conditional PATH additions (Developer Languages)
-[[ -z "${RUST_BIN}" ]] || export PATH="${PATH}:${RUST_BIN}"
-[[ -z "${GOPATH}" ]] || export PATH="${PATH}:${GOPATH}/bin"
-[[ -z "${HOMEBREW}" ]] || export PATH="${PATH}:${HOMEBREW}"
-[[ -z "${DENO_INSTALL}" ]] || export PATH="${PATH}:${DENO_INSTALL}/bin"
-[[ -z "${FNM_MULTISHELL_PATH}" ]] ||
-	export PATH="${PATH}:${FNM_MULTISHELL_PATH}/bin"
+[[ -z "${RUST_BIN}" ]] || PATH="${PATH}:${RUST_BIN}"
+[[ -z "${GOPATH}" ]] || PATH="${PATH}:${GOPATH}/bin"
+[[ -z "${HOMEBREW}" ]] || PATH="${PATH}:${HOMEBREW}"
+[[ -z "${DENO_INSTALL}" ]] || PATH="${PATH}:${DENO_INSTALL}/bin"
+[[ -z "${FNM_MULTISHELL_PATH}" ]] || PATH="${PATH}:${FNM_MULTISHELL_PATH}/bin"
+
+export PATH
 
 ############################ SHELL FUNCTIONS ###################################
 
@@ -256,8 +257,8 @@ readfile() { /bin/cat -n "${@}"; }
 which() { command -v "${@}"; }
 
 # If bat/batcat exists, create opposite alias to replace cat
-[[ -x /bin/bat ]] && bat() { /bin/bat -p "${@}"; }
-[[ -x /bin/batcat ]] && bat() { /bin/batcat -p "${@}"; }
+[[ -x /bin/bat ]] && bat() { /bin/bat -P "${@}"; }
+[[ -x /bin/batcat ]] && bat() { /bin/batcat -P "${@}"; }
 
 # Listing files/directories
 unalias ls && function ls() { /usr/bin/ls --color=auto --group-directories-first "${@}"; }
