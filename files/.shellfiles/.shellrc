@@ -4,18 +4,22 @@
 
 # Default Editor
 # (checks for each editor, if proceeding editor exists then default is changed)
-[[ -f "$(command -v nano)" ]] && export EDITOR="$(command -v nano)"
-[[ -f "$(command -v nvim)" ]] && export EDITOR="$(command -v nvim)"
-[[ -f "$(command -v code)" ]] && export EDITOR="$(command -v code)"
-[[ -f "$(command -v micro)" ]] && export EDITOR="$(command -v micro)"
+[[ -f "$(command -v nano)" ]] && EDITOR="$(command -v nano)"
+[[ -f "$(command -v nvim)" ]] && EDITOR="$(command -v nvim)"
+[[ -f "$(command -v code)" ]] && EDITOR="$(command -v code)"
+[[ -f "$(command -v micro)" ]] && EDITOR="$(command -v micro)"
+export EDITOR
 
 # Default Browser
-[[ -x "$(command -v firefox)" ]] && export BROWSER="$(command -v firefox)"
+[[ -x "$(command -v firefox)" ]] && BROWSER="$(command -v firefox)"
+[[ -x "$(command -v microsoft-edge)" ]] && BROWSER="$(command -v microsoft-edge)"
+export BROWSER
 
 # Default Authentication
 # (sudo is default, if doas exists then it becomes default)
-[[ -x "$(command -v sudo)" ]] && export AUTH="$(command -v sudo)"
-[[ -x "$(command -v doas)" ]] && export AUTH="$(command -v doas)"
+[[ -x "$(command -v sudo)" ]] && AUTH="$(command -v sudo)"
+[[ -x "$(command -v doas)" ]] && AUTH="$(command -v doas)"
+export AUTH
 
 # XDG
 export XDG_CONFIG_HOME="${HOME}/.config"
@@ -29,7 +33,7 @@ export TRASH="${XDG_DATA_HOME}/Trash/files"
 export LANG="en_US.UTF-8"
 export SNAPS="/snap/bin"
 export GNUPGHOME="${HOME}/.gnupg"
-export CARGO_HOME="${XDG_DATA_HOME}/cargo" # Rust
+export CARGO_HOME="${XDG_DATA_HOME}/cargo"   # Rust
 export RUSTUP_HOME="${XDG_DATA_HOME}/rustup" # Rust
 export GTK2_RC_FILES="${XDG_CONFIG_HOME}/gtk-2.0/gtkrc"
 export WINEPREFIX="${XDG_DATA_HOME}/wineprefixes/default"
@@ -73,7 +77,7 @@ export FNM_ARCH="x64"
 [[ -z "${GOPATH}" ]] || export PATH="${PATH}:${GOPATH}/bin"
 [[ -z "${HOMEBREW}" ]] || export PATH="${PATH}:${HOMEBREW}"
 [[ -z "${DENO_INSTALL}" ]] || export PATH="${PATH}:${DENO_INSTALL}/bin"
-[[ -z "${FNM_MULTISHELL_PATH}" ]] || \
+[[ -z "${FNM_MULTISHELL_PATH}" ]] ||
 	export PATH="${PATH}:${FNM_MULTISHELL_PATH}/bin"
 
 ############################ SHELL FUNCTIONS ###################################
@@ -88,7 +92,10 @@ NPRINT() { printf "%b" "${@}"; }
 
 ### Pauses script execution until the user presses ENTER
 # usage: PAUSE
-PAUSE() { PRINT "Press <ENTER> to continue..."; read; }
+PAUSE() {
+	PRINT "Press <ENTER> to continue..."
+	read -r
+}
 
 ### Sets the terminal window title
 # usage: TITLE "test"
@@ -118,20 +125,23 @@ TRIM() {
 	var="${var%%*( )}"
 
 	# Return trimmed string
-	printf '%s' "$var";
+	printf '%s' "$var"
 }
 
 ### Run code silently
 # usage: SILENTRUN <command>
-SILENTRUN() { $@ >/dev/null 2>&1; }
+SILENTRUN() { "$@" >/dev/null 2>&1; }
 
 ### Run programs in the background in disowned processes
 # usage: ASYNC '<commands>'
-ASYNC() { nohup $@ > /dev/null 2>&1 & }
+ASYNC() { nohup "$@" >/dev/null 2>&1 & }
 
 ### Check to see if command exists
 # usage: CMD_EXISTS <command>
-CMD_EXISTS() { SILENTRUN command -v "${1}"; return $?; }
+CMD_EXISTS() {
+	SILENTRUN command -v "${1}"
+	return $?
+}
 
 ### Checks for a filename in $PATH (commands), if not found then exit with an error
 # usage: REQUIRE_CMD "7z" "tar" || exit 1
@@ -147,7 +157,7 @@ REQUIRE_CMD() {
 	PRINT "The following programs are required to run this program:"
 	PRINT "${NEEDED[@]}"
 
-	return 1;
+	return 1
 }
 
 ### Checks to see if the script is being run as root, and if not then exit.
@@ -155,7 +165,7 @@ REQUIRE_CMD() {
 REQUIRE_ROOT() {
 	[[ ${EUID} -eq 0 ]] && exit 0
 	PRINT "This script must be run as root"
-	exit 1;
+	exit 1
 }
 
 ### Checks to see if the script is being run as root, and if so then exit.
@@ -163,7 +173,7 @@ REQUIRE_ROOT() {
 DISABLE_ROOT() {
 	[[ ${EUID} -ne 0 ]] && exit 0
 	PRINT "This script cannot be run as root. Try another user."
-	exit 1;
+	exit 1
 }
 
 ### Check to see if input is 'yes' or empty
@@ -172,7 +182,7 @@ DISABLE_ROOT() {
 CHECK_YES() {
 	[[ $1 =~ [yY][eE]?[sS]? ]] && return 0
 	[[ -z "$1" ]] && return 0
-	return 1;
+	return 1
 }
 
 ### Check to see if input is 'no' or empty
@@ -181,119 +191,134 @@ CHECK_YES() {
 CHECK_NO() {
 	[[ $1 =~ [nN][oO]? ]] && return 0
 	[[ -z "$1" ]] && return 0
-	return 1;
+	return 1
 }
 
 ### Download youtube videos
 # usage: downloadYTVideo <video url>[]
-downloadYTVideo ()
-{
+downloadYTVideo() {
 	# Preparations
-	DIR=$HOME/Downloads/VideoDownloader; [[ -d "$DIR" ]] \
-		|| mkdir "$DIR" ; cd "$DIR"
+	DIR=$HOME/Downloads/VideoDownloader
+	[[ -d "$DIR" ]] ||
+		mkdir "$DIR"
+	cd "$DIR" || return 1
 
-    youtube-dl --format mp4 -o "%(title)s.%(ext)s" "${@}";
+	youtube-dl --format mp4 -o "%(title)s.%(ext)s" "${@}"
 }
 
 ### Download youtube videos as MP3 sound files
 # usage: mp3dl <video url>[]
-mp3dl ()
-{
+mp3dl() {
 	# Preparations
-	DIR=$HOME/Downloads/Music; [[ -d "$DIR" ]] || mkdir "$DIR" ; cd "$DIR"
+	DIR=$HOME/Downloads/Music
+	[[ -d "$DIR" ]] || mkdir "$DIR"
+	cd "$DIR" || return 1
 
 	# Download
 	youtube-dl --prefer-ffmpeg --add-metadata --output '%(title)s.%(ext)s' \
-		--extract-audio --audio-format mp3 "${@}";
+		--extract-audio --audio-format mp3 "${@}"
 }
 
 ### Add sound clips to soundfx folder
 # usage: soundfx <video url>[]
-soundfx ()
-{
+soundfx() {
 	# Preparations
-	DIR=$HOME/Music/SoundFX; [[ -d "$DIR" ]] || mkdir "$DIR" ; cd "$DIR"
+	DIR=$HOME/Music/SoundFX
+	[[ -d "$DIR" ]] || mkdir "$DIR"
+	cd "$DIR" || return 1
 
 	# Download
 	youtube-dl --prefer-ffmpeg --add-metadata --output '%(title)s.%(ext)s' \
-		--extract-audio --audio-format mp3 "${@}";
+		--extract-audio --audio-format mp3 "${@}"
 }
 
 ### Write a line who's length is equal to the length of the terminal's columns
 # usage: write_lines
-write_lines() { for ((i=0; i<${COLUMNS}; ++i)); do printf -; done; PRINT ""; }
-
-################################ SHELL ALIASES #################################
+write_lines() {
+	for ((i = 0; i < COLUMNS; ++i)); do printf -; done
+	PRINT ""
+}
 
 # Edit files
-alias edit="${EDITOR}"
-alias rootedit="${AUTH} ${EDITOR}"
+edit() { "${EDITOR}" "${@}"; }
+rootedit() { ${AUTH} "${EDITOR}" "${@}"; }
 
 # Copy text from STDIN or from a file
-alias copy="xclip -sel clip"
+copy() { xclip -sel clip "${@}"; }
 
 # Colorized grep
-alias grep="grep --color=auto"
+#grep() { $(command -v grep) --color=auto "${@}" ; }
 
 # Cat a file w/ line numbers
-alias readfile="/bin/cat -n"
+readfile() { /bin/cat -n "${@}"; }
 
 # Replace 'which'
-alias which="command -v"
-
-# Check if program exists (silent, use return codes)
-alias CMDEXISTS="SILENTRUN command -v"
+which() { command -v "${@}"; }
 
 # If bat/batcat exists, create opposite alias to replace cat
-if CMDEXISTS bat; then
-	alias batcat="/bin/bat -p"
-elif CMDEXISTS batcat; then
-    alias bat="/bin/batcat -p"
-fi
+[[ -x /bin/bat ]] && bat() { /bin/bat -p "${@}"; }
+[[ -x /bin/batcat ]] && bat() { /bin/batcat -p "${@}"; }
 
 # Listing files/directories
-alias ls="ls --color=auto --group-directories-first"
-alias ll="ls -AlvhF"
-alias la="ls -A"
-alias l.="la | grep '^\.\w\w*$'"
+unalias ls && function ls() { /usr/bin/ls --color=auto --group-directories-first "${@}"; }
+unalias ll && function ll() { ls -AlvhF "${@}"; }
+function la() { ls -A "${@}"; }
 
 # Directory manipulation
-alias mkdir="mkdir -p"
-alias md="mkdir"
-alias mf="touch"
-alias rd="rm -rf"
-alias rf="rm -f"
-alias rmcd="dir=${PWD}; cd .. && rm -rf ${dir}"
-mkcd () { mkdir "${1}" && cd "${1}"; }
+mkdir() { /usr/bin/env mkdir -p "${@}"; }
+md() { mkdir "${@}"; }
+mf() { touch "${@}"; }
+rd() { rm -rf "${@}"; }
+rf() { rm -f "${@}"; }
+rmcd() {
+	dir="${PWD}"
+	cd .. || return 1
+	rm -rf "${dir}"
+}
+mkcd() { mkdir "${1}" && cd "${1}" || return 1; }
 
 # File Permissions (Exec/Non-exec)
-alias mke="chmod +x"
-alias rme="chmod 644"
-alias correctGPGperms="chown -R $(whoami) ~/.gnupg/;
-	chmod 600 ~/.gnupg/*; chmod 700 ~/.gnupg"
+mke() { chmod +x "${@}"; }
+rme() { chmod 644 "${@}"; }
+correctGPGperms() {
+	chown -R "$(whoami)" ~/.gnupg/
+	chmod 600 ~/.gnupg/*
+	chmod 700 ~/.gnupg
+}
 
 # Update software from source
-alias makeupdate="git pull && sudo make uninstall &&
-	make clean && make && sudo make install"
+makeupdate() {
+	git pull && sudo make uninstall && make clean && make &&
+		sudo make install
+}
 
 # Install gaming software
-alias install-gaming="pip3 install LibreGaming; PRINT
-	'\n\nRun \"LibreGaming --tui\" to install gaming software.'"
-alias update-gaming="pip3 install LibreGaming -U; PRINT
-	'\n\nRun \"LibreGaming --tui\" to install gaming software.'"
+install-gaming() {
+	pipe3 install LibreGaming && LibreGaming --tui
+}
+
+# Update gaming software
+update-gaming() {
+	pipe3 install LibreGaming -U && LibreGaming --tui
+}
 
 # Home
-alias home="cd ${HOME}"
+home() { cd "${HOME}" || return 1; }
 
 # Audio
-alias restart-pipewire="systemctl restart --user pipewire;
-	systemctl restart --user pipewire-pulse; systemctl restart --user bluetooth"
-alias restart-bluetooth="systemctl restart bluetooth.service"
+restart-bluetooth() {
+	systemctl restart --user bluetooth
+}
+restart-pipewire() {
+	systemctl restart --user pipewire
+	systemctl restart --user pipewire-pulse
+	restart-bluetooth
+}
 
 # Default apps
-alias terminal="${TERMINAL}"
-alias browser="${BROWSER}"
-alias auth="${AUTH}"
+terminal() { ${TERMINAL} "${@}"; }
+browser() { ${BROWSER} "${@}"; }
+auth() { ${AUTH} "${@}"; }
 
 ################################ SOURCES #######################################
 
@@ -306,21 +331,20 @@ export NVM_DIR="${XDG_CONFIG_HOME}/nvm"
 export INIT="/usr/share/nvm/init-nvm.sh"
 
 # NVM
-# load nvm
+# shellcheck source-path=NVM_DIR # load nvm
 [ -s "${NVM_DIR}/nvm.sh" ] && . "${NVM_DIR}/nvm.sh"
 # nvm bash completions
 [ -s "$NVM_DIR/bash_completion" ] && . "${NVM_DIR}/bash_completion"
-# nvm initialize
+# shellcheck source=INIT # nvm initialize
 [ -e "${INIT}" ] && . "${INIT}"
 
 # Pyenv
-if [ -d "$HOME/.pyenv" ]
-then
-    export PYENV_ROOT="${HOME}/.pyenv"
-    export PATH="${PYENV_ROOT}/bin:${PATH}"
+if [ -d "$HOME/.pyenv" ]; then
+	export PYENV_ROOT="${HOME}/.pyenv"
+	export PATH="${PYENV_ROOT}/bin:${PATH}"
 fi
 
-[[ `command -v pyenv` ]] && eval "$(pyenv init -)"
+[[ $(command -v pyenv) ]] && eval "$(pyenv init -)"
 
 # Rust
 [[ -e "${CARGO_HOME}/env" ]] && . "${CARGO_HOME}/env"
@@ -333,8 +357,8 @@ fi
 
 nixScript="${HOME}/.nix-profile/etc/profile.d/nix.sh"
 
-if [[ -f "${nixScript}" ]]
-then
+if [[ -f "${nixScript}" ]]; then
+	# shellcheck source=nixScript
 	. "${nixScript}"
 fi
 
@@ -358,11 +382,9 @@ userPrefix=/home/linuxbrew/.linuxbrew
 ### VTE
 ######################################
 
-vte="/etc/profile.d/vte.sh"
-
 if [[ $TILIX_ID ]] || [[ $VTE_VERSION ]]; then
 
-	[[ -f "${VTE}" ]] && . "${VTE}"
+	# shellcheck source-path=/etc/profile.d/vte.sh
+	[[ -f "/etc/profile.d/vte.sh" ]] && source "/etc/profile.d/vte.sh"
 
 fi
-
