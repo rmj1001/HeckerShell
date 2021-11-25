@@ -2,7 +2,7 @@
 
 ################################# CONSTANTS ####################################
 
-DOTFILES_SITE="https://github.com/rmj1001/dotfiles"
+DOTFILES_SITE="https://github.com/rmj1001/dotfiles.git"
 DOTFILES_DOWN_DIR="${HOME}/.local/share/com.github.rmj1001.dotfiles"
 DOTFILES="${DOTFILES_DOWN_DIR}/files"
 
