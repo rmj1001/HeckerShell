@@ -46,6 +46,9 @@ installConfigs() {
 	done
 }
 
+[[ ! -x "$(command -v git)" ]] &&
+	printf '%b\n' "Git is not installed." && exit 1
+
 # Confirm whether to install dotfiles.
 printf '%b' "Are you sure you want to install this script?
 This script will delete certain files, including your current bashrc.\n
@@ -59,15 +62,18 @@ printf "%b\n" "Downloading dotfiles..."
 git pull "${DOTFILES_SITE}" "${DOTFILES_DOWN_DIR}"
 
 # Scripts
-printf "%b\n" "Install scripts? (y/N) " && read -r confirmScripts
+printf "%b" "Install scripts? (y/N) " && read -r confirmScripts
+printf '%b\n' ""
 [[ "${confirmScripts}" =~ ^[yY][eE]?[sS]?$ ]] && installScripts
 
 # Shell configs
-printf "%b\n" "Install shell configs? (y/N) " && read -r confirmShell
+printf "%b" "Install shell configs? (y/N) " && read -r confirmShell
+printf '%b\n' ""
 [[ "${confirmShell}" =~ ^[yY][eE]?[sS]?$ ]] && installShell
 
 # Misc configs
 printf "%b\n" "Install miscellaneous configs? (y/N) " && read -r confirmConfs
+printf '%b\n' ""
 [[ "${confirmConfs}" =~ ^[yY][eE]?[sS]?$ ]] && installConfigs
 
 printf "%b\n" "Done."
