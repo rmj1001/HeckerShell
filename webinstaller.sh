@@ -32,7 +32,7 @@ SCRIPTS="${HOME}/System32"
 ################################# LOGIC ########################################
 
 # Confirm whether to install dotfiles.
-printf '%b' "Are you sure you want to install this script?\n
+printf '%b' "Are you sure you want to install this script?
 This script will delete certain files, including your current bashrc.\n
 Confirm? (y/N) " && read -r confirmInstall && PRINT
 
