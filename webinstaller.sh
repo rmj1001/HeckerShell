@@ -31,16 +31,17 @@ SCRIPTS="${HOME}/System32"
 
 ################################# LOGIC ########################################
 
+# Confirm whether to install dotfiles.
+printf '%b' "Are you sure you want to install this script?\n
+This script will delete certain files, including your current bashrc.\n
+Confirm? (y/N) " && read -r confirmInstall
+
+[[ "${confirmInstall}" =~ ^[yY][eE]?[sS]$ ]] ||
+	PRINT "Cancelling." && exit 1
+
+# Download dotfiles
 PRINT "Downloading dotfiles..."
 git pull "${DOTFILES_SITE}" "${DOTFILES_DOWN_DIR}"
-
-printf "%b" "$1" "Install? (Y/n) " && read -r confirm
-
-[[ "${confirm}" =~ ^[nN][oO]?$ ]] && printf '%b' \
-	"Downloaded but not installed.\n\nPress ENTER to continue..." && read -r &&
-	clear && exit 0
-
-PRINT
 
 # Scripts
 PRINT "Installing scripts..."
