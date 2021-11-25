@@ -16,50 +16,46 @@ BASHRC="${HOME}/.bashrc"
 SHELLFILES="${HOME}/.shellfiles"
 SCRIPTS="${HOME}/System32"
 
-PRINT()
-{
+PRINT() {
 	printf "%b\n" "$1"
 }
 
-LOWERCASE()
-{
+LOWERCASE() {
 	local text="$1"
 	printf "%b\n" "${text}" | tr '[:upper:]' '[:lower:]'
 }
 
 PRINT "Downloading dotfiles..."
-git pull ${DOTFILES_SITE} ${DOTFILES_DOWN_DIR}
+git pull "${DOTFILES_SITE}" "${DOTFILES_DOWN_DIR}"
 
-printf "%b" "$1" "Install? (Y/n) " && read confirm
+printf "%b" "$1" "Install? (Y/n) " && read -r confirm
 
 [[ "${confirm}" =~ ^[nN][oO]?$ ]] && printf '%b' \
-	"Downloaded but not installed.\n\nPress ENTER to continue..." && read \
-	&& clear && exit 0
+	"Downloaded but not installed.\n\nPress ENTER to continue..." && read -r &&
+	clear && exit 0
 
 PRINT
 
 # Scripts
 PRINT "Installing scripts..."
-[[ -h "${SYM_SCRIPTS}" ]] || ln -sf ${SYM_SCRIPTS} ${SCRIPTS}
+[[ -L "${SYM_SCRIPTS}" ]] || ln -sf "${SYM_SCRIPTS}" "${SCRIPTS}"
 
 # ZSH
 PRINT "Installing shell configs..."
-[[ -h "${SYM_ZSHRC}" ]] || ln -sf ${SYM_ZSHRC} ${ZSHRC}
-[[ -h "${SYM_BASHRC}" ]] || ln -sf ${SYM_BASHRC} ${BASHRC}
-[[ -h "${SYM_SHELLFILES}" ]] || ln -sf ${SYM_SHELLFILES} ${SHELLFILES}
+[[ -L "${SYM_ZSHRC}" ]] || ln -sf "${SYM_ZSHRC}" "${ZSHRC}"
+[[ -L "${SYM_BASHRC}" ]] || ln -sf "${SYM_BASHRC}" "${BASHRC}"
+[[ -L "${SYM_SHELLFILES}" ]] || ln -sf "${SYM_SHELLFILES}" "${SHELLFILES}"
 
 # Configs
 PRINT "Installing miscellaneous configs..."
 
-for folder in ${DOTFILES}/.config/*
-do
+for folder in "${DOTFILES}"/.config/*; do
 	linkRef="${folder##*/}"
 	sym="${HOME}/.config/${linkRef}"
 
 	PRINT "Installing config ${linkRef}..."
 
-	[[ -h "${sym}" ]] || ln -s ${folder} ${sym}
+	[[ -L "${sym}" ]] || ln -s "${folder}" "${sym}"
 done
 
 PRINT "Done."
-
