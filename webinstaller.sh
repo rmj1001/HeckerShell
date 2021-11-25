@@ -46,6 +46,7 @@ installConfigs() {
 	done
 }
 
+# Check if Git is installed.
 [[ ! -x "$(command -v git)" ]] &&
 	printf '%b\n' "Git is not installed." && exit 1
 
