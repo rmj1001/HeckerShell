@@ -34,7 +34,7 @@ SCRIPTS="${HOME}/System32"
 # Confirm whether to install dotfiles.
 printf '%b' "Are you sure you want to install this script?\n
 This script will delete certain files, including your current bashrc.\n
-Confirm? (y/N) " && read -r confirmInstall
+Confirm? (y/N) " && read -r confirmInstall && PRINT
 
 [[ "${confirmInstall}" =~ ^[yY][eE]?[sS]$ ]] ||
 	PRINT "Cancelling." && exit 1
