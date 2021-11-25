@@ -20,38 +20,54 @@ SCRIPTS="${HOME}/System32"
 
 ################################# LOGIC ########################################
 
+installScripts() {
+	printf "%b\n" "Installing scripts..."
+	[[ -L "${SYM_SCRIPTS}" ]] || ln -sf "${SYM_SCRIPTS}" "${SCRIPTS}"
+}
+
+installShell() {
+	printf "%b\n" "Installing shell configs..."
+	[[ -L "${SYM_ZSHRC}" ]] || ln -sf "${SYM_ZSHRC}" "${ZSHRC}"
+	[[ -L "${SYM_BASHRC}" ]] || ln -sf "${SYM_BASHRC}" "${BASHRC}"
+	[[ -L "${SYM_SHELLFILES}" ]] || ln -sf "${SYM_SHELLFILES}" "${SHELLFILES}"
+}
+
+installConfigs() {
+	# Configs
+	printf "%b\n" "Installing miscellaneous configs..."
+
+	for folder in "${DOTFILES}"/.config/*; do
+		linkRef="${folder##*/}"
+		sym="${HOME}/.config/${linkRef}"
+
+		printf "%b\n" "Installing config ${linkRef}..."
+
+		[[ -L "${sym}" ]] || ln -s "${folder}" "${sym}"
+	done
+}
+
 # Confirm whether to install dotfiles.
 printf '%b' "Are you sure you want to install this script?
 This script will delete certain files, including your current bashrc.\n
 Confirm? (y/N) " && read -r confirmInstall && printf "%b\n" ""
 
 [[ ! "${confirmInstall}" =~ ^[yY][eE]?[sS]?$ ]] &&
-	printf "%b\n" "" "Cancelling." && exit 1
+	printf "%b\n" "Cancelling." && exit 1
 
 # Download dotfiles
-printf "%b\n" "" "Downloading dotfiles..."
+printf "%b\n" "Downloading dotfiles..."
 git pull "${DOTFILES_SITE}" "${DOTFILES_DOWN_DIR}"
 
 # Scripts
-printf "%b\n" "" "Installing scripts..."
-[[ -L "${SYM_SCRIPTS}" ]] || ln -sf "${SYM_SCRIPTS}" "${SCRIPTS}"
+printf "%b\n" "Install scripts? (y/N) " && read -r confirmScripts
+[[ "${confirmScripts}" =~ ^[yY][eE]?[sS]?$ ]] && installScripts
 
-# ZSH
-printf "%b\n" "" "Installing shell configs..."
-[[ -L "${SYM_ZSHRC}" ]] || ln -sf "${SYM_ZSHRC}" "${ZSHRC}"
-[[ -L "${SYM_BASHRC}" ]] || ln -sf "${SYM_BASHRC}" "${BASHRC}"
-[[ -L "${SYM_SHELLFILES}" ]] || ln -sf "${SYM_SHELLFILES}" "${SHELLFILES}"
+# Shell configs
+printf "%b\n" "Install shell configs? (y/N) " && read -r confirmShell
+[[ "${confirmShell}" =~ ^[yY][eE]?[sS]?$ ]] && installShell
 
-# Configs
-printf "%b\n" "" "Installing miscellaneous configs..."
+# Misc configs
+printf "%b\n" "Install miscellaneous configs? (y/N) " && read -r confirmConfs
+[[ "${confirmConfs}" =~ ^[yY][eE]?[sS]?$ ]] && installConfigs
 
-for folder in "${DOTFILES}"/.config/*; do
-	linkRef="${folder##*/}"
-	sym="${HOME}/.config/${linkRef}"
-
-	printf "%b\n" "" "Installing config ${linkRef}..."
-
-	[[ -L "${sym}" ]] || ln -s "${folder}" "${sym}"
-done
-
-printf "%b\n" "" "Done."
+printf "%b\n" "Done."
