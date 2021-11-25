@@ -1,5 +1,18 @@
 #!/usr/bin/env bash
 
+################################# FUNCTIONS ####################################
+
+PRINT() {
+	printf "%b\n" "$1"
+}
+
+LOWERCASE() {
+	local text="$1"
+	printf "%b\n" "${text}" | tr '[:upper:]' '[:lower:]'
+}
+
+################################# CONSTANTS ####################################
+
 DOTFILES_SITE="https://github.com/rmj1001/dotfiles"
 DOTFILES_DOWN_DIR="${HOME}/.local/share/com.github.rmj1001.dotfiles"
 DOTFILES="${DOTFILES_DOWN_DIR}/files"
@@ -16,14 +29,7 @@ BASHRC="${HOME}/.bashrc"
 SHELLFILES="${HOME}/.shellfiles"
 SCRIPTS="${HOME}/System32"
 
-PRINT() {
-	printf "%b\n" "$1"
-}
-
-LOWERCASE() {
-	local text="$1"
-	printf "%b\n" "${text}" | tr '[:upper:]' '[:lower:]'
-}
+################################# LOGIC ########################################
 
 PRINT "Downloading dotfiles..."
 git pull "${DOTFILES_SITE}" "${DOTFILES_DOWN_DIR}"
