@@ -2,12 +2,13 @@
 
 ## Table of Contents
 
-- [Table of Contents](#table-of-contents)
-- [Warranty](#warranty)
-- [Install](#install)
-- [Distro Postinstall Scripts](#distro-postinstall-scripts)
-- [Dotfiles Development](#dotfiles-development)
-- [Scripts](#scripts)
+- [RMCJ's Dotfiles](#rmcjs-dotfiles)
+  - [Table of Contents](#table-of-contents)
+  - [Warranty](#warranty)
+  - [Install](#install)
+  - [Distro Postinstall Scripts](#distro-postinstall-scripts)
+  - [Dotfiles development](#dotfiles-development)
+    - [Scripts](#scripts)
 
 ## Warranty
 
@@ -27,13 +28,13 @@ symlinks. Make sure to back them up.
 Using `wget`:
 
 ```bash
-bash <(wget -qO- https://github.com/rmj1001/dotfiles/webinstaller.sh)
+bash <(wget -qO- https://raw.githubusercontent.com/rmj1001/dotfiles/main/webinstaller.sh)
 ```
 
 Using `curl`:
 
 ```bash
-bash <(curl -s https://github.com/rmj1001/dotfiles/webinstaller.sh)
+bash <(curl -s https://raw.githubusercontent.com/rmj1001/dotfiles/main/webinstaller.sh)
 ```
 
 ## Distro Postinstall Scripts
