@@ -12,7 +12,8 @@ export EDITOR
 
 # Default Browser
 [[ -x "$(command -v firefox)" ]] && BROWSER="$(command -v firefox)"
-[[ -x "$(command -v microsoft-edge)" ]] && BROWSER="$(command -v microsoft-edge)"
+[[ -x "$(command -v microsoft-edge)" ]] &&
+	BROWSER="$(command -v microsoft-edge)"
 export BROWSER
 
 # Default Authentication
@@ -144,7 +145,8 @@ CMD_EXISTS() {
 	return $?
 }
 
-### Checks for a filename in $PATH (commands), if not found then exit with an error
+### Checks for a filename in $PATH (commands), if not found
+### then exit with an error
 # usage: REQUIRE_CMD "7z" "tar" || exit 1
 REQUIRE_CMD() {
 	NEEDED=()
@@ -261,7 +263,10 @@ which() { command -v "${@}"; }
 [[ -x /bin/batcat ]] && bat() { /bin/batcat -P "${@}"; }
 
 # Listing files/directories
-unalias ls && function ls() { /usr/bin/ls --color=auto --group-directories-first "${@}"; }
+unalias ls && function ls() {
+	/usr/bin/ls --color=auto --group-directories-first "${@}"
+}
+
 unalias ll && function ll() { ls -AlvhF "${@}"; }
 function la() { ls -A "${@}"; }
 
@@ -315,6 +320,9 @@ restart-pipewire() {
 	systemctl restart --user pipewire-pulse
 	restart-bluetooth
 }
+
+# Hardware
+list-hardware() { lshw "${@}"; }
 
 # Default apps
 terminal() { ${TERMINAL} "${@}"; }
