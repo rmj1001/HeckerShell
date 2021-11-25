@@ -1,16 +1,5 @@
 #!/usr/bin/env bash
 
-################################# FUNCTIONS ####################################
-
-PRINT() {
-	printf "%b\n" "$1"
-}
-
-LOWERCASE() {
-	local text="$1"
-	printf "%b\n" "${text}" | tr '[:upper:]' '[:lower:]'
-}
-
 ################################# CONSTANTS ####################################
 
 DOTFILES_SITE="https://github.com/rmj1001/dotfiles"
@@ -34,34 +23,35 @@ SCRIPTS="${HOME}/System32"
 # Confirm whether to install dotfiles.
 printf '%b' "Are you sure you want to install this script?
 This script will delete certain files, including your current bashrc.\n
-Confirm? (y/N) " && read -r confirmInstall && PRINT
+Confirm? (y/N) " && read -r confirmInstall && printf "%b\n" ""
 
-[[ ! "${confirmInstall}" =~ ^[yY][eE]?[sS]?$ ]] && PRINT "Cancelling." && exit 1
+[[ ! "${confirmInstall}" =~ ^[yY][eE]?[sS]?$ ]] &&
+	printf "%b\n" "" "Cancelling." && exit 1
 
 # Download dotfiles
-PRINT "Downloading dotfiles..."
+printf "%b\n" "" "Downloading dotfiles..."
 git pull "${DOTFILES_SITE}" "${DOTFILES_DOWN_DIR}"
 
 # Scripts
-PRINT "Installing scripts..."
+printf "%b\n" "" "Installing scripts..."
 [[ -L "${SYM_SCRIPTS}" ]] || ln -sf "${SYM_SCRIPTS}" "${SCRIPTS}"
 
 # ZSH
-PRINT "Installing shell configs..."
+printf "%b\n" "" "Installing shell configs..."
 [[ -L "${SYM_ZSHRC}" ]] || ln -sf "${SYM_ZSHRC}" "${ZSHRC}"
 [[ -L "${SYM_BASHRC}" ]] || ln -sf "${SYM_BASHRC}" "${BASHRC}"
 [[ -L "${SYM_SHELLFILES}" ]] || ln -sf "${SYM_SHELLFILES}" "${SHELLFILES}"
 
 # Configs
-PRINT "Installing miscellaneous configs..."
+printf "%b\n" "" "Installing miscellaneous configs..."
 
 for folder in "${DOTFILES}"/.config/*; do
 	linkRef="${folder##*/}"
 	sym="${HOME}/.config/${linkRef}"
 
-	PRINT "Installing config ${linkRef}..."
+	printf "%b\n" "" "Installing config ${linkRef}..."
 
 	[[ -L "${sym}" ]] || ln -s "${folder}" "${sym}"
 done
 
-PRINT "Done."
+printf "%b\n" "" "Done."
