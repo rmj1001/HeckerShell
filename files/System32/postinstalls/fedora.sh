@@ -5,10 +5,10 @@
 #   Project: Fedora postinstall
 #   Version: 1.0
 #
-#   Usage: fedora.sh <flag> <args[]>...
+#   Usage: fedora.sh
 #
 #   Description:
-#		Postinstall script for fedora
+#		Curlable fedora post-install script
 ##############################################
 
 if [[ $EUID -eq 0 ]]; then
@@ -57,9 +57,6 @@ flatpak remote-add --user --if-not-exists \
 sudo dnf update
 sudo dnf groupinstall "Development Tools" "Development Libraries"
 
-# Gaming
-sudo dnf install lutris
-
 # Multimedia codecs & libdvdcss
 sudo dnf groupupdate multimedia --setop="install_weak_deps=False" \
 	--exclude=PackageKit-gstreamer-plugin
@@ -67,6 +64,9 @@ sudo dnf groupupdate multimedia --setop="install_weak_deps=False" \
 sudo dnf groupupdate sound-and-video
 sudo dnf install rpmfusion-free-release-tainted
 sudo dnf install libdvdcss
+
+# Gaming
+sudo dnf install lutris
 
 # Snaps
 sudo dnf install snapd fuse squashfuse kernel-modules
