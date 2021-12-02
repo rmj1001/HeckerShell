@@ -2,152 +2,158 @@
 
 ##############################################
 #   Author: Roy Conn
-#   Project: Fedora postinstall
+#   Project: Ubuntu postinstall
 #   Version: 1.0
 #
-#   Usage: fedora.sh <flag> <args[]>...
+#   Usage: ubuntu.sh
 #
 #   Description:
-#		Postinstall script for fedora
+#		Curlable ubuntu post-install script
 ##############################################
 
-# shellcheck disable=SC1091
-source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
+if [[ $EUID -eq 0 ]]; then
 
-# Preprocessing flags
-DISABLE_ROOT
-REQUIRE_CMD "apt" || exit 1
+	PROGRAM_NAME="$(basename "$0")"
 
-####################################
+	printf '%b' "'${PROGRAM_NAME}' should not be run as root. "
+	printf '%b\n' "Please try again as a normal user."
+	exit 1
+fi
 
-REBOOT=0
+[[ -x "$(which apt)" ]] || (
+	printf '%b\n' "This script must be run on Ubuntu." && exit 1
+)
 
-_help() {
-	_flags() {
-		PRINT "-------------|------|---------------------|"
-		PRINT "Flag|Args|Description"
-		PRINT "-------------|------|---------------------|"
-		PRINT "|||"
-		PRINT "-r, --repos|n/a|Install common repositories"
-		PRINT "-d, --development|n/a|Install developer libraries"
-		PRINT "-g, --games|n/a|Install games/supporting software"
-		PRINT "-m, --media|n/a|Install media codecs"
-		PRINT "-a, --all|n/a|Install all software"
-		PRINT "--reboot|n/a|Reboot the computer after installation"
-		PRINT "|||"
-		PRINT "-h, --help|n/a|Show this prompt"
-	}
+################################################################################
+# REPOSITORY SETUP
+#
 
-	PRINT "$(SCRIPTNAME) - Install common ubuntu software after install"
-	PRINT
-	PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"
-	PRINT "Example:\t$(SCRIPTNAME) --help"
-	PRINT
-	_flags | column -t -s'|'
-}
+# Install repositories/ppas
+ppas=(
+	"ppa:lutris-team/lutris"
+	"multiverse"
+)
 
-_repos() {
+for ppa in "${ppas[@]}"; do
 
-	# Install repositories/ppas
-	ppas=(
-		"ppa:lutris-team/lutris"
-	)
-
-	for ppa in "${ppas[@]}"; do
-
-		sudo add-apt-repository -y -n "${ppa}"
-
-	done
-
-	# Flathub
-	sudo apt update
-	sudo apt install flatpak gnome-software-plugin-flatpak
-	flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-}
-
-_development() {
-	sudo apt update
-	sudo apt install build-essential git
-}
-
-_games() {
-
-	# Install common gaming packages
-	packages=(
-		"lutris"
-		"steam-installer"
-		"meson"
-		"libsystemd-dev"
-		"pkg-config"
-		"ninja-build"
-		"git"
-		"libdbus-1-dev"
-		"libinih-dev"
-	)
-
-	sudo apt install "${packages[@]}"
-
-	# Gamemode
-	cd "${HOME}/Downloads" || return 1
-	[[ -d "${HOME}/Downloads/gamemode" ]] || git clone https://github.com/FeralInteractive/gamemode.git
-	cd gamemode || return 1
-
-	git checkout "${gamemodeVersion}"
-	./bootstrap.sh
-
-	# GDlauncher minecraft
-	flatpak install flathub io.gdevs.GDLauncher
-}
-
-_media() {
-	# Install multimedia codecs
-	sudo add-apt-repository multiverse
-	sudo apt install ubuntu-restricted-extras
-}
-
-# If no arguments are give, just show help prompt.
-[[ $# -eq 0 ]] && _help && exit 0
-
-# Iterate over all arguments and evaluate them
-while test $# -gt 0; do
-
-	case "$(LOWERCASE ${1})" in
-
-	-r | --repos)
-		shift
-		_repos
-		;;
-	-d | --development)
-		shift
-		_development
-		;;
-	-g | --games)
-		shift
-		_games
-		;;
-	-m | --media)
-		shift
-		_media
-		;;
-	-a | --all)
-		shift
-		_repos
-		_development
-		_games
-		_media
-		;;
-	--reboot) REBOOT=1 ;;
-
-	\? | -h | --help)
-		shift
-		_help
-		exit 0
-		;;
-
-	*) PRINT "$(SCRIPTNAME): Invalid argument '${1}'" && exit 1 ;;
-
-	esac
+	sudo add-apt-repository -y -n "${ppa}"
 
 done
 
-[[ ${REBOOT} -eq 1 ]] && sudo reboot
+sudo apt update
+
+# Flatpak Install
+sudo apt install flatpak gnome-software-plugin-flatpak
+
+# Flatpak Repositories (user-level only)
+flatpak remote-add --user --if-not-exists \
+	flathub https://flathub.org/repo/flathub.flatpakrepo
+flatpak remote-add --user --if-not-exists \
+	appcenter https://flatpak.elementary.io/repo.flatpakrepo
+
+################################################################################
+# SOFTWARE INSTALLATION
+#
+
+# Install common packages
+sudo apt install \
+	lutris \
+	steam-installer \
+	build-essential \
+	meson \
+	libsystemd-dev \
+	pkg-config \
+	ninja-build \
+	git \
+	libdbus-1-dev \
+	libinih-dev \
+	ubuntu-restricted-extras
+
+# Zap Appimage PM
+curl https://raw.githubusercontent.com/srevinsaju/zap/main/install.sh |
+	bash -s
+
+zap init
+zap daemon --install
+
+# Homebrew
+bash -c "$(
+	curl -fsSL
+	https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
+)"
+
+# Common flatpaks
+flatpak install --user --noninteractive --or-update flathub \
+	com.axosoft.GitKraken \
+	com.belmoussaoui.Authenticator \
+	com.belmoussaoui.Obfuscate \
+	com.discordapp.Discord \
+	com.etlegacy.ETLegacy \
+	com.github.bleakgrey.tootle \
+	com.github.hugolabe.Wike \
+	com.github.maoschanz.drawing \
+	com.github.rafostar.Clapper \
+	com.github.tchx84.Flatseal \
+	com.github.wwmm.easyeffects \
+	com.valvesoftware.Steam \
+	de.haeckerfelix.Fragments \
+	io.gdevs.GDLauncher \
+	io.github.achetagames.epic_asset_manager \
+	io.github.seadve.Kooha \
+	io.github.shiftey.Desktop \
+	io.mrarm.mcpelauncher \
+	net.veloren.veloren \
+	network.loki.Session \
+	nl.hjdskes.gcolor3 \
+	org.freedesktop.LinuxAudio.Plugins.LSP \
+	org.freedesktop.LinuxAudio.Plugins.TAP \
+	org.freedesktop.LinuxAudio.Plugins.ZamPlugins \
+	org.freedesktop.LinuxAudio.Plugins.swh \
+	org.freedesktop.Platform.Compat.i386 \
+	org.freedesktop.Platform.GL.default \
+	org.freedesktop.Platform.GL.default \
+	org.freedesktop.Platform.GL32.default \
+	org.freedesktop.Platform.VAAPI.Intel \
+	org.freedesktop.Platform.VAAPI.Intel \
+	org.freedesktop.Platform.VAAPI.Intel.i386 \
+	org.freedesktop.Platform.ffmpeg-full \
+	org.freedesktop.Platform.openh264 \
+	org.gimp.GIMP \
+	org.gimp.GIMP.Manual \
+	org.gnome.Boxes \
+	org.gnome.Boxes.Extension.OsinfoDb \
+	org.gnome.Builder \
+	org.gnome.Connections \
+	org.gnome.DejaDup \
+	org.gnome.Extensions \
+	org.gnome.Lollypop \
+	org.gnome.Platform \
+	org.gnome.Podcasts \
+	org.gnome.Polari \
+	org.gnome.TextEditor \
+	org.gnome.World.PikaBackup \
+	org.gnome.seahorse.Application \
+	org.gustavoperedo.FontDownloader \
+	org.inkscape.Inkscape \
+	org.kde.KStyle.Adwaita \
+	org.kde.Platform \
+	org.kde.PlatformTheme.QGnomePlatform \
+	org.kde.PlatformTheme.QtSNI \
+	org.kde.WaylandDecoration.QGnomePlatform-decoration \
+	org.kde.kdenlive \
+	org.libreoffice.LibreOffice \
+	org.mozilla.Thunderbird.Locale \
+	org.mozilla.firefox \
+	org.onlyoffice.desktopeditors \
+	org.signal.Signal \
+	org.videolan.VLC \
+	org.x.Warpinator \
+	re.sonny.Commit \
+	re.sonny.Tangram
+
+################################################################################
+# REBOOT
+#
+
+printf '%b' "Reboot? (Y/n) " && read -r reboot
+[[ -z "${reboot}" || "${reboot}" =~ ^[yY][eE]?[sS]?$ ]] && systemctl reboot
