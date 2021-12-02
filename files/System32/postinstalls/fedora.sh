@@ -160,10 +160,7 @@ _configs() {
 }
 
 _repos
-_development
-_games
-_media
-_snapd
+_software
 _configs
 
 printf '%b' "Reboot? (Y/n) " && read -r reboot
