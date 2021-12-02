@@ -22,8 +22,8 @@ REQUIRE_CMD "apt" || exit 1
 
 REBOOT=0
 
-_help () {
-	_flags () {
+_help() {
+	_flags() {
 		PRINT "-------------|------|---------------------|"
 		PRINT "Flag|Args|Description"
 		PRINT "-------------|------|---------------------|"
@@ -46,7 +46,7 @@ _help () {
 	_flags | column -t -s'|'
 }
 
-_repos () {
+_repos() {
 
 	# Install repositories/ppas
 	ppas=(
@@ -65,12 +65,12 @@ _repos () {
 	flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 }
 
-_development () {
+_development() {
 	sudo apt update
 	sudo apt install build-essential git
 }
 
-_games () {
+_games() {
 
 	# Install common gaming packages
 	packages=(
@@ -88,9 +88,9 @@ _games () {
 	sudo apt install "${packages[@]}"
 
 	# Gamemode
-	cd $HOME/Downloads
-	[[ -d "$HOME/Downloads/gamemode" ]] || git clone https://github.com/FeralInteractive/gamemode.git
-	cd gamemode
+	cd "${HOME}/Downloads" || return 1
+	[[ -d "${HOME}/Downloads/gamemode" ]] || git clone https://github.com/FeralInteractive/gamemode.git
+	cd gamemode || return 1
 
 	git checkout "${gamemodeVersion}"
 	./bootstrap.sh
@@ -99,7 +99,7 @@ _games () {
 	flatpak install flathub io.gdevs.GDLauncher
 }
 
-_media () {
+_media() {
 	# Install multimedia codecs
 	sudo add-apt-repository multiverse
 	sudo apt install ubuntu-restricted-extras
@@ -113,20 +113,41 @@ while test $# -gt 0; do
 
 	case "$(LOWERCASE ${1})" in
 
-		-r | --repos ) shift; _repos ;;
-		-d | --development ) shift; _development ;;
-		-g | --games ) shift; _games ;;
-		-m | --media ) shift; _media ;;
-		-a | --all ) shift; _repos; _development; _games; _media ;;
-		--reboot ) REBOOT=1 ;;
+	-r | --repos)
+		shift
+		_repos
+		;;
+	-d | --development)
+		shift
+		_development
+		;;
+	-g | --games)
+		shift
+		_games
+		;;
+	-m | --media)
+		shift
+		_media
+		;;
+	-a | --all)
+		shift
+		_repos
+		_development
+		_games
+		_media
+		;;
+	--reboot) REBOOT=1 ;;
 
-		\? | -h | --help ) shift; _help; exit 0 ;;
+	\? | -h | --help)
+		shift
+		_help
+		exit 0
+		;;
 
-		* ) PRINT "$(SCRIPTNAME): Invalid argument '${1}'" && exit 1 ;;
+	*) PRINT "$(SCRIPTNAME): Invalid argument '${1}'" && exit 1 ;;
 
 	esac
 
 done
 
 [[ ${REBOOT} -eq 1 ]] && sudo reboot
-
