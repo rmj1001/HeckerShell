@@ -1,5 +1,16 @@
 #!/usr/bin/env bash
 
+################################################################################
+#   Author: Roy Conn
+#   Project: Dotfiles
+#   Version: 1.0
+#
+#   Usage: webinstaller.sh
+#
+#   Description:
+#		Curl-able/wget-able webinstaller for my dotfiles
+################################################################################
+
 ################################# CONSTANTS ####################################
 
 DOTFILES_SITE="https://github.com/rmj1001/dotfiles.git"
