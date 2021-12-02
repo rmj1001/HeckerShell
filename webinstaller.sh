@@ -73,7 +73,7 @@ printf '%b\n' ""
 [[ "${confirmShell}" =~ ^[yY][eE]?[sS]?$ ]] && installShell
 
 # Misc configs
-printf "%b\n" "Install miscellaneous configs? (y/N) " && read -r confirmConfs
+printf "%b" "Install miscellaneous configs? (y/N) " && read -r confirmConfs
 printf '%b\n' ""
 [[ "${confirmConfs}" =~ ^[yY][eE]?[sS]?$ ]] && installConfigs
 
