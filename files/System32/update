@@ -19,56 +19,73 @@ DISABLE_ROOT
 
 ####################################
 
+LOG() {
+	local folder, logfile
+
+	folder="${HOME}/.local/share/com.github.rmj1001.dotfiles.updater/logs"
+	logfile="${folder}/$(date -u +"%Y-%m-%dT%H).log"
+
+	"${@}" >"${logfile}" 2>&1
+}
+
 UPDATER() {
+	local interactive=1
 
 	while test $# -gt 0; do
 
-		# Required command and command to eval
-		req="${1}" cmd="${2}"; shift; shift
+		[[ "${1}" == "--noninteractive" || "${1}" == "-n" ]] &&
+			interactive=0 &&
+			shift && continue
 
-		# If cmd does not exist, return with error code 1
+		# Required command and command to eval
+		req="${1}" cmd="${2}"
+		shift
+		shift
+
+		# If cmd does not exist, continue loop
 		CMD_EXISTS "${req}" || continue
 
 		clear
 
+		((interactive == 0)) && LOG eval "${cmd}" &&
+			(CMD_EXISTS "notify-send" &&
+				notify-send -i info -t 250 "Updated '${req}'.") && continue
+
 		read -rp "Update \"${req}\"? (Y/n) " confirm
 
-		CHECK_YES "${confirm}" && PRINT "Updating ${req}...\n" && eval "${cmd}" && PAUSE && continue
+		CHECK_YES "${confirm}" && PRINT "Updating ${req}...\n" &&
+			eval "${cmd}" &&
+			PAUSE && continue
+
 		PRINT "Skipped updating \"${req}\"" && PAUSE && continue
 
 	done
+
+	((interactive == 0)) && CMD_EXISTS "notify-send" &&
+		notify-send -i info -t 250 "Updates finished." && exit 0
+
+	clear && PRINT "Updates finished." && exit 0
+
 }
 
-UPDATER \
-	"flatpak" "flatpak update" \
+[[ "${1}" == "--noninteractive" || "${1}" == "-n" ]] && UPDATER -n \
+	"flatpak" "flatpak update --assumeyes" \
 	"snap" "sudo snap refresh" \
 	"brew" "brew upgrade" \
 	"apt" "sudo apt update && sudo apt upgrade" \
-	"dnf" "sudo dnf update" \
-	"rpm-ostree" "rpm-ostree upgrade" \
+	"dnf" "sudo dnf update --assumeyes" \
+	"rpm-ostree" "rpm-ostree upgrade --assumeyes" \
 	"pacman" "sudo pacman -Syu --noconfirm" \
 	"yay" "yay -Sua --noconfirm" \
-	"paru" "paru -Sua --noconfirm" \
+	"paru" "paru -Sua --noconfirm"
 
-#########################################################
-# Below is the old method for using the UPDATER function.
-# it's still valid syntax, but it would introduce too
-# many 'while' loops.
-#
-# UPDATER "flatpak" "flatpak update"
-# UPDATER "snap" "sudo snap refresh"
-# UPDATER "brew" "brew upgrade"
-# UPDATER "apt" "sudo apt update && sudo apt upgrade"
-# UPDATER "dnf" "sudo dnf update"
-# UPDATER "rpm-ostree" "rpm-ostree upgrade"
-# UPDATER "pacman" "sudo pacman -Syu --noconfirm"
-# UPDATER "yay" "yay -Sua --noconfirm"
-# UPDATER "paru" "paru -Sua --noconfirm"
-#
-#########################################################
-
-clear
-PRINT "Updates finished."
-PAUSE
-clear
-
+UPDATER \
+	"flatpak" "flatpak update --assumeyes" \
+	"snap" "sudo snap refresh" \
+	"brew" "brew upgrade" \
+	"apt" "sudo apt update && sudo apt upgrade" \
+	"dnf" "sudo dnf update --assumeyes" \
+	"rpm-ostree" "rpm-ostree upgrade --assumeyes" \
+	"pacman" "sudo pacman -Syu --noconfirm" \
+	"yay" "yay -Sua --noconfirm" \
+	"paru" "paru -Sua --noconfirm"
