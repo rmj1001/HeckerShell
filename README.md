@@ -44,6 +44,8 @@ There are post-install scripts for various distros in
 software for development, gaming, media (codecs), and more. These scripts will
 source the api since they need certain common functions.
 
+For the postinstall scripts, go [here](https://github.com/rmj1001/dotfiles/tree/main/files/System32/postinstalls)
+
 ## Dotfiles development
 
 1. Do not mark lib scripts as executable, since they are used more like headers.
