@@ -23,8 +23,18 @@ fi
 [[ -x "$(which dnf)" ]] || exit 1
 
 ################################################################################
+# REPOSITORY SETUP
+#
 
 clear
+
+# Configure DNF
+configFileContents="fastestmirror=True
+max_parallel_downloads=20
+deltrarpm=True
+defaultyes=True"
+
+printf '%b\n' "${configFileContents}" | sudo tee /etc/dnf/dnf.conf
 
 # RPM Fusion
 sudo dnf install \
@@ -40,6 +50,8 @@ flatpak remote-add --user --if-not-exists \
 	appcenter https://flatpak.elementary.io/repo.flatpakrepo
 
 ################################################################################
+# SOFTWARE INSTALLATION
+#
 
 # Development
 sudo dnf update
@@ -146,19 +158,15 @@ flatpak install --user --noninteractive --or-update flathub \
 	re.sonny.Tangram
 
 ################################################################################
-
-# DNF
-configFileContents="fastestmirror=True
-max_parallel_downloads=20
-deltrarpm=True
-defaultyes=True"
-
-printf '%b\n' "${configFileContents}" | sudo tee /etc/dnf/dnf.conf
+# MISCELLANEOUS CONFIGS
+#
 
 # Enable cronie
 systemctl enable crond
 
 ################################################################################
+# REBOOT
+#
 
 printf '%b' "Reboot? (Y/n) " && read -r reboot
 [[ -z "${reboot}" || "${reboot}" =~ ^[yY][eE]?[sS]?$ ]] && systemctl reboot
