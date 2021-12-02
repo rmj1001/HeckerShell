@@ -24,6 +24,8 @@ fi
 
 ################################################################################
 
+clear
+
 # RPM Fusion
 sudo dnf install \
 	"https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm" \
@@ -42,12 +44,6 @@ flatpak remote-add --user --if-not-exists \
 # Development
 sudo dnf update
 sudo dnf groupinstall "Development Tools" "Development Libraries"
-
-# Homebrew
-bash -c "$(
-	curl -fsSL
-	https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
-)"
 
 # Gaming
 sudo dnf install lutris
@@ -73,6 +69,12 @@ curl https://raw.githubusercontent.com/srevinsaju/zap/main/install.sh |
 
 zap init
 zap daemon --install
+
+# Homebrew
+bash -c "$(
+	curl -fsSL
+	https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
+)"
 
 # Common flatpaks
 flatpak install --user --noninteractive --or-update flathub \
