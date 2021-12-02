@@ -20,7 +20,9 @@ if [[ $EUID -eq 0 ]]; then
 	exit 1
 fi
 
-[[ -x "$(which dnf)" ]] || exit 1
+[[ -x "$(which dnf)" ]] || (
+	printf '%b\n' "This script must be run on Fedora." && exit 1
+)
 
 ################################################################################
 # REPOSITORY SETUP
