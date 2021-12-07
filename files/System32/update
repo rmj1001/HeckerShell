@@ -20,12 +20,14 @@ DISABLE_ROOT
 ####################################
 
 LOG() {
-	local folder, logfile
+	local folder
 
 	folder="${HOME}/.local/share/com.github.rmj1001.dotfiles.updater/logs"
-	logfile="${folder}/$(date -u +"%Y-%m-%dT%H).log"
+	logfile="${folder}/$(date -u +"%Y-%m-%dT%H").log"
 
-	"${@}" >"${logfile}" 2>&1
+	mkdir -p "${folder}"
+	touch "${logfile}"
+	"${@}" >>"${logfile}" 2>&1
 }
 
 UPDATER() {
