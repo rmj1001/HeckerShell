@@ -33,8 +33,7 @@ bash.load() {
 
 	done
 
-	# Print MOTD
-	cat "${SHELLFILES}/.motd.txt"
+	motd
 }
 
 bash.load

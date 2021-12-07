@@ -1,7 +1,6 @@
 #!/usr/bin/env zsh
 
-zsh.load()
-{
+zsh.load() {
 	clear
 
 	SHELLFILES="${HOME}/.shellfiles"
@@ -10,9 +9,9 @@ zsh.load()
 	export SYNTAXHIGH="${SHELLFILES}/.syntaxhighlighting"
 
 	# Install syntax highlighting if the ~/.zsh/.syntaxhighlighting folder is missing
-	[[ ! -d ${SYNTAXHIGH} ]] && \
-		printf "%b\n" "Installing syntax highlighting...\n" && \
-		git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${SYNTAXHIGH} && \
+	[[ ! -d ${SYNTAXHIGH} ]] &&
+		printf "%b\n" "Installing syntax highlighting...\n" &&
+		git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${SYNTAXHIGH} &&
 		printf "%b\n" "" && read -s -k "?Press ENTER to continue." && clear
 
 	# Source syntax highlighting
@@ -68,14 +67,12 @@ zsh.load()
 
 	done
 
-	# Print MOTD
-	cat ${SHELLFILES}/.motd.txt
-	printf "%b\n"
+	motd
+	printf "%b\n" ""
 
-	function precmd()
-	{
+	function precmd() {
 		for ((i = 0; i < $COLUMNS; ++i)); do
-		printf -
+			printf -
 		done
 
 		printf "%b\n" ""
@@ -83,4 +80,3 @@ zsh.load()
 }
 
 zsh.load
-

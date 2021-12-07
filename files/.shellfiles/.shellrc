@@ -197,6 +197,10 @@ CHECK_NO() {
 	return 1
 }
 
+### Print custom MOTD file to terminal
+# usage: motd
+motd() { cat "${SHELLFILES}/.motd.txt"; }
+
 ### Download youtube videos
 # usage: downloadYTVideo <video url>[]
 downloadYTVideo() {
@@ -391,9 +395,5 @@ userPrefix=/home/linuxbrew/.linuxbrew
 ### VTE
 ######################################
 
-if [[ $TILIX_ID ]] || [[ $VTE_VERSION ]]; then
-
-	# shellcheck source-path=/etc/profile.d/vte.sh
-	[[ -f "/etc/profile.d/vte.sh" ]] && source "/etc/profile.d/vte.sh"
-
-fi
+[[ $TILIX_ID || $VTE_VERSION ]] && [[ -f "/etc/profile.d/vte.sh" ]] &&
+	source "/etc/profile.d/vte.sh"
