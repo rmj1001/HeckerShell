@@ -1,107 +1,98 @@
 #!/usr/bin/env bash
 
-DOTFILES="$(dirname "$(readlink -f "$0")")/files"
+DOTFILES="$(dirname "$(readlink -f "${0}")")/files"
 
 # OG Paths
-SYM_ZSHRC="$DOTFILES/.zshrc"
-SYM_BASHRC="$DOTFILES/.bashrc"
-SYM_SHELLFILES="$DOTFILES/.shellfiles"
-SYM_SCRIPTS="$DOTFILES/System32"
+SYM_ZSHRC="${DOTFILES}/.zshrc"
+SYM_BASHRC="${DOTFILES}/.bashrc"
+SYM_SHELLFILES="${DOTFILES}/.shellfiles"
+SYM_SCRIPTS="${DOTFILES}/System32"
 
 # Paths
-ZSHRC="$HOME/.zshrc"
-BASHRC="$HOME/.bashrc"
-SHELLFILES="$HOME/.shellfiles"
-SCRIPTS="$HOME/System32"
+ZSHRC="${HOME}/.zshrc"
+BASHRC="${HOME}/.bashrc"
+SHELLFILES="${HOME}/.shellfiles"
+SCRIPTS="${HOME}/System32"
 
-PRINT()
-{
+PRINT() {
 	printf "%b\n" "$1"
 }
 
-LOWERCASE()
-{
+LOWERCASE() {
 	local text="$1"
-	printf "%b\n" "$text" | tr '[:upper:]' '[:lower:]'
+	printf "%b\n" "${text}" | tr '[:upper:]' '[:lower:]'
 }
 
-_install()
-{
-	local linkRef;
-	local sym;
+_install() {
+	local linkRef
+	local sym
 
 	PRINT
 
 	# Scripts
 	PRINT "Installing scripts..."
-	[[ -h "$SYM_SCRIPTS" ]] || ln -s $SYM_SCRIPTS $SCRIPTS
+	[[ -L "${SYM_SCRIPTS}" ]] || ln -s "${SYM_SCRIPTS}" "${SCRIPTS}"
 
 	# ZSH
 	PRINT "Installing shell configs..."
-	[[ -h "$SYM_ZSHRC" ]] || ln -s $SYM_ZSHRC $ZSHRC
-	[[ -h "$SYM_BASHRC" ]] || ln -s $SYM_BASHRC $BASHRC
-	[[ -h "$SYM_SHELLFILES" ]] || ln -s $SYM_SHELLFILES $SHELLFILES
+	[[ -L "${SYM_ZSHRC}" ]] || ln -s "${SYM_ZSHRC}" "${ZSHRC}"
+	[[ -L "${SYM_BASHRC}" ]] || ln -s "${SYM_BASHRC}" "${BASHRC}"
+	[[ -L "${SYM_SHELLFILES}" ]] || ln -s "${SYM_SHELLFILES}" "${SHELLFILES}"
 
 	# Configs
 	PRINT "Installing miscellaneous configs..."
 
-	for folder in $DOTFILES/.config/*
-	do
+	for folder in "${DOTFILES}"/.config/*; do
 		linkRef="${folder##*/}"
-		sym="$HOME/.config/$linkRef"
+		sym="${HOME}/.config/${linkRef}"
 
 		PRINT "Installing config ${linkRef}..."
 
-		[[ -h "$sym" ]] || ln -s $folder $sym
+		[[ -L "${sym}" ]] || ln -s "${folder}" "${sym}"
 	done
 
 	PRINT "Done."
 }
 
-_remove()
-{
+_remove() {
 	PRINT
 
 	# Scripts
 	PRINT "Removing scripts symlink..."
-	[[ -h "$SYM_SCRIPTS" ]] && rm $SYM_SCRIPTS
+	[[ -L "${SYM_SCRIPTS}" ]] && rm "${SYM_SCRIPTS}"
 
 	# ZSH
 	PRINT "Removing shell config symlinks..."
-	[[ -h "$SYM_ZSHRC" ]] && rm $SYM_ZSHRC $ZSHRC
-	[[ -h "$SYM_BASHRC" ]] && rm $SYM_BASHRC $BASHRC
-	[[ -h "$SYM_SHELLFILES" ]] && rm $SYM_SHELLFILES $SHELLFILES
+	[[ -L "${SYM_ZSHRC}" ]] && rm "${SYM_ZSHRC}" "${ZSHRC}"
+	[[ -L "${SYM_BASHRC}" ]] && rm "${SYM_BASHRC}" "${BASHRC}"
+	[[ -L "${SYM_SHELLFILES}" ]] && rm "${SYM_SHELLFILES}" "${SHELLFILES}"
 
 	# Configs
 	PRINT "Removing miscellaneous configs..."
 
-	local linkRef;
-	local sym;
+	local linkRef
+	local sym
 
-	for folder in $DOTFILES/.config/*
-	do
+	for folder in "${DOTFILES}"/.config/*; do
 		linkRef="${folder##*/}"
-		sym="$HOME/.config/$linkRef"
+		sym="$HOME/.config/${linkRef}"
 
 		PRINT "Removing config ${linkRef}..."
 
-		[[ -h "$sym" ]] && rm "$sym"
+		[[ -L "${sym}" ]] && rm "${sym}"
 	done
 
 	PRINT "Done."
 }
 
-_update()
-{
-	cd "$DOTFILES"/.. || return 1;
+_update() {
+	cd "$DOTFILES"/.. || return 1
 
 	git pull
 }
 
-_help()
-{
-	_help.commands()
-	{
+_help() {
+	_help.commands() {
 		PRINT "Command|Arguments|Description"
 		PRINT "(i) install||Install dotfiles to the system"
 		PRINT "(r) remove||Remove dotfiles from the system"
@@ -118,14 +109,13 @@ _help()
 	_help.commands | column -t -s "|"
 }
 
-case "$(LOWERCASE $1)" in
+case "$(LOWERCASE "${1}")" in
 
-	i | install ) _install ;;
-	r | remove ) _remove ;;
-	u | update ) _update ;;
-	\? | h | help ) _help ;;
-	* ) [[ -z "${1}" ]] && _help && exit 0 || PRINT "Invalid subcommand '$1'." \
-		&& exit 1
+i | install) _install ;;
+r | remove) _remove ;;
+u | update) _update ;;
+\? | h | help) _help ;;
+*) [[ -z "${1}" ]] && _help && exit 0 || PRINT "Invalid subcommand '${1}'." &&
+	exit 1 ;;
 
 esac
-
