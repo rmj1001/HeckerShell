@@ -91,7 +91,8 @@ bash -c "$(
 )"
 
 # Common flatpaks
-flatpak install --user --noninteractive --or-update flathub \
+flatpak repair
+flatpak install --user --noninteractive -y --or-update flathub \
 	com.axosoft.GitKraken \
 	com.belmoussaoui.Authenticator \
 	com.belmoussaoui.Obfuscate \
@@ -105,6 +106,7 @@ flatpak install --user --noninteractive --or-update flathub \
 	com.github.wwmm.easyeffects \
 	com.valvesoftware.Steam \
 	de.haeckerfelix.Fragments \
+	de.haeckerfelix.Shortwave \
 	io.gdevs.GDLauncher \
 	io.github.achetagames.epic_asset_manager \
 	io.github.seadve.Kooha \
@@ -113,19 +115,6 @@ flatpak install --user --noninteractive --or-update flathub \
 	net.veloren.veloren \
 	network.loki.Session \
 	nl.hjdskes.gcolor3 \
-	org.freedesktop.LinuxAudio.Plugins.LSP \
-	org.freedesktop.LinuxAudio.Plugins.TAP \
-	org.freedesktop.LinuxAudio.Plugins.ZamPlugins \
-	org.freedesktop.LinuxAudio.Plugins.swh \
-	org.freedesktop.Platform.Compat.i386 \
-	org.freedesktop.Platform.GL.default \
-	org.freedesktop.Platform.GL.default \
-	org.freedesktop.Platform.GL32.default \
-	org.freedesktop.Platform.VAAPI.Intel \
-	org.freedesktop.Platform.VAAPI.Intel \
-	org.freedesktop.Platform.VAAPI.Intel.i386 \
-	org.freedesktop.Platform.ffmpeg-full \
-	org.freedesktop.Platform.openh264 \
 	org.gimp.GIMP \
 	org.gimp.GIMP.Manual \
 	org.gnome.Boxes \
@@ -135,7 +124,6 @@ flatpak install --user --noninteractive --or-update flathub \
 	org.gnome.DejaDup \
 	org.gnome.Extensions \
 	org.gnome.Lollypop \
-	org.gnome.Platform \
 	org.gnome.Podcasts \
 	org.gnome.Polari \
 	org.gnome.TextEditor \
@@ -143,11 +131,6 @@ flatpak install --user --noninteractive --or-update flathub \
 	org.gnome.seahorse.Application \
 	org.gustavoperedo.FontDownloader \
 	org.inkscape.Inkscape \
-	org.kde.KStyle.Adwaita \
-	org.kde.Platform \
-	org.kde.PlatformTheme.QGnomePlatform \
-	org.kde.PlatformTheme.QtSNI \
-	org.kde.WaylandDecoration.QGnomePlatform-decoration \
 	org.kde.kdenlive \
 	org.libreoffice.LibreOffice \
 	org.mozilla.Thunderbird.Locale \
