@@ -46,7 +46,7 @@ _wine() {
 	MSG="WINE removed."
 
 	_wine.error() {
-		([[ GUI -eq 0 ]] && PRINT "$(SCRIPTNAME): WINE could not be removed." && return 1) ||
+		( ((GUI == 0)) && PRINT "$(SCRIPTNAME): WINE could not be removed." && return 1) ||
 			(zenity --info --title "$(SCRIPTNAME)" --width 100 --height 100 --text "WINE could not be removed." && return 1)
 	}
 
@@ -74,7 +74,7 @@ _wine() {
 
 	test $? != 0 && _wine.error
 
-	[[ ${GUI} -eq 0 ]] && PRINT "$(SCRIPTNAME): Removed WINE." && return 0
+	((GUI == 0)) && PRINT "$(SCRIPTNAME): Removed WINE." && return 0
 
 	zenity --info \
 		--title "$(SCRIPTNAME)" \
@@ -92,7 +92,7 @@ _trash() {
 			cd "${TRASHF}"/info && SILENTRUN rm -rf ./*
 	) || MSG="Trash failed to empty."
 
-	[[ ${GUI} -eq 0 ]] && PRINT "$(SCRIPTNAME): ${MSG}" && return 0
+	((GUI == 0)) && PRINT "$(SCRIPTNAME): ${MSG}" && return 0
 
 	zenity --info \
 		--title "$(SCRIPTNAME)" \
