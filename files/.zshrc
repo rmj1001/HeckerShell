@@ -50,7 +50,9 @@ zsh.load() {
 	autoload -U compinit && compinit
 
 	# Source shellrc (common settings between bash and zsh)
-	source ${SHELLFILES}/.shellrc
+	source "${SHELLFILES}/.shellenv"
+	source "${SHELLFILES}/.shellfns"
+	source "${SHELLFILES}/.shellsrcs"
 
 	# Plugins
 	export plugins=(
