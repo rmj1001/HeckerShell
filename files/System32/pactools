@@ -45,10 +45,10 @@ _help() {
 
 	_help.commands() {
 		PRINT "Command|Arguments|Description"
-		PRINT "browse||Browse installed packages"
-		PRINT "refresh-mirrors||Refresh your mirror list"
-		PRINT "list-orphans||List dependencies no longer required by any packages"
-		PRINT "remove-orphans||Remove orphans and their config files"
+		PRINT "-b, --browse||Browse installed packages"
+		PRINT "-u, --update-mirrors||Update your mirror list"
+		PRINT "-l, --list-orphans||List dependencies no longer required by any packages"
+		PRINT "-r, --remove-orphans||Remove orphans and their config files"
 	}
 
 	PRINT
@@ -63,19 +63,19 @@ _help() {
 
 case "$(LOWERCASE "$1")" in
 
-	browse) _browse ;;
+-b | --browse) _browse ;;
 
-	refresh-mirrors) _refresh_mirrors ;;
+-u | --update-mirrors) _refresh_mirrors ;;
 
-	list-orphans) _list_orphans ;;
+-l | --list-orphans) _list_orphans ;;
 
-	remove-orphans) _remove_orphans ;;
+-r | --remove-orphans) _remove_orphans ;;
 
-	help) _help ;;
+\? | -h | --help) _help ;;
 
-	*)
-		[[ -z "$1" ]] && _help && exit 0
-		PRINT "Invalid command '$1'!" && exit 1
-		;;
+*)
+	[[ -z "$1" ]] && _help && exit 0
+	PRINT "Invalid command '$1'!" && exit 1
+	;;
 
 esac
