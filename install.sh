@@ -14,8 +14,8 @@
 ################################# CONSTANTS ####################################
 
 DOTFILES_SITE="https://github.com/rmj1001/dotfiles.git"
-DOTFILES_DOWN_DIR="${HOME}/.local/share/com.github.rmj1001.dotfiles"
-DOTFILES="${DOTFILES_DOWN_DIR}/files"
+DOTFILES_DOWN_DIR="${HOME}/.local/share"
+DOTFILES="${DOTFILES_DOWN_DIR}/dotfiles/files"
 
 # OG Paths
 SYM_ZSHRC="${DOTFILES}/.zshrc"
@@ -43,17 +43,18 @@ SCRIPTS="${HOME}/System32"
 
 # Download dotfiles
 printf "%b\n" "Downloading dotfiles..."
-git clone "${DOTFILES_SITE}" "${DOTFILES_DOWN_DIR}"
+cd "${DOTFILES_DOWN_DIR}" || exit 1
+git clone "${DOTFILES_SITE}"
 
 # Install scripts
 printf "%b\n" "Installing scripts..."
-[[ -L "${SYM_SCRIPTS}" ]] || ln -sf "${SYM_SCRIPTS}" "${SCRIPTS}"
+ln -sf "${SYM_SCRIPTS}" "${SCRIPTS}"
 
 # Install shellfiles
 printf "%b\n" "Installing shell configs..."
-[[ -L "${SYM_ZSHRC}" ]] || ln -sf "${SYM_ZSHRC}" "${ZSHRC}"
-[[ -L "${SYM_BASHRC}" ]] || ln -sf "${SYM_BASHRC}" "${BASHRC}"
-[[ -L "${SYM_SHELLFILES}" ]] || ln -sf "${SYM_SHELLFILES}" "${SHELLFILES}"
+ln -sf "${SYM_ZSHRC}" "${ZSHRC}"
+ln -sf "${SYM_BASHRC}" "${BASHRC}"
+ln -sf "${SYM_SHELLFILES}" "${SHELLFILES}"
 
 # Install miscellany configs
 printf "%b\n" "Installing miscellaneous configs..."
