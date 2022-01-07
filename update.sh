@@ -17,7 +17,7 @@ DOTFILES_DOWN_DIR="${HOME}/.local/share/dotfiles"
 
 ################################# LOGIC ########################################
 
-[[ -x "$(command -v)" ]] || printf '%b\n' \
+[[ -x "$(command -v git)" ]] || printf '%b\n' \
     'git must be installed.' && exit 1
 
 cd "${DOTFILES_DOWN_DIR}" || printf '%b\n' 'Dotfiles does not exist.' && exit 1
