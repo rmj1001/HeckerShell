@@ -43,7 +43,7 @@ SCRIPTS="${HOME}/System32"
 
 # Download dotfiles
 printf "%b\n" "Downloading dotfiles..."
-git pull "${DOTFILES_SITE}" "${DOTFILES_DOWN_DIR}"
+git clone "${DOTFILES_SITE}" "${DOTFILES_DOWN_DIR}"
 
 # Install scripts
 printf "%b\n" "Installing scripts..."
