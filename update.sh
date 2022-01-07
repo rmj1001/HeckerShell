@@ -17,9 +17,9 @@ DOTFILES_DOWN_DIR="${HOME}/.local/share/dotfiles"
 
 ################################# LOGIC ########################################
 
-[[ -x "$(command -v git)" ]] || printf '%b\n' \
-    'git must be installed.' && exit 1
+[[ -x "$(command -v git)" ]] || { printf '%b\n' \
+    'git must be installed.' && exit 1; } 
 
-cd "${DOTFILES_DOWN_DIR}" || printf '%b\n' 'Dotfiles does not exist.' && exit 1
+cd "${DOTFILES_DOWN_DIR}" || { printf '%b\n' 'Dotfiles does not exist.' && exit 1; }
 
 git pull
