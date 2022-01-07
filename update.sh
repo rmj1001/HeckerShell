@@ -13,7 +13,7 @@
 
 ################################# CONSTANTS ####################################
 
-DOTFILES_DOWN_DIR="${HOME}/.local/share/com.github.rmj1001.dotfiles"
+DOTFILES_DOWN_DIR="${HOME}/.local/share/dotfiles"
 
 ################################# LOGIC ########################################
 

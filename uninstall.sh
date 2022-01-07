@@ -13,7 +13,7 @@
 
 ################################# CONSTANTS ####################################
 
-DOTFILES_DIR="${HOME}/.local/share/com.github.rmj1001.dotfiles"
+DOTFILES_DIR="${HOME}/.local/share/dotfiles"
 DOTFILES="${DOTFILES_DIR}/files"
 
 # Paths
