@@ -44,12 +44,7 @@ sudo apt update
 
 # Flatpak Install
 sudo apt install flatpak gnome-software-plugin-flatpak
-
-# Flatpak Repositories (user-level only)
-flatpak remote-add --user --if-not-exists \
-	flathub https://flathub.org/repo/flathub.flatpakrepo
-flatpak remote-add --user --if-not-exists \
-	appcenter https://flatpak.elementary.io/repo.flatpakrepo
+bash <(curl -s https://raw.githubusercontent.com/rmj1001/dotfiles/main/files/System32/postinstalls/flatconfig.sh)
 
 ################################################################################
 # SOFTWARE INSTALLATION
@@ -81,58 +76,6 @@ bash -c "$(
 	curl -fsSL
 	https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
 )"
-
-# Common flatpaks
-flatpak repair
-flatpak install --user --noninteractive -y --or-update flathub \
-	com.axosoft.GitKraken \
-	com.belmoussaoui.Authenticator \
-	com.belmoussaoui.Obfuscate \
-	com.discordapp.Discord \
-	com.etlegacy.ETLegacy \
-	com.github.bleakgrey.tootle \
-	com.github.hugolabe.Wike \
-	com.github.maoschanz.drawing \
-	com.github.rafostar.Clapper \
-	com.github.tchx84.Flatseal \
-	com.github.wwmm.easyeffects \
-	com.valvesoftware.Steam \
-	de.haeckerfelix.Fragments \
-	de.haeckerfelix.Shortwave \
-	io.gdevs.GDLauncher \
-	io.github.achetagames.epic_asset_manager \
-	io.github.seadve.Kooha \
-	io.github.shiftey.Desktop \
-	io.mrarm.mcpelauncher \
-	net.veloren.veloren \
-	network.loki.Session \
-	nl.hjdskes.gcolor3 \
-	org.gimp.GIMP \
-	org.gimp.GIMP.Manual \
-	org.gnome.Boxes \
-	org.gnome.Boxes.Extension.OsinfoDb \
-	org.gnome.Builder \
-	org.gnome.Connections \
-	org.gnome.DejaDup \
-	org.gnome.Extensions \
-	org.gnome.Lollypop \
-	org.gnome.Podcasts \
-	org.gnome.Polari \
-	org.gnome.TextEditor \
-	org.gnome.World.PikaBackup \
-	org.gnome.seahorse.Application \
-	org.gustavoperedo.FontDownloader \
-	org.inkscape.Inkscape \
-	org.kde.kdenlive \
-	org.libreoffice.LibreOffice \
-	org.mozilla.Thunderbird.Locale \
-	org.mozilla.firefox \
-	org.onlyoffice.desktopeditors \
-	org.signal.Signal \
-	org.videolan.VLC \
-	org.x.Warpinator \
-	re.sonny.Commit \
-	re.sonny.Tangram
 
 ################################################################################
 # REBOOT
