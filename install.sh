@@ -36,7 +36,7 @@ SCRIPTS="${HOME}/System32"
 	printf '%b\n' "Git is not installed." && exit 1
 
 # Confirm uninstallation
-printf '%b\n' "Are you sure you want to install this" && read -r confirm
+printf '%b' "Are you sure you want to install this? (y/N) " && read -r confirm
 printf '%b\n' ""
 
 [[ "${confirm}" =~ ^[yY][eE]?[sS]?$ ]] || printf '%b\n' "Cancelling." && exit 1
