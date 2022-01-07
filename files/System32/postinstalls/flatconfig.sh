@@ -4,10 +4,10 @@
 # 
 ###############################
 
-flatpak repo-add --if-not-exists --user \
+flatpak remote-add --if-not-exists --user \
 	flathub https://flathub.org/repo/flathub.flatpakrepo
 
-flatpak repo-add --if-not-exists --user \
+flatpak remote-add --if-not-exists --user \
 	elementaryio https://flatpak.elementary.io/repo.flatpakrepo
 
 flatpak repair

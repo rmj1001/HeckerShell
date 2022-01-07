@@ -70,7 +70,7 @@ sudo dnf install snapd fuse squashfuse kernel-modules
 sudo ln -s /var/lib/snapd/snap /snap
 
 # Miscellaneous RPMs
-sudo dnf install xclip cronie
+sudo dnf install xclip cronie jq
 
 # Zap Appimage PM
 curl https://raw.githubusercontent.com/srevinsaju/zap/main/install.sh |
