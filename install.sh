@@ -69,4 +69,4 @@ for folder in "${DOTFILES}"/.config/*; do
 done
 
 # Finish
-printf "%b\n" "Done."
+printf "%b\n" "Dotfiles installed to '${DOTFILES_DOWN_DIR}/dotfiles'."
