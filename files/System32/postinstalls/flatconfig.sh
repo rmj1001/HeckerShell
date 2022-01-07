@@ -10,7 +10,7 @@ flatpak remote-add --if-not-exists --user \
 flatpak remote-add --if-not-exists --user \
 	elementaryio https://flatpak.elementary.io/repo.flatpakrepo
 
-flatpak repair
+flatpak repair --user
 
 flatpak install --user --noninteractive --or-update flathub \
 ar.xjuan.Cambalache \
