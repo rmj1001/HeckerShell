@@ -31,7 +31,8 @@ fi
 clear
 
 # Configure DNF
-configFileContents="fastestmirror=True
+configFileContents="[main]
+fastestmirror=True
 max_parallel_downloads=20
 deltrarpm=True
 defaultyes=True"
