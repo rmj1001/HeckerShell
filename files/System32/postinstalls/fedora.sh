@@ -85,7 +85,7 @@ bash -c "$(
 )"
 
 # Install flatpaks
-
+bash <(curl -s https://raw.githubusercontent.com/rmj1001/dotfiles/main/files/System32/postinstalls/flatconfig.sh)
 
 ################################################################################
 # MISCELLANEOUS CONFIGS
