@@ -46,7 +46,7 @@ printf '%b\n' ""
 }
 
 # Check if dotfiles exist
-[[ -d "${DOTFILES_DOWN_DIR}" ]] && {
+[[ -d "${DOTFILES_DOWN_DIR}/dotfiles" ]] && {
 	printf "%b\n" "Dotfiles directory exists. Try using the update script."
 	printf "%b\n" "Exiting..."
 	exit 1
