@@ -36,12 +36,17 @@ SCRIPTS="${HOME}/System32"
 	printf '%b\n' "Git is not installed." && exit 1
 
 # Confirm uninstallation
-printf '%b' "Are you sure you want to install this? (y/N) "
-read -r confirm
+read -r -p "Are you sure you want to install this? (y/N) " confirm
 
 printf '%b\n' ""
 
 [[ "${confirm}" =~ ^[yY][eE]?[sS]?$ ]] || printf '%b\n' "Cancelling." && exit 1
+
+# Check if dotfiles exist
+[[ -d "${DOTFILES_DOWN_DIR}" ]] && {
+	printf "%b\n" "Dotfiles directory exists, exiting..."
+	exit 1
+}
 
 # Download dotfiles
 printf "%b\n" "Downloading dotfiles..."
