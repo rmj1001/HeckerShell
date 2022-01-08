@@ -40,7 +40,8 @@ read -r -p "Are you sure you want to install this? (y/N) " confirm
 
 printf '%b\n' ""
 
-[[ "${confirm}" =~ ^[yY][eE]?[sS]?$ ]] || printf '%b\n' "Cancelling." && exit 1
+[[ "${confirm}" =~ ^[yY][eE]?[sS]?$ ]] ||
+	{ printf '%b\n' "Cancelling." && exit 1; }
 
 # Check if dotfiles exist
 [[ -d "${DOTFILES_DOWN_DIR}" ]] && {
