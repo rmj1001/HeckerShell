@@ -44,7 +44,11 @@ sudo apt update
 
 # Flatpak Install
 sudo apt install flatpak gnome-software-plugin-flatpak
-bash <(curl -s https://raw.githubusercontent.com/rmj1001/dotfiles/main/files/System32/postinstalls/flatconfig.sh)
+# Install flatpaks
+bash <(
+	curl -s
+	https://raw.githubusercontent.com/rmj1001/dotfiles/main/files/System32/postinstalls/helpers/flatconfig.sh
+)
 
 ################################################################################
 # SOFTWARE INSTALLATION
