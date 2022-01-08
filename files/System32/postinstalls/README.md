@@ -6,6 +6,7 @@ common configurations for various OSs.
 - [Post-installation Scripts](#post-installation-scripts)
   - [Distro Installers](#distro-installers)
   - [Flatpak Apps Installer](#flatpak-apps-installer)
+  - [Portable Apps Installer](#portable-apps-installer)
 
 ## Distro Installers
 
@@ -43,4 +44,16 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/rmj1001/dotfiles/main/fi
 ```bash
 # wget
 bash -c "$(wget -qO- https://raw.githubusercontent.com/rmj1001/dotfiles/main/files/System32/postinstalls/helpers/flatconfig.sh)"
+```
+
+## Portable Apps Installer
+
+```bash
+# curl
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/rmj1001/dotfiles/main/files/System32/postinstalls/helpers/portableApps.sh)"
+```
+
+```bash
+# wget
+bash -c "$(wget -qO- https://raw.githubusercontent.com/rmj1001/dotfiles/main/files/System32/postinstalls/helpers/portableApps.sh)"
 ```
