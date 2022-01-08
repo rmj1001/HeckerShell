@@ -25,6 +25,12 @@ fi
 )
 
 ################################################################################
+# ENVIRONMENT VARIABLES
+#
+
+HELPERS="https://raw.githubusercontent.com/rmj1001/dotfiles/main/files/System32/postinstalls/helpers"
+
+################################################################################
 # REPOSITORY SETUP
 #
 
@@ -41,14 +47,6 @@ for ppa in "${ppas[@]}"; do
 done
 
 sudo apt update
-
-# Flatpak Install
-sudo apt install flatpak gnome-software-plugin-flatpak
-# Install flatpaks
-bash <(
-	curl -s
-	https://raw.githubusercontent.com/rmj1001/dotfiles/main/files/System32/postinstalls/helpers/flatconfig.sh
-)
 
 ################################################################################
 # SOFTWARE INSTALLATION
@@ -68,18 +66,18 @@ sudo apt install \
 	libinih-dev \
 	ubuntu-restricted-extras
 
-# Zap Appimage PM
-curl https://raw.githubusercontent.com/srevinsaju/zap/main/install.sh |
-	bash -s
+# Flatpak Backend
+sudo apt install flatpak gnome-software-plugin-flatpak
 
-zap init
-zap daemon --install
+################################################################################
+# PORTABLE SOFTWARE
+#
 
-# Homebrew
-bash -c "$(
-	curl -fsSL
-	https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
-)"
+# Install flatpak apps
+bash <(curl -s ${HELPERS}/flatconfig.sh)
+
+# Install portable software
+bash <(curl -s ${HELPERS}/portableApps.sh)
 
 ################################################################################
 # REBOOT

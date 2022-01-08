@@ -25,6 +25,12 @@ fi
 }
 
 ################################################################################
+# ENVIRONMENT VARIABLES
+#
+
+HELPERS="https://raw.githubusercontent.com/rmj1001/dotfiles/main/files/System32/postinstalls/helpers"
+
+################################################################################
 # REPOSITORY SETUP
 #
 
@@ -54,12 +60,6 @@ sudo dnf groupupdate core
 sudo dnf update
 sudo dnf groupinstall "Development Tools" "Development Libraries"
 
-# Development: VS Code
-sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
-sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
-dnf check-update
-sudo dnf install code
-
 # Multimedia codecs & libdvdcss
 sudo dnf groupupdate multimedia --setop="install_weak_deps=False" \
 	--exclude=PackageKit-gstreamer-plugin
@@ -76,34 +76,28 @@ sudo dnf install snapd fuse squashfuse kernel-modules
 sudo ln -s /var/lib/snapd/snap /snap
 
 # Miscellaneous RPMs
-sudo dnf install xclip micro cronie
-
-# Install flatpaks
-bash <(
-	curl -s
-	https://raw.githubusercontent.com/rmj1001/dotfiles/main/files/System32/postinstalls/helpers/flatconfig.sh
-)
-
-#### MISCELLANEOUS APPLICATIONS
+sudo dnf install xclip micro cronie jq
 
 # Microsoft Edge
 sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
 sudo dnf config-manager --add-repo https://packages.microsoft.com/yumrepos/edge
 dnf install microsoft-edge
 
-# Zap Appimage PM
-sudo dnf install jq
-curl https://raw.githubusercontent.com/srevinsaju/zap/main/install.sh |
-	bash -s
+# VS Code
+sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
+dnf check-update
+sudo dnf install code
 
-zap init
-zap daemon --install
+################################################################################
+# PORTABLE SOFTWARE
+#
 
-# Homebrew
-bash -c "$(
-	curl -fsSL
-	https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
-)"
+# Install flatpak apps
+bash <(curl -s ${HELPERS}/flatconfig.sh)
+
+# Install portable software
+bash <(curl -s ${HELPERS}/portableApps.sh)
 
 ################################################################################
 # MISCELLANEOUS CONFIGS
