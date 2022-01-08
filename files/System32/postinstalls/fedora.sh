@@ -76,9 +76,20 @@ sudo dnf install snapd fuse squashfuse kernel-modules
 sudo ln -s /var/lib/snapd/snap /snap
 
 # Miscellaneous RPMs
-sudo dnf install xclip cronie jq
+sudo dnf install xclip micro cronie
+
+# Install flatpaks
+bash <(curl -s https://raw.githubusercontent.com/rmj1001/dotfiles/main/files/System32/postinstalls/flatconfig.sh)
+
+#### MISCELLANEOUS APPLICATIONS
+
+# Microsoft Edge
+sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+sudo dnf config-manager --add-repo https://packages.microsoft.com/yumrepos/edge
+dnf install microsoft-edge
 
 # Zap Appimage PM
+sudo dnf install jq
 curl https://raw.githubusercontent.com/srevinsaju/zap/main/install.sh |
 	bash -s
 
@@ -90,9 +101,6 @@ bash -c "$(
 	curl -fsSL
 	https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
 )"
-
-# Install flatpaks
-bash <(curl -s https://raw.githubusercontent.com/rmj1001/dotfiles/main/files/System32/postinstalls/flatconfig.sh)
 
 ################################################################################
 # MISCELLANEOUS CONFIGS
