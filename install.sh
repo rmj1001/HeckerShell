@@ -47,7 +47,8 @@ printf '%b\n' ""
 
 # Check if dotfiles exist
 [[ -d "${DOTFILES_DOWN_DIR}" ]] && {
-	printf "%b\n" "Dotfiles directory exists, exiting..."
+	printf "%b\n" "Dotfiles directory exists. Try using the update script."
+	printf "%b\n" "Exiting..."
 	exit 1
 }
 
