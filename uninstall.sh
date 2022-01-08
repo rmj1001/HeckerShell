@@ -29,10 +29,14 @@ SCRIPTS="${HOME}/System32"
     printf '%b\n' "Git is not installed." && exit 1
 
 # Confirm uninstallation
-printf '%b\n' "Are you sure you want to uninstall this" && read -r confirm
+read -r -p "Are you sure you want to uninstall this? (y/N) " confirm
+
 printf '%b\n' ""
 
-[[ "${confirm}" =~ ^[yY][eE]?[sS]?$ ]] || printf '%b\n' "Cancelling." && exit 1
+[[ ! "${confirm}" =~ ^[yY][eE]?[sS]?$ ]] && {
+    printf '%b\n' "Cancelling."
+    exit 1
+}
 
 # Uninstall scripts
 printf "%b\n" "Uninstalling scripts..."
