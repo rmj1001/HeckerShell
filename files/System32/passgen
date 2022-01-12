@@ -21,6 +21,6 @@ REQUIRE_CMD "tr" "fold" "head" || exit 1
 ####################################
 
 chars="16"
-[[ -n "${1}" ]] && chars="${1}"
+test -n "${1}" && chars="${1}"
 
 tr -cd '[:alnum:]' </dev/urandom | fold -w"${chars}" | head -n 1

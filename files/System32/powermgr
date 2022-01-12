@@ -26,7 +26,7 @@ powermgr.gui() {
 	REQUIRE_CMD "zenity" "rofi" || return 1
 
 	# If no display then disallow GUI use.
-	[[ -z "$DISPLAY" ]] && PRINT "No valid display!" && return 1
+	test -z "$DISPLAY" && PRINT "No valid display!" && return 1
 
 	# Turns on zenity dialogs
 	GUI=1
@@ -35,33 +35,33 @@ powermgr.gui() {
 	cmd="$(LOWERCASE "$(PRINT 'Shutdown\nReboot\nLock\nLogout\nCancel' | rofi -dmenu -i -window-title "Power Manager" -prompt "Option: ")")"
 
 	# Show message 'cancelled' if cmd is empty (exit from rofi)
-	[[ "${cmd}" == "" ]] && zenity --info --text="Cancelled." && return 1
+	test -z "${cmd}" && zenity --info --text="Cancelled." && return 1
 }
 
 # Shutdown PC
 powermgr.shutoff() {
-	[[ $GUI -eq 1 ]] && zenity --info --text="Shutting down..."
+	test $GUI -eq 1 && zenity --info --text="Shutting down..."
 
 	systemctl poweroff
 }
 
 # Restart PC
 powermgr.restart() {
-	[[ $GUI -eq 1 ]] && zenity --info --text="Rebooting..."
+	test $GUI -eq 1 && zenity --info --text="Rebooting..."
 
 	systemctl reboot
 }
 
 # Kill user process and logout
 powermgr.logout() {
-	[[ $GUI -eq 1 ]] && zenity --info --text="Logging out..."
+	test $GUI -eq 1 && zenity --info --text="Logging out..."
 
 	killall -u "$USER"
 }
 
 # Screen locker
 powermgr.lock() {
-	[[ $GUI -eq 1 ]] && zenity --info --text="Locking screen..."
+	test $GUI -eq 1 && zenity --info --text="Locking screen..."
 
 	# Lightdm lock command
 	CMD_EXISTS "dm-tool" && dm-tool lock && return 0
@@ -104,8 +104,9 @@ powermgr.help() {
 }
 
 test $# -eq 0 && powermgr.help && exit 0
-[[ "${1}" == "gui" ]] && powermgr.gui
-[[ "${1}" != "gui" ]] && cmd="$(LOWERCASE "${1}")"
+test "${1}" == "gui" &&
+	powermgr.gui ||
+	cmd="$(LOWERCASE "${1}")"
 
 # Evaluate commands
 case "${cmd}" in

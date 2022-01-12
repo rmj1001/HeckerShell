@@ -49,12 +49,16 @@ _ls() {
 	cd "${dir}" || exit
 }
 
-_mk() {
+_script_conditions() {
 	# Check for script name argument
-	[[ -z "${1}" ]] && PRINT "You must specify a script name!" && exit 1
+	test -z "${1}" && PRINT "You must specify a script name!" && return 1
 
 	# Check if script exists
-	[[ -e "${SCRIPTS}"/"${1}" ]] && PRINT "Script '${1}' already exists!" && return 1
+	test ! -e "${SCRIPTS}"/"${1}" && PRINT "Script '${1}' doesn't exist!" && return 1
+}
+
+_mk() {
+	_script_conditions "$@" || return 1
 
 	cp "${SCRIPTS}"/00-template.sh "${SCRIPTS}"/"${1}".sh &&
 		mv "${SCRIPTS}"/"${1}".sh "${SCRIPTS}"/"${1}" &&
@@ -63,11 +67,7 @@ _mk() {
 }
 
 _ed() {
-	# Check for script name argument
-	[[ -z "${1}" ]] && PRINT "You must specify a script name!" && return 1
-
-	# Check if script exists
-	[[ ! -e "${SCRIPTS}"/"${1}" ]] && PRINT "Script '${1}' doesn't exist!" && return 1
+	_script_conditions "$@" || return 1
 
 	# Edit the script
 	${EDITOR:=nano} "${SCRIPTS}"/"${1}" &&
@@ -75,11 +75,7 @@ _ed() {
 }
 
 _rm() {
-	# Check for script name argument
-	[[ -z "${1}" ]] && PRINT "You must specify a script name!" && return 1
-
-	# Check if script exists
-	[[ ! -e "${SCRIPTS}"/"${1}" ]] && PRINT "Script '${1}' doesn't exist!" && return 1
+	_script_conditions "$@" || return 1
 
 	# Confirm whether to delete script
 	read -r -p "Are you sure you want to delete '${1}'? (y/N) " confirm
@@ -93,7 +89,7 @@ _rm() {
 }
 
 # If no arguments are given, just show help prompt.
-[[ $# -eq 0 ]] && _help && exit 0
+test $# -eq 0 && _help && exit 0
 
 # Iterate over all arguments and evaluate them
 while test $# -gt 0; do
