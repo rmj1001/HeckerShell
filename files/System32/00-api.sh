@@ -118,7 +118,7 @@ REQUIRE_ROOT() {
 	# shellcheck disable=SC2046
 	test $(id -u) -eq 0 && return 0
 
-	printf "%b\n" "This script must be run as root"
+	printf "%b\n" "'$(SCRIPTNAME)' must be run as root"
 	exit 1
 }
 
@@ -130,7 +130,7 @@ DISABLE_ROOT() {
 	# shellcheck disable=SC2046
 	test $(id -u) -ne 0 && return 0
 
-	PRINT "'$(basename "$0")' should not be run as root. Please try again as a normal user."
+	PRINT "'$(SCRIPTNAME)' should not be run as root. Please try again as a normal user."
 	exit 1
 }
 
