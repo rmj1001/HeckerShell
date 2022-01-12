@@ -32,7 +32,7 @@ NPRINT() {
 # Usage: PAUSE
 # Returns: int
 PAUSE() {
-	printf "%b" "Press <ENTER> to continue..." && read -r
+	NPRINT "Press <ENTER> to continue..." && read -r
 }
 
 # Description: Sets the terminal window title
@@ -40,7 +40,7 @@ PAUSE() {
 # Usage: TITLE "test"
 # Returns: void
 TITLE() {
-	printf "%b" "\033]2;${1}\a"
+	NPRINT "\033]2;${1}\a"
 }
 
 # Description: Generate a random number from 1 to the specified maximum
@@ -56,7 +56,7 @@ RANDOM_NUM() {
 # Usage: name="$(LOWERCASE $name)"
 # Returns: string
 LOWERCASE() {
-	printf "%b" "${1}" | tr "[:upper:]" "[:lower:]"
+	NPRINT "${1}" | tr "[:upper:]" "[:lower:]"
 }
 
 # Description: Converts a string to all UPPERCASE characters
@@ -64,7 +64,7 @@ LOWERCASE() {
 # Usage: name="$(UPPERCASE $name)"
 # Returns: string
 UPPERCASE() {
-	printf "%b" "${1}" | tr "[:lower:]" "[:upper:]"
+	NPRINT "${1}" | tr "[:lower:]" "[:upper:]"
 }
 
 # Description: Trim all leading/trailing whitespace from a string
@@ -89,7 +89,7 @@ TRIM() {
 # Usage: SCRIPTNAME
 # Returns: string
 SCRIPTNAME() {
-	printf "%b" "$(basename "$(readlink -nf "$0")")"
+	NPRINT "$(basename "$(readlink -nf "$0")")"
 }
 
 # Description: Checks for a filename in $PATH (commands), if not found then exit with an error
@@ -105,8 +105,8 @@ REQUIRE_CMD() {
 
 	test ${#NEEDED[@]} -eq 0 && return 0
 
-	printf "%b\n" "The following programs are required to run this program:"
-	printf "%b\n" "${NEEDED[@]}"
+	PRINT "The following programs are required to run this program:"
+	PRINT "${NEEDED[@]}"
 	return 1
 }
 
@@ -118,7 +118,7 @@ REQUIRE_ROOT() {
 	# shellcheck disable=SC2046
 	test $(id -u) -eq 0 && return 0
 
-	printf "%b\n" "'$(SCRIPTNAME)' must be run as root"
+	PRINT "'$(SCRIPTNAME)' must be run as root"
 	exit 1
 }
 
