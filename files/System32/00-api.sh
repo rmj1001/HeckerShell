@@ -107,12 +107,12 @@ REQUIRE_CMD() {
 		command -v "${arg}" >/dev/null 2>&1 || NEEDED+=("${arg}")
 	done
 
-	if [ "${#NEEDED[@]}" = 0 ]; then
-		printf "%b\n" "The following programs are required to run this program:"
-		printf "%b\n" "${NEEDED[@]}"
+	[ "${#NEEDED[@]}" != "0" ] && return 0
 
-		return 1
-	fi
+	printf "%b\n" "The following programs are required to run this program:"
+	printf "%b\n" "${NEEDED[@]}"
+
+	return 1
 }
 
 # Description: Checks to see if the script is being run as root, and if not then exit.
@@ -120,7 +120,7 @@ REQUIRE_CMD() {
 # Usage: REQUIRE_ROOT
 # Returns: string
 REQUIRE_ROOT() {
-	if [ "$(id -u)" != 0 ]; then
+	if [ "$(id -u)" != "0" ]; then
 		printf "%b\n" "This script must be run as root"
 		exit 1
 	fi
