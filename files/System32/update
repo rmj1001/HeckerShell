@@ -49,11 +49,11 @@ UPDATER() {
 
 		clear
 
-		((interactive == 0)) && LOG eval "${cmd}" &&
-			(CMD_EXISTS "notify-send" &&
-				notify-send -i info -t 250 "Updated '${req}'.") && continue
+		test $interactive -eq 0 && LOG eval "${cmd}" &&
+			{ CMD_EXISTS "notify-send" &&
+				notify-send -i info -t 250 "Updated '${req}'."; } && continue
 
-		read -rp "Update \"${req}\"? (Y/n) " confirm
+		NPRINT "Update \"${req}\"? (Y/n) " && read -r confirm
 
 		CHECK_YES "${confirm}" && PRINT "Updating ${req}...\n" &&
 			eval "${cmd}" &&
@@ -63,31 +63,29 @@ UPDATER() {
 
 	done
 
-	((interactive == 0)) && CMD_EXISTS "notify-send" &&
+	test $interactive -eq 0 && CMD_EXISTS "notify-send" &&
 		notify-send -i info -t 250 "Updates finished." && exit 0
 
 	clear && PRINT "Updates finished." && exit 0
 
 }
 
-[[ "${1}" == "--noninteractive" || "${1}" == "-n" ]] && UPDATER -n \
-	"flatpak" "flatpak update --assumeyes" \
-	"snap" "sudo snap refresh" \
-	"brew" "brew upgrade" \
-	"apt" "sudo apt update && sudo apt upgrade" \
-	"dnf" "sudo dnf update --assumeyes" \
-	"rpm-ostree" "rpm-ostree upgrade --assumeyes" \
-	"pacman" "sudo pacman -Syu --noconfirm" \
-	"yay" "yay -Sua --noconfirm" \
+ENTRIES=(
+	"flatpak" "flatpak update --assumeyes"
+	"snap" "sudo snap refresh"
+	"brew" "brew upgrade"
+	"apt" "sudo apt update && sudo apt upgrade"
+	"dnf" "sudo dnf update --assumeyes"
+	"rpm-ostree" "rpm-ostree upgrade --assumeyes"
+	"pacman" "sudo pacman -Syu --noconfirm"
+	"yay" "yay -Sua --noconfirm"
 	"paru" "paru -Sua --noconfirm"
+)
 
-UPDATER \
-	"flatpak" "flatpak update --assumeyes" \
-	"snap" "sudo snap refresh" \
-	"brew" "brew upgrade" \
-	"apt" "sudo apt update && sudo apt upgrade" \
-	"dnf" "sudo dnf update --assumeyes" \
-	"rpm-ostree" "rpm-ostree upgrade --assumeyes" \
-	"pacman" "sudo pacman -Syu --noconfirm" \
-	"yay" "yay -Sua --noconfirm" \
-	"paru" "paru -Sua --noconfirm"
+{ test "${1}" == "--noninteractive" || test "${1}" == "-n"; } &&
+	{
+		UPDATER -n "${ENTRIES[@]}"
+		exit 0
+	}
+
+UPDATER "${ENTRIES[@]}"
