@@ -50,8 +50,12 @@ UPDATER() {
 		clear
 
 		test $interactive -eq 0 && LOG eval "${cmd}" &&
-			{ CMD_EXISTS "notify-send" &&
-				notify-send -i info -t 250 "Updated '${req}'."; } && continue
+			{
+				CMD_EXISTS "notify-send" &&
+					notify-send -i info -t 250 "Updated '${req}'."
+
+				PRINT "Updated '${req}'."
+			} && continue
 
 		NPRINT "Update \"${req}\"? (Y/n) " && read -r confirm
 
