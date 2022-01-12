@@ -42,25 +42,25 @@ trash.file.check() {
 
 trash.getPath() {
   confFile="${1}"
-  PRINT "$(grep -m 1 Path= ${confFile} | sed 's|Path=||')"
+  PRINT "$(grep -m 1 Path= "${confFile}" | sed 's|Path=||')"
 }
 
 trash.getDate() {
   confFile="${1}"
-  PRINT "$(grep -m 1 DeletionDate= ${confFile} | sed 's|DeletionDate=||')"
+  PRINT "$(grep -m 1 DeletionDate= "${confFile}" | sed 's|DeletionDate=||')"
 }
 
 trash.files.add() {
   trash.file.check "$1"
   if [ -e "${FILE}" ]; then
-    FILENAME="$(basename ${FILE})"
-    DELPATH=$(readlink -f ${FILE})
+    FILENAME="$(basename "${FILE}")"
+    DELPATH=$(readlink -f "${FILE}")
     DELDATE=$(date +"%Y-%m-%dT%H:%M:%S")
 
     PRINT "[Trash Info]" >"${TRASHINFO}/${FILENAME}.trashinfo"
     PRINT "Path=${DELPATH}" >>"${TRASHINFO}/${FILENAME}.trashinfo"
     PRINT "DeletionDate=${DELDATE}" >>"${TRASHINFO}/${FILENAME}.trashinfo"
-    mv ${FILE} ${TRASH}
+    mv "${FILE}" "${TRASH}"
 
     PRINT "Moved ${FILE} to the trash!"
     exit 0
@@ -76,7 +76,7 @@ trash.files.restore() {
   FILEINFO="${TRASHINFO}/${FILE}.trashinfo"
 
   if [ -f "${FILEINFO}" ] && [ -e "${FILEPATH}" ]; then
-    RESTOREPATH="$(trash.getPath ${FILEINFO})"
+    RESTOREPATH="$(trash.getPath "${FILEINFO}")"
 
     mv "${FILEPATH}" "${RESTOREPATH}"
     rm -f "${FILEINFO}"
@@ -89,8 +89,8 @@ trash.files.restore() {
 }
 
 trash.files.empty() {
-  cd ${TRASH} && SILENTRUN rm -rf ./*
-  cd ${TRASHINFO} && SILENTRUN rm -rf ./*
+  cd "${TRASH}" && SILENTRUN rm -rf ./*
+  cd "${TRASHINFO}" && SILENTRUN rm -rf ./*
 
   PRINT "Trash emptied!"
 }
@@ -129,7 +129,7 @@ trash.help() {
   trash.help.commands | column -t -s "|"
 }
 
-cmd="$(LOWERCASE ${1})"
+cmd="$(LOWERCASE "${1}")"
 
 case "${cmd}" in
 a | add)
@@ -142,7 +142,7 @@ e | empty)
   trash.files.empty
   ;;
 l | list)
-  ls --color=auto -AlvhF --group-directories-first $TRASH
+  ls --color=auto -AlvhF --group-directories-first "${TRASH}"
   exit 0
   ;;
 i | info)
