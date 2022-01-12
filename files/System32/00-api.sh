@@ -43,11 +43,6 @@ TITLE() {
 	printf "%b" "\033]2;${1}\a"
 }
 
-TEST() {
-	# shellcheck disable=SC2003
-	expr "$@" >/dev/null
-}
-
 # Description: Generate a random number from 1 to the specified maximum
 #
 # Usage: RANDOM_NUM 100
@@ -108,7 +103,7 @@ REQUIRE_CMD() {
 		command -v "${arg}" >/dev/null 2>&1 || NEEDED+=("${arg}")
 	done
 
-	TEST "${#NEEDED[@]}" '!=' "0" && return 0
+	test ${#NEEDED[@]} -ne 0 && return 0
 
 	printf "%b\n" "The following programs are required to run this program:"
 	printf "%b\n" "${NEEDED[@]}"
@@ -120,7 +115,8 @@ REQUIRE_CMD() {
 # Usage: REQUIRE_ROOT
 # Returns: string
 REQUIRE_ROOT() {
-	TEST "$(id -u)" "=" "0" && return 0
+	# shellcheck disable=SC2046
+	test $(id -u) -eq 0 && return 0
 
 	printf "%b\n" "This script must be run as root"
 	exit 1
@@ -131,7 +127,8 @@ REQUIRE_ROOT() {
 # Usage: DISABLE_ROOT
 # Returns: string
 DISABLE_ROOT() {
-	TEST "$(id -u)" "!=" "0" && return 0
+	# shellcheck disable=SC2046
+	test $(id -u) -ne 0 && return 0
 
 	PRINT "'$(basename "$0")' should not be run as root. Please try again as a normal user."
 	exit 1
@@ -159,7 +156,7 @@ CMD_EXISTS() {
 # Returns: return code (1 for yes/empty, 1 for no)
 CHECK_YES() {
 	echo "$1" | grep -Eq '[yY][eE]?[sS]?' && return 0
-	TEST "$1" "=" "" && return 0
+	test -z "$1" && return 0
 	return 1
 }
 
@@ -169,7 +166,7 @@ CHECK_YES() {
 # Returns: return code (0 for no/empty, 1 for yes)
 CHECK_NO() {
 	echo "$1" | grep -Eq '[nN][oO]?' && return 0
-	TEST "$1" "=" "" && return 0
+	test "$1" != "" && return 0
 	return 1
 }
 
