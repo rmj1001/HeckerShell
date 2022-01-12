@@ -33,8 +33,6 @@ NPRINT() {
 # Returns: int
 PAUSE() {
 	printf "%b" "Press <ENTER> to continue..." && read -r
-
-	return 0
 }
 
 # Description: Sets the terminal window title
@@ -43,6 +41,11 @@ PAUSE() {
 # Returns: void
 TITLE() {
 	printf "%b" "\033]2;${1}\a"
+}
+
+TEST() {
+	# shellcheck disable=SC2003
+	expr "$@" >/dev/null
 }
 
 # Description: Generate a random number from 1 to the specified maximum
@@ -59,7 +62,6 @@ RANDOM_NUM() {
 # Returns: string
 LOWERCASE() {
 	printf "%b" "${1}" | tr "[:upper:]" "[:lower:]"
-	return 0
 }
 
 # Description: Converts a string to all UPPERCASE characters
@@ -68,7 +70,6 @@ LOWERCASE() {
 # Returns: string
 UPPERCASE() {
 	printf "%b" "${1}" | tr "[:lower:]" "[:upper:]"
-	return 0
 }
 
 # Description: Trim all leading/trailing whitespace from a string
@@ -101,17 +102,16 @@ SCRIPTNAME() {
 # Usage: REQUIRE_CMD "7z" "tar" || exit 1
 # Returns: string
 REQUIRE_CMD() {
-	NEEDED=()
+	declare -a NEEDED
 
 	for arg in "${@}"; do
 		command -v "${arg}" >/dev/null 2>&1 || NEEDED+=("${arg}")
 	done
 
-	[ "${#NEEDED[@]}" != "0" ] && return 0
+	TEST "${#NEEDED[@]}" '!=' "0" && return 0
 
 	printf "%b\n" "The following programs are required to run this program:"
 	printf "%b\n" "${NEEDED[@]}"
-
 	return 1
 }
 
@@ -120,10 +120,10 @@ REQUIRE_CMD() {
 # Usage: REQUIRE_ROOT
 # Returns: string
 REQUIRE_ROOT() {
-	if [ "$(id -u)" != "0" ]; then
-		printf "%b\n" "This script must be run as root"
-		exit 1
-	fi
+	TEST "$(id -u)" "=" "0" && return 0
+
+	printf "%b\n" "This script must be run as root"
+	exit 1
 }
 
 # Description: Checks to see if the script is being run as root, and if so then exit.
@@ -131,13 +131,10 @@ REQUIRE_ROOT() {
 # Usage: DISABLE_ROOT
 # Returns: string
 DISABLE_ROOT() {
-	if [ "$(id -u)" = "0" ]; then
+	TEST "$(id -u)" "!=" "0" && return 0
 
-		PROGRAM_NAME="$(basename "$0")"
-
-		PRINT "'${PROGRAM_NAME}' should not be run as root. Please try again as a normal user."
-		exit 1
-	fi
+	PRINT "'$(basename "$0")' should not be run as root. Please try again as a normal user."
+	exit 1
 }
 
 # Description: Run code silently
@@ -146,7 +143,6 @@ DISABLE_ROOT() {
 # Returns: return exit code
 SILENTRUN() {
 	"$@" >/dev/null 2>&1
-	return $?
 }
 
 # Description: Check to see if command exists
@@ -155,7 +151,6 @@ SILENTRUN() {
 # Returns: return code
 CMD_EXISTS() {
 	command -v "${1}" >/dev/null 2>&1
-	return $?
 }
 
 # Description: Check to see if input is 'yes' or empty
@@ -164,7 +159,7 @@ CMD_EXISTS() {
 # Returns: return code (1 for yes/empty, 1 for no)
 CHECK_YES() {
 	echo "$1" | grep -Eq '[yY][eE]?[sS]?' && return 0
-	[ -z "$1" ] && return 0
+	TEST "$1" "=" "" && return 0
 	return 1
 }
 
@@ -174,7 +169,7 @@ CHECK_YES() {
 # Returns: return code (0 for no/empty, 1 for yes)
 CHECK_NO() {
 	echo "$1" | grep -Eq '[nN][oO]?' && return 0
-	[ -z "$1" ] && return 0
+	TEST "$1" "=" "" && return 0
 	return 1
 }
 
