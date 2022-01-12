@@ -97,7 +97,7 @@ SCRIPTNAME() {
 # Usage: REQUIRE_CMD "7z" "tar" || exit 1
 # Returns: string
 REQUIRE_CMD() {
-	declare -a NEEDED
+	NEEDED=()
 
 	for arg in "${@}"; do
 		command -v "${arg}" >/dev/null 2>&1 || NEEDED+=("${arg}")
