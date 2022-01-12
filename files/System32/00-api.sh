@@ -103,7 +103,7 @@ REQUIRE_CMD() {
 		command -v "${arg}" >/dev/null 2>&1 || NEEDED+=("${arg}")
 	done
 
-	test ${#NEEDED[@]} -ne 0 && return 0
+	test ${#NEEDED[@]} -eq 0 && return 0
 
 	printf "%b\n" "The following programs are required to run this program:"
 	printf "%b\n" "${NEEDED[@]}"
