@@ -47,7 +47,7 @@ UPDATER() {
 		# If cmd does not exist, continue loop
 		CMD_EXISTS "${req}" || continue
 
-		clear
+		test $interactive -eq 0 && clear
 
 		test $interactive -eq 0 && LOG eval "${cmd}" &&
 			{
