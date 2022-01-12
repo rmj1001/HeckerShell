@@ -32,7 +32,7 @@ NPRINT() {
 # Usage: PAUSE
 # Returns: int
 PAUSE() {
-	read -r -p "Press <ENTER> to continue..."
+	printf "%b" "Press <ENTER> to continue..." && read -r
 
 	return 0
 }
@@ -50,7 +50,7 @@ TITLE() {
 # Usage: RANDOM_NUM 100
 # Returns: int
 RANDOM_NUM() {
-	printf "%b" "$((RANDOM % ${1} + 1))"
+	eval "shuf -i 1-${1} -n 1"
 }
 
 # Description: Converts a string to all api.std.failMsg characters
@@ -76,7 +76,7 @@ UPPERCASE() {
 # Usage: TRIM "   this      "
 # Returns: string
 TRIM() {
-	local var="$*"
+	var="$*"
 
 	# remove leading whitespace characters
 	var="${var##*( )}"
@@ -107,7 +107,7 @@ REQUIRE_CMD() {
 		command -v "${arg}" >/dev/null 2>&1 || NEEDED+=("${arg}")
 	done
 
-	if [[ ${#NEEDED[@]} -gt 0 ]]; then
+	if [ "${#NEEDED[@]}" = 0 ]; then
 		printf "%b\n" "The following programs are required to run this program:"
 		printf "%b\n" "${NEEDED[@]}"
 
@@ -120,7 +120,7 @@ REQUIRE_CMD() {
 # Usage: REQUIRE_ROOT
 # Returns: string
 REQUIRE_ROOT() {
-	if [[ $EUID -ne 0 ]]; then
+	if [ "$(id -u)" != 0 ]; then
 		printf "%b\n" "This script must be run as root"
 		exit 1
 	fi
@@ -131,7 +131,7 @@ REQUIRE_ROOT() {
 # Usage: DISABLE_ROOT
 # Returns: string
 DISABLE_ROOT() {
-	if [[ $EUID -eq 0 ]]; then
+	if [ "$(id -u)" = "0" ]; then
 
 		PROGRAM_NAME="$(basename "$0")"
 
@@ -163,8 +163,8 @@ CMD_EXISTS() {
 # Usage: CHECK_YES <var>
 # Returns: return code (1 for yes/empty, 1 for no)
 CHECK_YES() {
-	[[ $1 =~ [yY][eE]?[sS]? ]] && return 0
-	[[ -z "$1" ]] && return 0
+	echo "$1" | grep -Eq '[yY][eE]?[sS]?' && return 0
+	[ -z "$1" ] && return 0
 	return 1
 }
 
@@ -173,8 +173,8 @@ CHECK_YES() {
 # Usage: CHECK_NO <var>
 # Returns: return code (0 for no/empty, 1 for yes)
 CHECK_NO() {
-	[[ $1 =~ [nN][oO]? ]] && return 0
-	[[ -z "$1" ]] && return 0
+	echo "$1" | grep -Eq '[nN][oO]?' && return 0
+	[ -z "$1" ] && return 0
 	return 1
 }
 
@@ -184,13 +184,13 @@ CHECK_NO() {
 # Returns: void (reads file and inits variables in script from file)
 READ_CONF() {
 
-	local file="${1}"
-	local section=""
-	local var=""
-	local val=""
+	RCfile="${1}"
+	section=""
+	var=""
+	val=""
 
 	# If file doesn't exist, return with error.
-	[[ ! -f "${file}" ]] && PRINT "$(SCRIPTNAME): Invalid file ${file}." && return 1
+	[ ! -f "${RCfile}" ] && PRINT "$(SCRIPTNAME): Invalid file ${RCfile}." && return 1
 
 	# Read file line-by-line
 	while read -r line; do
@@ -198,22 +198,22 @@ READ_CONF() {
 		line="$(TRIM "${line}")"
 
 		# Continue to next line if commented
-		[[ $line =~ ^#.* ]] && continue
+		echo "$line" | grep -Eq '^#\.*' && continue
 
 		# If line is a section, set `$section` variable and continue to next line
-		[[ "${line}" =~ ^\[[a-z]+\]$ ]] && section="$(NPRINT "${line}" | sed -e 's|\[\([a-z]\+\)\]|\1|')" && continue
+		echo "$line" | grep -Eq '^\[[a-z]+\]$' && section="$(NPRINT "${line}" | sed -e 's|\[\([a-z]\+\)\]|\1|')" && continue
 
 		# If line is a key=value pair, then set `var` and `val` accordingly, else continue to next line.
-		[[ "${line}" =~ ^[a-z]+\=\"?\'?.*\"?\'?$ ]] || continue
-		[[ "${line}" =~ ^[a-z]+\=\"?\'?.*\"?\'?$ ]] &&
+		echo "$line" | grep -Eq "^[a-z]+\=\"?\'?.*\"?\'?$" || continue
+		echo "$line" | grep -Eq "^[a-z]+\=\"?\'?.*\"?\'?$" &&
 			var="$(NPRINT "${line}" | sed 's|\([a-z]\+\)\=.*|\1|')" &&
 			val="$(NPRINT "${line}" | sed 's|.*\=||g' | cut -d\" -f2 | cut -d\' -f2)"
 
 		# If no section, import as `var="val"`
-		[[ -z "${section}" ]] && eval "${var}=\"${val}\"" && continue
+		[ -z "${section}" ] && eval "${var}=\"${val}\"" && continue
 
 		# If section, import as `section.var="val"`
 		eval "${section}_${var}=\"${val}\""
 
-	done <"${file}"
+	done <"${RCfile}"
 }
