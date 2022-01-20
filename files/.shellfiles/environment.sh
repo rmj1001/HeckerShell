@@ -31,7 +31,16 @@ export XDG_CACHE_HOME="${HOME}/.cache"
 export TRASH="${XDG_DATA_HOME}/Trash/files"
 
 # Environment Variables
+export LC_COLLATE="en_US.UTF-8"
+export LC_CTYPE="en_US.UTF-8"
+export LC_MESSAGES="en_US.UTF-8"
+export LC_MONETARY="en_US.UTF-8"
+export LC_NUMERIC="en_US.UTF-8"
+export LC_TIME="en_US.UTF-8"
+export LC_ALL="en_US.UTF-8"
 export LANG="en_US.UTF-8"
+export LANGUAGE="en_US.UTF-8"
+export LESSCHARSET="utf-8"
 export SNAPS="/snap/bin"
 export GNUPGHOME="${HOME}/.gnupg"
 export CARGO_HOME="${XDG_DATA_HOME}/cargo"   # Rust
@@ -43,6 +52,10 @@ export XSERVERRC="${XDG_CONFIG_HOME}/X11/xserverrc"
 export ANDROID_HOME="${XDG_DATA_HOME}/android-sdk"
 export MYSQL_HISTFILE="${XDG_DATA_HOME}/mysql_history"
 export QT_QPA_PLATFORMTHEME="qt5ct"
+export SSH_KEY_PATH="${HOME}/.ssh/id_rsa"
+# GPG authorization
+GPG_TTY="$(tty)"
+export GPG_TTY
 
 # Compilation flags
 export ARCHFLAGS="-arch x86_64"

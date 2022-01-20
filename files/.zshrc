@@ -3,7 +3,7 @@
 zsh.load() {
 	clear
 
-	SHELLFILES="${HOME}/.shellfiles"
+	export SHELLFILES="${HOME}/.shellfiles"
 
 	# Syntax Highlighting
 	export SYNTAXHIGH="${SHELLFILES}/.syntaxhighlighting"
@@ -50,9 +50,9 @@ zsh.load() {
 	autoload -U compinit && compinit
 
 	# Source shellrc (common settings between bash and zsh)
-	source "${SHELLFILES}/.shellenv"
-	source "${SHELLFILES}/.shellfns"
-	source "${SHELLFILES}/.shellsrcs"
+	for config in ${SHELLFILES}/*.sh; do
+		source "${config}"
+	done
 
 	# Plugins
 	export plugins=(

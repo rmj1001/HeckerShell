@@ -214,6 +214,15 @@ correctGPGperms() {
     chmod 700 ~/.gnupg
 }
 
+# Man pages
+manual() {
+	/usr/bin/man "${@}"
+}
+
+man() {
+	printf "%b\n" "Based sigma grindset gender, not woman"
+}
+
 # Update software from source
 makeupdate() {
     git pull && sudo make uninstall && make clean && make &&

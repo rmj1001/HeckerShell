@@ -1,13 +1,12 @@
-#################################################################
-# 	Roy Conn 						#
-#								#
-# 	Reddit		u/rmj1001				#
-# 	Twitter		@RoyConn10				#
-# 	Matrix		@rmj1001:matrix.org			#
-# 	Mastodon	@Hydra_Slash_Linux@fosstodon.org	#
-# 	Youtube		https://bit.ly/3qGsGSJ			#
-# 	Github		https://github.com/rmj1001		#
-#								#
-# 	<My Dotfiles>	https://github.com/rmj1001/dotfiles	#
-#								#
-#################################################################
+##############################################################
+
+    Roy Conn
+
+    Reddit		u/rmj1001
+    Twitter		@RoyConn10
+    Matrix		@rmj1001:matrix.org
+    Mastodon	@Hydra_Slash_Linux@fosstodon.org
+    Youtube		https://bit.ly/3qGsGSJ
+    Github		https://github.com/rmj1001
+
+##############################################################
