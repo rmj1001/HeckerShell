@@ -115,9 +115,22 @@ CHECK_NO() {
     return 1
 }
 
-### Print custom MOTD file to terminal
+### Print custom MOTD to terminal
 # usage: motd
-motd() { cat "${SHELLFILES}/.motd.txt"; }
+motd() {
+    PRINT "########################################################"
+    PRINT "#"
+    PRINT "# Roy Conn"
+    PRINT "#"
+    PRINT "# Reddit \t u/rmj1001"
+    PRINT "# Twitter \t @RoyConn10"
+    PRINT "# Matrix \t @rmj1001:matrix.org"
+    PRINT "# Mastodon \t @Hydra_Slash_Linux@foostodon.org"
+    PRINT "# YouTube \t https://bit.ly/3qGsGSJ"
+    PRINT "# Github \t https://github.com/rmj"
+    PRINT "#"
+    PRINT "########################################################"
+}
 
 ### Download youtube videos
 # usage: downloadYTVideo <video url>[]
@@ -216,11 +229,11 @@ correctGPGperms() {
 
 # Man pages
 manual() {
-	/usr/bin/man "${@}"
+    /usr/bin/man "${@}"
 }
 
 man() {
-	printf "%b\n" "Based sigma grindset gender, not woman"
+    printf "%b\n" "Based sigma grindset gender, not woman"
 }
 
 # Update software from source
