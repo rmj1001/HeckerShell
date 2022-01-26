@@ -25,7 +25,6 @@ NUMBERS=()
 RESULTS=()
 
 while test $# -gt 0; do
-
 	case "$(LOWERCASE "${1}")" in
 
 	--raw)

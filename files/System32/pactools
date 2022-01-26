@@ -42,23 +42,25 @@ _remove_orphans() {
 }
 
 _help() {
-
-	_help.commands() {
-		PRINT "Command|Arguments|Description"
-		PRINT "-b, --browse||Browse installed packages"
-		PRINT "-u, --update-mirrors||Update your mirror list"
-		PRINT "-l, --list-orphans||List dependencies no longer required by any packages"
-		PRINT "-r, --remove-orphans||Remove orphans and their config files"
+	_flags() {
+		PRINT "-------------|------|---------------------"
+		PRINT "Flag|Args|Description"
+		PRINT "-------------|------|---------------------"
+		PRINT "||"
+		PRINT "-b, --browse||"
+		PRINT "-u, --update-mirrors||"
+		PRINT "-l, --list-orphans||"
+		PRINT "-r, --remove-orphans||"
+		PRINT "||"
+		PRINT "-h, --help|n/a|Show this prompt"
 	}
 
+	PRINT "$(SCRIPTNAME) - Various pacman tools"
 	PRINT
-	PRINT "pactools - Various pacman tools"
+	PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"
+	PRINT "Example:\t$(SCRIPTNAME) --help"
 	PRINT
-	PRINT "Usage:\t\tpactools [command] <args?[]>"
-	PRINT "Example:\tpactools refresh-mirrors"
-	PRINT
-	_help.commands | column -t -s '|'
-	PRINT
+	_flags | column -t -s'|'
 }
 
 case "$(LOWERCASE "$1")" in
