@@ -28,7 +28,7 @@ fi
 # ENVIRONMENT VARIABLES
 #
 
-HELPERS="https://raw.githubusercontent.com/rmj1001/dotfiles/main/files/System32/postinstalls/helpers"
+HELPERS="https://raw.githubusercontent.com/rmj1001/dotfiles/main/files/Postinstallers/helpers"
 
 ################################################################################
 # REPOSITORY SETUP

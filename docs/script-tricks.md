@@ -1,5 +1,7 @@
 # Script Tips
 
+Return [Home](..)
+
 This file aims to provide bash scripters (mainly me)
 with tips & tricks for creating immersive scripts.
 

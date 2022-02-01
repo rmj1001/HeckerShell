@@ -15,7 +15,7 @@
 
 - [Dev Guidelines](docs/dev-rules.md)
 - [Script Tricks](docs/script-tricks.md)
-- [Distro Postinstallation Handlers](files/System32/postinstalls)
+- [Distro Postinstallation Handlers](files/Postinstallers)
 
 ## Warranty
 

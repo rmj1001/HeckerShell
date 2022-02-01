@@ -1,4 +1,6 @@
-## Dotfiles development
+# Dotfiles Development Guidelines
+
+Return [Home](..)
 
 1. Do not mark lib scripts as executable, since they are used more like headers.
 2. Do not declare global variables inside functions. Always use
@@ -12,7 +14,7 @@ Example: `${version:=1.0}`, where 1.0 is the default
 All plugins must be stored in `files/.shellfiles/plugins` and named as
 `<plugin>`. Plugins can be sourced per-shell in their config file.
 
-### Scripts
+## Script Guidelines
 
 Scripts can be self-dependent, but we have also provided an API
 to make developing shell scripts easier. To source the API, just
