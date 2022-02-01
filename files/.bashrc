@@ -20,14 +20,12 @@ shell.load() {
 
 	done
 
-	export PS1='\n$(write_lines)\n$(printf "%${COLUMNS}s\n" "$(date -u +"%m-%d-%Y %H:%M:%S")")[ ${USER}@${HOSTNAME} ] $(pwd) > '
+	# Source changable bash settings
+	# shellcheck disable=1091
+	source "${SHELLFILES}/configs/bash.sh"
 
-	# Plugins
-	export plugins=(
-		backstreet
-		curlapps
-	)
-
+	# Load plugins described in ${plugins} array.
+	# shellcheck disable=SC2154
 	for plug in "${plugins[@]}"; do
 
 		plugin="${SHELLFILES}/plugins/${plug}"
