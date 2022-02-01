@@ -36,17 +36,17 @@ other config files with symlinks. Make sure to back them up.
 ### **Install**
 
 ```bash
-bash <(wget -qO- https://raw.githubusercontent.com/rmj1001/dotfiles/main/install.sh)
+bash <(wget -qO- https://raw.githubusercontent.com/rmj1001/dotfiles/main/auto/install.sh)
 ```
 
 ### **Uninstall**
 
 ```bash
-bash <(wget -qO- https://raw.githubusercontent.com/rmj1001/dotfiles/main/uninstall.sh)
+bash <(wget -qO- https://raw.githubusercontent.com/rmj1001/dotfiles/main/auto/uninstall.sh)
 ```
 
 ### **Update**
 
 ```bash
-bash <(wget -qO- https://raw.githubusercontent.com/rmj1001/dotfiles/main/update.sh)
+bash <(wget -qO- https://raw.githubusercontent.com/rmj1001/dotfiles/main/auto/update.sh)
 ```
