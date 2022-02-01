@@ -2,4 +2,3 @@ files/.shellfiles/.syntaxhighlighting
 files/System32/*.py
 
 *.vscode
-*.gitignore
