@@ -132,6 +132,12 @@ motd() {
     PRINT "########################################################"
 }
 
+### Reload shell
+# usage: reload
+reload() {
+    shell.load
+}
+
 ### Download youtube videos
 # usage: downloadYTVideo <video url>[]
 downloadYTVideo() {
@@ -234,6 +240,7 @@ manual() {
     /usr/bin/man "${@}"
 }
 
+# Man meme
 man() {
     printf "%b\n" "Based sigma grindset gender, not woman"
 }
@@ -274,8 +281,3 @@ list-hardware() { lshw "${@}"; }
 terminal() { ${TERMINAL} "${@}"; }
 browser() { ${BROWSER} "${@}"; }
 auth() { ${AUTH} "${@}"; }
-
-# Reload shell
-reload() {
-    shell.load
-}
