@@ -3,7 +3,7 @@
 The scripts in this directory install common software, repositories, and apply
 common configurations for various OSs.
 
-Return [Home](../..)
+Return [Home](../../README.md)
 
 __Table of Contents:__
 

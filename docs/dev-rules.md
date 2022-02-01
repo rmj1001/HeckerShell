@@ -1,6 +1,6 @@
 # Dotfiles Development Guidelines
 
-Return [Home](..)
+Return [Home](../README.md)
 
 1. Do not mark lib scripts as executable, since they are used more like headers.
 2. Do not declare global variables inside functions. Always use

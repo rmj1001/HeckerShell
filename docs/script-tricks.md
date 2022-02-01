@@ -1,6 +1,6 @@
 # Script Tips
 
-Return [Home](..)
+Return [Home](../README.md)
 
 This file aims to provide bash scripters (mainly me)
 with tips & tricks for creating immersive scripts.
