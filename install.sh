@@ -13,7 +13,10 @@
 
 ################################# CONSTANTS ####################################
 
-DOTFILES_SITE="https://github.com/rmj1001/dotfiles.git"
+DOTFILES_SITE_HTTPS="https://github.com/rmj1001/dotfiles.git"
+DOTFILES_SITE_SSH="git@github.com:rmj1001/dotfiles.git"
+DOTFILES_SITE="${DOTFILES_SITE_HTTPS}"
+
 DOTFILES_DOWN_DIR="${HOME}/.local/share"
 DOTFILES="${DOTFILES_DOWN_DIR}/dotfiles/files"
 
@@ -35,7 +38,7 @@ SCRIPTS="${HOME}/System32"
 [[ ! -x "$(command -v git)" ]] &&
 	printf '%b\n' "Git is not installed." && exit 1
 
-# Confirm uninstallation
+# Confirm installation
 read -r -p "Are you sure you want to install this? (y/N) " confirm
 
 printf '%b\n' ""
@@ -51,6 +54,10 @@ printf '%b\n' ""
 	printf "%b\n" "Exiting..."
 	exit 1
 }
+
+# If user wishes to contribute, use SSH
+read -r -p "Will you be contributing to these dotfiles? (y/N) " contrib
+[[ "${contrib}" =~ ^[yY][eE]?[sS]?$ ]] && DOTFILES_SITE="${DOTFILES_SITE_SSH}"
 
 # Download dotfiles
 printf "%b\n" "Downloading dotfiles..."
