@@ -1,6 +1,6 @@
 #!/bin/bash
 
-bash.load() {
+shell.load() {
 	clear
 
 	# shellcheck disable=SC1091 # Source global definitions
@@ -41,4 +41,4 @@ bash.load() {
 	motd
 }
 
-bash.load
+shell.load

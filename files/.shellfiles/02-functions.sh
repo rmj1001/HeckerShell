@@ -198,11 +198,13 @@ which() { command -v "${@}"; }
 [[ -x /bin/batcat ]] && bat() { /bin/batcat -P "${@}"; }
 
 # Listing files/directories
-unalias ls && function ls() {
+SILENTRUN unalias ls
+function ls() {
     /usr/bin/ls --color=auto --group-directories-first "${@}"
 }
 
-unalias ll && function ll() { ls -AlvhF "${@}"; }
+SILENTRUN unalias ll
+function ll() { ls -AlvhF "${@}"; }
 function la() { ls -A "${@}"; }
 
 # Directory manipulation
@@ -272,3 +274,8 @@ list-hardware() { lshw "${@}"; }
 terminal() { ${TERMINAL} "${@}"; }
 browser() { ${BROWSER} "${@}"; }
 auth() { ${AUTH} "${@}"; }
+
+# Reload shell
+reload() {
+    shell.load
+}

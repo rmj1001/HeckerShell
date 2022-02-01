@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 
-zsh.load() {
+shell.load() {
 	clear
 
 	export SHELLFILES="${HOME}/.shellfiles"
@@ -81,4 +81,4 @@ zsh.load() {
 	}
 }
 
-zsh.load
+shell.load
