@@ -73,6 +73,7 @@ export PATH=${PATH}:${SYSTEM32}:${BIN}:${APPIMAGES}
 export GOPATH="${XDG_DATA_HOME}/go:${HOME}/Bin/projects/golang"
 export HOMEBREW="/home/linuxbrew/.linuxbrew/bin"
 export DENO_INSTALL="/home/roy/.deno"
+export FLATPAK_ENABLE_SDK_EXT=rust-stable,php74,openjdk,node16,mono6,dotnet,haskell,golang
 
 # RUST lang paths
 export RUSTUP_HOME="${HOME}/.local/share/rustup"
