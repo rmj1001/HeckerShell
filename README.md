@@ -30,7 +30,7 @@ scripts provided here to manage them. **WARNING:** Downloading scripts from
 the internet and running them is dangerous, make sure to audit these before
 running them.
 
-Note: The installer **WILL** replace your `.bashrc`, `.zshrc`, and possibly 
+Note: The installer **WILL** replace your `.bashrc`, `.zshrc`, and possibly
 other config files with symlinks. Make sure to back them up.
 
 ### **Install**
