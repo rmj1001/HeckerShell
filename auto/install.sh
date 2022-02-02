@@ -52,7 +52,7 @@ printf '%b\n' ""
 }
 
 # Check if dotfiles exist
-[[ -d "${DOTFILES_DOWN_DIR}/dotfiles" ]] && {
+[[ -d "${DOTFILES_DIR}" ]] && {
 	printf "%b\n" "Dotfiles directory exists. Try using the update script."
 	printf "%b\n" "Exiting..."
 	exit 1
@@ -90,4 +90,4 @@ for folder in "${DOTFILES}"/.config/*; do
 done
 
 # Finish
-printf "%b\n" "Dotfiles installed to '${DOTFILES_DOWN_DIR}/dotfiles'."
+printf "%b\n" "Dotfiles installed to '${DOTFILES_DIR}'."
