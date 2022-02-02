@@ -1,21 +1,27 @@
 #!/usr/bin/env bash
 
-DOTFILES_SITE_HTTPS="https://github.com/rmj1001/dotfiles.git"
-DOTFILES_SITE_SSH="git@github.com:rmj1001/dotfiles.git"
-DOTFILES_SITE="${DOTFILES_SITE_HTTPS}"
+#
+# Dotfiles common environment variables for automation scripts
+#
 
-DOTFILES_DOWN_DIR="${HOME}/.local/share"
-DOTFILES_DIR="${DOTFILES_DOWN_DIR}/dotfiles"
-DOTFILES="${DOTFILES_DIR}/files"
+# Dotfiles urls
+export DOTFILES_SITE_HTTPS="https://github.com/rmj1001/dotfiles.git"
+export DOTFILES_SITE_SSH="git@github.com:rmj1001/dotfiles.git"
+export DOTFILES_SITE="${DOTFILES_SITE_HTTPS}"
+
+# Dotfiles directories
+export DOTFILES_DOWN_DIR="${HOME}/.local/share"
+export DOTFILES_DIR="${DOTFILES_DOWN_DIR}/dotfiles"
+export DOTFILES="${DOTFILES_DIR}/files"
 
 # OG Paths
-SYM_ZSHRC="${DOTFILES}/.zshrc"
-SYM_BASHRC="${DOTFILES}/.bashrc"
-SYM_SHELLFILES="${DOTFILES}/.shellfiles"
-SYM_SCRIPTS="${DOTFILES}/System32"
+export SYM_ZSHRC="${DOTFILES}/.zshrc"
+export SYM_BASHRC="${DOTFILES}/.bashrc"
+export SYM_SHELLFILES="${DOTFILES}/.shellfiles"
+export SYM_SCRIPTS="${DOTFILES}/System32"
 
 # Paths
-ZSHRC="${HOME}/.zshrc"
-BASHRC="${HOME}/.bashrc"
-SHELLFILES="${HOME}/.shellfiles"
-SCRIPTS="${HOME}/System32"
+export ZSHRC="${HOME}/.zshrc"
+export BASHRC="${HOME}/.bashrc"
+export SHELLFILES="${HOME}/.shellfiles"
+export SCRIPTS="${HOME}/System32"
