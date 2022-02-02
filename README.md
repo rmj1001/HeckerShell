@@ -30,6 +30,10 @@ scripts provided here to manage them. **WARNING:** Downloading scripts from
 the internet and running them is dangerous, make sure to audit these before
 running them.
 
+You can also use the built-in `dotfiles` script to update, clean update (uninstall/install),
+or uninstall the dotfiles from within your terminal. More management functionality
+may come to this script in the future. Use `dotfiles ?` to get started.
+
 Note: The installer **WILL** replace your `.bashrc`, `.zshrc`, and possibly
 other config files with symlinks. Make sure to back them up.
 
