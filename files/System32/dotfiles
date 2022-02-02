@@ -20,19 +20,19 @@ DISABLE_ROOT
 
 ####################################
 
-MGRSCRIPTS="https://raw.githubusercontent.com/rmj1001/dotfiles/main/auto"
+MGRSCRIPTS="$(dirname "$(realpath "$0")")"/../../auto
 
 _update() {
-    bash <(wget -qO- ${MGRSCRIPTS}/update.sh)
+    "${MGRSCRIPTS}"/update.sh
 }
 
 _cleanupdate() {
-    bash <(wget -qO- ${MGRSCRIPTS}/uninstall.sh)
-    bash <(wget -qO- ${MGRSCRIPTS}/install.sh)
+    "${MGRSCRIPTS}"/uninstall.sh
+    "${MGRSCRIPTS}"/install.sh
 }
 
 _uninstall() {
-    bash <(wget -qO- ${MGRSCRIPTS}/uninstall.sh)
+    "${MGRSCRIPTS}"/uninstall.sh
 }
 
 _help() {

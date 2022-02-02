@@ -46,8 +46,8 @@ autoload -U compinit && compinit
 
 # Plugins
 export plugins=(
-    sudo
     backstreet
     curlapps
     russian-roulette
+    sudo
 )
