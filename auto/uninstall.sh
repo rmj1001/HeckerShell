@@ -11,17 +11,6 @@
 #		Curl-able/wget-able webinstaller for my dotfiles
 ################################################################################
 
-################################# CONSTANTS ####################################
-
-DOTFILES_DIR="${HOME}/.local/share/dotfiles"
-DOTFILES="${DOTFILES_DIR}/files"
-
-# Paths
-ZSHRC="${HOME}/.zshrc"
-BASHRC="${HOME}/.bashrc"
-SHELLFILES="${HOME}/.shellfiles"
-SCRIPTS="${HOME}/System32"
-
 ################################# LOGIC ########################################
 
 # Check if Git is installed.
@@ -37,6 +26,10 @@ printf '%b\n' ""
     printf '%b\n' "Cancelling."
     exit 1
 }
+
+# Source environment variables
+wget -qO- https://raw.githubusercontent.com/rmj1001/dotfiles/main/auto/env.sh |
+    source /dev/stdin
 
 # Uninstall scripts
 printf "%b\n" "Uninstalling scripts..."

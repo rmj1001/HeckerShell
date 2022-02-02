@@ -11,27 +11,6 @@
 #		Curl-able/wget-able webinstaller for my dotfiles
 ################################################################################
 
-################################# CONSTANTS ####################################
-
-DOTFILES_SITE_HTTPS="https://github.com/rmj1001/dotfiles.git"
-DOTFILES_SITE_SSH="git@github.com:rmj1001/dotfiles.git"
-DOTFILES_SITE="${DOTFILES_SITE_HTTPS}"
-
-DOTFILES_DOWN_DIR="${HOME}/.local/share"
-DOTFILES="${DOTFILES_DOWN_DIR}/dotfiles/files"
-
-# OG Paths
-SYM_ZSHRC="${DOTFILES}/.zshrc"
-SYM_BASHRC="${DOTFILES}/.bashrc"
-SYM_SHELLFILES="${DOTFILES}/.shellfiles"
-SYM_SCRIPTS="${DOTFILES}/System32"
-
-# Paths
-ZSHRC="${HOME}/.zshrc"
-BASHRC="${HOME}/.bashrc"
-SHELLFILES="${HOME}/.shellfiles"
-SCRIPTS="${HOME}/System32"
-
 ################################# LOGIC ########################################
 
 # Check if Git is installed.
@@ -47,6 +26,10 @@ printf '%b\n' ""
 	printf '%b\n' "Cancelling."
 	exit 1
 }
+
+# Source environment variables
+wget -qO- https://raw.githubusercontent.com/rmj1001/dotfiles/main/auto/env.sh |
+	source /dev/stdin
 
 # Check if dotfiles exist
 [[ -d "${DOTFILES_DOWN_DIR}/dotfiles" ]] && {
