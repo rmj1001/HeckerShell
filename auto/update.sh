@@ -42,4 +42,16 @@ export SCRIPTS="${HOME}/System32"
 
 cd "${DOTFILES_DIR}" || { printf '%b\n' 'Dotfiles does not exist.' && exit 1; }
 
+# Confirm uninstallation
+read -r -p \
+    "Are you sure you want to update? Changes you made will be lost. (y/N) " \
+    confirm
+
+printf '%b\n' ""
+
+[[ ! "${confirm}" =~ ^[yY][eE]?[sS]?$ ]] && {
+    printf '%b\n' "Cancelling."
+    exit 1
+}
+
 git pull
