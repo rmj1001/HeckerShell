@@ -48,7 +48,7 @@ _help() {
         PRINT "-h, --help|n/a|Show this prompt"
     }
 
-    PRINT "$(SCRIPTNAME) - description"
+    PRINT "$(SCRIPTNAME) - Automatic dotfiles manager script"
     PRINT
     PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"
     PRINT "Example:\t$(SCRIPTNAME) --help"
