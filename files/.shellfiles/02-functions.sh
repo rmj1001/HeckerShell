@@ -115,6 +115,13 @@ CHECK_NO() {
     return 1
 }
 
+### Write a line who's length is equal to the length of the terminal's columns
+# usage: write_lines
+write_lines() {
+    for ((i = 0; i < COLUMNS; ++i)); do printf -; done
+    PRINT ""
+}
+
 ### Print custom MOTD to terminal
 # usage: motd
 motd() {
@@ -174,13 +181,6 @@ soundfx() {
     # Download
     youtube-dl --prefer-ffmpeg --add-metadata --output '%(title)s.%(ext)s' \
         --extract-audio --audio-format mp3 "${@}"
-}
-
-### Write a line who's length is equal to the length of the terminal's columns
-# usage: write_lines
-write_lines() {
-    for ((i = 0; i < COLUMNS; ++i)); do printf -; done
-    PRINT ""
 }
 
 # Edit files
@@ -247,7 +247,10 @@ man-meme() {
 
 # Update software from source
 makeupdate() {
-    git pull && sudo make uninstall && make clean && make &&
+    sudo make uninstall &&
+        make clean &&
+        git pull &&
+        make &&
         sudo make install
 }
 
