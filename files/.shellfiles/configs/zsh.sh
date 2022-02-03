@@ -3,10 +3,12 @@
 # Syntax Highlighting
 export SYNTAXHIGH="${SHELLFILES}/.syntaxhighlighting"
 
-# Install syntax highlighting if the ~/.zsh/.syntaxhighlighting folder is missing
+# Install syntax highlighting if the
+# ~/.shellfiles/.syntaxhighlighting folder is missing
 [[ ! -d "${SYNTAXHIGH}" ]] &&
     printf "%b\n" "Installing syntax highlighting...\n" &&
-    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "${SYNTAXHIGH}" &&
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git \
+        "${SYNTAXHIGH}" &&
     printf "%b\n" "" && read -s -k "?Press ENTER to continue." && clear
 
 # Source syntax highlighting
@@ -14,7 +16,8 @@ source "${SYNTAXHIGH}"/zsh-syntax-highlighting.zsh
 
 # Prompt
 #export PS1='C:$(pwd | tr "////" "\\\\" ) > '
-export PS1='[ ${USER}@${HOSTNAME} ] ${PWD} > '
+#export PS1='[ ${USER}@${HOSTNAME} ] ${PWD} > '
+export PS1='[ ${USER}@${HOSTNAME} ${PWD##*/} ]$ '
 export RPS1='$(date -u +"%m-%d-%Y %H:%M:%S")'
 
 # History
