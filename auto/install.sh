@@ -84,9 +84,9 @@ ln -s "${SYM_SCRIPTS}" "${SCRIPTS}"
 # Install shellfiles
 sleep 0.5
 printf "%b\n" "Installing shell configs..."
-rm -f "${ZSHRC}" && ln -s "${SYM_ZSHRC}" "${ZSHRC}"
-rm -f "${BASHRC}" && ln -s "${SYM_BASHRC}" "${BASHRC}"
-ln -s "${SYM_SHELLFILES}" "${SHELLFILES}"
+rm -f "${ZSHRC}" && ln -s "${SYM_ZSHRC}" "${ZSHRC}" && sleep 0.5
+rm -f "${BASHRC}" && ln -s "${SYM_BASHRC}" "${BASHRC}" && sleep 0.5
+ln -s "${SYM_SHELLFILES}" "${SHELLFILES}" && sleep 0.5
 
 # Install miscellany configs
 sleep 0.5
