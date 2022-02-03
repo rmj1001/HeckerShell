@@ -47,8 +47,6 @@ export SCRIPTS="${HOME}/System32"
 # Confirm installation
 read -r -p "Are you sure you want to install this? (y/N) " confirm
 
-printf '%b\n' ""
-
 [[ ! "${confirm}" =~ ^[yY][eE]?[sS]?$ ]] && {
 	printf '%b\n' "Cancelling."
 
@@ -87,7 +85,11 @@ printf "%b\n" "Installing shell configs..."
 rm -f "${ZSHRC}" && ln -s "${SYM_ZSHRC}" "${ZSHRC}" && sleep 0.5
 rm -f "${BASHRC}" && ln -s "${SYM_BASHRC}" "${BASHRC}" && sleep 0.5
 ln -s "${SYM_SHELLFILES}" "${SHELLFILES}" && sleep 0.5
-rm -f "${SHELLFILES}/.shellfiles" # fix bug making .shellfiles symlink
+
+# Remove rogue symlinks
+sleep 0.5
+printf "%b\n" "Removing rogue symlinks..."
+[[ -L "${SHELLFILES}/.shellfiles" ]] && rm -f "${SHELLFILES}/.shellfiles"
 
 # Install miscellany configs
 sleep 0.5
