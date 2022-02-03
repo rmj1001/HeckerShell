@@ -79,14 +79,14 @@ git clone "${DOTFILES_SITE}"
 # Install scripts
 sleep 0.5
 printf "%b\n" "Installing scripts..."
-ln -sf "${SYM_SCRIPTS}" "${SCRIPTS}"
+ln -s "${SYM_SCRIPTS}" "${SCRIPTS}"
 
 # Install shellfiles
 sleep 0.5
 printf "%b\n" "Installing shell configs..."
-ln -sf "${SYM_ZSHRC}" "${ZSHRC}"
-ln -sf "${SYM_BASHRC}" "${BASHRC}"
-ln -sf "${SYM_SHELLFILES}" "${SHELLFILES}"
+ln -s "${SYM_ZSHRC}" "${ZSHRC}"
+ln -s "${SYM_BASHRC}" "${BASHRC}"
+ln -s "${SYM_SHELLFILES}" "${SHELLFILES}"
 
 # Install miscellany configs
 sleep 0.5
