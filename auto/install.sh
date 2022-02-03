@@ -87,6 +87,7 @@ printf "%b\n" "Installing shell configs..."
 rm -f "${ZSHRC}" && ln -s "${SYM_ZSHRC}" "${ZSHRC}" && sleep 0.5
 rm -f "${BASHRC}" && ln -s "${SYM_BASHRC}" "${BASHRC}" && sleep 0.5
 ln -s "${SYM_SHELLFILES}" "${SHELLFILES}" && sleep 0.5
+rm -f "${SHELLFILES}/.shellfiles" # fix bug making .shellfiles symlink
 
 # Install miscellany configs
 sleep 0.5
