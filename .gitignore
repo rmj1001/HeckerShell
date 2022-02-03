@@ -1,4 +1,5 @@
 files/.shellfiles/.syntaxhighlighting
+files/.shelfiles/.shellfiles
 files/System32/*.py
 
 *.vscode
