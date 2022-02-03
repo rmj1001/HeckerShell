@@ -39,7 +39,10 @@ export SCRIPTS="${HOME}/System32"
 
 # Check if Git is installed.
 [[ ! -x "$(command -v git)" ]] &&
-	printf '%b\n' "Git is not installed." && exit 1
+	printf '%b\n' "Git is not installed." && {
+	sleep 0.5
+	exit 1
+}
 
 # Confirm installation
 read -r -p "Are you sure you want to install this? (y/N) " confirm
@@ -48,6 +51,8 @@ printf '%b\n' ""
 
 [[ ! "${confirm}" =~ ^[yY][eE]?[sS]?$ ]] && {
 	printf '%b\n' "Cancelling."
+
+	sleep 0.5
 	exit 1
 }
 
@@ -55,38 +60,48 @@ printf '%b\n' ""
 [[ -d "${DOTFILES_DIR}" ]] && {
 	printf "%b\n" "Dotfiles directory exists. Try using the update script."
 	printf "%b\n" "Exiting..."
+
+	sleep 0.5
 	exit 1
 }
 
 # If user wishes to contribute, use SSH
+sleep 0.5
 read -r -p "Will you be contributing to these dotfiles? (y/N) " contrib
 [[ "${contrib}" =~ ^[yY][eE]?[sS]?$ ]] && DOTFILES_SITE="${DOTFILES_SITE_SSH}"
 
 # Download dotfiles
+sleep 0.5
 printf "%b\n" "Downloading dotfiles..."
 cd "${DOTFILES_DOWN_DIR}" || exit 1
 git clone "${DOTFILES_SITE}"
 
 # Install scripts
+sleep 0.5
 printf "%b\n" "Installing scripts..."
 ln -sf "${SYM_SCRIPTS}" "${SCRIPTS}"
 
 # Install shellfiles
+sleep 0.5
 printf "%b\n" "Installing shell configs..."
 ln -sf "${SYM_ZSHRC}" "${ZSHRC}"
 ln -sf "${SYM_BASHRC}" "${BASHRC}"
 ln -sf "${SYM_SHELLFILES}" "${SHELLFILES}"
 
 # Install miscellany configs
+sleep 0.5
 printf "%b\n" "Installing miscellaneous configs..."
 
 for folder in "${DOTFILES}"/.config/*; do
-	linkRef="${folder##*/}"
-	sym="${HOME}/.config/${linkRef}"
+	name="$(basename "${folder}")"
+	sym="${HOME}/.config/${name}"
 
-	printf "%b\n" "Installing config ${linkRef}..."
+	sleep 0.5
+
+	printf "%b\n" "Installing config '${name}'..."
 
 	[[ -L "${sym}" ]] || ln -s "${folder}" "${sym}"
+
 done
 
 # Finish
