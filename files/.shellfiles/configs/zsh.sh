@@ -17,7 +17,7 @@ source "${SYNTAXHIGH}"/zsh-syntax-highlighting.zsh
 # Prompt
 #export PS1='C:$(pwd | tr "////" "\\\\" ) > '
 #export PS1='[ ${USER}@${HOSTNAME} ] ${PWD} > '
-export PS1='[ ${USER}@${HOSTNAME} ${PWD##*/} ]$ '
+export PS1='[ ${USER}@${HOSTNAME} $(basename $(dirs)) ]$ '
 export RPS1='$(date -u +"%m-%d-%Y %H:%M:%S")'
 
 # History
