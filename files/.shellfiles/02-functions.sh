@@ -205,11 +205,11 @@ which() { command -v "${@}"; }
 
 # Listing files/directories
 SILENTRUN unalias ls
-function ls() {
-    /usr/bin/ls --color=auto --group-directories-first "${@}"
-}
-
 SILENTRUN unalias ll
+SILENTRUN unalias la
+function ls() {
+    /usr/bin/env ls --color=auto --group-directories-first "${@}"
+}
 function ll() { ls -AlvhF "${@}"; }
 function la() { ls -A "${@}"; }
 
@@ -241,7 +241,7 @@ manual() {
 }
 
 # Man meme
-man() {
+man-meme() {
     printf "%b\n" "Based sigma grindset gender, not woman"
 }
 
