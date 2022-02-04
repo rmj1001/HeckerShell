@@ -264,6 +264,16 @@ update-gaming() {
     pipe3 install LibreGaming -U && LibreGaming --tui
 }
 
+# Get list of flatpaks
+ls-flatpaks() {
+    flatpak list --columns=application "${@}" | tail -n +1
+}
+
+# List of attached hardware
+ls-hardware() {
+    lshw "${@}"
+}
+
 # Home
 home() { cd "${HOME}" || return 1; }
 
@@ -276,9 +286,6 @@ restart-pipewire() {
     systemctl restart --user pipewire-pulse
     restart-bluetooth
 }
-
-# Hardware
-list-hardware() { lshw "${@}"; }
 
 # Default apps
 terminal() { ${TERMINAL} "${@}"; }
