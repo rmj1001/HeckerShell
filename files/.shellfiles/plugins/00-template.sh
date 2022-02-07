@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
+
+##############################################
+#   Author(s): name <email@domain.com>
+#   Plugin:
+#   Version: 1.0
 #
-# Plugin Name:
-# Description:
-# Author(s): name <email@domain.com>
+#   Usage:
 #
+#   Description:
+#
+##############################################

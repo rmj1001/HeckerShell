@@ -1,9 +1,15 @@
 #!/usr/bin/env bash
+
+##############################################
+#   Author(s): name <email@domain.com>
+#   Plugin: backstreet
+#   Version: 1.0
 #
-# Plugin Name: backstreet
-# Description: Tell my why by backstreet boys
-# Author(s): RMCJ <rmichael1001@gmail.com>
+#   Usage: tellmewhy
 #
+#   Description: Ain't nothin but a heartache
+#
+##############################################
 
 tellmewhy() {
     [[ -z "$iters" ]] && iters=0

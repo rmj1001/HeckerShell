@@ -1,9 +1,15 @@
 #!/usr/bin/env zsh
+
+##############################################
+#   Author(s): RMCJ <rmichael1001@gmail.com>
+#   Plugin: sudo
+#   Version: 1.0
 #
-# Plugin Name: sudo
-# Description: sudo or rootedit will be inserted before the command
-# Author(s): RMCJ <rmichael1001@gmail.com>
+#   Usage: n/a
 #
+#   Description: sudo or rootedit will be inserted before a command.
+#
+##############################################
 
 __sudo-replace-buffer() {
     local old=$1 new=$2 space=${2:+ }

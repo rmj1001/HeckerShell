@@ -1,9 +1,16 @@
 #!/usr/bin/env zsh
+
+##############################################
+#   Author(s): RMCJ <rmichael1001@gmail.com>
+#   Plugin: doas
+#   Version: 1.0
 #
-# Plugin Name: doas
-# Description: doas or rootedit will be inserted before the command
-# Author(s): RMCJ <rmichael1001@gmail.com>
+#   Usage: n/a
 #
+#   Description: doas or rootedit will be inserted before the command
+#
+##############################################
+
 
 __doas-replace-buffer() {
     local old=$1 new=$2 space=${2:+ }

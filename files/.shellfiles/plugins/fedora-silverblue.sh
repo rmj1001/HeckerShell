@@ -1,14 +1,20 @@
 #!/usr/bin/env bash
+
+##############################################
+#   Author(s): RMCJ <rmichael1001@gmail.com>
+#   Plugin: fedora-silverblue
+#   Version: 1.0
 #
-# Plugin Name: fedora-silverblue
-# Description: Aliases for Fedora Silverblue
-# Author(s): Roy Conn
+#   Usage: dnf
 #
+#   Description: Aliases for Fedora Silverblue
+#
+##############################################
 
 # Alias for 'rpm-ostree', replaces certain subcommands with custom implementations
-function dnf () {
+function dnf() {
 
-	_help () {
+	_help() {
 		PRINT "dnf - An alias for 'rpm-ostree' on Fedora Silverblue"
 		PRINT "Note: This command uses the same syntax as 'rpm-ostree', but adds"
 		PRINT "      custom flags for aliases for subcommands."
@@ -20,7 +26,7 @@ function dnf () {
 		PRINT ""
 	}
 
-	_install () {
+	_install() {
 		rpm-ostree install -A
 	}
 
@@ -28,20 +34,20 @@ function dnf () {
 
 		case "${1}" in
 
-			--dnf-install )
-				shift
-				_install $@
-				;;
+		--dnf-install)
+			shift
+			_install "$@"
+			;;
 
-			\? | --dnf-help )
-				shift
-				_help
-				;;
+		\? | --dnf-help)
+			shift
+			_help
+			;;
 
-			* )
-				shift
-				[[ $# -gt 0 ]] && rpm-ostree $@ || rpm-ostree -h
-				;;
+		*)
+			shift
+			[[ $# -gt 0 ]] && rpm-ostree "$@" || rpm-ostree -h
+			;;
 
 		esac
 

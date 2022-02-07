@@ -1,15 +1,19 @@
 #!/usr/bin/env bash
 
+##############################################
+#   Author(s): name <email@domain.com>
+#   Plugin: curlapps
+#   Version: 1.0
 #
-# Plugin Name: curlapps
-# Description: Common curl applications packaged in ZSH functions
-# Author(s): RMCJ <rmichael1001@gmail.com>
+#   Usage: curlapps, etc.
 #
+#   Description: Common curl applications packaged in shell functions
+#
+##############################################
 
 ### CURL APPS HELP
 # usage: curlapps
-curlapps()
-{
+curlapps() {
     PRINT "cheat \t\t [command]"
     PRINT "weather"
     PRINT "qrcode \t\t [url]"
@@ -21,57 +25,48 @@ curlapps()
 
 ### CHEAT PAGES
 # usage: cheat <command>
-cheatsh()
-{
+cheatsh() {
     curl cheat.sh/$1
 }
 
 ### WEATHER
 # usage: weather
-weather()
-{
+weather() {
     curl wttr.in
 }
 
 ### QR CODE CREATOR
 # usage: qrcode <link>
-qrcode()
-{
+qrcode() {
     curl qrenco.de/$1
 }
 
 ### DICTIONARY
 # usage: dict <word>
-dict()
-{
+dict() {
     curl dict://dict.org/d:$1
 }
 
 ### CRYTPOCURRENCY RATES
 # usage: rate <cryptocurrency symbol>
-rate ()
-{
+rate() {
     curl rate.sx/$1
 }
 
 ### URL SHORTENER
 # usage: urlshorten <link>
-urlshorten()
-{
+urlshorten() {
     curl -F "shorten=$1" https://0x0.st
 }
 
 ### NEWS READER
 # usage: getnews <topic>
-getnews()
-{
+getnews() {
     curl getnews.tech/$1
 }
 
 ### PARROT IN TERMINAL
 # usage: parrot
-parrot()
-{
+parrot() {
     curl parrot.live
 }
-

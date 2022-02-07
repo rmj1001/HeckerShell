@@ -1,4 +1,15 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+##############################################
+#   Author(s): RMCJ <rmichael1001@gmail.com>
+#   Plugin: russian-roulette
+#   Version: 1.0
+#
+#   Usage: russian-roulette, russian-roulette-testing
+#
+#   Description: Possibly destroy your system
+#
+##############################################
 
 # Generate random number between 1 and 6.
 # If the result is  6, delete the OS.

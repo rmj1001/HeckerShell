@@ -1,9 +1,15 @@
 #!/usr/bin/env zsh
+
+##############################################
+#   Author(s): RMCJ <rmichael1001@gmail.com>
+#   Plugin: shellmanage (deprecated)
+#   Version: 1.0
 #
-# Plugin Name: zmanage
-# Description: Advanced manager for the ZSH shell
-# Author(s): RMCJ <rmichael1001@gmail.com>
+#   Usage: zmanage <commands> <args?[]>
 #
+#   Description: Advanced manager for my shell
+#
+##############################################
 
 zmanage() {
 
