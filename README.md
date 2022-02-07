@@ -15,10 +15,11 @@ a reloadable config for those settings that cannot be used for both.
 
 ## Links to parts of this project
 
-- [Developer Guidelines](docs/dev-rules.md)
-- [Script Tricks](docs/script-tricks.md)
 - [Distro Post-install Handlers](files/Postinstallers)
 - [Scripts](files/System32)
+- Developer Docs
+  - [Guidelines](docs/dev-rules.md)
+  - [Tips & Tricks](docs/script-tricks.md)
 
 ## Warranty
 
