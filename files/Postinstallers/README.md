@@ -1,3 +1,15 @@
+<!--
+##############################################
+#   Author(s): RMCJ <rmichael1001@gmail.com>
+#   Project: Dotfiles
+#   Version: 1.0
+#
+#   Usage: n/a
+#
+#   Description: Distro post-install info
+#
+##############################################
+-->
 # Post-installation Scripts
 
 The scripts in this directory install common software, repositories, and apply

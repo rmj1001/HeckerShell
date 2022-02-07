@@ -1,3 +1,15 @@
+<!--
+##############################################
+#   Author(s): RMCJ <rmichael1001@gmail.com>
+#   Project: Dotfiles
+#   Version: 1.0
+#
+#   Usage: n/a
+#
+#   Description: Dotfiles main README
+#
+##############################################
+-->
 # RMCJ's Dotfiles
   
 ## About
