@@ -9,11 +9,11 @@ export NVM_DIR="${XDG_CONFIG_HOME}/nvm"
 export INIT="/usr/share/nvm/init-nvm.sh"
 
 # NVM
-# shellcheck source-path=NVM_DIR # load nvm
+# shellcheck disable=1091 disable=1090 # load nvm
 [ -s "${NVM_DIR}/nvm.sh" ] && . "${NVM_DIR}/nvm.sh"
-# nvm bash completions
+# shellcheck disable=1091 disable=1090 # nvm bash completions
 [ -s "$NVM_DIR/bash_completion" ] && . "${NVM_DIR}/bash_completion"
-# shellcheck source=INIT # nvm initialize
+# shellcheck disable=1091 disable=1090 # nvm initialize
 [ -e "${INIT}" ] && . "${INIT}"
 
 # Pyenv
@@ -25,6 +25,7 @@ fi
 [[ $(command -v pyenv) ]] && eval "$(pyenv init -)"
 
 # Rust
+# shellcheck disable=1091 disable=1090
 [[ -e "${CARGO_HOME}/env" ]] && . "${CARGO_HOME}/env"
 
 ######################################
@@ -36,7 +37,7 @@ fi
 nixScript="${HOME}/.nix-profile/etc/profile.d/nix.sh"
 
 if [[ -f "${nixScript}" ]]; then
-    # shellcheck source=nixScript
+    # shellcheck disable=1091 disable=1090
     . "${nixScript}"
 fi
 
@@ -53,12 +54,13 @@ userPrefix=/home/linuxbrew/.linuxbrew
 # Evaluate the homebrew prefix's shellenv if brew exists
 [[ -z "${BREW_PREFIX}" ]] || eval "$(${BREW_PREFIX}/bin/brew shellenv)"
 
-# Generated for envman. Do not edit.
+# shellcheck disable=1091 disable=1090 # Generated for envman. Do not edit.
 [[ -s "$HOME/.config/envman/load.sh" ]] && source "$HOME/.config/envman/load.sh"
 
 ######################################
 ### VTE
 ######################################
 
+# shellcheck disable=1091 disable=1090
 [[ $TILIX_ID || $VTE_VERSION ]] && [[ -f "/etc/profile.d/vte.sh" ]] &&
     source "/etc/profile.d/vte.sh"
