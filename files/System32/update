@@ -23,6 +23,27 @@ interactive=1
 clearscr=1
 notifications=1
 
+_help() {
+	_flags() {
+		PRINT "-------------|------|---------------------"
+		PRINT "Flag|Args|Description"
+		PRINT "-------------|------|---------------------"
+		PRINT "||"
+		PRINT "-i, --non-interactive||Disable interactivity"
+		PRINT "-c, --no-clear||Disable clearing screen"
+		PRINT "-n, --notifications||Send notifications to system"
+		PRINT "||"
+		PRINT "-h, --help|n/a|Show this prompt"
+	}
+
+	PRINT "$(SCRIPTNAME) - Update system applications in batch."
+	PRINT
+	PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"
+	PRINT "Example:\t$(SCRIPTNAME) --help"
+	PRINT
+	_flags | column -t -s'|'
+}
+
 LOG() {
 	local folder
 
@@ -68,6 +89,10 @@ for arg in "${@}"; do
 	-n | --notifications) notifications=0 ;;
 	-i | --non-interactive) interactive=0 ;;
 	-c | --no-clear) clearscr=0 ;;
+	\? | -h | --help)
+		_help
+		exit 0
+		;;
 	esac
 
 done
