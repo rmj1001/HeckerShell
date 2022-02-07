@@ -144,7 +144,9 @@ motd() {
 # usage: freshscreen <flag?>
 freshscreen() {
     [[ "$(LOWERCASE "${1}")" == "--no-clear" ]] || clear
+
     motd
+
     [[ "${SHELL}" == "/bin/zsh" ]] && printf "%b\n" ""
 }
 
@@ -152,8 +154,13 @@ freshscreen() {
 ## [flag] --clean: Restart shell completely, not just reload dotfiles
 # usage: reload <flag>
 reload() {
-    [[ "$(LOWERCASE "${1}")" == "--clean" ]] || shell.load
+    # If clean flag isn't used then just reload sourced files
+    [[ "$(LOWERCASE "${1}")" == "--clean" ]] || {
+        shell.load
+        return 0
+    }
 
+    # If clean flag is used then exec/restart the shell
     exec "$(basename "${SHELL}")"
 }
 
