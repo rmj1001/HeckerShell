@@ -23,6 +23,10 @@ For some tips on developing scripts/plugins, see [here](script-tricks.md).
 5. Sourced settings are stored in `files/.shellfiles/03-sources.sh`.
 6. Distro postinstall scripts are stored in `files/Postinstallers`.
 7. Optional or shell-specific functionality must be developed as a plugin.
+8. When hacking on the dotfiles, make use of these commands. NOTE: Use `command ?` to see their help menu.
+   1. `dotfiles` - Update/clean/uninstall dotfiles
+   2. `reload` - Reload shell configs (use `--clean` flag if necessary).
+   3. `scriptctl` - Create/manage script files
 
 ## Script Guidelines
 
