@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 ##############################################
-#   Author(s): name <email@domain.com>
+#   Author(s): RMCJ <rmichael1001@gmail.com>
 #   Plugin: curlapps
 #   Version: 1.0
 #
