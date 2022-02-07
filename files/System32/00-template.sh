@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 ##############################################
-#   Author: Roy Conn
+#   Author(s): name <email@domain.com>
 #   Project:
 #   Version: 1.0
 #
