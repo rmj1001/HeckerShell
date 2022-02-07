@@ -12,7 +12,7 @@
 ##############################################
 
 
-__doas-replace-buffer() {
+function __doas-replace-buffer() {
     local old=$1 new=$2 space=${2:+ }
     if [[ ${#LBUFFER} -le ${#old} ]]; then
         RBUFFER="${space}${BUFFER#$old }"
@@ -22,7 +22,7 @@ __doas-replace-buffer() {
     fi
 }
 
-doas-command-line() {
+function doas-command-line() {
     [[ -z $BUFFER ]] && LBUFFER="$(fc -ln -1)"
 
     # Save beginning space

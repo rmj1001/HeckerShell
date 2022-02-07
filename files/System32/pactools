@@ -19,7 +19,7 @@ DISABLE_ROOT
 
 ####################################
 
-_browse() {
+function _browse() {
 	trap 'exit 0' SIGINT SIGHUP
 
 	REQUIRE_CMD "pacman" || return 1
@@ -27,21 +27,21 @@ _browse() {
 	pacman -Qq | fzf --preview 'pacman -Qil {}' --layout=reverse --bind 'enter:execute(pacman -Qil {} | less)'
 }
 
-_refresh_mirrors() {
+function _refresh_mirrors() {
 	REQUIRE_CMD "reflector" || return 1
 
 	sudo reflector --latest 100 --protocol https --sort rate --verbose --save /etc/pacman.d/mirrorlist
 }
 
-_list_orphans() {
+function _list_orphans() {
 	pacman -Qtdq
 }
 
-_remove_orphans() {
+function _remove_orphans() {
 	pacman -Qtdq | sudo pacman -Rns -
 }
 
-_help() {
+function _help() {
 	PRINT "$(SCRIPTNAME) - Various pacman tools"
 	PRINT
 	PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"

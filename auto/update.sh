@@ -35,7 +35,7 @@ export BASHRC="${HOME}/.bashrc"
 export SHELLFILES="${HOME}/.shellfiles"
 export SCRIPTS="${HOME}/System32"
 
-PRINT() { printf '%b\n' "${@}"; }
+function PRINT() { printf '%b\n' "${@}"; }
 
 ################################# LOGIC ########################################
 

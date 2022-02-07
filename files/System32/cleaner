@@ -21,7 +21,7 @@ DISABLE_ROOT
 
 GUI=0
 
-_help() {
+function _help() {
 	PRINT "$(SCRIPTNAME) - System cleaner script"
 	PRINT
 	PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"
@@ -40,10 +40,10 @@ _help() {
 	} | column -t -s'|'
 }
 
-_wine() {
+function _wine() {
 	MSG="WINE removed."
 
-	_wine.error() {
+	function _wine.error() {
 		{ ((GUI == 0)) && PRINT "$(SCRIPTNAME): WINE could not be removed." && return 1; } ||
 			{ zenity --info --title "$(SCRIPTNAME)" --width 100 --height 100 --text "WINE could not be removed." && return 1; }
 	}
@@ -81,7 +81,7 @@ _wine() {
 		--text "Removed WINE."
 }
 
-_trash() {
+function _trash() {
 	TRASHF="${HOME}/.local/share/Trash"
 	MSG="Trash emptied successfully."
 
@@ -99,7 +99,7 @@ _trash() {
 		--text "${MSG}."
 }
 
-_gui() {
+function _gui() {
 	# If zenity or rofi are missing then disallow GUI use.
 	REQUIRE_CMD "zenity" || return 1
 

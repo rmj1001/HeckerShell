@@ -13,7 +13,7 @@
 
 ### CURL APPS HELP
 # usage: curlapps
-curlapps() {
+function curlapps() {
     PRINT "cheat \t\t [command]"
     PRINT "weather"
     PRINT "qrcode \t\t [url]"
@@ -25,48 +25,48 @@ curlapps() {
 
 ### CHEAT PAGES
 # usage: cheat <command>
-cheatsh() {
-    curl cheat.sh/$1
+function cheatsh() {
+    curl "cheat.sh/${1}"
 }
 
 ### WEATHER
 # usage: weather
-weather() {
+function weather() {
     curl wttr.in
 }
 
 ### QR CODE CREATOR
 # usage: qrcode <link>
-qrcode() {
-    curl qrenco.de/$1
+function qrcode() {
+    curl "qrenco.de/${1}"
 }
 
 ### DICTIONARY
 # usage: dict <word>
-dict() {
-    curl dict://dict.org/d:$1
+function dict() {
+    curl "dict://dict.org/d:${1}"
 }
 
 ### CRYTPOCURRENCY RATES
 # usage: rate <cryptocurrency symbol>
-rate() {
-    curl rate.sx/$1
+function rate() {
+    curl "rate.sx/${1}"
 }
 
 ### URL SHORTENER
 # usage: urlshorten <link>
-urlshorten() {
-    curl -F "shorten=$1" https://0x0.st
+function urlshorten() {
+    curl -F "shorten=${1}" https://0x0.st
 }
 
 ### NEWS READER
 # usage: getnews <topic>
-getnews() {
-    curl getnews.tech/$1
+function getnews() {
+    curl "getnews.tech/${1}"
 }
 
 ### PARROT IN TERMINAL
 # usage: parrot
-parrot() {
+function parrot() {
     curl parrot.live
 }

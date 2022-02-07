@@ -20,15 +20,15 @@ REQUIRE_CMD "rofi" || exit 1
 
 ####################################
 
-_menu() {
+function _menu() {
 	rofi -show drun -scroll-method 1 -show-icons -columns 2 -disable-history -sorting-method 'fzf'
 }
 
-_switcher() {
+function _switcher() {
 	rofi -show window -window-icon -window-format "{c}    {t}"
 }
 
-_help() {
+function _help() {
 	PRINT "$(SCRIPTNAME) - Invoke common app management programs"
 	PRINT
 	PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"

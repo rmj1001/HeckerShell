@@ -227,8 +227,8 @@ function readfile() { /bin/cat -n "${@}"; }
 function which() { WHICH "${@}"; }
 
 # If bat/batcat exists, create opposite alias to replace cat
-[[ -x /bin/bat ]] && bat() { /bin/bat -P "${@}"; }
-[[ -x /bin/batcat ]] && bat() { /bin/batcat -P "${@}"; }
+[[ -x /bin/bat ]] && function bat() { /bin/bat -P "${@}"; }
+[[ -x /bin/batcat ]] && function bat() { /bin/batcat -P "${@}"; }
 
 # Listing files/directories
 SILENTRUN unalias ls

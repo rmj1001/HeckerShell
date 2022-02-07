@@ -19,7 +19,7 @@ DISABLE_ROOT
 
 ####################################
 
-_help() {
+function _help() {
 	PRINT "$(SCRIPTNAME) - description"
 	PRINT
 	PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"
@@ -39,21 +39,21 @@ _help() {
 	} | column -t -s'|'
 }
 
-_up() {
+function _up() {
 	percent=${1:-15}
 	SILENTRUN amixer sset Master "${percent}%+"
 }
 
-_down() {
+function _down() {
 	percent=${1:-15}
 	SILENTRUN amixer sset Master "${percent}%-"
 }
 
-_mute() {
+function _mute() {
 	SILENTRUN amixer sset Master toggle
 }
 
-_view() {
+function _view() {
 	local volume
 
 	volume="$(amixer sget Master | grep 'Front Left' | grep '%' | sed -e 's|.* Playback [0-9]* ||g' -e 's|\[on\]||g' -re 's|[^0-9]||g')%"

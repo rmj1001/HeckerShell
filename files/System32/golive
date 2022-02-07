@@ -22,7 +22,7 @@ REQUIRE_CMD "pactl" || exit 1
 
 ####################################
 
-golive.setup() {
+function golive.setup() {
 	pactl list short modules | grep -q 'Virtual_Sink' && return
 
 	if [ -z "$MIC_SOURCE" ]; then
@@ -49,7 +49,7 @@ golive.setup() {
 	MIX_LOOPBACK=$(pactl load-module module-loopback latency_msec=1 source="$MIX_SOURCE" sink="$OUTPUT_SINK")
 }
 
-golive.cleanup() {
+function golive.cleanup() {
 	virtual_sink=$(pactl list short modules | grep 'Virtual_Sink' | awk '{print $1;}') # e.g. 30
 	[ -z "$virtual_sink" ] && return
 	read -r -p '>> Press enter to unload PulseAudio modules for the virtual mix...'

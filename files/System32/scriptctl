@@ -21,7 +21,7 @@ DISABLE_ROOT
 
 SCRIPTS="${SCRIPTS:=$HOME/.local/bin}"
 
-_help() {
+function _help() {
 	PRINT "$(SCRIPTNAME) - Manage user scripts"
 	PRINT
 	PRINT "Usage:\t\tscriptctl <flag> <args?>"
@@ -40,14 +40,14 @@ _help() {
 	} | column -t -s'|'
 }
 
-_ls() {
+function _ls() {
 	dir="${PWD}"
 	cd "${SCRIPTS}" || exit
 	ls -alvhF --group-directories-first
 	cd "${dir}" || exit
 }
 
-_script_conditions() {
+function _script_conditions() {
 	# Check for script name argument
 	test -z "${1}" && PRINT "You must specify a script name!" && return 1
 
@@ -55,7 +55,7 @@ _script_conditions() {
 	test ! -e "${SCRIPTS}"/"${1}" && PRINT "Script '${1}' doesn't exist!" && return 1
 }
 
-_mk() {
+function _mk() {
 	_script_conditions "$@" || return 1
 
 	cp "${SCRIPTS}"/00-template.sh "${SCRIPTS}"/"${1}".sh &&
@@ -64,7 +64,7 @@ _mk() {
 		PRINT "scriptctl: Created '${1}'."
 }
 
-_ed() {
+function _ed() {
 	_script_conditions "$@" || return 1
 
 	# Edit the script
@@ -72,7 +72,7 @@ _ed() {
 		PRINT "scriptctl: Edited '${1}'."
 }
 
-_rm() {
+function _rm() {
 	_script_conditions "$@" || return 1
 
 	# Confirm whether to delete script

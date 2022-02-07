@@ -24,7 +24,7 @@ interactive=1
 clearscr=1
 notifications=1
 
-_help() {
+function _help() {
 	PRINT "$(SCRIPTNAME) - Update system applications in batches."
 	PRINT
 	PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"
@@ -43,7 +43,7 @@ _help() {
 	} | column -t -s'|'
 }
 
-LOG() {
+function LOG() {
 	local folder
 
 	folder="${HOME}/.local/share/com.github.rmj1001.dotfiles.updater/logs"
@@ -54,7 +54,7 @@ LOG() {
 	"${@}" >>"${logfile}" 2>&1
 }
 
-UPDATE() {
+function UPDATE() {
 	req="${1}" cmd="${2}"
 	shift
 	shift

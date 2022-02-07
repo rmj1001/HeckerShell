@@ -23,7 +23,7 @@ REQUIRE_CMD "grep" "sed" "uname" "cat" || exit 1
 CLEAR=0
 NEOFETCH=0
 
-aboutpc.fetch() {
+function aboutpc.fetch() {
 	# Operating System Information
 	OS="$(grep '^NAME=' /etc/os-release | sed 's/NAME=//;s/"//g')"
 	OS="${OS} $(grep '^VERSION=' /etc/os-release | sed 's/VERSION=//;s/"//g')"
@@ -56,7 +56,7 @@ aboutpc.fetch() {
 	CMD_EXISTS "xrandr" && RESOLUTION="$(xrandr -q | grep current | sed -e 's|.*current\s||g' -e 's|,.*||g')"
 }
 
-aboutpc.zenity() {
+function aboutpc.zenity() {
 	REQUIRE_CMD "zenity" || return 1
 
 	aboutpc.fetch
@@ -76,7 +76,7 @@ aboutpc.zenity() {
 	return 0
 }
 
-aboutpc.neofetch() {
+function aboutpc.neofetch() {
 	aboutpc.fetch
 
 	# Header
@@ -97,7 +97,7 @@ aboutpc.neofetch() {
 	PRINT
 }
 
-aboutpc.normal() {
+function aboutpc.normal() {
 	aboutpc.fetch
 
 	# Header
@@ -123,7 +123,7 @@ aboutpc.normal() {
 	PRINT
 }
 
-_help() {
+function _help() {
 	PRINT "$(SCRIPTNAME) - Show system information for screenshots :)"
 	PRINT
 	PRINT "Usage:\t\t$(SCRIPTNAME) <flag?> <args?> ..."

@@ -24,7 +24,7 @@ exclusions="${HOME}/.backup_exclusions"
 method="tar"
 ARGS=()
 
-backup.create() {
+function backup.create() {
 	clear
 
 	# If the directory doesn't exist, throw an error and exit
@@ -94,7 +94,7 @@ backup.create() {
 	clear
 }
 
-backup.restore() {
+function backup.restore() {
 	clear
 
 	# Cleanly exit backup process
@@ -123,7 +123,7 @@ backup.restore() {
 }
 
 # Create/edit the exclusions file
-backup.exclusions() {
+function backup.exclusions() {
 
 	local name
 
@@ -145,7 +145,7 @@ backup.exclusions() {
 	${EDITOR:-nano} "${exclusions}"
 }
 
-backup.help() {
+function backup.help() {
 	PRINT "$(SCRIPTNAME) - Create/restore backups of your HOME directory"
 	PRINT
 	PRINT "Usage:\t\t$(SCRIPTNAME) <flag/command> <args?>"

@@ -19,7 +19,7 @@ DISABLE_ROOT
 
 ####################################
 
-extract.help() {
+function extract.help() {
 	PRINT "extract - Extract various archive files"
 	PRINT
 	PRINT "Usage: extract <archive1> <archive2> ..."
@@ -44,7 +44,7 @@ extract.help() {
 }
 
 # Determine if an argument is a file (not symlink, folder, etc.)
-extract.isFile() {
+function extract.isFile() {
 	[[ ! -f "${1}" ]] && PRINT "'${1}' is not a file." && return 1
 
 	[[ -f "${1}" ]] && return 0

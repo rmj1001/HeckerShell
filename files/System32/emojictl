@@ -42,7 +42,7 @@ FILE=${FONTS}/NotoColorEmoji.ttf
 # cmd
 cmd=""
 
-emojictl.prepare() {
+function emojictl.prepare() {
 	# Make the config directory and move to it
 	[[ ! -d "${CONFDIR}" ]] && mkdir -p "${CONFDIR}"
 	[[ ! -d "${FONTS}" ]] && mkdir -p "${FONTS}"
@@ -52,7 +52,7 @@ emojictl.prepare() {
 	[[ -f "${NOTOPKG}" ]] && rm -f "${NOTOPKG}"
 }
 
-emojictl.emojis.install() {
+function emojictl.emojis.install() {
 	clear
 
 	# Make the config directory and move to it
@@ -85,7 +85,7 @@ emojictl.emojis.install() {
 	clear
 }
 
-emojictl.emojis.uninstall() {
+function emojictl.emojis.uninstall() {
 	clear
 	emojictl.prepare
 
@@ -110,7 +110,7 @@ emojictl.emojis.uninstall() {
 	clear
 }
 
-emojictl.help() {
+function emojictl.help() {
 	PRINT "$(SCRIPTNAME) - Manage system emojis"
 	PRINT
 	PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"

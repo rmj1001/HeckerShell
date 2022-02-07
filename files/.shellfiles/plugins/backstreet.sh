@@ -11,12 +11,12 @@
 #
 ##############################################
 
-tellmewhy() {
+function tellmewhy() {
     [[ -z "$iters" ]] && iters=0
 
     local text=""
 
-    choose_text() {
+    function choose_text() {
         case "${iters}" in
 
         0) text="Ain't nothin but a heartache" ;;

@@ -23,17 +23,17 @@ REQUIRE_CMD "pv" || exit 1
 
 FORMAT=0
 
-_format() {
+function _format() {
 	sudo dd if=/dev/zero of="${DISK}" bs=512 count=1
 	sync
 }
 
-_write() {
+function _write() {
 	sudo -- bash -c "cat ${ISO} | pv > ${DISK}"
 	sync
 }
 
-_help() {
+function _help() {
 	PRINT "$(SCRIPTNAME) - Create a bootable USB drive"
 	PRINT
 	PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"

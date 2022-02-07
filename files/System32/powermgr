@@ -20,7 +20,7 @@ DISABLE_ROOT
 ####################################
 
 # Rofi power menu
-powermgr.gui() {
+function powermgr.gui() {
 
 	# If zenity or rofi are missing then disallow GUI use.
 	REQUIRE_CMD "zenity" "rofi" || return 1
@@ -39,28 +39,28 @@ powermgr.gui() {
 }
 
 # Shutdown PC
-powermgr.shutoff() {
+function powermgr.shutoff() {
 	test $GUI -eq 1 && zenity --info --text="Shutting down..."
 
 	systemctl poweroff
 }
 
 # Restart PC
-powermgr.restart() {
+function powermgr.restart() {
 	test $GUI -eq 1 && zenity --info --text="Rebooting..."
 
 	systemctl reboot
 }
 
 # Kill user process and logout
-powermgr.logout() {
+function powermgr.logout() {
 	test $GUI -eq 1 && zenity --info --text="Logging out..."
 
 	killall -u "$USER"
 }
 
 # Screen locker
-powermgr.lock() {
+function powermgr.lock() {
 	test $GUI -eq 1 && zenity --info --text="Locking screen..."
 
 	# Lightdm lock command
@@ -73,13 +73,13 @@ powermgr.lock() {
 
 # Unlock available for KDE connect (CLI/Phone only)
 # Does not work with Lightdm
-powermgr.unlock() {
+function powermgr.unlock() {
 	# Systemd unlock command (doesn't work with lightdm)
 	SESSIONS=("$(loginctl list-sessions | grep "$(whoami)" | awk '{print $1}' | tr '\n' ' ')")
 	loginctl unlock-session "${SESSIONS[@]}"
 }
 
-powermgr.help() {
+function powermgr.help() {
 	PRINT "$(SCRIPTNAME) - Manage the state of your PC or account"
 	PRINT
 	PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"

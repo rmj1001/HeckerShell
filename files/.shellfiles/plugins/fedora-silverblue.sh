@@ -14,7 +14,7 @@
 # Alias for 'rpm-ostree', replaces certain subcommands with custom implementations
 function dnf() {
 
-	_help() {
+	function _help() {
 		PRINT "dnf - An alias for 'rpm-ostree' on Fedora Silverblue"
 		PRINT "Note: This command uses the same syntax as 'rpm-ostree', but adds"
 		PRINT "      custom flags for aliases for subcommands."
@@ -26,7 +26,7 @@ function dnf() {
 		PRINT ""
 	}
 
-	_install() {
+	function _install() {
 		rpm-ostree install -A
 	}
 
@@ -46,7 +46,8 @@ function dnf() {
 
 		*)
 			shift
-			[[ $# -gt 0 ]] && rpm-ostree "$@" || rpm-ostree -h
+			[[ $# -gt 0 ]] || { rpm-ostree -h && continue; }
+			rpm-ostree "$@"
 			;;
 
 		esac

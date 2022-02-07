@@ -32,7 +32,7 @@ TRASHDIRS=$HOME/.local/share/Trash
 TRASHINFO=$TRASHDIRS/info
 [ -z "$TRASH" ] && TRASH=$TRASHDIRS/files
 
-trash.file.check() {
+function trash.file.check() {
   if [ -n "$1" ]; then
     FILE="$1"
   else
@@ -40,17 +40,17 @@ trash.file.check() {
   fi
 }
 
-trash.getPath() {
+function trash.getPath() {
   confFile="${1}"
   PRINT "$(grep -m 1 Path= "${confFile}" | sed 's|Path=||')"
 }
 
-trash.getDate() {
+function trash.getDate() {
   confFile="${1}"
   PRINT "$(grep -m 1 DeletionDate= "${confFile}" | sed 's|DeletionDate=||')"
 }
 
-trash.files.add() {
+function trash.files.add() {
   trash.file.check "$1"
   if [ -e "${FILE}" ]; then
     FILENAME="$(basename "${FILE}")"
@@ -69,7 +69,7 @@ trash.files.add() {
   fi
 }
 
-trash.files.restore() {
+function trash.files.restore() {
   trash.file.check "$1"
 
   FILEPATH="${TRASH}/${FILE}"
@@ -88,14 +88,14 @@ trash.files.restore() {
   fi
 }
 
-trash.files.empty() {
+function trash.files.empty() {
   cd "${TRASH}" && SILENTRUN rm -rf ./*
   cd "${TRASHINFO}" && SILENTRUN rm -rf ./*
 
   PRINT "Trash emptied!"
 }
 
-trash.files.information() {
+function trash.files.information() {
   trash.file.check "$1"
 
   FILEINFO=$TRASHINFO/"${FILE}.trashinfo"
@@ -108,7 +108,7 @@ trash.files.information() {
   fi
 }
 
-trash.help() {
+function trash.help() {
   PRINT "$(SCRIPTNAME) - Manage your trash bin"
   PRINT
   PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"

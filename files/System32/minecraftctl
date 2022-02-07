@@ -25,7 +25,7 @@ downloadLink="https://launcher.mojang.com/download/Minecraft.deb"
 binary="/usr/bin/minecraft-launcher"
 desktopEntry="/usr/share/applications/minecraft.desktop"
 
-minecraftctl.install() {
+function minecraftctl.install() {
 	# Clear Screen
 	clear
 
@@ -63,7 +63,7 @@ minecraftctl.install() {
 	clear
 }
 
-minecraftctl.remove() {
+function minecraftctl.remove() {
 	# Clear screen
 	clear
 
@@ -84,7 +84,7 @@ minecraftctl.remove() {
 	clear
 }
 
-minecraftctl.help() {
+function minecraftctl.help() {
 	PRINT "$(SCRIPTNAME) - Manage your minecraft installation"
 	PRINT
 	PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"
