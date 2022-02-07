@@ -33,9 +33,10 @@ For some tips on developing scripts/plugins, see [here](script-tricks.md).
 3. Environment variables are stored in `files/.shellfiles/01-environment.sh`.
 4. Functions (aliases) are stored in `files/.shellfiles/02-functions.sh`.
 5. Sourced settings are stored in `files/.shellfiles/03-sources.sh`.
-6. Distro postinstall scripts are stored in `files/Postinstallers`.
-7. Optional or shell-specific functionality must be developed as a plugin.
-8. When hacking on the dotfiles, make use of these commands. NOTE: Use `command ?` to see their help menu.
+6. The MOTD is stored in `files/.shellfiles/04-motd.sh`.
+7. Distro postinstall scripts are stored in `files/Postinstallers`.
+8. Optional or shell-specific functionality must be developed as a plugin.
+9. When hacking on the dotfiles, make use of these commands. NOTE: Use `command ?` to see their help menu.
    1. `dotfiles` - Update/clean/uninstall dotfiles
    2. `reload` - Reload shell configs (use `--clean` flag if hacking on `<shell>rc` files.).
    3. `scriptctl` - Create/manage script files
