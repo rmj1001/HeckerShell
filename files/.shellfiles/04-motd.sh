@@ -1,5 +1,16 @@
 #!/usr/bin/env bash
 
+##############################################
+#   Author(s): RMCJ <rmichael1001@gmail.com>
+#   Project: 04-motd.sh
+#   Version: 1.0
+#
+#   Usage: n/a
+#
+#   Description: MOTD printed to terminal
+#
+##############################################
+
 ### Print custom MOTD to terminal
 # Usage: motd
 function motd() {
