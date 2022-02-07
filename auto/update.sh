@@ -35,22 +35,24 @@ export BASHRC="${HOME}/.bashrc"
 export SHELLFILES="${HOME}/.shellfiles"
 export SCRIPTS="${HOME}/System32"
 
+PRINT() { printf '%b\n' "${@}"; }
+
 ################################# LOGIC ########################################
 
-[[ -x "$(command -v git)" ]] || { printf '%b\n' \
+[[ -x "$(command -v git)" ]] || { PRINT "" \
     'git must be installed.' && exit 1; }
 
-cd "${DOTFILES_DIR}" || { printf '%b\n' 'Dotfiles does not exist.' && exit 1; }
+cd "${DOTFILES_DIR}" || { PRINT 'Dotfiles does not exist.' && exit 1; }
 
 # Confirm uninstallation
 read -r -p \
     "Are you sure you want to update? Changes you made will be lost. (y/N) " \
     confirm
 
-printf '%b\n' ""
+PRINT ""
 
 [[ ! "${confirm}" =~ ^[yY][eE]?[sS]?$ ]] && {
-    printf '%b\n' "Cancelling."
+    PRINT "Cancelling."
     exit 1
 }
 

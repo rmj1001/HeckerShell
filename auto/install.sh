@@ -35,11 +35,13 @@ export BASHRC="${HOME}/.bashrc"
 export SHELLFILES="${HOME}/.shellfiles"
 export SCRIPTS="${HOME}/System32"
 
+PRINT() { printf '%b\n' "${@}"; }
+
 ################################# LOGIC ########################################
 
 # Check if Git is installed.
 [[ ! -x "$(command -v git)" ]] &&
-	printf '%b\n' "Git is not installed." && {
+	PRINT "Git is not installed." && {
 	sleep 0.5
 	exit 1
 }
@@ -48,7 +50,7 @@ export SCRIPTS="${HOME}/System32"
 read -r -p "Are you sure you want to install this? (y/N) " confirm
 
 [[ ! "${confirm}" =~ ^[yY][eE]?[sS]?$ ]] && {
-	printf '%b\n' "Cancelling."
+	PRINT "Cancelling."
 
 	sleep 0.5
 	exit 1
@@ -56,8 +58,8 @@ read -r -p "Are you sure you want to install this? (y/N) " confirm
 
 # Check if dotfiles exist
 [[ -d "${DOTFILES_DIR}" ]] && {
-	printf "%b\n" "Dotfiles directory exists. Try using the update script."
-	printf "%b\n" "Exiting..."
+	PRINT "Dotfiles directory exists. Try using the update script."
+	PRINT "Exiting..."
 
 	sleep 0.5
 	exit 1
@@ -70,30 +72,30 @@ read -r -p "Will you be contributing to these dotfiles? (y/N) " contrib
 
 # Download dotfiles
 sleep 0.5
-printf "%b\n" "Downloading dotfiles..."
+PRINT "Downloading dotfiles..."
 cd "${DOTFILES_DOWN_DIR}" || exit 1
 git clone "${DOTFILES_SITE}"
 
 # Install scripts
 sleep 0.5
-printf "%b\n" "Installing scripts..."
+PRINT "Installing scripts..."
 ln -s "${SYM_SCRIPTS}" "${SCRIPTS}"
 
 # Install shellfiles
 sleep 0.5
-printf "%b\n" "Installing shell configs..."
+PRINT "Installing shell configs..."
 rm -f "${ZSHRC}" && ln -s "${SYM_ZSHRC}" "${ZSHRC}" && sleep 0.5
 rm -f "${BASHRC}" && ln -s "${SYM_BASHRC}" "${BASHRC}" && sleep 0.5
 ln -s "${SYM_SHELLFILES}" "${SHELLFILES}" && sleep 0.5
 
 # Remove rogue symlinks
 sleep 0.5
-printf "%b\n" "Removing rogue symlinks..."
+PRINT "Removing rogue symlinks..."
 [[ -L "${SHELLFILES}/.shellfiles" ]] && rm -f "${SHELLFILES}/.shellfiles"
 
 # Install miscellany configs
 sleep 0.5
-printf "%b\n" "Installing miscellaneous configs..."
+PRINT "Installing miscellaneous configs..."
 
 for folder in "${DOTFILES}"/.config/*; do
 	name="$(basename "${folder}")"
@@ -101,11 +103,11 @@ for folder in "${DOTFILES}"/.config/*; do
 
 	sleep 0.5
 
-	printf "%b\n" "Installing config '${name}'..."
+	PRINT "Installing config '${name}'..."
 
 	[[ -L "${sym}" ]] || ln -s "${folder}" "${sym}"
 
 done
 
 # Finish
-printf "%b\n" "Dotfiles installed to '${DOTFILES_DIR}'."
+PRINT "Dotfiles installed to '${DOTFILES_DIR}'."

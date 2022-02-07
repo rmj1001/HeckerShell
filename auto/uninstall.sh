@@ -35,47 +35,49 @@ export BASHRC="${HOME}/.bashrc"
 export SHELLFILES="${HOME}/.shellfiles"
 export SCRIPTS="${HOME}/System32"
 
+PRINT() { printf '%b\n' "${@}"; }
+
 ################################# LOGIC ########################################
 
 # Check if Git is installed.
 [[ ! -x "$(command -v git)" ]] &&
-    printf '%b\n' "Git is not installed." && exit 1
+    PRINT "Git is not installed." && exit 1
 
 # Confirm uninstallation
 read -r -p "Are you sure you want to uninstall this? (y/N) " confirm
 
-printf '%b\n' ""
+PRINT ""
 
 [[ ! "${confirm}" =~ ^[yY][eE]?[sS]?$ ]] && {
-    printf '%b\n' "Cancelling."
+    PRINT "Cancelling."
     exit 1
 }
 
 # Uninstall scripts
-printf "%b\n" "Uninstalling scripts..."
+PRINT "Uninstalling scripts..."
 [[ -L "${SCRIPTS}" ]] && rm -f "${SCRIPTS}"
 
 # Uninstall shell files
-printf "%b\n" "Uninstalling shell configs..."
+PRINT "Uninstalling shell configs..."
 [[ -L "${ZSHRC}" ]] || rm -f "${ZSHRC}"
 [[ -L "${BASHRC}" ]] || rm -f "${BASHRC}"
 [[ -L "${SHELLFILES}" ]] || rm -f "${SHELLFILES}"
 
 # Uninstall miscellany configs
-printf "%b\n" "Uninstalling miscellaneous configs..."
+PRINT "Uninstalling miscellaneous configs..."
 
 for folder in "${DOTFILES}"/.config/*; do
     linkRef="${folder##*/}"
     sym="${HOME}/.config/${linkRef}"
 
-    printf "%b\n" "Uninstalling config ${linkRef}..."
+    PRINT "Uninstalling config ${linkRef}..."
 
     [[ -L "${sym}" ]] && rm -f "${sym}"
 done
 
 # Delete dotfiles
-printf "%b\n" "Deleting dotfiles..."
+PRINT "Deleting dotfiles..."
 rm -rf "${DOTFILES_DIR}"
 
 # Finish
-printf "%b\n" "Done."
+PRINT "Done."
