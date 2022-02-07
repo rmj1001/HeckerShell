@@ -16,6 +16,7 @@ source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
 
 # Preprocessor flags
 DISABLE_ROOT
+TITLE "Matrix"
 
 ####################################
 
@@ -39,11 +40,11 @@ colors=($green)
 
 spacing=${1:-100}
 scroll=${2:-0}
-lines=$(expr `tput lines` - 1 + $scroll)
-cols=$(expr `tput cols` / 2 - 1)
+lines=$(expr $(tput lines) - 1 + $scroll)
+cols=$(expr $(tput cols) / 2 - 1)
 
 chars=(a b c d e f g h i j k l m n o p q r s t u v w x y z
-A B C D E F G H I J K L M N O P Q R S T U V W X Y Z 0 1 2 3 4 5 6 7 8 9 ^)
+	A B C D E F G H I J K L M N O P Q R S T U V W X Y Z 0 1 2 3 4 5 6 7 8 9 ^)
 
 count=${#chars[@]}
 colorcount=${#colors[@]}
@@ -51,19 +52,19 @@ colorcount=${#colors[@]}
 clear
 tput cup 0 0
 
-while : ; do
+while :; do
 
 	for i in $(eval echo {1..$lines}); do
 
 		for i in $(eval echo {1..$cols}); do
 
-			rand=$(( RANDOM % spacing ))
+			rand=$((RANDOM % spacing))
 
 			case "$rand" in
-				0 ) printf \
-					"${colors[$RANDOM%$colorcount]}${chars[$RANDOM%$count]} " ;;
-				1 ) printf "  " ;;
-				* ) printf "\033[2C" ;;
+			0) printf \
+				"${colors[$RANDOM % $colorcount]}${chars[$RANDOM % $count]} " ;;
+			1) printf "  " ;;
+			*) printf "\033[2C" ;;
 			esac
 
 		done
