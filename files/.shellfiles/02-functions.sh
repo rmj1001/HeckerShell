@@ -1,5 +1,16 @@
 #!/bin/bash
 
+##############################################
+#   Author(s): RMCJ <rmichael1001@gmail.com>
+#   Project: 02-functions.sh
+#   Version: 1.0
+#
+#   Usage: n/a
+#
+#   Description: Dotfiles functions
+#
+##############################################
+
 ############################ SHELL FUNCTIONS ###################################
 
 ### Replacement for 'echo'

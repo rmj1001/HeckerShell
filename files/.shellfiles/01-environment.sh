@@ -1,5 +1,16 @@
 #!/bin/bash
 
+##############################################
+#   Author(s): RMCJ <rmichael1001@gmail.com>
+#   Project: 01-environment.sh
+#   Version: 1.0
+#
+#   Usage: n/a
+#
+#   Description: Dotfiles environment variables
+#
+##############################################
+
 ################################## ENVIRONMENT #################################
 
 # Default Editor
