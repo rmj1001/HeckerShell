@@ -9,8 +9,7 @@ __Table of Contents:__
 
 - [Post-installation Scripts](#post-installation-scripts)
   - [Distro Installers](#distro-installers)
-  - [Flatpak Apps Installer](#flatpak-apps-installer)
-  - [Portable Apps Installer](#portable-apps-installer)
+  - [Miscellaneous Installers](#miscellaneous-installers)
 
 ## Distro Installers
 
@@ -28,14 +27,16 @@ __Ubuntu:__
 bash -c "$(wget -qO- https://raw.githubusercontent.com/rmj1001/dotfiles/main/files/Postinstallers/ubuntu.sh)" 
 ```
 
-## Flatpak Apps Installer
+## Miscellaneous Installers
+
+__Flatpak Apps:__
 
 ```bash
 # wget
 bash -c "$(wget -qO- https://raw.githubusercontent.com/rmj1001/dotfiles/main/files/Postinstallers/helpers/flatconfig.sh)"
 ```
 
-## Portable Apps Installer
+__Portable Apps:__
 
 ```bash
 # wget
