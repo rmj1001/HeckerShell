@@ -6,7 +6,7 @@ Return [Home](../README.md)
 
 1. Headers must be named `00-name.sh`.
 2. Do not mark header scripts as executable.
-3. Function names should be uppercase.
+3. All function names should use the `function` keyword.
 4. Functions should have comments with a description and usage example.
 5. Do not declare global variables inside functions. Always use `local <name>=""` to declare variables in functons.
 6. If functions assume global variables exist, make sure to include a default value if the variable is empty.
