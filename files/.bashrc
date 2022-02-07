@@ -28,7 +28,7 @@ shell.load() {
 	# shellcheck disable=SC2154
 	for plug in "${plugins[@]}"; do
 
-		plugin="${SHELLFILES}/plugins/${plug}"
+		plugin="${SHELLFILES}/plugins/${plug}.sh"
 
 		# shellcheck disable=SC1090
 		[[ -f "${plugin}" ]] && source "${plugin}"

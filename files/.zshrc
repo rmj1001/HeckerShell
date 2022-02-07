@@ -16,7 +16,7 @@ shell.load() {
 	# Load plugins described in ${plugins} array.
 	for plug in "${plugins[@]}"; do
 
-		plugin="${SHELLFILES}/plugins/${plug}"
+		plugin="${SHELLFILES}/plugins/${plug}.sh"
 
 		[[ -f "${plugin}" ]] && source ${plugin} || PRINT "zsh: Plugin '${plug}' does not exist."
 
