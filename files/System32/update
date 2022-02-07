@@ -19,6 +19,10 @@ DISABLE_ROOT
 
 ####################################
 
+interactive=1
+clearscr=1
+notifications=1
+
 LOG() {
 	local folder
 
@@ -30,66 +34,55 @@ LOG() {
 	"${@}" >>"${logfile}" 2>&1
 }
 
-UPDATER() {
-	local interactive=1
+UPDATE() {
+	req="${1}" cmd="${2}"
+	shift
+	shift
 
-	while test $# -gt 0; do
+	# If cmd does not exist, return error.
+	CMD_EXISTS "${req}" || return 1
 
-		[[ "${1}" == "--noninteractive" || "${1}" == "-n" ]] &&
-			interactive=0 &&
-			shift && continue
+	[[ $interactive -eq 0 ]] && LOG eval "${cmd}" &&
+		{
+			[[ $notifications -eq 0 ]] && CMD_EXISTS "notify-send" &&
+				notify-send -i info -t 250 "Updated '${req}'."
 
-		# Required command and command to eval
-		req="${1}" cmd="${2}"
-		shift
-		shift
+			PRINT "Updated '${req}'."
+		} && return 0
 
-		# If cmd does not exist, continue loop
-		CMD_EXISTS "${req}" || continue
+	PRINT "\n"
+	[[ $clearscr -eq 1 ]] && clear
 
-		test $interactive -eq 1 && clear
+	NPRINT "Update \"${req}\"? (Y/n) " && read -r confirm
 
-		test $interactive -eq 0 && LOG eval "${cmd}" &&
-			{
-				CMD_EXISTS "notify-send" &&
-					notify-send -i info -t 250 "Updated '${req}'."
+	CHECK_YES "${confirm}" && PRINT "Updating ${req}...\n" &&
+		eval "${cmd}" &&
+		PAUSE && return 0
 
-				PRINT "Updated '${req}'."
-			} && continue
-
-		NPRINT "Update \"${req}\"? (Y/n) " && read -r confirm
-
-		CHECK_YES "${confirm}" && PRINT "Updating ${req}...\n" &&
-			eval "${cmd}" &&
-			PAUSE && continue
-
-		PRINT "Skipped updating \"${req}\"" && PAUSE && continue
-
-	done
-
-	test $interactive -eq 0 && CMD_EXISTS "notify-send" &&
-		notify-send -i info -t 250 "Updates finished." && exit 0
-
-	clear && PRINT "Updates finished." && exit 0
-
+	PRINT "Skipped updating \"${req}\"" && PAUSE && return 1
 }
 
-ENTRIES=(
-	"flatpak" "flatpak update --assumeyes"
-	"snap" "sudo snap refresh"
-	"brew" "brew upgrade"
-	"apt" "sudo apt update && sudo apt upgrade"
-	"dnf" "sudo dnf update --assumeyes"
-	"rpm-ostree" "rpm-ostree upgrade --assumeyes"
-	"pacman" "sudo pacman -Syu --noconfirm"
-	"yay" "yay -Sua --noconfirm"
-	"paru" "paru -Sua --noconfirm"
-)
+for arg in "${@}"; do
 
-{ test "${1}" == "--noninteractive" || test "${1}" == "-n"; } &&
-	{
-		UPDATER -n "${ENTRIES[@]}"
-		exit 0
-	}
+	case "${arg}" in
+	-n | --notifications) notifications=0 ;;
+	-i | --non-interactive) interactive=0 ;;
+	-c | --no-clear) clearscr=0 ;;
+	esac
 
-UPDATER "${ENTRIES[@]}"
+done
+
+[[ ! $interactive -eq 0 ]] && clear
+
+UPDATE "flatpak" "flatpak update --assumeyes"
+UPDATE "snap" "sudo snap refresh"
+UPDATE "brew" "brew upgrade"
+UPDATE "apt" "sudo apt update && sudo apt upgrade"
+UPDATE "dnf" "sudo dnf update --assumeyes"
+UPDATE "rpm-ostree" "rpm-ostree upgrade --assumeyes"
+UPDATE "pacman" "sudo pacman -Syu --noconfirm"
+UPDATE "yay" "yay -Sua --noconfirm"
+UPDATE "paru" "paru -Sua --noconfirm"
+
+[[ $clearscr -eq 1 && ! $interactive -eq 0 ]] && clear
+PRINT "\n\nFinished updates!"
