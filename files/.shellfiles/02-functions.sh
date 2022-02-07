@@ -140,6 +140,7 @@ motd() {
 }
 
 ### Clear screen and print MOTD
+## [flag] --no-clear: do not clear screen when printing
 # usage: freshscreen <flag?>
 freshscreen() {
     [[ "$(LOWERCASE "${1}")" == "--no-clear" ]] || clear
@@ -148,9 +149,12 @@ freshscreen() {
 }
 
 ### Reload shell
-# usage: reload
+## [flag] --clean: Restart shell completely, not just reload dotfiles
+# usage: reload <flag>
 reload() {
-    shell.load
+    [[ "$(LOWERCASE "${1}")" == "--clean" ]] || shell.load
+
+    exec "$(basename "${SHELL}")"
 }
 
 ### Download youtube videos
