@@ -11,8 +11,6 @@ shell.load() {
 
 	# Source shellrc (common settings between bash and zsh)
 	export SHELLFILES="${HOME}/.shellfiles"
-
-	# Source shellrc (common settings between bash and zsh)
 	for config in "${SHELLFILES}"/*.sh; do
 
 		# shellcheck disable=SC1090
@@ -20,9 +18,19 @@ shell.load() {
 
 	done
 
-	# Source changable bash settings
-	# shellcheck disable=1091
-	source "${SHELLFILES}/configs/bash.sh"
+	############################################################################
+	# PLACE BASH-SPECIFIC SETTINGS IN HERE.
+
+	# export PS1='\n$(write_lines)\n$(printf "%${COLUMNS}s\n" "$(date -u +"%m-%d-%Y %H:%M:%S")")[ ${USER}@${HOSTNAME} $(basename $(dirs +0)) ]$ '
+	export PS1='\n$(write_lines)\n$(printf "%${COLUMNS}s\n" "${PWD}")[ ${USER}@${HOSTNAME} $(basename $(dirs +0)) ]$ '
+
+	# Plugins
+	export plugins=(
+		backstreet
+		curlapps
+	)
+
+	############################################################################
 
 	# Load plugins described in ${plugins} array.
 	# shellcheck disable=SC2154
