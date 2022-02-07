@@ -15,7 +15,7 @@
 #
 # Usage: PRINT "text"
 # Returns: string
-PRINT() {
+function PRINT() {
 	printf "%b\n" "${@}"
 }
 
@@ -23,7 +23,7 @@ PRINT() {
 #
 # Usage: NPRINT "text"
 # Returns: string
-NPRINT() {
+function NPRINT() {
 	printf "%b" "${@}"
 }
 
@@ -31,7 +31,7 @@ NPRINT() {
 #
 # Usage: PAUSE
 # Returns: int
-PAUSE() {
+function PAUSE() {
 	NPRINT "Press <ENTER> to continue..." && read -r
 }
 
@@ -39,7 +39,7 @@ PAUSE() {
 #
 # Usage: TITLE "test"
 # Returns: void
-TITLE() {
+function TITLE() {
 	NPRINT "\033]2;${1}\a"
 }
 
@@ -47,7 +47,7 @@ TITLE() {
 #
 # Usage: RANDOM_NUM 100
 # Returns: int
-RANDOM_NUM() {
+function RANDOM_NUM() {
 	eval "shuf -i 1-${1} -n 1"
 }
 
@@ -55,7 +55,7 @@ RANDOM_NUM() {
 #
 # Usage: name="$(LOWERCASE $name)"
 # Returns: string
-LOWERCASE() {
+function LOWERCASE() {
 	NPRINT "${1}" | tr "[:upper:]" "[:lower:]"
 }
 
@@ -63,7 +63,7 @@ LOWERCASE() {
 #
 # Usage: name="$(UPPERCASE $name)"
 # Returns: string
-UPPERCASE() {
+function UPPERCASE() {
 	NPRINT "${1}" | tr "[:lower:]" "[:upper:]"
 }
 
@@ -71,7 +71,7 @@ UPPERCASE() {
 #
 # Usage: TRIM "   this      "
 # Returns: string
-TRIM() {
+function TRIM() {
 	var="$*"
 
 	# remove leading whitespace characters
@@ -88,7 +88,7 @@ TRIM() {
 #
 # Usage: SCRIPTNAME
 # Returns: string
-SCRIPTNAME() {
+function SCRIPTNAME() {
 	NPRINT "$(basename "$(readlink -nf "$0")")"
 }
 
@@ -96,7 +96,7 @@ SCRIPTNAME() {
 #
 # Usage: REQUIRE_CMD "7z" "tar" || exit 1
 # Returns: string
-REQUIRE_CMD() {
+function REQUIRE_CMD() {
 	NEEDED=()
 
 	for arg in "${@}"; do
@@ -114,7 +114,7 @@ REQUIRE_CMD() {
 #
 # Usage: REQUIRE_ROOT
 # Returns: string
-REQUIRE_ROOT() {
+function REQUIRE_ROOT() {
 	# shellcheck disable=SC2046
 	test $(id -u) -eq 0 && return 0
 
@@ -126,7 +126,7 @@ REQUIRE_ROOT() {
 #
 # Usage: DISABLE_ROOT
 # Returns: string
-DISABLE_ROOT() {
+function DISABLE_ROOT() {
 	# shellcheck disable=SC2046
 	test $(id -u) -ne 0 && return 0
 
@@ -138,7 +138,7 @@ DISABLE_ROOT() {
 #
 # Usage: SILENTRUN <command>
 # Returns: return exit code
-SILENTRUN() {
+function SILENTRUN() {
 	"$@" >/dev/null 2>&1
 }
 
@@ -146,7 +146,7 @@ SILENTRUN() {
 #
 # Usage: CMD_EXISTS <command>
 # Returns: return code
-CMD_EXISTS() {
+function CMD_EXISTS() {
 	command -v "${1}" >/dev/null 2>&1
 }
 
@@ -154,7 +154,7 @@ CMD_EXISTS() {
 #
 # Usage: CHECK_YES <var>
 # Returns: return code (1 for yes/empty, 1 for no)
-CHECK_YES() {
+function CHECK_YES() {
 	echo "$1" | grep -Eq '[yY][eE]?[sS]?' && return 0
 	test -z "$1" && return 0
 	return 1
@@ -164,7 +164,7 @@ CHECK_YES() {
 #
 # Usage: CHECK_NO <var>
 # Returns: return code (0 for no/empty, 1 for yes)
-CHECK_NO() {
+function CHECK_NO() {
 	echo "$1" | grep -Eq '[nN][oO]?' && return 0
 	test "$1" != "" && return 0
 	return 1
@@ -174,7 +174,7 @@ CHECK_NO() {
 #
 # Usage: READ_CONF <file>
 # Returns: void (reads file and inits variables in script from file)
-READ_CONF() {
+function READ_CONF() {
 
 	RCfile="${1}"
 	section=""

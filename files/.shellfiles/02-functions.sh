@@ -4,38 +4,38 @@
 
 ### Replacement for 'echo'
 # usage: PRINT "text"
-PRINT() { printf "%b\n" "${@}"; }
+function PRINT() { printf "%b\n" "${@}"; }
 
 ### 'echo' replacement w/o newline
 # usage: NPRINT "text"
-NPRINT() { printf "%b" "${@}"; }
+function NPRINT() { printf "%b" "${@}"; }
 
 ### Pauses script execution until the user presses ENTER
 # usage: PAUSE
-PAUSE() {
+function PAUSE() {
     PRINT "Press <ENTER> to continue..."
     read -r
 }
 
 ### Sets the terminal window title
 # usage: TITLE "test"
-TITLE() { NPRINT "\033]2;${1}\a"; }
+function TITLE() { NPRINT "\033]2;${1}\a"; }
 
 ### Generate a random number from 1 to the specified maximum
 # usage: RANDOM_NUM 100
-RANDOM_NUM() { NPRINT "$((RANDOM % ${1} + 1))"; }
+function RANDOM_NUM() { NPRINT "$((RANDOM % ${1} + 1))"; }
 
 ### Converts a string to all api.std.failMsg characters
 # usage: name="$(LOWERCASE $name)"
-LOWERCASE() { NPRINT "${1}" | tr "[:upper:]" "[:lower:]"; }
+function LOWERCASE() { NPRINT "${1}" | tr "[:upper:]" "[:lower:]"; }
 
 ### Converts a string to all UPPERCASE characters
 # usage: name="$(UPPERCASE $name)"
-UPPERCASE() { NPRINT "${1}" | tr "[:lower:]" "[:upper:]"; }
+function UPPERCASE() { NPRINT "${1}" | tr "[:lower:]" "[:upper:]"; }
 
 ### Trim all leading/trailing whitespace from a string
 # usage: TRIM "   this      "
-TRIM() {
+function TRIM() {
     local var="$*"
 
     # remove leading whitespace characters
@@ -50,15 +50,15 @@ TRIM() {
 
 ### Run code silently
 # usage: SILENTRUN <command>
-SILENTRUN() { "$@" >/dev/null 2>&1; }
+function SILENTRUN() { "$@" >/dev/null 2>&1; }
 
 ### Run programs in the background in disowned processes
 # usage: ASYNC '<commands>'
-ASYNC() { nohup "$@" >/dev/null 2>&1 & }
+function ASYNC() { nohup "$@" >/dev/null 2>&1 & }
 
 ### Check to see if command exists
 # usage: CMD_EXISTS <command>
-CMD_EXISTS() {
+function CMD_EXISTS() {
     SILENTRUN command -v "${1}"
     return $?
 }
@@ -66,7 +66,7 @@ CMD_EXISTS() {
 ### Checks for a filename in $PATH (commands), if not found
 ### then exit with an error
 # usage: REQUIRE_CMD "7z" "tar" || exit 1
-REQUIRE_CMD() {
+function REQUIRE_CMD() {
     NEEDED=()
 
     for arg in "${@}"; do
@@ -83,7 +83,7 @@ REQUIRE_CMD() {
 
 ### Checks to see if the script is being run as root, and if not then exit.
 # usage: REQUIRE_ROOT
-REQUIRE_ROOT() {
+function REQUIRE_ROOT() {
     [[ ${EUID} -eq 0 ]] && exit 0
     PRINT "This script must be run as root"
     exit 1
@@ -91,7 +91,7 @@ REQUIRE_ROOT() {
 
 ### Checks to see if the script is being run as root, and if so then exit.
 # usage: DISABLE_ROOT
-DISABLE_ROOT() {
+function DISABLE_ROOT() {
     [[ ${EUID} -ne 0 ]] && exit 0
     PRINT "This script cannot be run as root. Try another user."
     exit 1
@@ -100,7 +100,7 @@ DISABLE_ROOT() {
 ### Check to see if input is 'yes' or empty
 # usage: CHECK_YES <var>
 # returns: return code (1 for yes/empty, 1 for no)
-CHECK_YES() {
+function CHECK_YES() {
     [[ $1 =~ [yY][eE]?[sS]? ]] && return 0
     [[ -z "$1" ]] && return 0
     return 1
@@ -109,7 +109,7 @@ CHECK_YES() {
 ### Check to see if input is 'no' or empty
 # usage: CHECK_NO <var>
 # returns: return code (0 for no/empty, 1 for yes)
-CHECK_NO() {
+function CHECK_NO() {
     [[ $1 =~ [nN][oO]? ]] && return 0
     [[ -z "$1" ]] && return 0
     return 1
@@ -118,20 +118,20 @@ CHECK_NO() {
 ### Find the path for a command
 # usage: WHICH <command>
 # returns: string
-WHICH() {
+function WHICH() {
     command -v "${@}"
 }
 
 ### Write a line who's length is equal to the length of the terminal's columns
 # usage: write_lines
-write_lines() {
+function write_lines() {
     for ((i = 0; i < COLUMNS; ++i)); do printf -; done
     PRINT ""
 }
 
 ### Print custom MOTD to terminal
 # usage: motd
-motd() {
+function motd() {
     PRINT "########################################################"
     PRINT "#"
     PRINT "# Roy Conn"
@@ -149,7 +149,7 @@ motd() {
 ### Clear screen and print MOTD
 ## [flag] --no-clear: do not clear screen when printing
 # usage: freshscreen <flag?>
-freshscreen() {
+function freshscreen() {
     [[ "$(LOWERCASE "${1}")" == "--no-clear" ]] || clear
 
     motd
@@ -160,7 +160,7 @@ freshscreen() {
 ### Reload shell
 ## [flag] --clean: Restart shell completely, not just reload dotfiles
 # usage: reload <flag>
-reload() {
+function reload() {
     # If clean flag isn't used then just reload sourced files
     [[ "$(LOWERCASE "${1}")" == "--clean" ]] || {
         shell.load
@@ -173,7 +173,7 @@ reload() {
 
 ### Download youtube videos
 # usage: downloadYTVideo <video url>[]
-downloadYTVideo() {
+function downloadYTVideo() {
     # Preparations
     DIR=$HOME/Downloads/VideoDownloader
     [[ -d "$DIR" ]] ||
@@ -185,7 +185,7 @@ downloadYTVideo() {
 
 ### Download youtube videos as MP3 sound files
 # usage: mp3dl <video url>[]
-mp3dl() {
+function mp3dl() {
     # Preparations
     DIR=$HOME/Downloads/Music
     [[ -d "$DIR" ]] || mkdir "$DIR"
@@ -198,7 +198,7 @@ mp3dl() {
 
 ### Add sound clips to soundfx folder
 # usage: soundfx <video url>[]
-soundfx() {
+function soundfx() {
     # Preparations
     DIR=$HOME/Music/SoundFX
     [[ -d "$DIR" ]] || mkdir "$DIR"
@@ -210,21 +210,21 @@ soundfx() {
 }
 
 # Edit files
-edit() { "${EDITOR}" "${@}"; }
-rootedit() { ${AUTH} "${EDITOR}" "${@}"; }
+function edit() { "${EDITOR}" "${@}"; }
+function rootedit() { ${AUTH} "${EDITOR}" "${@}"; }
 
 # Copy text from STDIN or from a file
-copy() { xclip -sel clip "${@}"; }
+function copy() { xclip -sel clip "${@}"; }
 
 # Colorized grep
 SILENTRUN unalias grep
-grep() { $(WHICH grep) --color=auto "${@}"; }
+function grep() { $(WHICH grep) --color=auto "${@}"; }
 
 # Cat a file w/ line numbers
-readfile() { /bin/cat -n "${@}"; }
+function readfile() { /bin/cat -n "${@}"; }
 
 # Replace 'which'
-which() { WHICH "${@}"; }
+function which() { WHICH "${@}"; }
 
 # If bat/batcat exists, create opposite alias to replace cat
 [[ -x /bin/bat ]] && bat() { /bin/bat -P "${@}"; }
@@ -234,46 +234,46 @@ which() { WHICH "${@}"; }
 SILENTRUN unalias ls
 SILENTRUN unalias ll
 SILENTRUN unalias la
-ls() {
+function ls() {
     /usr/bin/env ls --color=auto --group-directories-first "${@}"
 }
-ll() { ls -AlvhF "${@}"; }
-la() { ls -A "${@}"; }
+function ll() { ls -AlvhF "${@}"; }
+function la() { ls -A "${@}"; }
 
 # Directory manipulation
-mkdir() { /usr/bin/env mkdir -p "${@}"; }
-md() { mkdir "${@}"; }
-mf() { touch "${@}"; }
-rd() { rm -rf "${@}"; }
-rf() { rm -f "${@}"; }
-rmcd() {
+function mkdir() { /usr/bin/env mkdir -p "${@}"; }
+function md() { mkdir "${@}"; }
+function mf() { touch "${@}"; }
+function rd() { rm -rf "${@}"; }
+function rf() { rm -f "${@}"; }
+function rmcd() {
     dir="${PWD}"
     cd .. || return 1
     rm -rf "${dir}"
 }
-mkcd() { mkdir "${1}" && cd "${1}" || return 1; }
+function mkcd() { mkdir "${1}" && cd "${1}" || return 1; }
 
 # File Permissions (Exec/Non-exec)
-mke() { chmod +x "${@}"; }
-rme() { chmod 644 "${@}"; }
-correctGPGperms() {
+function mke() { chmod +x "${@}"; }
+function rme() { chmod 644 "${@}"; }
+function correctGPGperms() {
     chown -R "$(whoami)" ~/.gnupg/
     chmod 600 ~/.gnupg/*
     chmod 700 ~/.gnupg
 }
 
 # Man pages
-manual() {
+function manual() {
     /usr/bin/man "${@}"
 }
 
 # Man meme
-man-meme() {
+function man-meme() {
     printf "%b\n" "Based sigma grindset gender, not woman"
 }
 
 # Update software from source
-makeupdate() {
+function makeupdate() {
     sudo make uninstall &&
         make clean &&
         git pull &&
@@ -282,39 +282,39 @@ makeupdate() {
 }
 
 # Install gaming software
-install-gaming() {
+function install-gaming() {
     pipe3 install LibreGaming && LibreGaming --tui
 }
 
 # Update gaming software
-update-gaming() {
+function update-gaming() {
     pipe3 install LibreGaming -U && LibreGaming --tui
 }
 
 # Get list of flatpaks
-ls-flatpaks() {
+function ls-flatpaks() {
     flatpak list --columns=application "${@}" | tail -n +1
 }
 
 # List of attached hardware
-ls-hardware() {
+function ls-hardware() {
     lshw "${@}"
 }
 
 # Home
-home() { cd "${HOME}" || return 1; }
+function home() { cd "${HOME}" || return 1; }
 
 # Audio
-restart-bluetooth() {
+function restart-bluetooth() {
     systemctl restart --user bluetooth
 }
-restart-pipewire() {
+function restart-pipewire() {
     systemctl restart --user pipewire
     systemctl restart --user pipewire-pulse
     restart-bluetooth
 }
 
 # Default apps
-terminal() { ${TERMINAL} "${@}"; }
-browser() { ${BROWSER} "${@}"; }
-auth() { ${AUTH} "${@}"; }
+function terminal() { ${TERMINAL} "${@}"; }
+function browser() { ${BROWSER} "${@}"; }
+function auth() { ${AUTH} "${@}"; }
