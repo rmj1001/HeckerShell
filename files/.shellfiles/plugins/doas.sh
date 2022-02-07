@@ -8,6 +8,7 @@
 #   Usage: n/a
 #
 #   Description: doas or rootedit will be inserted before the command
+#   NOTE: This plugin currently only works in zsh.
 #
 ##############################################
 

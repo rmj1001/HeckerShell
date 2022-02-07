@@ -8,6 +8,7 @@
 #   Usage: n/a
 #
 #   Description: sudo or rootedit will be inserted before a command.
+#   NOTE: This plugin currently only works in zsh.
 #
 ##############################################
 
