@@ -36,7 +36,12 @@ _uninstall() {
 }
 
 _help() {
-    _flags() {
+    PRINT "$(SCRIPTNAME) - Automatic dotfiles manager script"
+    PRINT
+    PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"
+    PRINT "Example:\t$(SCRIPTNAME) --help"
+    PRINT
+    {
         PRINT "-------------|------|---------------------"
         PRINT "Flag|Args|Description"
         PRINT "-------------|------|---------------------"
@@ -46,14 +51,7 @@ _help() {
         PRINT "-r, --uninstall||Uninstall dotfiles"
         PRINT "||"
         PRINT "-h, --help|n/a|Show this prompt"
-    }
-
-    PRINT "$(SCRIPTNAME) - Automatic dotfiles manager script"
-    PRINT
-    PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"
-    PRINT "Example:\t$(SCRIPTNAME) --help"
-    PRINT
-    _flags | column -t -s'|'
+    } | column -t -s'|'
 }
 
 # If no arguments are give, just show help prompt.

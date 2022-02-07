@@ -29,7 +29,12 @@ _switcher() {
 }
 
 _help() {
-	_flags() {
+	PRINT "$(SCRIPTNAME) - Invoke common app management programs"
+	PRINT
+	PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"
+	PRINT "Example:\t$(SCRIPTNAME) --menu"
+	PRINT
+	{
 		PRINT "-------------|------|---------------------"
 		PRINT "Flag|Args|Description"
 		PRINT "-------------|------|---------------------"
@@ -38,14 +43,7 @@ _help() {
 		PRINT "--switcher|n/a|Switch between running apps"
 		PRINT "||"
 		PRINT "-h, --help|n/a|Show this prompt"
-	}
-
-	PRINT "$(SCRIPTNAME) - Invoke common app management programs"
-	PRINT
-	PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"
-	PRINT "Example:\t$(SCRIPTNAME) --menu"
-	PRINT
-	_flags | column -t -s'|'
+	} | column -t -s'|'
 }
 
 # If no arguments are give, just show help prompt.

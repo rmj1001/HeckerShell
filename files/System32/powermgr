@@ -79,28 +79,27 @@ powermgr.unlock() {
 	loginctl unlock-session "${SESSIONS[@]}"
 }
 
-# Help prompt (CLI only)
 powermgr.help() {
-	powermgr.help.commands() {
-		PRINT "Command|Arguments|Description"
-		PRINT "shutdown||Power off computer"
-		PRINT "reboot||Restart computer"
-		PRINT "logout||Log out of account"
-		PRINT "lock||Lock user account"
-		PRINT "unlock||Unlock user account (CLI only)"
-		PRINT "|||"
-		PRINT "gui||Show the interactive prompt"
-		PRINT "help||Show this help menu"
-	}
-
+	PRINT "$(SCRIPTNAME) - Manage the state of your PC or account"
 	PRINT
-	PRINT "Manage the state of your running PC or user account"
+	PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"
+	PRINT "Example:\t$(SCRIPTNAME) --help"
 	PRINT
-	PRINT "Usage:\t\tpowermgr [command]"
-	PRINT "Example:\tpowermgr shutdown"
-	PRINT "Example:\tpowermgr\t\t# Run for interactive prompt"
-	PRINT
-	powermgr.help.commands | column -t -s "|"
+	{
+		PRINT "-------------|------|---------------------"
+		PRINT "Flag|Args|Description"
+		PRINT "-------------|------|---------------------"
+		PRINT "||"
+		PRINT "--shutdown||Power off computer"
+		PRINT "--reboot||Restart computer"
+		PRINT "--logout||Log out of account"
+		PRINT "--lock||Lock user account"
+		PRINT "--unlock||Unlock user account (CLI only)"
+		PRINT "||"
+		PRINT "--gui||Show the interactive prompt"
+		PRINT "||"
+		PRINT "-h, --help|n/a|Show this prompt"
+	} | column -t -s'|'
 }
 
 test $# -eq 0 && powermgr.help && exit 0
@@ -110,13 +109,13 @@ test "${1}" == "gui" &&
 
 # Evaluate commands
 case "${cmd}" in
-shutdown) powermgr.shutoff ;;
-reboot) powermgr.restart ;;
-logout) powermgr.logout ;;
-lock) powermgr.lock ;;
-unlock) powermgr.unlock ;;
-help) powermgr.help ;;
-helpgui) zenity --info --height=800 --width=800 --text="$(powermgr.help)" ;;
-cancel) zenity --info --text="Cancelled." && exit 1 ;;
+--shutdown) powermgr.shutoff ;;
+--reboot) powermgr.restart ;;
+--logout) powermgr.logout ;;
+--lock) powermgr.lock ;;
+--unlock) powermgr.unlock ;;
+--help) powermgr.help ;;
+--helpgui) zenity --info --height=800 --width=800 --text="$(powermgr.help)" ;;
+--cancel) zenity --info --text="Cancelled." && exit 1 ;;
 *) zenity --warning --text="Invalid command '${cmd}'." && exit 1 ;;
 esac

@@ -111,36 +111,36 @@ emojictl.emojis.uninstall() {
 }
 
 emojictl.help() {
-
-	emojictl.help.commands() {
-		PRINT "Command|Arguments|Description"
-		PRINT "(i) install||Install emojis"
-		PRINT "(u) uninstall||Remove emojis"
-		PRINT "(h) help||Show this help menu"
-	}
-
+	PRINT "$(SCRIPTNAME) - Manage system emojis"
 	PRINT
-	PRINT "Install/uninstall color emojis"
+	PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"
+	PRINT "Example:\t$(SCRIPTNAME) --help"
 	PRINT
-	PRINT "Usage:\t\temojictl [command] <args?[]>"
-	PRINT "Example:\temojictl install"
-	PRINT
-	emojictl.help.commands | column -t -s "|"
+	{
+		PRINT "-------------|------|---------------------"
+		PRINT "Flag|Args|Description"
+		PRINT "-------------|------|---------------------"
+		PRINT "||"
+		PRINT "-i, --install||Install emojis"
+		PRINT "-u, --uninstall||Remove emojis"
+		PRINT "||"
+		PRINT "-h, --help|n/a|Show this prompt"
+	} | column -t -s'|'
 }
 
 cmd="$(LOWERCASE "${1}")"
 
 case "${cmd}" in
 
-install | i)
+-i | --install)
 	emojictl.emojis.install
 	exit 0
 	;;
-uninstall | u)
+-u | --uninstall)
 	emojictl.emojis.uninstall
 	exit 0
 	;;
-help | h | \?)
+\? | -h | --help)
 	emojictl.help
 	exit 0
 	;;

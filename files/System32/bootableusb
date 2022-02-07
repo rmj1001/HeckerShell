@@ -34,7 +34,13 @@ _write() {
 }
 
 _help() {
-	_flags() {
+	PRINT "$(SCRIPTNAME) - Create a bootable USB drive"
+	PRINT
+	PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"
+	PRINT "Example:\t\t$(SCRIPTNAME) --iso <iso> --drive <drive>"
+	PRINT "Example:\t\t$(SCRIPTNAME) -i ubuntu.iso -i /dev/sdb"
+	PRINT
+	{
 		PRINT "-------------|------|---------------------"
 		PRINT "Flag|Args|Description"
 		PRINT "-------------|------|---------------------"
@@ -44,15 +50,7 @@ _help() {
 		PRINT "-d, --disk|<usb>|The usb to make bootable (required)"
 		PRINT "||"
 		PRINT "-h, --help|n/a|Show this prompt"
-	}
-
-	PRINT "$(SCRIPTNAME) - Create a bootable USB drive"
-	PRINT
-	PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"
-	PRINT "Example:\t\t$(SCRIPTNAME) --iso <iso> --drive <drive>"
-	PRINT "Example:\t\t$(SCRIPTNAME) -i ubuntu.iso -i /dev/sdb"
-	PRINT
-	_flags | column -t -s'|'
+	} | column -t -s'|'
 }
 
 while test $# -gt 0; do

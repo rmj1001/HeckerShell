@@ -21,20 +21,18 @@ REQUIRE_CMD "" || exit 1
 ####################################
 
 _help() {
-	_flags() {
-		PRINT "-------------|------|---------------------"
-		PRINT "Flag|Args|Description"
-		PRINT "-------------|------|---------------------"
-		PRINT "||"
-		PRINT "-h, --help|n/a|Show this prompt"
-	}
-
 	PRINT "$(SCRIPTNAME) - description"
 	PRINT
 	PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"
 	PRINT "Example:\t$(SCRIPTNAME) --help"
 	PRINT
-	_flags | column -t -s'|'
+	{
+		PRINT "-------------|------|---------------------"
+		PRINT "Flag|Args|Description"
+		PRINT "-------------|------|---------------------"
+		PRINT "||"
+		PRINT "-h, --help|n/a|Show this prompt"
+	} | column -t -s'|'
 }
 
 # If no arguments are give, just show help prompt.

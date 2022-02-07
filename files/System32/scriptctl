@@ -22,7 +22,12 @@ DISABLE_ROOT
 SCRIPTS="${SCRIPTS:=$HOME/.local/bin}"
 
 _help() {
-	_flags() {
+	PRINT "$(SCRIPTNAME) - Manage user scripts"
+	PRINT
+	PRINT "Usage:\t\tscriptctl <flag> <args?>"
+	PRINT "Example:\tscriptctl --list"
+	PRINT
+	{
 		PRINT "-------------|------|---------------------|"
 		PRINT "Flag|Args|Description"
 		PRINT "-------------|------|---------------------|"
@@ -32,14 +37,7 @@ _help() {
 		PRINT "-rm, --delete|<name>|Delete a script"
 		PRINT "|||"
 		PRINT "-h, --help|n/a|Show this prompt"
-	}
-
-	PRINT "scriptctl - Manage user scripts"
-	PRINT
-	PRINT "Usage:\t\tscriptctl <flag> <args?>"
-	PRINT "Example:\tscriptctl --list"
-	PRINT
-	_flags | column -t -s'|'
+	} | column -t -s'|'
 }
 
 _ls() {

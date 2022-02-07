@@ -101,22 +101,22 @@ backup.restore() {
 	trap 'clear; PRINT "Backup Terminated."; PAUSE; clear; exit 0' SIGTERM SIGINT
 
 	# If target isn't a file/tarball, or it's not a directory, print error and exit
-	[[ ! -f "${target}" && ! "${target}" =~ ^*.tar.gz$ && ! -d "${target}" ]] && \
+	[[ ! -f "${target}" && ! "${target}" =~ ^*.tar.gz$ && ! -d "${target}" ]] &&
 		PRINT "Invalid backup target!" && return 1
 
 	# Tarball
-	[[ -f "${target}"  && "${target}" =~ ^*.tar.gz$ ]] && PRINT "Restoring tarball..." && \
-		tar -xvf "${target}" -C "${HOME}" && PRINT "\n\nRestore Finished.\n" && return 0 || \
+	[[ -f "${target}" && "${target}" =~ ^*.tar.gz$ ]] && PRINT "Restoring tarball..." &&
+		tar -xvf "${target}" -C "${HOME}" && PRINT "\n\nRestore Finished.\n" && return 0 ||
 		return 1
 
 	# Directory, use rsync if exists
-	[[ -d "${target}" ]] && REQUIRE_CMD "rsync" >/dev/null 2>&1 && PRINT "Restoring backup" && \
-		rsync -auv "${target}" "${HOME}" && PRINT "\n\nRestore Finished.\n" && return 0 || \
+	[[ -d "${target}" ]] && REQUIRE_CMD "rsync" >/dev/null 2>&1 && PRINT "Restoring backup" &&
+		rsync -auv "${target}" "${HOME}" && PRINT "\n\nRestore Finished.\n" && return 0 ||
 		return 1
 
 	# Directory, use cp if rsync is missing
-	[[ -d "${target}" ]] && REQUIRE_CMD "cp" >/dev/null 2>&1 && PRINT "Restoring backup..." && \
-		cp -vR "${target}" "${HOME}" && PRINT "\n\nRestore Finished.\n" && return 0 || \
+	[[ -d "${target}" ]] && REQUIRE_CMD "cp" >/dev/null 2>&1 && PRINT "Restoring backup..." &&
+		cp -vR "${target}" "${HOME}" && PRINT "\n\nRestore Finished.\n" && return 0 ||
 		return 1
 
 	PRINT "Error restoring backup..." && return 1
@@ -145,43 +145,45 @@ backup.exclusions() {
 	${EDITOR:-nano} "${exclusions}"
 }
 
-# Help prompt
 backup.help() {
-	# Commands portion of help prompt (columnized)
-	backup.help.commands() {
-		PRINT "Flags|Arguments|Description"
-		PRINT "-t, --tar||(Default) Uses tar to backup your files"
-		PRINT "-r, --rsync||Uses rsync to backup your files"
-		PRINT "-c, --cp||Uses cp to backup your files (no exclusions)"
-		PRINT "|||"
-		PRINT "Commands|Arguments|Description"
-		PRINT "(c) create|<destination>|Create a new backup"
-		PRINT "(r) restore|<target>|Restore a backup"
-		PRINT "(e) exclusions||Create/edit a file specifying exclusions from backups"
-		PRINT "(h) help||Show this prompt"
-	}
-
+	PRINT "$(SCRIPTNAME) - Create/restore backups of your HOME directory"
 	PRINT
-	PRINT "Create/restore tarball backups of your HOME directory"
+	PRINT "Usage:\t\t$(SCRIPTNAME) <flag/command> <args?>"
+	PRINT "Example:\t$(SCRIPTNAME) --help"
 	PRINT
-	PRINT "Usage:\t\tbackup [command] [flag] <args?[]>"
-	PRINT "Example:\tbackup create --rsync \$HOME/Documents/Backups"
-	PRINT
-	backup.help.commands | column -t -s "|"
+	{
+		PRINT "-------------|------|---------------------"
+		PRINT "Flag|Args|Description"
+		PRINT "-------------|------|---------------------"
+		PRINT "||"
+		PRINT "--tar||(Default) Uses tar to backup your files"
+		PRINT "--rsync||Uses rsync to backup your files"
+		PRINT "--cp||Uses cp to backup your files (no exclusions)"
+		PRINT "||"
+		PRINT "-------------|------|---------------------"
+		PRINT "Commands|Args|Description"
+		PRINT "-------------|------|---------------------"
+		PRINT "||"
+		PRINT "-c, --create|<destination>|Create a new backup"
+		PRINT "-r, --restore|<target>|Restore a backup"
+		PRINT "-e, --exclusions||Create/edit a file specifying exclusions from backups"
+		PRINT "||"
+		PRINT "-h, --help|n/a|Show this prompt"
+	} | column -t -s'|'
 }
 
 ### Flags ###
 for arg in "$@"; do
 	case "$(LOWERCASE "$arg")" in
-	-r | --rsync)
+	--rsync)
 		method="rsync"
 		;;
 
-	-t | --tar)
+	--tar)
 		method="tar"
 		;;
 
-	-c | --cp)
+	--cp)
 		method="cp"
 		;;
 	*)
@@ -195,27 +197,28 @@ cmd="$(LOWERCASE "${ARGS[0]}")"
 
 case "${cmd}" in
 
-	c | create)
+-c | --create)
 
-		backup.create "${ARGS[1]}" && exit 0 || exit 1
-		;;
+	backup.create "${ARGS[1]}" && exit 0 || exit 1
+	;;
 
-	r | restore)
+-r | --restore)
 
-		backup.restore "${ARGS[1]}" && exit 0 || exit 1
-		;;
+	backup.restore "${ARGS[1]}" && exit 0 || exit 1
+	;;
 
-	e | exclusions)
+-e | --exclusions)
 
-		backup.exclusions && exit 0 || exit 1
-		;;
+	backup.exclusions && exit 0 || exit 1
+	;;
 
-	\? | h | help)
-		backup.help; exit 0
-		;;
+\? | -h | --help)
+	backup.help
+	exit 0
+	;;
 
-	*)
+*)
 
-		[[ $# -eq 0 ]] && backup.help || PRINT "Invalid command!" && exit 1
-		;;
+	[[ $# -eq 0 ]] && backup.help || PRINT "Invalid command!" && exit 1
+	;;
 esac

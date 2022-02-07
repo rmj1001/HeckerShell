@@ -125,7 +125,13 @@ aboutpc.normal() {
 }
 
 _help() {
-	_flags() {
+	PRINT "$(SCRIPTNAME) - Show system information for screenshots :)"
+	PRINT
+	PRINT "Usage:\t\t$(SCRIPTNAME) <flag?> <args?> ..."
+	PRINT "Example:\t$(SCRIPTNAME)\t\t\t\t# Default $(SCRIPTNAME) output"
+	PRINT "Example:\t$(SCRIPTNAME) --clear --neofetch\t# Clear screen, show neofetch-esque output"
+	PRINT
+	{
 		PRINT "-------------|------|---------------------"
 		PRINT "Flag|Args|Description"
 		PRINT "-------------|------|---------------------"
@@ -135,15 +141,7 @@ _help() {
 		PRINT "--zenity|n/a|Print information to a graphical window"
 		PRINT "||"
 		PRINT "-h, --help|n/a|Show this prompt"
-	}
-
-	PRINT "$(SCRIPTNAME) - Show system information for screenshots :)"
-	PRINT
-	PRINT "Usage:\t\t$(SCRIPTNAME) <flag?> <args?> ..."
-	PRINT "Example:\t$(SCRIPTNAME)\t\t\t\t# Default $(SCRIPTNAME) output"
-	PRINT "Example:\t$(SCRIPTNAME) --clear --neofetch\t# Clear screen, show neofetch-esque output"
-	PRINT
-	_flags | column -t -s'|'
+	} | column -t -s'|'
 }
 
 # Iterate over all arguments and evaluate them

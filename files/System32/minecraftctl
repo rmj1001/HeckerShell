@@ -85,22 +85,22 @@ minecraftctl.remove() {
 }
 
 minecraftctl.help() {
-
-	minecraftctl.help.commands() {
-		PRINT "Flag|Arguments|Description"
-		PRINT "(-i) --install||Install minecraft"
-		PRINT "(-r) --remove||Uninstall minecraft"
-		PRINT "(-u) --update||Update minecraft"
-		PRINT "(-h) --help||Show this help menu"
-	}
-
+	PRINT "$(SCRIPTNAME) - Manage your minecraft installation"
 	PRINT
-	PRINT "Manage your minecraft installation"
+	PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"
+	PRINT "Example:\t$(SCRIPTNAME) --help"
 	PRINT
-	PRINT "Usage:\t\tminecraftctl [flag] <args?[]>"
-	PRINT "Example:\tminecraftctl --install"
-	PRINT
-	minecraftctl.help.commands | column -t -s "|"
+	{
+		PRINT "-------------|------|---------------------"
+		PRINT "Flag|Args|Description"
+		PRINT "-------------|------|---------------------"
+		PRINT "||"
+		PRINT "-i, --install||Install minecraft"
+		PRINT "-r, --remove||Uninstall minecraft"
+		PRINT "-u, --update||Update minecraft"
+		PRINT "||"
+		PRINT "-h, --help|n/a|Show this prompt"
+	} | column -t -s'|'
 }
 
 [[ $# -eq 0 ]] && minecraftctl.help && exit 0

@@ -24,7 +24,12 @@ clearscr=1
 notifications=1
 
 _help() {
-	_flags() {
+	PRINT "$(SCRIPTNAME) - Update system applications in batches."
+	PRINT
+	PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"
+	PRINT "Example:\t$(SCRIPTNAME) --help"
+	PRINT
+	{
 		PRINT "-------------|------|---------------------"
 		PRINT "Flag|Args|Description"
 		PRINT "-------------|------|---------------------"
@@ -34,14 +39,7 @@ _help() {
 		PRINT "-n, --notifications||Send notifications to system"
 		PRINT "||"
 		PRINT "-h, --help|n/a|Show this prompt"
-	}
-
-	PRINT "$(SCRIPTNAME) - Update system applications in batches."
-	PRINT
-	PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"
-	PRINT "Example:\t$(SCRIPTNAME) --help"
-	PRINT
-	_flags | column -t -s'|'
+	} | column -t -s'|'
 }
 
 LOG() {

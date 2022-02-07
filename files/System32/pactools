@@ -42,7 +42,12 @@ _remove_orphans() {
 }
 
 _help() {
-	_flags() {
+	PRINT "$(SCRIPTNAME) - Various pacman tools"
+	PRINT
+	PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"
+	PRINT "Example:\t$(SCRIPTNAME) --help"
+	PRINT
+	{
 		PRINT "-------------|------|---------------------"
 		PRINT "Flag|Args|Description"
 		PRINT "-------------|------|---------------------"
@@ -53,14 +58,7 @@ _help() {
 		PRINT "-r, --remove-orphans||Remove orphaned packages"
 		PRINT "||"
 		PRINT "-h, --help|n/a|Show this prompt"
-	}
-
-	PRINT "$(SCRIPTNAME) - Various pacman tools"
-	PRINT
-	PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"
-	PRINT "Example:\t$(SCRIPTNAME) --help"
-	PRINT
-	_flags | column -t -s'|'
+	} | column -t -s'|'
 }
 
 case "$(LOWERCASE "$1")" in

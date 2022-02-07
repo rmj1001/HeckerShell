@@ -109,43 +109,43 @@ trash.files.information() {
 }
 
 trash.help() {
-
-  trash.help.commands() {
-    PRINT "Command|Arguments|Description"
-    PRINT "(a) add|<file>|Add a file to the trash"
-    PRINT "(r) restore|<file>|Restore a file from the trash"
-    PRINT "(e) empty||Empty the trash bin"
-    PRINT "(i) info|<file>|Get a trashed file's metadata"
-    PRINT "(l) list||List the contents of the trash bin"
-    PRINT "(h) help||Show this prompt"
-  }
-
+  PRINT "$(SCRIPTNAME) - Manage your trash bin"
   PRINT
-  PRINT "Manage your trash bin"
+  PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"
+  PRINT "Example:\t$(SCRIPTNAME) --help"
   PRINT
-  PRINT "Usage:\t\ttrashr [command] <args?[]>"
-  PRINT "Example:\ttrashr add \$HOME/Documents/file.docx"
-  PRINT
-  trash.help.commands | column -t -s "|"
+  {
+    PRINT "-------------|------|---------------------"
+    PRINT "Flag|Args|Description"
+    PRINT "-------------|------|---------------------"
+    PRINT "||"
+    PRINT "-a, --add|<file>|Add a file to the trash"
+    PRINT "-r, --restore|<file>|Restore a file from the trash"
+    PRINT "-e, --empty||Empty the trash bin"
+    PRINT "-i, --info|<file>|Get a trashed file's metadata"
+    PRINT "-l, --list||List the contents of the trash bin"
+    PRINT "||"
+    PRINT "-h, --help|n/a|Show this prompt"
+  } | column -t -s'|'
 }
 
 cmd="$(LOWERCASE "${1}")"
 
 case "${cmd}" in
-a | add)
+-a | --add)
   trash.files.add "${2}"
   ;;
-r | restore)
+-r | --restore)
   trash.files.restore "${2}"
   ;;
-e | empty)
+-e | --empty)
   trash.files.empty
   ;;
-l | list)
+-l | --list)
   ls --color=auto -AlvhF --group-directories-first "${TRASH}"
   exit 0
   ;;
-i | info)
+-i | --info)
   trash.files.information "${2}"
   ;;
 \? | h | help)

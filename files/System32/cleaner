@@ -22,7 +22,12 @@ DISABLE_ROOT
 GUI=0
 
 _help() {
-	_flags() {
+	PRINT "$(SCRIPTNAME) - System cleaner script"
+	PRINT
+	PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"
+	PRINT "Example:\t$(SCRIPTNAME) --help"
+	PRINT
+	{
 		PRINT "-------------|------|---------------------"
 		PRINT "Flag|Args|Description"
 		PRINT "-------------|------|---------------------"
@@ -32,14 +37,7 @@ _help() {
 		PRINT "-a, --all|n/a|Run all cleaning modules"
 		PRINT "||"
 		PRINT "-h, --help|n/a|Show this prompt"
-	}
-
-	PRINT "$(SCRIPTNAME) - System cleaner script"
-	PRINT
-	PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"
-	PRINT "Example:\t$(SCRIPTNAME) --help"
-	PRINT
-	_flags | column -t -s'|'
+	} | column -t -s'|'
 }
 
 _wine() {
