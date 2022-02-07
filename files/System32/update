@@ -29,7 +29,7 @@ _help() {
 		PRINT "Flag|Args|Description"
 		PRINT "-------------|------|---------------------"
 		PRINT "||"
-		PRINT "-i, --non-interactive||Disable interactivity"
+		PRINT "-i, --non-interactive||Disable interactivity & clearing screen"
 		PRINT "-c, --no-clear||Disable clearing screen"
 		PRINT "-n, --notifications||Send notifications to system"
 		PRINT "||"
