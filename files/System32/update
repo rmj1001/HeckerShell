@@ -72,7 +72,7 @@ for arg in "${@}"; do
 
 done
 
-[[ ! $interactive -eq 0 ]] && clear
+[[ $clearscr -eq 1 && ! $interactive -eq 0 ]] && clear
 
 UPDATE "flatpak" "flatpak update --assumeyes"
 UPDATE "snap" "sudo snap refresh"
