@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
 
 ##############################################
 #   Author(s): RMCJ <rmichael1001@gmail.com>

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ##############################################
 #   Author(s): RMCJ <rmichael1001@gmail.com>
