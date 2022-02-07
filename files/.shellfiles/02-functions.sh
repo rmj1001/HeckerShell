@@ -234,11 +234,11 @@ which() { WHICH "${@}"; }
 SILENTRUN unalias ls
 SILENTRUN unalias ll
 SILENTRUN unalias la
-function ls() {
+ls() {
     /usr/bin/env ls --color=auto --group-directories-first "${@}"
 }
-function ll() { ls -AlvhF "${@}"; }
-function la() { ls -A "${@}"; }
+ll() { ls -AlvhF "${@}"; }
+la() { ls -A "${@}"; }
 
 # Directory manipulation
 mkdir() { /usr/bin/env mkdir -p "${@}"; }
