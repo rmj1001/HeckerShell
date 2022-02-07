@@ -36,7 +36,7 @@ _help() {
 		PRINT "-h, --help|n/a|Show this prompt"
 	}
 
-	PRINT "$(SCRIPTNAME) - Update system applications in batch."
+	PRINT "$(SCRIPTNAME) - Update system applications in batches."
 	PRINT
 	PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"
 	PRINT "Example:\t$(SCRIPTNAME) --help"
