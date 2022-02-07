@@ -82,7 +82,7 @@ aboutpc.neofetch() {
 	# Header
 	PRINT "\n${USER}@${HOST}" &&
 		PRINT "---------------------------------------------------------" &&
-		(
+		{
 			PRINT " OS|${OS}"
 			PRINT " Kernel|${KERNEL}"
 			PRINT " Uptime|${UPTIME}"
@@ -92,7 +92,7 @@ aboutpc.neofetch() {
 			PRINT " Display Server|${XDG_SESSION_TYPE}"
 			PRINT " Memory|${MEMORY}"
 			[[ -n "${TERMINAL}" ]] && PRINT " Terminal|${TERMINAL}"
-		) | column -t -s'|'
+		} | column -t -s'|'
 
 	PRINT
 }
@@ -105,8 +105,7 @@ aboutpc.normal() {
 	PRINT "|                        About PC                         |"
 	PRINT " ---------------------------------------------------------"
 	PRINT
-
-	(
+	{
 		PRINT " User@Host|${USER}@${HOST}"
 		PRINT " OS|${OS}"
 		PRINT " Kernel|${KERNEL}"
@@ -119,7 +118,7 @@ aboutpc.normal() {
 		PRINT " Display Server|${XDG_SESSION_TYPE}"
 		PRINT " Memory|${MEMORY}"
 		[[ -n "${TERMINAL}" ]] && PRINT " Terminal|${TERMINAL}"
-	) | column -t -s "|"
+	} | column -t -s "|"
 
 	PRINT
 }
