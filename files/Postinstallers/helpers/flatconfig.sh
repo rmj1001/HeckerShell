@@ -29,6 +29,7 @@ flatpak install --user --noninteractive --or-update flathub \
 	com.bitwarden.desktop \
 	com.etlegacy.ETLegacy \
 	com.github.bleakgrey.tootle \
+	com.github.calo001.fondo \
 	com.github.hugolabe.Wike \
 	com.github.maoschanz.drawing \
 	com.github.rafostar.Clapper \
@@ -101,7 +102,6 @@ flatpak install --user --noninteractive --or-update flathub \
 	org.kde.kdenlive \
 	org.kde.krita \
 	org.libreoffice.LibreOffice \
-	org.mozilla.Thunderbird.Locale \
 	org.mozilla.firefox \
 	org.onlyoffice.desktopeditors \
 	org.signal.Signal \
