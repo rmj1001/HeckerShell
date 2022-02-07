@@ -139,6 +139,14 @@ motd() {
     PRINT "########################################################"
 }
 
+### Clear screen and print MOTD
+# usage: freshscreen <flag?>
+freshscreen() {
+    [[ "$(LOWERCASE "${1}")" == "--no-clear" ]] || clear
+    motd
+    [[ "${SHELL}" == "/bin/zsh" ]] && printf "%b\n" ""
+}
+
 ### Reload shell
 # usage: reload
 reload() {
