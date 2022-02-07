@@ -115,6 +115,13 @@ CHECK_NO() {
     return 1
 }
 
+### Find the path for a command
+# usage: WHICH <command>
+# returns: string
+WHICH() {
+    command -v "${@}"
+}
+
 ### Write a line who's length is equal to the length of the terminal's columns
 # usage: write_lines
 write_lines() {
@@ -210,13 +217,14 @@ rootedit() { ${AUTH} "${EDITOR}" "${@}"; }
 copy() { xclip -sel clip "${@}"; }
 
 # Colorized grep
-#grep() { $(command -v grep) --color=auto "${@}" ; }
+SILENTRUN unalias grep
+grep() { $(WHICH grep) --color=auto "${@}"; }
 
 # Cat a file w/ line numbers
 readfile() { /bin/cat -n "${@}"; }
 
 # Replace 'which'
-which() { command -v "${@}"; }
+which() { WHICH "${@}"; }
 
 # If bat/batcat exists, create opposite alias to replace cat
 [[ -x /bin/bat ]] && bat() { /bin/bat -P "${@}"; }
