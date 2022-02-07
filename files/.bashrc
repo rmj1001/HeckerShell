@@ -1,5 +1,16 @@
 #!/bin/bash
 
+##############################################
+#   Author(s): RMCJ <rmichael1001@gmail.com>
+#   Project: .bashrc
+#   Version: 1.0
+#
+#   Usage: n/a
+#
+#   Description: Bash config file
+#
+##############################################
+
 shell.load() {
 	clear
 

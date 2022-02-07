@@ -1,5 +1,16 @@
 #!/bin/zsh
 
+##############################################
+#   Author(s): RMCJ <rmichael1001@gmail.com>
+#   Project: .zshrc
+#   Version: 1.0
+#
+#   Usage: n/a
+#
+#   Description: Z Shell config file
+#
+##############################################
+
 shell.load() {
 	clear
 
