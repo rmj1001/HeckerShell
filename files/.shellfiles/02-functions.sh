@@ -3,38 +3,38 @@
 ############################ SHELL FUNCTIONS ###################################
 
 ### Replacement for 'echo'
-# usage: PRINT "text"
+# Usage: PRINT "text"
 function PRINT() { printf "%b\n" "${@}"; }
 
 ### 'echo' replacement w/o newline
-# usage: NPRINT "text"
+# Usage: NPRINT "text"
 function NPRINT() { printf "%b" "${@}"; }
 
 ### Pauses script execution until the user presses ENTER
-# usage: PAUSE
+# Usage: PAUSE
 function PAUSE() {
     PRINT "Press <ENTER> to continue..."
     read -r
 }
 
 ### Sets the terminal window title
-# usage: TITLE "test"
+# Usage: TITLE "test"
 function TITLE() { NPRINT "\033]2;${1}\a"; }
 
 ### Generate a random number from 1 to the specified maximum
-# usage: RANDOM_NUM 100
+# Usage: RANDOM_NUM 100
 function RANDOM_NUM() { NPRINT "$((RANDOM % ${1} + 1))"; }
 
 ### Converts a string to all api.std.failMsg characters
-# usage: name="$(LOWERCASE $name)"
+# Usage: name="$(LOWERCASE $name)"
 function LOWERCASE() { NPRINT "${1}" | tr "[:upper:]" "[:lower:]"; }
 
 ### Converts a string to all UPPERCASE characters
-# usage: name="$(UPPERCASE $name)"
+# Usage: name="$(UPPERCASE $name)"
 function UPPERCASE() { NPRINT "${1}" | tr "[:lower:]" "[:upper:]"; }
 
 ### Trim all leading/trailing whitespace from a string
-# usage: TRIM "   this      "
+# Usage: TRIM "   this      "
 function TRIM() {
     local var="$*"
 
@@ -49,15 +49,15 @@ function TRIM() {
 }
 
 ### Run code silently
-# usage: SILENTRUN <command>
+# Usage: SILENTRUN <command>
 function SILENTRUN() { "$@" >/dev/null 2>&1; }
 
 ### Run programs in the background in disowned processes
-# usage: ASYNC '<commands>'
+# Usage: ASYNC '<commands>'
 function ASYNC() { nohup "$@" >/dev/null 2>&1 & }
 
 ### Check to see if command exists
-# usage: CMD_EXISTS <command>
+# Usage: CMD_EXISTS <command>
 function CMD_EXISTS() {
     SILENTRUN command -v "${1}"
     return $?
@@ -65,7 +65,7 @@ function CMD_EXISTS() {
 
 ### Checks for a filename in $PATH (commands), if not found
 ### then exit with an error
-# usage: REQUIRE_CMD "7z" "tar" || exit 1
+# Usage: REQUIRE_CMD "7z" "tar" || exit 1
 function REQUIRE_CMD() {
     NEEDED=()
 
@@ -82,7 +82,7 @@ function REQUIRE_CMD() {
 }
 
 ### Checks to see if the script is being run as root, and if not then exit.
-# usage: REQUIRE_ROOT
+# Usage: REQUIRE_ROOT
 function REQUIRE_ROOT() {
     [[ ${EUID} -eq 0 ]] && exit 0
     PRINT "This script must be run as root"
@@ -90,7 +90,7 @@ function REQUIRE_ROOT() {
 }
 
 ### Checks to see if the script is being run as root, and if so then exit.
-# usage: DISABLE_ROOT
+# Usage: DISABLE_ROOT
 function DISABLE_ROOT() {
     [[ ${EUID} -ne 0 ]] && exit 0
     PRINT "This script cannot be run as root. Try another user."
@@ -98,7 +98,7 @@ function DISABLE_ROOT() {
 }
 
 ### Check to see if input is 'yes' or empty
-# usage: CHECK_YES <var>
+# Usage: CHECK_YES <var>
 # returns: return code (1 for yes/empty, 1 for no)
 function CHECK_YES() {
     [[ $1 =~ [yY][eE]?[sS]? ]] && return 0
@@ -107,7 +107,7 @@ function CHECK_YES() {
 }
 
 ### Check to see if input is 'no' or empty
-# usage: CHECK_NO <var>
+# Usage: CHECK_NO <var>
 # returns: return code (0 for no/empty, 1 for yes)
 function CHECK_NO() {
     [[ $1 =~ [nN][oO]? ]] && return 0
@@ -116,21 +116,21 @@ function CHECK_NO() {
 }
 
 ### Find the path for a command
-# usage: WHICH <command>
+# Usage: WHICH <command>
 # returns: string
 function WHICH() {
     command -v "${@}"
 }
 
 ### Write a line who's length is equal to the length of the terminal's columns
-# usage: write_lines
+# Usage: write_lines
 function write_lines() {
     for ((i = 0; i < COLUMNS; ++i)); do printf -; done
     PRINT ""
 }
 
 ### Print custom MOTD to terminal
-# usage: motd
+# Usage: motd
 function motd() {
     PRINT "########################################################"
     PRINT "#"
@@ -148,7 +148,7 @@ function motd() {
 
 ### Clear screen and print MOTD
 ## [flag] --no-clear: do not clear screen when printing
-# usage: freshscreen <flag?>
+# Usage: freshscreen <flag?>
 function freshscreen() {
     [[ "$(LOWERCASE "${1}")" == "--no-clear" ]] || clear
 
@@ -159,7 +159,7 @@ function freshscreen() {
 
 ### Reload shell
 ## [flag] --clean: Restart shell completely, not just reload dotfiles
-# usage: reload <flag>
+# Usage: reload <flag>
 function reload() {
     # If clean flag isn't used then just reload sourced files
     [[ "$(LOWERCASE "${1}")" == "--clean" ]] || {
@@ -172,7 +172,7 @@ function reload() {
 }
 
 ### Download youtube videos
-# usage: downloadYTVideo <video url>[]
+# Usage: downloadYTVideo <video url>[]
 function downloadYTVideo() {
     # Preparations
     DIR=$HOME/Downloads/VideoDownloader
@@ -184,7 +184,7 @@ function downloadYTVideo() {
 }
 
 ### Download youtube videos as MP3 sound files
-# usage: mp3dl <video url>[]
+# Usage: mp3dl <video url>[]
 function mp3dl() {
     # Preparations
     DIR=$HOME/Downloads/Music
@@ -197,7 +197,7 @@ function mp3dl() {
 }
 
 ### Add sound clips to soundfx folder
-# usage: soundfx <video url>[]
+# Usage: soundfx <video url>[]
 function soundfx() {
     # Preparations
     DIR=$HOME/Music/SoundFX

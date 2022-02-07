@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 ##############################################
-#   Author: Roy Conn
+#   Author: RMCJ <rmichael1001@gmail.com>
 #   Project: Ubuntu postinstall
 #   Version: 1.0
 #

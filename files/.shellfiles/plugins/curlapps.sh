@@ -12,7 +12,7 @@
 ##############################################
 
 ### CURL APPS HELP
-# usage: curlapps
+# Usage: curlapps
 function curlapps() {
     PRINT "cheat \t\t [command]"
     PRINT "weather"
@@ -24,49 +24,49 @@ function curlapps() {
 }
 
 ### CHEAT PAGES
-# usage: cheat <command>
+# Usage: cheat <command>
 function cheatsh() {
     curl "cheat.sh/${1}"
 }
 
 ### WEATHER
-# usage: weather
+# Usage: weather
 function weather() {
     curl wttr.in
 }
 
 ### QR CODE CREATOR
-# usage: qrcode <link>
+# Usage: qrcode <link>
 function qrcode() {
     curl "qrenco.de/${1}"
 }
 
 ### DICTIONARY
-# usage: dict <word>
+# Usage: dict <word>
 function dict() {
     curl "dict://dict.org/d:${1}"
 }
 
 ### CRYTPOCURRENCY RATES
-# usage: rate <cryptocurrency symbol>
+# Usage: rate <cryptocurrency symbol>
 function rate() {
     curl "rate.sx/${1}"
 }
 
 ### URL SHORTENER
-# usage: urlshorten <link>
+# Usage: urlshorten <link>
 function urlshorten() {
     curl -F "shorten=${1}" https://0x0.st
 }
 
 ### NEWS READER
-# usage: getnews <topic>
+# Usage: getnews <topic>
 function getnews() {
     curl "getnews.tech/${1}"
 }
 
 ### PARROT IN TERMINAL
-# usage: parrot
+# Usage: parrot
 function parrot() {
     curl parrot.live
 }
