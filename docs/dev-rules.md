@@ -14,20 +14,34 @@ Return [Home](../README.md)
 
 For some tips on developing scripts/plugins, see [here](script-tricks.md).
 
+## Dotfiles Configs Guidelines
+
+1. All dotfiles that hold shell code (excluding scripts) must be named as `<file>.sh`.
+2. Each shell has a reloadable config in `files/.shellfiles/configs/`.
+3. Environment variables are stored in `files/.shellfiles/01-environment.sh`.
+4. Functions (aliases) are stored in `files/.shellfiles/02-functions.sh`.
+5. Sourced settings are stored in `files/.shellfiles/03-sources.sh`.
+6. Distro postinstall scripts are stored in `files/Postinstallers`.
+7. Optional or shell-specific functionality must be developed as a plugin.
+
 ## Script Guidelines
 
-1. Scripts must not source other scripts. Headers are the exception.
-2. Scripts should source the API header (`00-api.sh`) for common functionality.
-3. Make sure to include preprocessing commands (require/disable root, require commands, etc.) before the main logic of the script.
-4. Make sure a commented header with the author & basic script info is included at the top of the script.
+1. Scripts are stored in `files/System32`.
+2. Scripts must be named as `<command>`.
+3. Scripts must not source other scripts. Headers are the exception.
+4. Scripts should source the API header (`00-api.sh`) for common functionality.
+5. Make sure to include preprocessing commands (require/disable root, require commands, etc.) before the main logic of the script.
+6. Make sure a commented header with the author & basic script info is included at the top of the script.
 
 See script template [here](../files/System32/00-template.sh).
 
 ## Plugin Guidelines
 
-1. Optional or shell-specific functionality must be developed as a plugin.
-2. Plugins must be stored in `files/.shellfiles/plugins` and named as `plugin.sh`
-3. Plugins must be enabled in `files/.shellfiles/configs/<shell>.sh`.
-4. Do not source `00-template.sh`. This is only meant to provide boilerplate code.
+1. Plugins are stored in `files/.shellfiles/plugins`.
+2. Plugins must be named as `<plugin>.sh`
+3. Plugins must not source other plugins.
+4. Plugins must be enabled in `files/.shellfiles/configs/<shell>.sh`.
+5. Do not source `00-template.sh`. This is only meant to provide boilerplate code.
+6. Make sure a commented header with the author & basic script info at the top.
 
 See plugin template [here](../files/.shellfiles/plugins/00-template.sh).
