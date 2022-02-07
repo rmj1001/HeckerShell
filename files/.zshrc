@@ -22,8 +22,7 @@ shell.load() {
 
 	done
 
-	motd
-	printf "%b\n" ""
+	freshscreen --no-clear
 
 	function precmd() {
 		for ((i = 0; i < $COLUMNS; ++i)); do

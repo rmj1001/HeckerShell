@@ -36,7 +36,7 @@ shell.load() {
 
 	done
 
-	motd
+	freshscreen --no-clear
 }
 
 shell.load
