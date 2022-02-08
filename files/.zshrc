@@ -60,11 +60,10 @@ shell.load() {
 	setopt EXTENDED_HISTORY
 	setopt PROMPT_SUBST
 
-	# Ctrl ->
-	bindkey ';5C' forward-word
-
-	# Ctrl <-
-	bindkey ';5D' backward-word
+	# Bound keys
+	bindkey ';5C' forward-word  # Ctrl ->
+	bindkey ';5D' backward-word # Ctrl <-
+	bindkey "\e[3~" delete-char # del
 
 	zstyle ':completion:*' rehash true
 	zstyle ':completion:*' menu select
