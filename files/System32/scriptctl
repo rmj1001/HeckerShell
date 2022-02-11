@@ -31,10 +31,10 @@ function _help() {
 		PRINT "-------------|------|---------------------|"
 		PRINT "Flag|Args|Description"
 		PRINT "-------------|------|---------------------|"
-		PRINT "-ls, --list|n/a|List all user scripts"
-		PRINT "-mk, --create|<name>|Create a new script"
-		PRINT "-ed, --edit|<name>|Edit an existing script"
-		PRINT "-rm, --delete|<name>|Delete a script"
+		PRINT "-l, --list|n/a|List all user scripts"
+		PRINT "-c, --create|<name>|Create a new script"
+		PRINT "-e, --edit|<name>|Edit an existing script"
+		PRINT "-r, --delete|<name>|Delete a script"
 		PRINT "|||"
 		PRINT "-h, --help|n/a|Show this prompt"
 	} | column -t -s'|'
@@ -100,25 +100,25 @@ while test $# -gt 0; do
 		exit $?
 		;;
 
-	-ls | --list)
+	-l | --list)
 		shift
 		_ls
 		exit $?
 		;;
 
-	-mk | --create)
+	-c | --create)
 		shift
 		_mk "$@"
 		exit $?
 		;;
 
-	-ed | --edit)
+	-e | --edit)
 		shift
 		_ed "$@"
 		exit $?
 		;;
 
-	-rm | --delete)
+	-r | --delete)
 		shift
 		_rm "$@"
 		exit $?
