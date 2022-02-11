@@ -165,38 +165,74 @@ function reload() {
     exec "$(basename "${SHELL}")"
 }
 
-### Download youtube videos
+### youtube-dl alias for yt-dlp
+# Usage: youtube-dl <args?[]>
+CMD_EXISTS "yt-dlp" && function youtube-dl() {
+    yt-dlp "${@}"
+}
+
+### Download youtube videos (yt-dlp & youtube-dl)
 # Usage: downloadYTVideo <video url>[]
 function downloadYTVideo() {
+
+    PRINT "This function does not currently work for yt-dlp."
+    return 1
+
     # Preparations
     DIR=$HOME/Downloads/VideoDownloader
     [[ -d "$DIR" ]] ||
         mkdir "$DIR"
     cd "$DIR" || return 1
 
+    CMD_EXISTS "yt-dlp" && {
+        # yt-dlp "${@}"
+        PRINT "This function does not currently work for yt-dlp."
+        return 0
+    }
+
     youtube-dl --format mp4 -o "%(title)s.%(ext)s" "${@}"
 }
 
-### Download youtube videos as MP3 sound files
+### Download youtube videos as MP3 sound files (yt-dlp & youtube-dl)
 # Usage: mp3dl <video url>[]
 function mp3dl() {
+
+    PRINT "This function does not currently work for yt-dlp."
+    return 1
+
     # Preparations
     DIR=$HOME/Downloads/Music
     [[ -d "$DIR" ]] || mkdir "$DIR"
     cd "$DIR" || return 1
+
+    CMD_EXISTS "yt-dlp" && {
+        # yt-dlp "${@}"
+        PRINT "This function does not currently work for yt-dlp."
+        return 0
+    }
 
     # Download
     youtube-dl --prefer-ffmpeg --add-metadata --output '%(title)s.%(ext)s' \
         --extract-audio --audio-format mp3 "${@}"
 }
 
-### Add sound clips to soundfx folder
+### Add sound clips to soundfx folder (yt-dlp & youtube-dl)
 # Usage: soundfx <video url>[]
 function soundfx() {
+
+    PRINT "This function does not currently work for yt-dlp."
+    return 1
+
     # Preparations
     DIR=$HOME/Music/SoundFX
     [[ -d "$DIR" ]] || mkdir "$DIR"
     cd "$DIR" || return 1
+
+    CMD_EXISTS "yt-dlp" && {
+        # yt-dlp "${@}"
+        PRINT "This function does not currently work for yt-dlp."
+        return 0
+    }
 
     # Download
     youtube-dl --prefer-ffmpeg --add-metadata --output '%(title)s.%(ext)s' \
