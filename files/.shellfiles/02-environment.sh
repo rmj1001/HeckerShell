@@ -74,18 +74,18 @@ export ARCHFLAGS="-arch x86_64"
 
 # User Scripts/AppImages/Executables
 export BIN="${HOME}/.local/bin"
-export SYSTEM32="${HOME}/System32"
+export Scripts="${HOME}/Scripts"
 export APPIMAGES="${HOME}/Apps"
 
 # Dotfiles Locations
 export ZSHRC="${HOME}/.zshrc"
 export BASHRC="${HOME}/.bashrc"
 export SHELLFILES="${HOME}/.shellfiles"
-export SCRIPTS="${HOME}/System32"
+export SCRIPTS="${HOME}/Scripts"
 export DOTFILES="${XDG_DATA_HOME}/dotfiles"
 
 # Update PATH with script paths and AppImages
-PATH=${PATH}:${SYSTEM32}:${BIN}:${APPIMAGES}
+PATH="${PATH}:${Scripts}:${BIN}:${APPIMAGES}"
 
 # Developer Language Paths
 export GOPATH="${XDG_DATA_HOME}/go:${HOME}/Bin/projects/golang"

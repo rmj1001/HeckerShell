@@ -27,13 +27,13 @@ export DOTFILES="${DOTFILES_DIR}/files"
 export SYM_ZSHRC="${DOTFILES}/.zshrc"
 export SYM_BASHRC="${DOTFILES}/.bashrc"
 export SYM_SHELLFILES="${DOTFILES}/.shellfiles"
-export SYM_SCRIPTS="${DOTFILES}/System32"
+export SYM_SCRIPTS="${DOTFILES}/Scripts"
 
 # Paths
 export ZSHRC="${HOME}/.zshrc"
 export BASHRC="${HOME}/.bashrc"
 export SHELLFILES="${HOME}/.shellfiles"
-export SCRIPTS="${HOME}/System32"
+export SCRIPTS="${HOME}/Scripts"
 
 function PRINT() { printf '%b\n' "${@}"; }
 

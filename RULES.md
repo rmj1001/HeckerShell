@@ -43,14 +43,14 @@ For some tips on developing scripts/plugins, see [here](script-tricks.md).
 
 ## Script Guidelines
 
-1. Scripts are stored in `files/System32`.
+1. Scripts are stored in `files/Scripts`.
 2. Scripts must be named as `<command>`.
 3. Scripts must not source other scripts. Headers are the exception.
 4. Scripts should source the API header (`00-api.sh`) for common functionality.
 5. Make sure to include preprocessing commands (require/disable root, require commands, etc.) before the main logic of the script.
 6. Make sure a commented header with the author & basic script info is included at the top of the script.
 
-See script template [here](../files/System32/00-template.sh).
+See script template [here](../files/Scripts/00-template.sh).
 
 ## Plugin Guidelines
 
