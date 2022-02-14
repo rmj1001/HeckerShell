@@ -142,6 +142,15 @@ function SILENTRUN() {
     "$@" >/dev/null 2>&1
 }
 
+# Description: Run code silently and disown it
+#
+# Usage: ASYNC <command>
+# Returns: void
+function ASYNC() {
+    "$@" >/dev/null 2>&1 &
+    disown
+}
+
 # Description: Check to see if command exists
 #
 # Usage: CMD_EXISTS <command>
