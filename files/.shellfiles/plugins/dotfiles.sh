@@ -48,7 +48,7 @@ function dotfiles() {
     }
 
     # If no arguments are give, just show help prompt.
-    [[ $# -eq 0 ]] && _help && exit 0
+    [[ $# -eq 0 ]] && _help && return 0
 
     # Iterate over all arguments and evaluate them
     while test $# -gt 0; do
@@ -58,28 +58,28 @@ function dotfiles() {
         -u | --update)
             shift
             _update
-            exit 0
+            return 0
             ;;
 
         -c | --clean-update)
             shift
             _cleanupdate
-            exit 0
+            return 0
             ;;
 
         -r | --uninstall)
             shift
             _uninstall
-            exit 0
+            return 0
             ;;
 
         \? | -h | --help)
             shift
             _help
-            exit 0
+            return 0
             ;;
 
-        *) PRINT "$0: Invalid argument '${1}'" && exit 1 ;;
+        *) PRINT "$0: Invalid argument '${1}'" && return 1 ;;
 
         esac
 
