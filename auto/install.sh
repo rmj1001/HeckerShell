@@ -2,7 +2,7 @@
 
 ################################################################################
 #   Author: RMCJ <rmichael1001@gmail.com>
-#   Project: Dotfiles
+#   Project: HeckerShell
 #   Version: 1.0
 #
 #   Usage: webinstaller.sh

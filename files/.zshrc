@@ -2,7 +2,7 @@
 
 ##############################################
 #   Author(s): RMCJ <rmichael1001@gmail.com>
-#   Project: .zshrc
+#   Project: HeckerShell
 #   Version: 1.0
 #
 #   Usage: n/a
@@ -75,6 +75,7 @@ shell.load() {
 	export plugins=(
 		backstreet
 		curlapps
+		dotfiles
 		russian-roulette
 		sudo
 	)
@@ -92,7 +93,7 @@ shell.load() {
 	done
 
 	freshscreen --no-clear
-	SILENTRUN TITLE "HeckerOS"
+	TITLE "HeckerOS"
 
 	function precmd() {
 		for ((i = 0; i < $COLUMNS; ++i)); do

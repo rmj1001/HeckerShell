@@ -2,7 +2,7 @@
 
 ##############################################
 #   Author(s): RMCJ <rmichael1001@gmail.com>
-#   Project: .bashrc
+#   Project: HeckerShell
 #   Version: 1.0
 #
 #   Usage: n/a
@@ -39,6 +39,7 @@ shell.load() {
 	export plugins=(
 		backstreet
 		curlapps
+		dotfiles
 	)
 
 	############################################################################
@@ -56,7 +57,7 @@ shell.load() {
 	done
 
 	freshscreen --no-clear
-	SILENTRUN TITLE "HeckerOS"
+	TITLE "HeckerOS"
 }
 
 shell.load
