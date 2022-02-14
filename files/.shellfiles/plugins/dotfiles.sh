@@ -3,6 +3,7 @@
 ##############################################
 #   Author: RMCJ <rmichael1001@gmail.com>
 #   Project: HeckerShell
+#   Plugin: dotfiles
 #   Version: 1.0
 #
 #   Usage: dotfiles [command] [args]

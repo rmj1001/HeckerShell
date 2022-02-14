@@ -2,6 +2,7 @@
 
 ##############################################
 #   Author(s): RMCJ <rmichael1001@gmail.com>
+#   Project: HeckerShell
 #   Plugin: fedora-silverblue
 #   Version: 1.0
 #

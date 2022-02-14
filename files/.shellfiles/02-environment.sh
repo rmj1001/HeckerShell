@@ -2,7 +2,7 @@
 
 ##############################################
 #   Author(s): RMCJ <rmichael1001@gmail.com>
-#   Project: 01-environment.sh
+#   Project: HeckerShell
 #   Version: 1.0
 #
 #   Usage: n/a

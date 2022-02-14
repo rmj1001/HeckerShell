@@ -2,6 +2,7 @@
 
 ##############################################
 #   Author(s): RMCJ <rmichael1001@gmail.com>
+#   Project: HeckerShell
 #   Plugin: backstreet
 #   Version: 1.0
 #

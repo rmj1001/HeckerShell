@@ -2,7 +2,7 @@
 
 ##############################################
 #   Author(s): RMCJ <rmichael1001@gmail.com>
-#   Project: 03-sources.sh
+#   Project: HeckerShell
 #   Version: 1.0
 #
 #   Usage: n/a
