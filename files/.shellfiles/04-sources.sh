@@ -33,7 +33,7 @@ if [ -d "$HOME/.pyenv" ]; then
     export PATH="${PYENV_ROOT}/bin:${PATH}"
 fi
 
-[[ $(command -v pyenv) ]] && eval "$(pyenv init -)"
+[[ $(WHICH pyenv) ]] && eval "$(pyenv init -)"
 
 # Rust
 # shellcheck disable=1091 disable=1090
