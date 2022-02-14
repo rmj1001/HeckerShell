@@ -47,7 +47,7 @@ function freshscreen() {
 
     motd
 
-    [[ "${SHELL}" == "/bin/zsh" ]] && printf "%b\n" ""
+    [[ "${SHELL}" == "/bin/zsh" ]] && PRINT ""
 }
 
 ### Reload shell
