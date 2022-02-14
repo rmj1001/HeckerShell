@@ -2,7 +2,7 @@
 
 ##############################################
 #   Author(s): RMCJ <rmichael1001@gmail.com>
-#   Project: 04-dotfilesManager.sh
+#   Project: 04-dotfilesmgr.sh
 #   Version: 1.0
 #
 #   Usage: n/a
