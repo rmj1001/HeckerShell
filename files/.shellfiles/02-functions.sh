@@ -133,38 +133,6 @@ function WHICH() {
     command -v "${@}"
 }
 
-### Write a line who's length is equal to the length of the terminal's columns
-# Usage: write_lines
-function write_lines() {
-    for ((i = 0; i < COLUMNS; ++i)); do printf -; done
-    PRINT ""
-}
-
-### Clear screen and print MOTD
-## [flag] --no-clear: do not clear screen when printing
-# Usage: freshscreen <flag?>
-function freshscreen() {
-    [[ "$(LOWERCASE "${1}")" == "--no-clear" ]] || clear
-
-    motd
-
-    [[ "${SHELL}" == "/bin/zsh" ]] && printf "%b\n" ""
-}
-
-### Reload shell
-## [flag] --clean: Restart shell completely, not just reload dotfiles
-# Usage: reload <flag>
-function reload() {
-    # If clean flag isn't used then just reload sourced files
-    [[ "$(LOWERCASE "${1}")" == "--clean" ]] || {
-        shell.load
-        return 0
-    }
-
-    # If clean flag is used then exec/restart the shell
-    exec "$(basename "${SHELL}")"
-}
-
 ### youtube-dl alias for yt-dlp
 # Usage: youtube-dl <args?[]>
 CMD_EXISTS "yt-dlp" && function youtube-dl() {
