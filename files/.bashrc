@@ -57,7 +57,7 @@ shell.load() {
 	done
 
 	freshscreen --no-clear
-	TITLE "HeckerOS"
+	TITLE "HeckerShell"
 }
 
 shell.load

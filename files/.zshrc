@@ -93,7 +93,7 @@ shell.load() {
 	done
 
 	freshscreen --no-clear
-	TITLE "HeckerOS"
+	TITLE "HeckerShell"
 
 	function precmd() {
 		for ((i = 0; i < $COLUMNS; ++i)); do
