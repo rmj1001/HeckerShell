@@ -10,7 +10,7 @@
 #
 ##############################################
 -->
-# RMCJ's Dotfiles
+# HeckerShell Project
   
 ## About
 
