@@ -29,10 +29,10 @@ function dotfiles() {
     }
 
     function _help() {
-        PRINT "$0 - Automatic dotfiles manager script"
+        PRINT "dotfiles - Automatic dotfiles manager script"
         PRINT
-        PRINT "Usage:\t\t$0 <flag> <args?>"
-        PRINT "Example:\t$0 --help"
+        PRINT "Usage:\t\tdotfiles <flag> <args?>"
+        PRINT "Example:\tdotfiles --help"
         PRINT
         {
             PRINT "-------------|------|---------------------"
@@ -79,7 +79,7 @@ function dotfiles() {
             return 0
             ;;
 
-        *) PRINT "$0: Invalid argument '${1}'" && return 1 ;;
+        *) PRINT "dotfiles: Invalid argument '${1}'" && return 1 ;;
 
         esac
 
