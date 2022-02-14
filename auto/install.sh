@@ -36,6 +36,7 @@ export SHELLFILES="${HOME}/.shellfiles"
 export SCRIPTS="${HOME}/Scripts"
 
 function PRINT() { printf '%b\n' "${@}"; }
+function SYM() { ln -s "${@}"; }
 
 ################################# LOGIC ########################################
 
@@ -79,14 +80,14 @@ git clone "${DOTFILES_SITE}"
 # Install scripts
 sleep 0.5
 PRINT "Installing scripts..."
-ln -s "${SYM_SCRIPTS}" "${SCRIPTS}"
+SYM "${SYM_SCRIPTS}" "${SCRIPTS}"
 
 # Install shellfiles
 sleep 0.5
 PRINT "Installing shell configs..."
-rm -f "${ZSHRC}" && ln -s "${SYM_ZSHRC}" "${ZSHRC}" && sleep 0.5
-rm -f "${BASHRC}" && ln -s "${SYM_BASHRC}" "${BASHRC}" && sleep 0.5
-ln -s "${SYM_SHELLFILES}" "${SHELLFILES}" && sleep 0.5
+rm -f "${ZSHRC}" && SYM "${SYM_ZSHRC}" "${ZSHRC}" && sleep 0.5
+rm -f "${BASHRC}" && SYM "${SYM_BASHRC}" "${BASHRC}" && sleep 0.5
+SYM "${SYM_SHELLFILES}" "${SHELLFILES}" && sleep 0.5
 
 # Remove rogue symlinks
 sleep 0.5
@@ -105,7 +106,7 @@ for folder in "${DOTFILES}"/.config/*; do
 
 	PRINT "Installing config '${name}'..."
 
-	[[ -L "${sym}" ]] || ln -s "${folder}" "${sym}"
+	[[ -L "${sym}" ]] || SYM "${folder}" "${sym}"
 
 done
 
