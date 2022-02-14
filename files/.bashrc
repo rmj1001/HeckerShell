@@ -56,6 +56,7 @@ shell.load() {
 	done
 
 	freshscreen --no-clear
+	SILENTRUN TITLE "HeckerOS"
 }
 
 shell.load

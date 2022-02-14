@@ -92,6 +92,7 @@ shell.load() {
 	done
 
 	freshscreen --no-clear
+	SILENTRUN TITLE "HeckerOS"
 
 	function precmd() {
 		for ((i = 0; i < $COLUMNS; ++i)); do
