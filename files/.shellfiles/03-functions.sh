@@ -87,6 +87,11 @@ function soundfx() {
         --extract-audio --audio-format mp3 "${@}"
 }
 
+# Neofetch
+[[ -z "$(WHICH "neofetch")" ]] && WHICH aboutpc && function neofetch() {
+    aboutpc --neofetch
+}
+
 # Edit files
 function edit() { "${EDITOR}" "${@}"; }
 function rootedit() { ${AUTH} "${EDITOR}" "${@}"; }

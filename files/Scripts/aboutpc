@@ -80,19 +80,19 @@ function aboutpc.neofetch() {
 	aboutpc.fetch
 
 	# Header
-	PRINT "\n${USER}@${HOST}" &&
-		PRINT "---------------------------------------------------------" &&
-		{
-			PRINT " OS|${OS}"
-			PRINT " Kernel|${KERNEL}"
-			PRINT " Uptime|${UPTIME}"
-			PRINT " Packages|${PKGCOUNT}"
-			PRINT " Shell|${SHELL}"
-			CMD_EXISTS "xrandr" && PRINT " Resolution|${RESOLUTION}"
-			PRINT " Display Server|${XDG_SESSION_TYPE}"
-			PRINT " Memory|${MEMORY}"
-			[[ -n "${TERMINAL}" ]] && PRINT " Terminal|${TERMINAL}"
-		} | column -t -s'|'
+	PRINT "\n${USER}@${HOST}"
+	PRINT "---------------------------------------------------------"
+	{
+		PRINT " OS|${OS}"
+		PRINT " Kernel|${KERNEL}"
+		PRINT " Uptime|${UPTIME}"
+		PRINT " Packages|${PKGCOUNT}"
+		PRINT " Shell|${SHELL}"
+		CMD_EXISTS "xrandr" && PRINT " Resolution|${RESOLUTION}"
+		PRINT " Display Server|${XDG_SESSION_TYPE}"
+		PRINT " Memory|${MEMORY}"
+		[[ -n "${TERMINAL}" ]] && PRINT " Terminal|${TERMINAL}"
+	} | column -t -s'|'
 
 	PRINT
 }
