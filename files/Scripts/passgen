@@ -15,7 +15,7 @@
 source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
 
 # Preprocessing flags
-DISABLE_ROOT
+DISABLE_ROOT || exit 1
 REQUIRE_CMD "tr" "fold" "head" || exit 1
 
 ####################################

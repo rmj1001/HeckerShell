@@ -15,7 +15,7 @@
 source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
 
 # Preprocessor flags
-DISABLE_ROOT
+DISABLE_ROOT || exit 1
 REQUIRE_CMD "wget" "unzip" "fc-cache" || exit 1
 
 ####################################
