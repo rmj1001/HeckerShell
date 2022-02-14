@@ -93,9 +93,9 @@ shell.load() {
 	done
 
 	freshscreen --no-clear
-	TITLE "HeckerShell"
 
 	function precmd() {
+		TITLE "${SHELL_TITLE}"
 		for ((i = 0; i < $COLUMNS; ++i)); do
 			printf -
 		done

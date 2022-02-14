@@ -77,12 +77,13 @@ export BIN="${HOME}/.local/bin"
 export Scripts="${HOME}/Scripts"
 export APPIMAGES="${HOME}/Apps"
 
-# Dotfiles Locations
+# Dotfiles
 export ZSHRC="${HOME}/.zshrc"
 export BASHRC="${HOME}/.bashrc"
 export SHELLFILES="${HOME}/.shellfiles"
 export SCRIPTS="${HOME}/Scripts"
 export DOTFILES="${XDG_DATA_HOME}/dotfiles"
+export SHELL_TITLE="HeckerShell"
 
 # Update PATH with script paths and AppImages
 PATH="${PATH}:${Scripts}:${BIN}:${APPIMAGES}"
