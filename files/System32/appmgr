@@ -21,11 +21,11 @@ REQUIRE_CMD "rofi" || exit 1
 ####################################
 
 function _menu() {
-	rofi -show drun -scroll-method 1 -show-icons -columns 2 -disable-history -sorting-method 'fzf'
+	SILENTRUN rofi -show drun -scroll-method 1 -show-icons -columns 2 -disable-history -sorting-method 'fzf'
 }
 
 function _switcher() {
-	rofi -show window -window-icon -window-format "{c}    {t}"
+	SILENTRUN rofi -show window -window-icon -window-format "{c}    {t}"
 }
 
 function _help() {
