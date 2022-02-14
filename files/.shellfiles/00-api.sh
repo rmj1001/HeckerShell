@@ -32,7 +32,8 @@ function NPRINT() {
 # Usage: PAUSE
 # Returns: int
 function PAUSE() {
-    NPRINT "Press <ENTER> to continue..." && read -r
+    NPRINT "Press <ENTER> to continue..."
+    read -r
 }
 
 # Description: Sets the terminal window title
@@ -92,46 +93,12 @@ function SCRIPTNAME() {
     NPRINT "$(basename "$(readlink -nf "$0")")"
 }
 
-# Description: Checks for a filename in $PATH (commands), if not found then exit with an error
+# Description: Find the path for a command
 #
-# Usage: REQUIRE_CMD "7z" "tar" || exit 1
+# Usage: WHICH <cmd>
 # Returns: string
-function REQUIRE_CMD() {
-    NEEDED=()
-
-    for arg in "${@}"; do
-        command -v "${arg}" >/dev/null 2>&1 || NEEDED+=("${arg}")
-    done
-
-    test ${#NEEDED[@]} -eq 0 && return 0
-
-    PRINT "The following programs are required to run this program:"
-    PRINT "${NEEDED[@]}"
-    return 1
-}
-
-# Description: Checks to see if the script is being run as root, and if not then exit.
-#
-# Usage: REQUIRE_ROOT
-# Returns: string
-function REQUIRE_ROOT() {
-    # shellcheck disable=SC2046
-    test $(id -u) -eq 0 && return 0
-
-    PRINT "'$(SCRIPTNAME)' must be run as root"
-    exit 1
-}
-
-# Description: Checks to see if the script is being run as root, and if so then exit.
-#
-# Usage: DISABLE_ROOT
-# Returns: string
-function DISABLE_ROOT() {
-    # shellcheck disable=SC2046
-    test $(id -u) -ne 0 && return 0
-
-    PRINT "'$(SCRIPTNAME)' should not be run as root. Please try again as a normal user."
-    exit 1
+function WHICH() {
+    command -v "${@}"
 }
 
 # Description: Run code silently
@@ -151,21 +118,64 @@ function ASYNC() {
     disown
 }
 
+# Description: Checks for a filename in $PATH (commands), if not found then exit with an error
+#
+# Usage: REQUIRE_CMD "7z" "tar" || exit 1
+# Returns: string
+function REQUIRE_CMD() {
+    NEEDED=()
+
+    for arg in "${@}"; do
+        SILENTRUN WHICH "${arg}" || NEEDED+=("${arg}")
+    done
+
+    test ${#NEEDED[@]} -eq 0 && return 0
+
+    PRINT "The following programs are required to run this program:"
+    PRINT "${NEEDED[@]}"
+    return 1
+}
+
+# Description: Checks to see if the script is being run as root, and if not then exit.
+#
+# Usage: REQUIRE_ROOT
+# Returns: string
+function REQUIRE_ROOT() {
+    # shellcheck disable=SC2046
+    test $(id -u) -eq 0 && return 0
+
+    PRINT "'$(SCRIPTNAME)' must be run as root"
+    return 1
+}
+
+# Description: Checks to see if the script is being run as root, and if so then exit.
+#
+# Usage: DISABLE_ROOT
+# Returns: string
+function DISABLE_ROOT() {
+    # shellcheck disable=SC2046
+    [[ $(id -u) -ne 0 ]] && return 0
+
+    PRINT "'$(SCRIPTNAME)' should not be run as root. Please try again as a normal user."
+    return 1
+}
+
 # Description: Check to see if command exists
 #
 # Usage: CMD_EXISTS <command>
 # Returns: return code
 function CMD_EXISTS() {
-    command -v "${1}" >/dev/null 2>&1
+    WHICH "${1}" >/dev/null 2>&1
 }
 
 # Description: Check to see if input is 'yes' or empty
 #
 # Usage: CHECK_YES <var>
-# Returns: return code (1 for yes/empty, 1 for no)
+# Returns: return code (0 for yes/empty, 1 for no)
 function CHECK_YES() {
-    echo "$1" | grep -Eq '[yY][eE]?[sS]?' && return 0
-    test -z "$1" && return 0
+    NPRINT "$1" | grep -Eq '[yY][eE]?[sS]?' && return 0
+    [[ -z "$1" ]] && return 0
+
     return 1
 }
 
@@ -174,26 +184,44 @@ function CHECK_YES() {
 # Usage: CHECK_NO <var>
 # Returns: return code (0 for no/empty, 1 for yes)
 function CHECK_NO() {
-    echo "$1" | grep -Eq '[nN][oO]?' && return 0
-    test "$1" != "" && return 0
+    NPRINT "$1" | grep -Eq '[nN][oO]?' && return 0
+    [[ -n "${1}" ]] && return 0
+
     return 1
+}
+
+# Description: Prompt with message, check if input is 'yes' or empty
+#
+# Usage: PROMPT_YES "prompt text"
+# Returns: return code (0 for yes/empty, 1 for no)
+function PROMPT_YES() {
+    local confirm
+
+    NPRINT "${1}? (Y/n) "
+    read -r confirm
+
+    CHECK_YES "${confirm}"
+}
+
+# Description: Prompt with message, check if input is 'no' or empty
+#
+# Usage: PROMPT_NO "prompt text"
+# Returns: return code (0 for no/empty, 1 for yes)
+function PROMPT_NO() {
+    local confirm
+
+    NPRINT "${1}? (y/N) "
+    read -r confirm
+
+    CHECK_NO "${confirm}"
 }
 
 # Description: Checks to see if input is a number
 #
 # Usage: IS_NUMBER <var>
-# Returns: return code (0 for yes, 1 for no)
+# Returns: return code (0 for yes)
 function IS_NUMBER() {
-    echo "$1" | grep -Eq '[0-9]+' && return 0
-    return 1
-}
-
-# Description: Find the path for a command
-#
-# Usage: WHICH <cmd>
-# Returns: string
-function WHICH() {
-    command -v "${@}"
+    NPRINT "$1" | grep -Eq '[0-9]+'
 }
 
 # Description: Read config file using ini-esque format
@@ -208,7 +236,7 @@ function READ_CONF() {
     val=""
 
     # If file doesn't exist, return with error.
-    [ ! -f "${RCfile}" ] && PRINT "$(SCRIPTNAME): Invalid file ${RCfile}." && return 1
+    [[ ! -f "${RCfile}" ]] && PRINT "$(SCRIPTNAME): Invalid file ${RCfile}." && return 1
 
     # Read file line-by-line
     while read -r line; do
@@ -216,14 +244,14 @@ function READ_CONF() {
         line="$(TRIM "${line}")"
 
         # Continue to next line if commented
-        echo "$line" | grep -Eq '^#\.*' && continue
+        NPRINT "$line" | grep -Eq '^#\.*' && continue
 
         # If line is a section, set `$section` variable and continue to next line
-        echo "$line" | grep -Eq '^\[[a-z]+\]$' && section="$(NPRINT "${line}" | sed -e 's|\[\([a-z]\+\)\]|\1|')" && continue
+        NPRINT "$line" | grep -Eq '^\[[a-z]+\]$' && section="$(NPRINT "${line}" | sed -e 's|\[\([a-z]\+\)\]|\1|')" && continue
 
         # If line is a key=value pair, then set `var` and `val` accordingly, else continue to next line.
-        echo "$line" | grep -Eq "^[a-z]+\=\"?\'?.*\"?\'?$" || continue
-        echo "$line" | grep -Eq "^[a-z]+\=\"?\'?.*\"?\'?$" &&
+        NPRINT "$line" | grep -Eq "^[a-z]+\=\"?\'?.*\"?\'?$" || continue
+        NPRINT "$line" | grep -Eq "^[a-z]+\=\"?\'?.*\"?\'?$" &&
             var="$(NPRINT "${line}" | sed 's|\([a-z]\+\)\=.*|\1|')" &&
             val="$(NPRINT "${line}" | sed 's|.*\=||g' | cut -d\" -f2 | cut -d\' -f2)"
 
