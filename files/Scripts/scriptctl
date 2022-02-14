@@ -15,7 +15,7 @@
 source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
 
 # Preprocessor flags
-DISABLE_ROOT
+DISABLE_ROOT || exit 1
 
 ####################################
 
@@ -76,14 +76,14 @@ function _rm() {
 	_script_conditions "$@" || return 1
 
 	# Confirm whether to delete script
-	read -r -p "Are you sure you want to delete '${1}'? (y/N) " confirm
+	PROMPT_NO "Delete '${1}'" || {
+		rm -f "${SCRIPTS}/${1}"
+		PRINT "$(SCRIPTNAME): Removed '${1}'."
+		return 0
+	}
 
-	# If 'no' or empty string passed, cancel.
-	CHECK_NO "$confirm" && PRINT "Cancelled." && return 1
-
-	# Delete script
-	rm -f "${SCRIPTS}"/"${1}" &&
-		PRINT "scriptctl: Removed '${1}'."
+	PRINT "Cancelled."
+	return 1
 }
 
 # If no arguments are given, just show help prompt.

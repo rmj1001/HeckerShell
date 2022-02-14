@@ -15,7 +15,7 @@
 source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
 
 # Preprocessor flags
-DISABLE_ROOT
+DISABLE_ROOT || exit 1
 TITLE "Updater"
 
 ####################################
@@ -73,13 +73,19 @@ function UPDATE() {
 	PRINT "\n"
 	[[ $clearscr -eq 1 ]] && clear
 
-	NPRINT "Update \"${req}\"? (Y/n) " && read -r confirm
+	PROMPT_YES "Update \"${req}\"" && {
+		PRINT "Updating ${req}..."
+		PRINT
 
-	CHECK_YES "${confirm}" && PRINT "Updating ${req}...\n" &&
-		eval "${cmd}" &&
-		PAUSE && return 0
+		eval "${cmd}"
+		PAUSE
 
-	PRINT "Skipped updating \"${req}\"" && PAUSE && return 1
+		return 0
+	}
+
+	PRINT "Skipped updating \"${req}\"."
+	PAUSE
+	return 1
 }
 
 for arg in "${@}"; do
