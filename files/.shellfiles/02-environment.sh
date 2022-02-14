@@ -15,22 +15,22 @@
 
 # Default Editor
 # (checks for each editor, if proceeding editor exists then default is changed)
-[[ -f "$(command -v nano)" ]] && EDITOR="$(command -v nano)"
-[[ -f "$(command -v nvim)" ]] && EDITOR="$(command -v nvim)"
-[[ -f "$(command -v code)" ]] && EDITOR="$(command -v code)"
-[[ -f "$(command -v micro)" ]] && EDITOR="$(command -v micro)"
+[[ -f "$(WHICH nano)" ]] && EDITOR="$(WHICH nano)"
+[[ -f "$(WHICH nvim)" ]] && EDITOR="$(WHICH nvim)"
+[[ -f "$(WHICH code)" ]] && EDITOR="$(WHICH code)"
+[[ -f "$(WHICH micro)" ]] && EDITOR="$(WHICH micro)"
 export EDITOR
 
 # Default Browser
-[[ -x "$(command -v firefox)" ]] && BROWSER="$(command -v firefox)"
-[[ -x "$(command -v microsoft-edge)" ]] &&
-    BROWSER="$(command -v microsoft-edge)"
+[[ -x "$(WHICH firefox)" ]] && BROWSER="$(WHICH firefox)"
+[[ -x "$(WHICH microsoft-edge)" ]] &&
+    BROWSER="$(WHICH microsoft-edge)"
 export BROWSER
 
 # Default Authentication
 # (sudo is default, if doas exists then it becomes default)
-[[ -x "$(command -v sudo)" ]] && AUTH="$(command -v sudo)"
-[[ -x "$(command -v doas)" ]] && AUTH="$(command -v doas)"
+[[ -x "$(WHICH sudo)" ]] && AUTH="$(WHICH sudo)"
+[[ -x "$(WHICH doas)" ]] && AUTH="$(WHICH doas)"
 export AUTH
 
 # XDG
