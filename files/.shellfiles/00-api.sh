@@ -179,6 +179,15 @@ function CHECK_NO() {
     return 1
 }
 
+# Description: Checks to see if input is a number
+#
+# Usage: IS_NUMBER <var>
+# Returns: return code (0 for yes, 1 for no)
+function IS_NUMBER() {
+    echo "$1" | grep -Eq '[0-9]+' && return 0
+    return 1
+}
+
 # Description: Find the path for a command
 #
 # Usage: WHICH <cmd>

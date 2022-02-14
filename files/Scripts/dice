@@ -24,6 +24,12 @@ ONELINE=1
 NUMBERS=()
 RESULTS=()
 
+[[ $# -eq 0 ]] && {
+	PRINT "$(SCRIPTNAME): You must provide numbers to roll!"
+	PRINT "e.g. $(SCRIPTNAME) 50 25 100"
+	exit 1
+}
+
 while test $# -gt 0; do
 	case "$(LOWERCASE "${1}")" in
 
@@ -36,6 +42,7 @@ while test $# -gt 0; do
 		ONELINE=0
 		;;
 	*)
+		IS_NUMBER "${1}" || { shift && continue; }
 		(($1 > 0)) && NUMBERS+=("$1") && RESULTS+=("$((RANDOM % $1 + 1))")
 		shift
 		;;
