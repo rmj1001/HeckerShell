@@ -11,8 +11,6 @@
 ##############################################
 -->
 # HeckerShell Project
-  
-## About
 
 These dotfiles have been in development for a couple years now.
 It originally began as some personal settings built on top of
@@ -71,3 +69,7 @@ bash <(wget -qO- https://raw.githubusercontent.com/rmj1001/dotfiles/main/auto/un
 ```bash
 bash <(wget -qO- https://raw.githubusercontent.com/rmj1001/dotfiles/main/auto/update.sh)
 ```
+
+---
+
+![Laptop on Desk](https://repository-images.githubusercontent.com/311393059/20a6125c-2e58-426b-8758-10156878cf16)
