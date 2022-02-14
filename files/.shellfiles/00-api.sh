@@ -1,52 +1,78 @@
 #!/usr/bin/env bash
 
 ##############################################
-#   Author(s): RMCJ <rmichael1001@gmail.com>
-#   Project: 00-api.sh
-#   Version: 1.0
+#	Author(s): RMCJ <rmichael1001@gmail.com>
+#	Project: 00-api.sh
+#	Version: 1.0
 #
-#   Usage: n/a
-#
-#   Description: Functions for manipulating
-#   STD(IN/OUT/ERR) or other programs
-#
+# 	Description:
+#   	This file provides common bash functions
+#		that I use in all my bash scripts. Feel free
+#		to use these functions in your own scripts.
 ##############################################
 
-### Replacement for 'echo'
+# Description: Replacement for 'echo'
+#
 # Usage: PRINT "text"
-function PRINT() { printf "%b\n" "${@}"; }
-
-### 'echo' replacement w/o newline
-# Usage: NPRINT "text"
-function NPRINT() { printf "%b" "${@}"; }
-
-### Pauses script execution until the user presses ENTER
-# Usage: PAUSE
-function PAUSE() {
-    PRINT "Press <ENTER> to continue..."
-    read -r
+# Returns: string
+function PRINT() {
+    printf "%b\n" "${@}"
 }
 
-### Sets the terminal window title
+# Description: 'echo' replacement w/o newline
+#
+# Usage: NPRINT "text"
+# Returns: string
+function NPRINT() {
+    printf "%b" "${@}"
+}
+
+# Description: Pauses script execution until the user presses ENTER
+#
+# Usage: PAUSE
+# Returns: int
+function PAUSE() {
+    NPRINT "Press <ENTER> to continue..." && read -r
+}
+
+# Description: Sets the terminal window title
+#
 # Usage: TITLE "test"
-function TITLE() { NPRINT "\033]2;${1}\a"; }
+# Returns: void
+function TITLE() {
+    NPRINT "\033]2;${1}\a"
+}
 
-### Generate a random number from 1 to the specified maximum
+# Description: Generate a random number from 1 to the specified maximum
+#
 # Usage: RANDOM_NUM 100
-function RANDOM_NUM() { NPRINT "$((RANDOM % ${1} + 1))"; }
+# Returns: int
+function RANDOM_NUM() {
+    eval "shuf -i 1-${1} -n 1"
+}
 
-### Converts a string to all api.std.failMsg characters
+# Description: Converts a string to all api.std.failMsg characters
+#
 # Usage: name="$(LOWERCASE $name)"
-function LOWERCASE() { NPRINT "${1}" | tr "[:upper:]" "[:lower:]"; }
+# Returns: string
+function LOWERCASE() {
+    NPRINT "${1}" | tr "[:upper:]" "[:lower:]"
+}
 
-### Converts a string to all UPPERCASE characters
+# Description: Converts a string to all UPPERCASE characters
+#
 # Usage: name="$(UPPERCASE $name)"
-function UPPERCASE() { NPRINT "${1}" | tr "[:lower:]" "[:upper:]"; }
+# Returns: string
+function UPPERCASE() {
+    NPRINT "${1}" | tr "[:lower:]" "[:upper:]"
+}
 
-### Trim all leading/trailing whitespace from a string
+# Description: Trim all leading/trailing whitespace from a string
+#
 # Usage: TRIM "   this      "
+# Returns: string
 function TRIM() {
-    local var="$*"
+    var="$*"
 
     # remove leading whitespace characters
     var="${var##*( )}"
@@ -58,76 +84,136 @@ function TRIM() {
     printf '%s' "$var"
 }
 
-### Run code silently
-# Usage: SILENTRUN <command>
-function SILENTRUN() { "$@" >/dev/null 2>&1; }
-
-### Run programs in the background in disowned processes
-# Usage: ASYNC '<commands>'
-function ASYNC() { nohup "$@" >/dev/null 2>&1 & }
-
-### Check to see if command exists
-# Usage: CMD_EXISTS <command>
-function CMD_EXISTS() {
-    SILENTRUN command -v "${1}"
-    return $?
+# Description: Return the name of the script
+#
+# Usage: SCRIPTNAME
+# Returns: string
+function SCRIPTNAME() {
+    NPRINT "$(basename "$(readlink -nf "$0")")"
 }
 
-### Checks for a filename in $PATH (commands), if not found
-### then exit with an error
+# Description: Checks for a filename in $PATH (commands), if not found then exit with an error
+#
 # Usage: REQUIRE_CMD "7z" "tar" || exit 1
+# Returns: string
 function REQUIRE_CMD() {
     NEEDED=()
 
     for arg in "${@}"; do
-        CMD_EXISTS "${arg}" || NEEDED+=("${arg}")
+        command -v "${arg}" >/dev/null 2>&1 || NEEDED+=("${arg}")
     done
 
-    [[ ${#NEEDED[@]} -lt 1 ]] && exit 0
+    test ${#NEEDED[@]} -eq 0 && return 0
 
     PRINT "The following programs are required to run this program:"
     PRINT "${NEEDED[@]}"
-
     return 1
 }
 
-### Checks to see if the script is being run as root, and if not then exit.
+# Description: Checks to see if the script is being run as root, and if not then exit.
+#
 # Usage: REQUIRE_ROOT
+# Returns: string
 function REQUIRE_ROOT() {
-    [[ ${EUID} -eq 0 ]] && exit 0
-    PRINT "This script must be run as root"
+    # shellcheck disable=SC2046
+    test $(id -u) -eq 0 && return 0
+
+    PRINT "'$(SCRIPTNAME)' must be run as root"
     exit 1
 }
 
-### Checks to see if the script is being run as root, and if so then exit.
+# Description: Checks to see if the script is being run as root, and if so then exit.
+#
 # Usage: DISABLE_ROOT
+# Returns: string
 function DISABLE_ROOT() {
-    [[ ${EUID} -ne 0 ]] && exit 0
-    PRINT "This script cannot be run as root. Try another user."
+    # shellcheck disable=SC2046
+    test $(id -u) -ne 0 && return 0
+
+    PRINT "'$(SCRIPTNAME)' should not be run as root. Please try again as a normal user."
     exit 1
 }
 
-### Check to see if input is 'yes' or empty
+# Description: Run code silently
+#
+# Usage: SILENTRUN <command>
+# Returns: return exit code
+function SILENTRUN() {
+    "$@" >/dev/null 2>&1
+}
+
+# Description: Check to see if command exists
+#
+# Usage: CMD_EXISTS <command>
+# Returns: return code
+function CMD_EXISTS() {
+    command -v "${1}" >/dev/null 2>&1
+}
+
+# Description: Check to see if input is 'yes' or empty
+#
 # Usage: CHECK_YES <var>
-# returns: return code (1 for yes/empty, 1 for no)
+# Returns: return code (1 for yes/empty, 1 for no)
 function CHECK_YES() {
-    [[ $1 =~ [yY][eE]?[sS]? ]] && return 0
-    [[ -z "$1" ]] && return 0
+    echo "$1" | grep -Eq '[yY][eE]?[sS]?' && return 0
+    test -z "$1" && return 0
     return 1
 }
 
-### Check to see if input is 'no' or empty
+# Description: Check to see if input is 'no' or empty
+#
 # Usage: CHECK_NO <var>
-# returns: return code (0 for no/empty, 1 for yes)
+# Returns: return code (0 for no/empty, 1 for yes)
 function CHECK_NO() {
-    [[ $1 =~ [nN][oO]? ]] && return 0
-    [[ -z "$1" ]] && return 0
+    echo "$1" | grep -Eq '[nN][oO]?' && return 0
+    test "$1" != "" && return 0
     return 1
 }
 
-### Find the path for a command
-# Usage: WHICH <command>
-# returns: string
+# Description: Find the path for a command
+#
+# Usage: WHICH <cmd>
+# Returns: string
 function WHICH() {
     command -v "${@}"
+}
+
+# Description: Read config file using ini-esque format
+#
+# Usage: READ_CONF <file>
+# Returns: void (reads file and inits variables in script from file)
+function READ_CONF() {
+
+    RCfile="${1}"
+    section=""
+    var=""
+    val=""
+
+    # If file doesn't exist, return with error.
+    [ ! -f "${RCfile}" ] && PRINT "$(SCRIPTNAME): Invalid file ${RCfile}." && return 1
+
+    # Read file line-by-line
+    while read -r line; do
+
+        line="$(TRIM "${line}")"
+
+        # Continue to next line if commented
+        echo "$line" | grep -Eq '^#\.*' && continue
+
+        # If line is a section, set `$section` variable and continue to next line
+        echo "$line" | grep -Eq '^\[[a-z]+\]$' && section="$(NPRINT "${line}" | sed -e 's|\[\([a-z]\+\)\]|\1|')" && continue
+
+        # If line is a key=value pair, then set `var` and `val` accordingly, else continue to next line.
+        echo "$line" | grep -Eq "^[a-z]+\=\"?\'?.*\"?\'?$" || continue
+        echo "$line" | grep -Eq "^[a-z]+\=\"?\'?.*\"?\'?$" &&
+            var="$(NPRINT "${line}" | sed 's|\([a-z]\+\)\=.*|\1|')" &&
+            val="$(NPRINT "${line}" | sed 's|.*\=||g' | cut -d\" -f2 | cut -d\' -f2)"
+
+        # If no section, import as `var="val"`
+        [ -z "${section}" ] && eval "${var}=\"${val}\"" && continue
+
+        # If section, import as `section.var="val"`
+        eval "${section}_${var}=\"${val}\""
+
+    done <"${RCfile}"
 }
