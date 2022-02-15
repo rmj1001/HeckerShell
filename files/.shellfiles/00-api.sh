@@ -73,7 +73,7 @@ function UPPERCASE() {
 # Usage: TRIM "   this      "
 # Returns: string
 function TRIM() {
-    var="$*"
+    local var="$*"
 
     # remove leading whitespace characters
     var="${var##*( )}"
@@ -129,7 +129,7 @@ function REQUIRE_CMD() {
         SILENTRUN WHICH "${arg}" || NEEDED+=("${arg}")
     done
 
-    test ${#NEEDED[@]} -eq 0 && return 0
+    [[ "${#NEEDED[@]}" == "0" ]] && return 0
 
     PRINT "The following programs are required to run this program:"
     PRINT "${NEEDED[@]}"
@@ -142,7 +142,7 @@ function REQUIRE_CMD() {
 # Returns: string
 function REQUIRE_ROOT() {
     # shellcheck disable=SC2046
-    test $(id -u) -eq 0 && return 0
+    [[ "$(id -u)" == "0" ]] && return 0
 
     PRINT "'$(SCRIPTNAME)' must be run as root"
     return 1
@@ -154,7 +154,7 @@ function REQUIRE_ROOT() {
 # Returns: string
 function DISABLE_ROOT() {
     # shellcheck disable=SC2046
-    [[ $(id -u) -ne 0 ]] && return 0
+    [[ "$(id -u)" == "0" ]] && return 0
 
     PRINT "'$(SCRIPTNAME)' should not be run as root. Please try again as a normal user."
     return 1
@@ -230,13 +230,13 @@ function IS_NUMBER() {
 # Returns: void (reads file and inits variables in script from file)
 function READ_CONF() {
 
-    RCfile="${1}"
-    section=""
-    var=""
-    val=""
+    local file="${1}"
+    local section=""
+    local var=""
+    local val=""
 
     # If file doesn't exist, return with error.
-    [[ ! -f "${RCfile}" ]] && PRINT "$(SCRIPTNAME): Invalid file ${RCfile}." && return 1
+    [[ ! -f "${file}" ]] && PRINT "$(SCRIPTNAME): Invalid file ${file}." && return 1
 
     # Read file line-by-line
     while read -r line; do
@@ -250,16 +250,16 @@ function READ_CONF() {
         NPRINT "$line" | grep -Eq '^\[[a-z]+\]$' && section="$(NPRINT "${line}" | sed -e 's|\[\([a-z]\+\)\]|\1|')" && continue
 
         # If line is a key=value pair, then set `var` and `val` accordingly, else continue to next line.
-        NPRINT "$line" | grep -Eq "^[a-z]+\=\"?\'?.*\"?\'?$" || continue
+        { NPRINT "$line" | grep -Eq "^[a-z]+\=\"?\'?.*\"?\'?$"; } || continue
         NPRINT "$line" | grep -Eq "^[a-z]+\=\"?\'?.*\"?\'?$" &&
             var="$(NPRINT "${line}" | sed 's|\([a-z]\+\)\=.*|\1|')" &&
             val="$(NPRINT "${line}" | sed 's|.*\=||g' | cut -d\" -f2 | cut -d\' -f2)"
 
         # If no section, import as `var="val"`
-        [ -z "${section}" ] && eval "${var}=\"${val}\"" && continue
+        [[ -z "${section}" ]] && eval "${var}=\"${val}\"" && continue
 
         # If section, import as `section.var="val"`
         eval "${section}_${var}=\"${val}\""
 
-    done <"${RCfile}"
+    done <"${file}"
 }
