@@ -87,9 +87,10 @@ function soundfx() {
         --extract-audio --audio-format mp3 "${@}"
 }
 
-# Neofetch
-[[ -z "$(WHICH "neofetch")" ]] && WHICH aboutpc && function neofetch() {
-    aboutpc --neofetch
+# If neofetch doesn't exist, use `aboutpc` script
+function neofetch() {
+    CMD_EXISTS "neofetch" && neofetch "${@}" && return 0
+    aboutpc --neofetch "${@}"
 }
 
 # Edit files
