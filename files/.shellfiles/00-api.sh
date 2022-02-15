@@ -154,7 +154,7 @@ function REQUIRE_ROOT() {
 # Returns: string
 function DISABLE_ROOT() {
     # shellcheck disable=SC2046
-    [[ "$(id -u)" == "0" ]] && return 0
+    [[ "$(id -u)" == "0" ]] || return 0
 
     PRINT "'$(SCRIPTNAME)' should not be run as root. Please try again as a normal user."
     return 1
