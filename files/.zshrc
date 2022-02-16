@@ -41,7 +41,7 @@ shell.load() {
 	# Prompt
 	#export PS1='C:$(pwd | tr "////" "\\\\" ) > '
 	#export PS1='[ ${USER}@${HOSTNAME} ] ${PWD} > '
-	export PS1='[ ${USER}@${HOSTNAME} $(basename $(dirs)) ]$ '
+	export PS1='[ ${USER}@${HOSTNAME} "$(basename "$(dirs)")" ]$ '
 	#export RPS1='$(date -u +"%m-%d-%Y %H:%M:%S")'
 	export RPS1='${PWD}'
 
