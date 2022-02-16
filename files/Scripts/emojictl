@@ -23,7 +23,7 @@ REQUIRE_CMD "wget" "unzip" "fc-cache" || exit 1
 # Noto Emoji package link
 EMOJIPKG="https://noto-website-2.storage.googleapis.com/pkgs/NotoColorEmoji-unhinted.zip"
 
-CONFLINK="https://raw.githubusercontent.com/rmj1001/dotfiles/main/files/.config/fontconfig/conf.d"
+CONFLINK="https://raw.githubusercontent.com/rmj1001/HeckerShell/main/files/.config/fontconfig/conf.d"
 
 # Fontconfig file links
 FONTCONFIGS=(

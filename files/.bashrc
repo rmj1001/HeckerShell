@@ -39,7 +39,7 @@ shell.load() {
 	export plugins=(
 		backstreet
 		curlapps
-		dotfiles
+		heckershell
 	)
 
 	############################################################################

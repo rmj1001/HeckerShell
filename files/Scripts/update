@@ -46,7 +46,7 @@ function _help() {
 function LOG() {
 	local folder
 
-	folder="${HOME}/.local/share/com.github.rmj1001.dotfiles.updater/logs"
+	folder="${HOME}/.local/share/com.github.rmj1001.HeckerShell.updater/logs"
 	logfile="${folder}/$(date -u +"%Y-%m-%dT%H").log"
 
 	mkdir -p "${folder}"

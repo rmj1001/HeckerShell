@@ -8,26 +8,26 @@
 #   Usage: webinstaller.sh
 #
 #   Description:
-#		Curl-able/wget-able webinstaller for my dotfiles
+#		Curl-able/wget-able webinstaller for HeckerShell
 ################################################################################
 
 ################################# CONSTANTS ####################################
 
-# Dotfiles urls
-export DOTFILES_SITE_HTTPS="https://github.com/rmj1001/dotfiles.git"
-export DOTFILES_SITE_SSH="git@github.com:rmj1001/dotfiles.git"
-export DOTFILES_SITE="${DOTFILES_SITE_HTTPS}"
+# HeckerShell urls
+export HECKERSHELL_SITE_HTTPS="https://github.com/rmj1001/HeckerShell.git"
+export HECKERSHELL_SITE_SSH="git@github.com:rmj1001/HeckerShell.git"
+export HECKERSHELL_SITE="${HECKERSHELL_SITE_HTTPS}"
 
-# Dotfiles directories
-export DOTFILES_DOWN_DIR="${HOME}/.local/share"
-export DOTFILES_DIR="${DOTFILES_DOWN_DIR}/dotfiles"
-export DOTFILES="${DOTFILES_DIR}/files"
+# HeckerShell directories
+export HECKERSHELL_DOWN_DIR="${HOME}/.local/share"
+export HECKERSHELL_DIR="${HECKERSHELL_DOWN_DIR}/HeckerShell"
+export HECKERSHELL="${HECKERSHELL_DIR}/files"
 
 # OG Paths
-export SYM_ZSHRC="${DOTFILES}/.zshrc"
-export SYM_BASHRC="${DOTFILES}/.bashrc"
-export SYM_SHELLFILES="${DOTFILES}/.shellfiles"
-export SYM_SCRIPTS="${DOTFILES}/Scripts"
+export SYM_ZSHRC="${HECKERSHELL}/.zshrc"
+export SYM_BASHRC="${HECKERSHELL}/.bashrc"
+export SYM_SHELLFILES="${HECKERSHELL}/.shellfiles"
+export SYM_SCRIPTS="${HECKERSHELL}/Scripts"
 
 # Paths
 export ZSHRC="${HOME}/.zshrc"
@@ -57,9 +57,9 @@ read -r -p "Are you sure you want to install this? (y/N) " confirm
 	exit 1
 }
 
-# Check if dotfiles exist
-[[ -d "${DOTFILES_DIR}" ]] && {
-	PRINT "Dotfiles directory exists. Try using the update script."
+# Check if HeckerShell exist
+[[ -d "${HECKERSHELL_DIR}" ]] && {
+	PRINT "HeckerShell directory exists. Try using the update script."
 	PRINT "Exiting..."
 
 	sleep 0.5
@@ -68,14 +68,14 @@ read -r -p "Are you sure you want to install this? (y/N) " confirm
 
 # If user wishes to contribute, use SSH
 sleep 0.5
-read -r -p "Will you be contributing to these dotfiles? (y/N) " contrib
-[[ "${contrib}" =~ ^[yY][eE]?[sS]?$ ]] && DOTFILES_SITE="${DOTFILES_SITE_SSH}"
+read -r -p "Will you be contributing to HeckerShell? (y/N) " contrib
+[[ "${contrib}" =~ ^[yY][eE]?[sS]?$ ]] && HECKERSHELL_SITE="${HECKERSHELL_SITE_SSH}"
 
-# Download dotfiles
+# Download HeckerShell
 sleep 0.5
-PRINT "Downloading dotfiles..."
-cd "${DOTFILES_DOWN_DIR}" || exit 1
-git clone "${DOTFILES_SITE}"
+PRINT "Downloading HeckerShell..."
+cd "${HECKERSHELL_DOWN_DIR}" || exit 1
+git clone "${HECKERSHELL_SITE}"
 
 # Install scripts
 sleep 0.5
@@ -98,7 +98,7 @@ PRINT "Removing rogue symlinks..."
 sleep 0.5
 PRINT "Installing miscellaneous configs..."
 
-for folder in "${DOTFILES}"/.config/*; do
+for folder in "${HECKERSHELL}"/.config/*; do
 	name="$(basename "${folder}")"
 	sym="${HOME}/.config/${name}"
 
@@ -111,4 +111,4 @@ for folder in "${DOTFILES}"/.config/*; do
 done
 
 # Finish
-PRINT "Dotfiles installed to '${DOTFILES_DIR}'."
+PRINT "HeckerShell installed to '${HECKERSHELL_DIR}'."

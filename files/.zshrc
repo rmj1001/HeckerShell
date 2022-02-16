@@ -75,7 +75,7 @@ shell.load() {
 	export plugins=(
 		backstreet
 		curlapps
-		dotfiles
+		heckershell
 		russian-roulette
 		sudo
 	)

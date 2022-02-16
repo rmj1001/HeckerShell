@@ -8,26 +8,26 @@
 #   Usage: webinstaller.sh
 #
 #   Description:
-#		Curl-able/wget-able webinstaller for my dotfiles
+#		Curl-able/wget-able webinstaller for HeckerShell
 ################################################################################
 
 ################################# CONSTANTS ####################################
 
-# Dotfiles urls
-export DOTFILES_SITE_HTTPS="https://github.com/rmj1001/dotfiles.git"
-export DOTFILES_SITE_SSH="git@github.com:rmj1001/dotfiles.git"
-export DOTFILES_SITE="${DOTFILES_SITE_HTTPS}"
+# HeckerShell urls
+export HECKERSHELL_SITE_HTTPS="https://github.com/rmj1001/HeckerShell.git"
+export HECKERSHELL_SITE_SSH="git@github.com:rmj1001/HeckerShell.git"
+export HECKERSHELL_SITE="${HECKERSHELL_SITE_HTTPS}"
 
-# Dotfiles directories
-export DOTFILES_DOWN_DIR="${HOME}/.local/share"
-export DOTFILES_DIR="${DOTFILES_DOWN_DIR}/dotfiles"
-export DOTFILES="${DOTFILES_DIR}/files"
+# HeckerShell directories
+export HECKERSHELL_DOWN_DIR="${HOME}/.local/share"
+export HECKERSHELL_DIR="${HECKERSHELL_DOWN_DIR}/HeckerShell"
+export HECKERSHELL="${HECKERSHELL_DIR}/files"
 
 # OG Paths
-export SYM_ZSHRC="${DOTFILES}/.zshrc"
-export SYM_BASHRC="${DOTFILES}/.bashrc"
-export SYM_SHELLFILES="${DOTFILES}/.shellfiles"
-export SYM_SCRIPTS="${DOTFILES}/Scripts"
+export SYM_ZSHRC="${HECKERSHELL}/.zshrc"
+export SYM_BASHRC="${HECKERSHELL}/.bashrc"
+export SYM_SHELLFILES="${HECKERSHELL}/.shellfiles"
+export SYM_SCRIPTS="${HECKERSHELL}/Scripts"
 
 # Paths
 export ZSHRC="${HOME}/.zshrc"
@@ -66,7 +66,7 @@ PRINT "Uninstalling shell configs..."
 # Uninstall miscellany configs
 PRINT "Uninstalling miscellaneous configs..."
 
-for folder in "${DOTFILES}"/.config/*; do
+for folder in "${HECKERSHELL}"/.config/*; do
     linkRef="${folder##*/}"
     sym="${HOME}/.config/${linkRef}"
 
@@ -75,9 +75,9 @@ for folder in "${DOTFILES}"/.config/*; do
     [[ -L "${sym}" ]] && rm -f "${sym}"
 done
 
-# Delete dotfiles
-PRINT "Deleting dotfiles..."
-rm -rf "${DOTFILES_DIR}"
+# Delete HeckerShell
+PRINT "Deleting HeckerShell..."
+rm -rf "${HECKERSHELL_DIR}"
 
 # Finish
 PRINT "Done."

@@ -7,7 +7,7 @@
 #
 #   Usage: n/a
 #
-#   Description: Dotfiles top-level
+#   Description: HeckerShell top-level
 #                management code
 #
 ##############################################
@@ -51,7 +51,7 @@ function freshscreen() {
 }
 
 ### Reload shell
-## [flag] --clean: Restart shell completely, not just reload dotfiles
+## [flag] --clean: Restart shell completely, not just reload HeckerShell
 # Usage: reload <flag>
 function reload() {
     # If clean flag isn't used then just reload sourced files

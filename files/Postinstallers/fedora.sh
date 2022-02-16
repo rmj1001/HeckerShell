@@ -28,7 +28,7 @@ fi
 # ENVIRONMENT VARIABLES
 #
 
-HELPERS="https://raw.githubusercontent.com/rmj1001/dotfiles/main/files/Postinstallers/helpers"
+HELPERS="https://raw.githubusercontent.com/rmj1001/HeckerShell/main/files/Postinstallers/helpers"
 
 ################################################################################
 # REPOSITORY SETUP

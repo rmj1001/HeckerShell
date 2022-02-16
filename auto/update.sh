@@ -8,26 +8,26 @@
 #   Usage: update.sh
 #
 #   Description:
-#		Curl-able/wget-able updater for my dotfiles
+#		Curl-able/wget-able updater for HeckerShell
 ################################################################################
 
 ################################# CONSTANTS ####################################
 
-# Dotfiles urls
-export DOTFILES_SITE_HTTPS="https://github.com/rmj1001/dotfiles.git"
-export DOTFILES_SITE_SSH="git@github.com:rmj1001/dotfiles.git"
-export DOTFILES_SITE="${DOTFILES_SITE_HTTPS}"
+# HeckerShell urls
+export HECKERSHELL_SITE_HTTPS="https://github.com/rmj1001/HeckerShell.git"
+export HECKERSHELL_SITE_SSH="git@github.com:rmj1001/HeckerShell.git"
+export HECKERSHELL_SITE="${HECKERSHELL_SITE_HTTPS}"
 
-# Dotfiles directories
-export DOTFILES_DOWN_DIR="${HOME}/.local/share"
-export DOTFILES_DIR="${DOTFILES_DOWN_DIR}/dotfiles"
-export DOTFILES="${DOTFILES_DIR}/files"
+# HeckerShell directories
+export HECKERSHELL_DOWN_DIR="${HOME}/.local/share"
+export HECKERSHELL_DIR="${HECKERSHELL_DOWN_DIR}/HeckerShell"
+export HECKERSHELL="${HECKERSHELL_DIR}/files"
 
 # OG Paths
-export SYM_ZSHRC="${DOTFILES}/.zshrc"
-export SYM_BASHRC="${DOTFILES}/.bashrc"
-export SYM_SHELLFILES="${DOTFILES}/.shellfiles"
-export SYM_SCRIPTS="${DOTFILES}/Scripts"
+export SYM_ZSHRC="${HECKERSHELL}/.zshrc"
+export SYM_BASHRC="${HECKERSHELL}/.bashrc"
+export SYM_SHELLFILES="${HECKERSHELL}/.shellfiles"
+export SYM_SCRIPTS="${HECKERSHELL}/Scripts"
 
 # Paths
 export ZSHRC="${HOME}/.zshrc"
@@ -42,7 +42,7 @@ function PRINT() { printf '%b\n' "${@}"; }
 [[ -x "$(command -v git)" ]] || { PRINT "" \
     'git must be installed.' && exit 1; }
 
-cd "${DOTFILES_DIR}" || { PRINT 'Dotfiles does not exist.' && exit 1; }
+cd "${HECKERSHELL_DIR}" || { PRINT 'HeckerShell does not exist.' && exit 1; }
 
 # Confirm uninstallation
 read -r -p \

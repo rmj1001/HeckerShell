@@ -10,7 +10,7 @@
 #
 ##############################################
 -->
-# Dotfiles Development Guidelines
+# HeckerShell Development Guidelines
 
 Return [Home](../README.md)
 
@@ -26,9 +26,9 @@ Return [Home](../README.md)
 
 For some tips on developing scripts/plugins, see [here](script-tricks.md).
 
-## Dotfiles Configs Guidelines
+## HeckerShell Configs Guidelines
 
-1. All dotfiles that hold shell code (excluding scripts) must be named as `<file>.sh`.
+1. All files that hold shell code (excluding scripts) must be named as `<file>.sh`.
 2. Shell-specific settings are stored in their respective `rc` file.
 3. Environment variables are stored in `files/.shellfiles/01-environment.sh`.
 4. Functions (aliases) are stored in `files/.shellfiles/02-functions.sh`.
@@ -36,8 +36,8 @@ For some tips on developing scripts/plugins, see [here](script-tricks.md).
 6. The MOTD is stored in `files/.shellfiles/04-motd.sh`.
 7. Distro postinstall scripts are stored in `files/Postinstallers`.
 8. Optional or shell-specific functionality must be developed as a plugin.
-9. When hacking on the dotfiles, make use of these commands. NOTE: Use `command ?` to see their help menu.
-   1. `dotfiles` - Update/clean/uninstall dotfiles
+9. When hacking on HeckerShell, make use of these commands. NOTE: Use `command ?` to see their help menu.
+   1. `heckershell` - Update/clean/uninstall HeckerShell
    2. `reload` - Reload shell configs (use `--clean` flag if hacking on `<shell>rc` files.).
    3. `scriptctl` - Create/manage script files
 

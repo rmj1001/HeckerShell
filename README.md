@@ -6,13 +6,13 @@
 #
 #   Usage: n/a
 #
-#   Description: Dotfiles main README
+#   Description: HeckerShell main README
 #
 ##############################################
 -->
 # HeckerShell Project
 
-These dotfiles have been in development for a couple years now.
+HeckerShell has been in development for a couple years now.
 It originally began as some personal settings built on top of
 oh-my-zsh's existing framework, but it has since grown out of that.
 I have completely replaced oh-my-zsh's files and settings with my own,

@@ -7,7 +7,7 @@
 #
 #   Usage: n/a
 #
-#   Description: Dotfiles sourced settings
+#   Description: HeckerShell sourced settings
 #
 ##############################################
 

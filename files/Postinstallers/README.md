@@ -29,14 +29,14 @@ __Fedora:__
 
 ```bash
 # wget
-bash -c "$(wget -qO- https://raw.githubusercontent.com/rmj1001/dotfiles/main/files/Postinstallers/fedora.sh)"
+bash -c "$(wget -qO- https://raw.githubusercontent.com/rmj1001/HeckerShell/main/files/Postinstallers/fedora.sh)"
 ```
 
 __Ubuntu:__
 
 ```bash
 # wget
-bash -c "$(wget -qO- https://raw.githubusercontent.com/rmj1001/dotfiles/main/files/Postinstallers/ubuntu.sh)" 
+bash -c "$(wget -qO- https://raw.githubusercontent.com/rmj1001/HeckerShell/main/files/Postinstallers/ubuntu.sh)" 
 ```
 
 ## Miscellaneous Installers
@@ -45,12 +45,12 @@ __Flatpak Apps:__
 
 ```bash
 # wget
-bash -c "$(wget -qO- https://raw.githubusercontent.com/rmj1001/dotfiles/main/files/Postinstallers/helpers/flatconfig.sh)"
+bash -c "$(wget -qO- https://raw.githubusercontent.com/rmj1001/HeckerShell/main/files/Postinstallers/helpers/flatconfig.sh)"
 ```
 
 __Portable Apps:__
 
 ```bash
 # wget
-bash -c "$(wget -qO- https://raw.githubusercontent.com/rmj1001/dotfiles/main/files/Postinstallers/helpers/portableApps.sh)"
+bash -c "$(wget -qO- https://raw.githubusercontent.com/rmj1001/HeckerShell/main/files/Postinstallers/helpers/portableApps.sh)"
 ```

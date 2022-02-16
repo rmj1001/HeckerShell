@@ -7,7 +7,7 @@
 #
 #   Usage: n/a
 #
-#   Description: Dotfiles environment variables
+#   Description: HeckerShell environment variables
 #
 ##############################################
 
@@ -77,12 +77,12 @@ export BIN="${HOME}/.local/bin"
 export Scripts="${HOME}/Scripts"
 export APPIMAGES="${HOME}/Apps"
 
-# Dotfiles
+# HeckerShell
 export ZSHRC="${HOME}/.zshrc"
 export BASHRC="${HOME}/.bashrc"
 export SHELLFILES="${HOME}/.shellfiles"
 export SCRIPTS="${HOME}/Scripts"
-export DOTFILES="${XDG_DATA_HOME}/dotfiles"
+export HECKERSHELL="${XDG_DATA_HOME}/HeckerShell"
 export SHELL_TITLE="HeckerShell"
 
 # Update PATH with script paths and AppImages

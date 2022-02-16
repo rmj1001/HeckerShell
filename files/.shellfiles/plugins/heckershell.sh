@@ -3,7 +3,7 @@
 ##############################################
 #   Author: RMCJ <rmichael1001@gmail.com>
 #   Project: HeckerShell
-#   Plugin: dotfiles
+#   Plugin: heckershell
 #   Version: 1.0
 #
 #   Usage: dotfiles [command] [args]
@@ -12,8 +12,8 @@
 #       Automatic dotfiles manager
 ##############################################
 
-function dotfiles() {
-    MGRSCRIPTS="https://raw.githubusercontent.com/rmj1001/dotfiles/main/auto"
+function heckershell() {
+    MGRSCRIPTS="https://raw.githubusercontent.com/rmj1001/HeckerShell/main/auto"
 
     function _update() {
         bash <(wget -qO- ${MGRSCRIPTS}/update.sh)
@@ -29,19 +29,19 @@ function dotfiles() {
     }
 
     function _help() {
-        PRINT "dotfiles - Automatic dotfiles manager script"
+        PRINT "heckershell - Automatic HeckerShell manager"
         PRINT
-        PRINT "Usage:\t\tdotfiles <flag> <args?>"
-        PRINT "Example:\tdotfiles --help"
+        PRINT "Usage:\t\theckershell <flag> <args?>"
+        PRINT "Example:\theckershell --help"
         PRINT
         {
             PRINT "-------------|------|---------------------"
             PRINT "Flag|Args|Description"
             PRINT "-------------|------|---------------------"
             PRINT "||"
-            PRINT "-u, --update||Update dotfiles"
-            PRINT "-c, --clean-update||Uninstall & reinstall dotfiles"
-            PRINT "-r, --uninstall||Uninstall dotfiles"
+            PRINT "-u, --update||Update HeckerShell"
+            PRINT "-c, --clean-update||Uninstall & reinstall HeckerShell"
+            PRINT "-r, --uninstall||Uninstall HeckerShell"
             PRINT "||"
             PRINT "-h, --help|n/a|Show this prompt"
         } | column -t -s'|'
@@ -79,7 +79,7 @@ function dotfiles() {
             return 0
             ;;
 
-        *) PRINT "dotfiles: Invalid argument '${1}'" && return 1 ;;
+        *) PRINT "heckershell: Invalid argument '${1}'" && return 1 ;;
 
         esac
 

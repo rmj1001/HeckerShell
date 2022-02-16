@@ -7,7 +7,7 @@
 #
 #   Usage: n/a
 #
-#   Description: Dotfiles functions
+#   Description: HeckerShell functions
 #
 ##############################################
 
