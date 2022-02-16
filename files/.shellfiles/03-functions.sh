@@ -202,3 +202,9 @@ function restart-pipewire() {
 function terminal() { ${TERMINAL} "${@}"; }
 function browser() { ${BROWSER} "${@}"; }
 function auth() { ${AUTH} "${@}"; }
+
+# Clear screen
+function cls() { freshscreen; }
+
+# Meme
+function @echo { [[ "$1" == "off" ]] && PRINT "This isn't batch nerd"; }
