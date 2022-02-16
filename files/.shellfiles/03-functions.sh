@@ -151,11 +151,6 @@ function manual() {
     /usr/bin/man "${@}"
 }
 
-# Man meme
-function man-meme() {
-    printf "%b\n" "Based sigma grindset gender, not woman"
-}
-
 # Update software from source
 function makeupdate() {
     sudo make uninstall &&
@@ -206,5 +201,8 @@ function auth() { ${AUTH} "${@}"; }
 # Clear screen
 function cls() { freshscreen; }
 
-# Meme
+# Meme Functions
 function @echo { [[ "$1" == "off" ]] && PRINT "This isn't batch nerd"; }
+function man-meme() {
+    printf "%b\n" "Based sigma grindset gender, not woman"
+}
