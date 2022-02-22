@@ -64,13 +64,11 @@ function _wine() {
 	# installed with WINE from your application menu(s). Make sure to
 	# remove them using your menu editor as well.
 
-	rm -f "$HOME"/.config/menus/applications-merged/wine* &&
+	{ rm -f "$HOME"/.config/menus/applications-merged/wine* &&
 		rm -rf "$HOME"/.local/share/applications/wine &&
 		rm -f "$HOME"/.local/share/desktop-directories/wine* &&
 		rm -f "$HOME"/.local/share/icons/????_*.{xpm,png} &&
-		rm -f "$HOME"/.local/share/icons/*-x-wine-*.{xpm,png}
-
-	test $? != 0 && _wine.error
+		rm -f "$HOME"/.local/share/icons/*-x-wine-*.{xpm,png}; } || _wine.error
 
 	((GUI == 0)) && PRINT "$(SCRIPTNAME): Removed WINE." && return 0
 
@@ -143,7 +141,7 @@ function _gui() {
 [[ $# -eq 0 ]] && _gui && exit 0
 
 # Iterate over all arguments and evaluate them
-while test $# -gt 0; do
+while [[ $# -gt 0 ]]; do
 
 	case "$(LOWERCASE "${1}")" in
 

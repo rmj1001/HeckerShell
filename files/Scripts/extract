@@ -53,7 +53,7 @@ function extract.isFile() {
 }
 
 # Show help prompt and exit script if no args are given or '?', '-h', or '--help' are present anywhere in arguments.
-test $# -eq 0 && extract.help && exit 0
+[[ $# -eq 0 ]] && extract.help && exit 0
 
 for arg in "$@"; do
 
@@ -67,7 +67,7 @@ done
 
 # For every argument, determine if argument is file, and extract if it is.
 # If an argument isn't a file or doesn't match an extension, throw an error.
-while test $# -gt 0; do
+while [[ $# -gt 0 ]]; do
 
 	case "${1}" in
 	*.tar.bz2)

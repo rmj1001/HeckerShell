@@ -51,7 +51,7 @@ function heckershell() {
     [[ $# -eq 0 ]] && _help && return 0
 
     # Iterate over all arguments and evaluate them
-    while test $# -gt 0; do
+    while [[ $# -gt 0 ]]; do
 
         case "$(LOWERCASE "${1}")" in
 

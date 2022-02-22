@@ -144,7 +144,7 @@ function _help() {
 }
 
 # Iterate over all arguments and evaluate them
-while test $# -gt 0; do
+while [[ $# -gt 0 ]]; do
 
 	case "$(LOWERCASE "${1}")" in
 

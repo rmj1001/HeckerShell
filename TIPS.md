@@ -50,7 +50,7 @@ esac
 
 # NOTE: If you want to show a help prompt when the program is called with 0 args,
 # test for it outside the while loop.
-while test $# -gt 0; do
+while [[ $# -gt 0 ]]; do
 
     case "${1}" in
     

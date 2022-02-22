@@ -30,7 +30,7 @@ RESULTS=()
 	exit 1
 }
 
-while test $# -gt 0; do
+while [[ $# -gt 0 ]]; do
 	case "$(LOWERCASE "${1}")" in
 
 	--raw)

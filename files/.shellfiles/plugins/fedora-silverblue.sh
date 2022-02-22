@@ -31,7 +31,7 @@ function dnf() {
 		rpm-ostree install -A
 	}
 
-	while test $# -gt 0; do
+	while [[ $# -gt 0 ]]; do
 
 		case "${1}" in
 
