@@ -20,3 +20,6 @@ zap daemon --install
 
 # Homebrew
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Papirus Icons
+wget -qO- https://git.io/papirus-icon-theme-install | sh
