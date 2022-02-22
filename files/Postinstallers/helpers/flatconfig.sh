@@ -21,12 +21,13 @@ flatpak repair --user
 
 flatpak install --user --noninteractive --or-update flathub \
 	ar.xjuan.Cambalache \
+	ca.desrt.dconf-editor \
 	com.axosoft.GitKraken \
 	com.belmoussaoui.Authenticator \
 	com.belmoussaoui.Obfuscate \
-	com.belmoussaoui.ashpd.demo \
 	com.bitstower.Markets \
 	com.bitwarden.desktop \
+	com.discordapp.Discord \
 	com.etlegacy.ETLegacy \
 	com.github.bleakgrey.tootle \
 	com.github.calo001.fondo \
@@ -53,9 +54,11 @@ flatpak install --user --noninteractive --or-update flathub \
 	io.github.prateekmedia.appimagepool \
 	io.github.seadve.Kooha \
 	io.github.shiftey.Desktop \
+	it.mijorus.smile \
 	net.veloren.veloren \
 	network.loki.Session \
 	nl.hjdskes.gcolor3 \
+	org.audacityteam.Audacity \
 	org.freedesktop.Sdk \
 	org.freedesktop.Sdk.Extension.dotnet \
 	org.freedesktop.Sdk.Extension.golang \
@@ -71,7 +74,6 @@ flatpak install --user --noninteractive --or-update flathub \
 	org.gimp.GIMP.Plugin.Resynthesizer \
 	org.gnome.Aisleriot \
 	org.gnome.Boxes \
-	org.gnome.Boxes.Extension.OsinfoDb \
 	org.gnome.Builder \
 	org.gnome.Calculator \
 	org.gnome.Calls \
@@ -87,6 +89,8 @@ flatpak install --user --noninteractive --or-update flathub \
 	org.gnome.PasswordSafe \
 	org.gnome.Podcasts \
 	org.gnome.Polari \
+	org.gnome.Sdk \
+	org.gnome.Sdk \
 	org.gnome.TextEditor \
 	org.gnome.World.PikaBackup \
 	org.gnome.design.IconLibrary \
