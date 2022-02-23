@@ -41,10 +41,13 @@ function _help() {
 }
 
 function _ls() {
-	dir="${PWD}"
-	cd "${SCRIPTS}" || exit
-	ls -alvhF --group-directories-first
-	cd "${dir}" || exit
+	for script in "${SCRIPTS}"/*; do
+		# Script must not be directory or symlink, and must be executable
+		[[ -d "${script}" || -L "${script}" || ! -x "${script}" ]] &&
+			continue
+
+		PRINT "  $(basename "${script}")"
+	done
 }
 
 function _script_conditions() {
