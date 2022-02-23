@@ -82,7 +82,7 @@ function powermgr.unlock() {
 function powermgr.help() {
 	PRINT "$(SCRIPTNAME) - Manage the state of your PC or account"
 	PRINT
-	PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"
+	PRINT "Usage:\t\t$(SCRIPTNAME) [FLAGS] [ARGS?] ..."
 	PRINT "Example:\t$(SCRIPTNAME) --help"
 	PRINT
 	{

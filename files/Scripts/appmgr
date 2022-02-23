@@ -31,7 +31,7 @@ function _switcher() {
 function _help() {
 	PRINT "$(SCRIPTNAME) - Invoke common app management programs"
 	PRINT
-	PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"
+	PRINT "Usage:\t\t$(SCRIPTNAME) [FLAGS] [ARGS?] ..."
 	PRINT "Example:\t$(SCRIPTNAME) --menu"
 	PRINT
 	{

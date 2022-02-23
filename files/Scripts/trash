@@ -111,7 +111,7 @@ function trash.files.information() {
 function trash.help() {
   PRINT "$(SCRIPTNAME) - Manage your trash bin"
   PRINT
-  PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"
+  PRINT "Usage:\t\t$(SCRIPTNAME) [FLAGS] [ARGS?] ..."
   PRINT "Example:\t$(SCRIPTNAME) --help"
   PRINT
   {

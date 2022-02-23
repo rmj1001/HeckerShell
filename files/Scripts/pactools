@@ -44,7 +44,7 @@ function _remove_orphans() {
 function _help() {
 	PRINT "$(SCRIPTNAME) - Various pacman tools"
 	PRINT
-	PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"
+	PRINT "Usage:\t\t$(SCRIPTNAME) [FLAGS] [ARGS?] ..."
 	PRINT "Example:\t$(SCRIPTNAME) --help"
 	PRINT
 	{

@@ -24,7 +24,7 @@ SCRIPTS="${SCRIPTS:=$HOME/.local/bin}"
 function _help() {
 	PRINT "$(SCRIPTNAME) - Manage user scripts"
 	PRINT
-	PRINT "Usage:\t\tscriptctl <flag> <args?>"
+	PRINT "Usage:\t\tscriptctl [FLAGS] [ARGS?] ..."
 	PRINT "Example:\tscriptctl --list"
 	PRINT
 	{

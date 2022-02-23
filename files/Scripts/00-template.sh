@@ -23,7 +23,7 @@ REQUIRE_CMD "" || exit 1
 function _help() {
 	PRINT "$(SCRIPTNAME) - description"
 	PRINT
-	PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"
+	PRINT "Usage:\t\t$(SCRIPTNAME) [FLAGS] [ARGS?] ..."
 	PRINT "Example:\t$(SCRIPTNAME) --help"
 	PRINT
 	{

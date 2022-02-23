@@ -87,7 +87,7 @@ function minecraftctl.remove() {
 function minecraftctl.help() {
 	PRINT "$(SCRIPTNAME) - Manage your minecraft installation"
 	PRINT
-	PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"
+	PRINT "Usage:\t\t$(SCRIPTNAME) [FLAGS] [ARGS?] ..."
 	PRINT "Example:\t$(SCRIPTNAME) --help"
 	PRINT
 	{

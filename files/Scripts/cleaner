@@ -24,7 +24,7 @@ GUI=0
 function _help() {
 	PRINT "$(SCRIPTNAME) - System cleaner script"
 	PRINT
-	PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"
+	PRINT "Usage:\t\t$(SCRIPTNAME) [FLAGS] [ARGS?] ..."
 	PRINT "Example:\t$(SCRIPTNAME) --help"
 	PRINT
 	{

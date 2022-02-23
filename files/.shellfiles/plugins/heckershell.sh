@@ -31,7 +31,7 @@ function heckershell() {
     function _help() {
         PRINT "heckershell - Automatic HeckerShell manager"
         PRINT
-        PRINT "Usage:\t\theckershell <flag> <args?>"
+        PRINT "Usage:\t\theckershell [FLAGS] [ARGS?] ..."
         PRINT "Example:\theckershell --help"
         PRINT
         {

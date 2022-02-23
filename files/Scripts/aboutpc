@@ -126,7 +126,7 @@ function aboutpc.normal() {
 function _help() {
 	PRINT "$(SCRIPTNAME) - Show system information for screenshots :)"
 	PRINT
-	PRINT "Usage:\t\t$(SCRIPTNAME) <flag?> <args?> ..."
+	PRINT "Usage:\t\t$(SCRIPTNAME) [FLAGS] [ARGS?] ..."
 	PRINT "Example:\t$(SCRIPTNAME)\t\t\t\t# Default $(SCRIPTNAME) output"
 	PRINT "Example:\t$(SCRIPTNAME) --clear --neofetch\t# Clear screen, show neofetch-esque output"
 	PRINT

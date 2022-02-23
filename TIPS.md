@@ -80,7 +80,7 @@ done
 function _help() {
     printf '%b\n' "$(basename "$(readlink -nf "$0")") - description"
     printf '%b\n'
-    printf '%b\n' "Usage:\t\t$(basename "$(readlink -nf "$0")") <flag> <args?>"
+    printf '%b\n' "Usage:\t\t$(basename "$(readlink -nf "$0")") [FLAGS] [ARGS?] ..."
     printf '%b\n' "Example:\t$(basename "$(readlink -nf "$0")") --help"
     printf '%b\n'
     {

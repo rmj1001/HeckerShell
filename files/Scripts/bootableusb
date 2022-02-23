@@ -36,7 +36,7 @@ function _write() {
 function _help() {
 	PRINT "$(SCRIPTNAME) - Create a bootable USB drive"
 	PRINT
-	PRINT "Usage:\t\t$(SCRIPTNAME) <flag> <args?>"
+	PRINT "Usage:\t\t$(SCRIPTNAME) [FLAGS] [ARGS?] ..."
 	PRINT "Example:\t\t$(SCRIPTNAME) --iso <iso> --drive <drive>"
 	PRINT "Example:\t\t$(SCRIPTNAME) -i ubuntu.iso -i /dev/sdb"
 	PRINT
