@@ -5,10 +5,10 @@
 #   Project:
 #   Version: 1.0
 #
-#   Usage:
+#   Usage: passgen [NUMBER OF CHARACTERS? (default 16)]
 #
 #   Description:
-#
+#       This generates a random password
 ##############################################
 
 # shellcheck disable=SC1091

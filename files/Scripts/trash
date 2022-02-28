@@ -152,6 +152,6 @@ case "${cmd}" in
   trash.help
   ;;
 *)
-  [ -z "${cmd}" ] && trash.help || PRINT "Invalid command!" && exit 1
+  [ -z "${cmd}" ] && trash.help || { INVALID_CMD "${1}" && exit 1; }
   ;;
 esac

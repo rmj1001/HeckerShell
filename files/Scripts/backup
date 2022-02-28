@@ -219,6 +219,6 @@ case "${cmd}" in
 
 *)
 
-	[[ $# -eq 0 ]] && backup.help || PRINT "Invalid command!" && exit 1
+	[[ $# -eq 0 ]] && backup.help || { INVALID_CMD "${cmd}" && exit 1; }
 	;;
 esac

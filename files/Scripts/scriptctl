@@ -50,29 +50,34 @@ function _ls() {
 	done
 }
 
-function _script_conditions() {
-	# Check for script name argument
-	[[ -z "${1}" ]] && PRINT "You must specify a script name!" && return 1
-
-	# Check if script exists
-	[[ ! -e "${SCRIPTS}"/"${1}" ]] && PRINT "Script '${1}' doesn't exist!" && return 1
-}
-
 function _mk() {
-	_script_conditions "$@" || return 1
+	# Check to see if script name is provided and script exists
+	[[ -z "${1}" ]] && PRINT "You must specify a script name!" && return 1
+	[[ -f "${SCRIPTS}"/"${1}" ]] && PRINT "Script '${1}' exists!" && return 1
 
-	cp "${SCRIPTS}"/00-template.sh "${SCRIPTS}"/"${1}".sh &&
-		mv "${SCRIPTS}"/"${1}".sh "${SCRIPTS}"/"${1}" &&
-		chmod +x "${SCRIPTS}"/"${1}" && ${EDITOR:=nano} "${SCRIPTS}"/"${1}" &&
-		PRINT "$(SCRIPTNAME): Created '${1}'." &&
+	{
+		cp "${SCRIPTS}"/00-template.sh "${SCRIPTS}"/"${1}".sh &&
+			mv "${SCRIPTS}"/"${1}".sh "${SCRIPTS}"/"${1}" &&
+			chmod +x "${SCRIPTS}"/"${1}" &&
+			PRINT "$(SCRIPTNAME): Created '${1}'." &&
+			{
+				local askedit
+				read -rp "Edit script? (y/N) " askedit
+				CHECK_NO "${askedit}" || ${EDITOR:=nano} "${SCRIPTS}"/"${1}"
+			}
+
 		return 0
+	}
 
 	PRINT "Failed to create '${1}'." &&
 		return 1
 }
 
 function _ed() {
-	_script_conditions "$@" || return 1
+	# Check to see if script name is provided and script exists
+	[[ -z "${1}" ]] && PRINT "You must specify a script name!" && return 1
+	[[ ! -f "${SCRIPTS}"/"${1}" ]] &&
+		PRINT "Script '${1}' doesn't exist!" && return 1
 
 	# Edit the script
 	${EDITOR:=nano} "${SCRIPTS}"/"${1}" &&
@@ -84,7 +89,10 @@ function _ed() {
 }
 
 function _rm() {
-	_script_conditions "$@" || return 1
+	# Check to see if script name is provided and script exists
+	[[ -z "${1}" ]] && PRINT "You must specify a script name!" && return 1
+	[[ ! -f "${SCRIPTS}"/"${1}" ]] &&
+		PRINT "Script '${1}' doesn't exist!" && return 1
 
 	# Confirm whether to delete script
 	PROMPT_NO "Delete '${1}'" || {
@@ -138,7 +146,7 @@ while [[ $# -gt 0 ]]; do
 		exit $?
 		;;
 
-	*) PRINT "$(SCRIPTNAME): Invalid argument '${1}'" && exit 1 ;;
+	*) INVALID_CMD "${1}" && exit 1 ;;
 
 	esac
 

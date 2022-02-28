@@ -1,0 +1,237 @@
+#!/usr/bin/env bash
+
+##############################################
+#   Author(s): name <email@domain.com>
+#   Project: pm
+#   Version: 1.0
+#
+#   Usage: pm [FLAGS] [ARGS?] ...
+#
+#   Description:
+#		Package manager wrapper for multiple distros
+##############################################
+
+# shellcheck disable=SC1091
+source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
+
+# Preprocessing flags
+DISABLE_ROOT || exit 1
+
+####################################
+
+function _help() {
+	PRINT "$(SCRIPTNAME) - Package manager wrapper for multiple distros"
+	PRINT
+	PRINT "Usage:\t\t$(SCRIPTNAME) [FLAGS] [ARGS?] ..."
+	PRINT "Example:\t$(SCRIPTNAME) --help"
+	PRINT
+	{
+		PRINT "-------------|------|---------------------"
+		PRINT "Flag|Args|Description"
+		PRINT "-------------|------|---------------------"
+		PRINT "||"
+		PRINT "install|<packages[]>|Install packages"
+		PRINT "uninstall|<packages[]>|Uninstall packages"
+		PRINT "update||Update all packages"
+		PRINT "check-update||Check for updates"
+		PRINT "search|<name>|Search for a package"
+		PRINT "list||List installed packages"
+		PRINT "||"
+		PRINT "-s, --supported||Print list of supported package managers"
+		PRINT "-h, --help||Show this prompt"
+	} | column -t -s'|'
+}
+
+function _supported() {
+	PRINT
+	PRINT "- apt"
+	PRINT "- dnf"
+	PRINT "- paru"
+	PRINT "- pacman"
+	PRINT
+	PRINT "PMs are listed top-down in order of priority; if multiple exist,"
+	PRINT "the one with greater priority will be used."
+	return 0
+}
+
+function _install() {
+	local packages="${@}"
+
+	CMD_EXISTS "apt" && {
+		sudo apt install "${@}"
+		return $?
+	}
+	CMD_EXISTS "dnf" && {
+		sudo dnf install "${@}"
+		return $?
+	}
+	CMD_EXISTS "paru" && {
+		paru -S "${@}"
+		return $?
+	}
+	CMD_EXISTS "pacman" && {
+		sudo pacman -S "${@}"
+		return $?
+	}
+}
+
+function _uninstall() {
+	local packages="${@}"
+
+	CMD_EXISTS "apt" && {
+		sudo apt remove "${@}"
+		return $?
+	}
+	CMD_EXISTS "dnf" && {
+		sudo dnf remove "${@}"
+		return $?
+	}
+	CMD_EXISTS "paru" && {
+		paru -Rns "${@}"
+		return $?
+	}
+	CMD_EXISTS "pacman" && {
+		sudo pacman -Rns "${@}"
+		return $?
+	}
+}
+
+function _update() {
+	CMD_EXISTS "apt" && {
+		sudo apt update && sudo apt upgrade
+		return $?
+	}
+	CMD_EXISTS "dnf" && {
+		sudo dnf update
+		return $?
+	}
+	CMD_EXISTS "paru" && {
+		paru -Syu
+		return $?
+	}
+	CMD_EXISTS "pacman" && {
+		sudo pacman -Syu
+		return $?
+	}
+}
+
+function _check-update() {
+	CMD_EXISTS "apt" && {
+		sudo apt update
+		return $?
+	}
+	CMD_EXISTS "dnf" && {
+		sudo dnf check-update
+		return $?
+	}
+	CMD_EXISTS "paru" && {
+		paru -Sy
+		return $?
+	}
+	CMD_EXISTS "pacman" && {
+		sudo pacman -Sy
+		return $?
+	}
+}
+
+function _search() {
+	local query="${@}"
+
+	CMD_EXISTS "apt" && {
+		apt search "${query}"
+		return $?
+	}
+	CMD_EXISTS "dnf" && {
+		dnf search "${query}"
+		return $?
+	}
+	CMD_EXISTS "paru" && {
+		paru -Ss "${query}"
+		return $?
+	}
+	CMD_EXISTS "pacman" && {
+		pacman -Ss "${query}"
+		return $?
+	}
+}
+
+function _list() {
+	CMD_EXISTS "apt" && {
+		apt list --installed
+		return $?
+	}
+	CMD_EXISTS "dnf" && {
+		dnf list --installed
+		return $?
+	}
+	CMD_EXISTS "paru" && {
+		paru -Q
+		return $?
+	}
+	CMD_EXISTS "pacman" && {
+		pacman -Q
+		return $?
+	}
+}
+
+# If no arguments are give, just show help prompt.
+[[ $# -eq 0 ]] && _help && exit 0
+
+# Iterate over all arguments and evaluate them
+while [[ $# -gt 0 ]]; do
+
+	case "$(LOWERCASE "${1}")" in
+
+	install)
+		shift
+		_install "${@}"
+		exit $?
+		;;
+
+	uninstall)
+		shift
+		_uninstall "${@}"
+		exit $?
+		;;
+
+	update)
+		shift
+		_update
+		exit $?
+		;;
+
+	check-update)
+		shift
+		_check-update
+		exit $?
+		;;
+
+	search)
+		shift
+		_search "${@}"
+		exit $?
+		;;
+
+	list)
+		shift
+		_list
+		exit $?
+		;;
+
+	-s | --supported)
+		shift
+		_supported
+		exit $?
+		;;
+
+	\? | -h | --help)
+		shift
+		_help
+		exit $?
+		;;
+
+	*) INVALID_CMD "${1}" && exit 1 ;;
+
+	esac
+
+done

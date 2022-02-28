@@ -119,6 +119,6 @@ case "$(LOWERCASE "${1}")" in
 	minecraftctl.help
 	;;
 *)
-	PRINT "'${1}' is an invalid subcommand!"
+	INVALID_CMD "${1}" && exit 1
 	;;
 esac

@@ -49,7 +49,7 @@ while [[ $# -gt 0 ]]; do
 		exit 0
 		;;
 
-	*) PRINT "$(SCRIPTNAME): Invalid argument '${1}'" && exit 1 ;;
+	*) INVALID_CMD "${1}" && exit 1 ;;
 
 	esac
 

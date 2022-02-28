@@ -128,24 +128,34 @@ function emojictl.help() {
 	} | column -t -s'|'
 }
 
-cmd="$(LOWERCASE "${1}")"
+# If no arguments are give, just show help prompt.
+[[ $# -eq 0 ]] && emojictl.help && exit 0
 
-case "${cmd}" in
+# Iterate over all arguments and evaluate them
+while [[ $# -gt 0 ]]; do
 
--i | --install)
-	emojictl.emojis.install
-	exit 0
-	;;
--u | --uninstall)
-	emojictl.emojis.uninstall
-	exit 0
-	;;
-\? | -h | --help)
-	emojictl.help
-	exit 0
-	;;
-*)
-	[ -z "${cmd}" ] && emojictl.help || PRINT "Invalid command '${1}'." && exit 1
-	;;
+	case "$(LOWERCASE "${1}")" in
 
-esac
+	-i | --install)
+		shift
+		emojictl.emojis.install
+		exit 0
+		;;
+	-u | --uninstall)
+		shift
+		emojictl.emojis.uninstall
+		exit 0
+		;;
+	\? | -h | --help)
+		shift
+		emojictl.help
+		exit 0
+		;;
+	*)
+		shift
+		INVALID_CMD "${1}" && exit 1
+		;;
+
+	esac
+
+done
