@@ -84,6 +84,10 @@ function SCRIPTNAME() {
     NPRINT "$(basename "$(readlink -nf "$0")")"
 }
 
+function INVALID_CMD() {
+    PRINT "$(SCRIPTNAME): Invalid command '${1}'."
+}
+
 # Description: Find the path for a command
 # Usage:  WHICH <cmd>
 # Returns: string
