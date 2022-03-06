@@ -20,9 +20,10 @@ TITLE "Updater"
 
 ####################################
 
-interactive=1
-clearscr=1
-notifications=1
+all=0
+log=0
+clearscr=0
+notify=0
 
 function _help() {
 	PRINT "$(SCRIPTNAME) - Update system applications in batches."
@@ -35,9 +36,10 @@ function _help() {
 		PRINT "Flag|Args|Description"
 		PRINT "-------------|------|---------------------"
 		PRINT "||"
-		PRINT "-i, --non-interactive||Disable interactivity & clearing screen"
-		PRINT "-c, --no-clear||Disable clearing screen"
-		PRINT "-n, --notifications||Send notifications to system"
+		PRINT "-a, --all||Update all software"
+		PRINT "-l, --log||Create logs for updates"
+		PRINT "-c, --clear||Clear the screen after each update"
+		PRINT "-n, --notify||Send notifications for each update"
 		PRINT "||"
 		PRINT "-h, --help|n/a|Show this prompt"
 	} | column -t -s'|'
@@ -51,7 +53,12 @@ function LOG() {
 
 	mkdir -p "${folder}"
 	touch "${logfile}"
-	"${@}" >>"${logfile}" 2>&1
+	"${@}" 2>&1 | tee "${logfile}"
+}
+
+function CLEAR() {
+	[[ $clearscr -eq 1 ]] && clear && return 0
+	PRINT
 }
 
 function UPDATE() {
@@ -62,39 +69,64 @@ function UPDATE() {
 	# If cmd does not exist, return error.
 	CMD_EXISTS "${req}" || return 1
 
-	[[ $interactive -eq 0 ]] && LOG eval "${cmd}" &&
-		{
-			[[ $notifications -eq 0 ]] && CMD_EXISTS "notify-send" &&
-				notify-send -i info -t 250 "Updated '${req}'."
-
-			PRINT "Updated '${req}'."
-		} && return 0
-
-	PRINT "\n"
-	[[ $clearscr -eq 1 ]] && clear
-
-	PROMPT_YES "Update \"${req}\"" && {
+	function _logic() {
 		PRINT "Updating ${req}..."
 		PRINT
 
-		eval "${cmd}"
+		[[ $log -eq 0 ]] && eval "${cmd}"
+		[[ $log -eq 1 ]] && LOG eval "${cmd}"
+
+		[[ $notify -eq 1 ]] && CMD_EXISTS "notify-send" &&
+			notify-send -i info -t 250 "Updated '${req}'."
+
+		PRINT "Updated '${req}'."
+
 		PAUSE
 
+		CLEAR
+	}
+
+	[[ $all -eq 1 ]] && {
+		_logic
+		return 0
+	}
+
+	PROMPT_YES "Update \"${req}\"" && {
+		_logic
 		return 0
 	}
 
 	PRINT "Skipped updating \"${req}\"."
 	PAUSE
+	CLEAR
 	return 1
 }
 
-for arg in "${@}"; do
+while [[ $# -gt 0 ]]; do
 
-	case "${arg}" in
-	-n | --notifications) notifications=0 ;;
-	-i | --non-interactive) interactive=0 ;;
-	-c | --no-clear) clearscr=0 ;;
+	case "$(LOWERCASE ${1})" in
+	-a | --all)
+		shift
+		all=1
+		continue
+		;;
+	-l | --log)
+		shift
+		log=1
+		continue
+		;;
+	-c | --clear)
+		shift
+		clearscr=1
+		continue
+		;;
+	-n | --notify)
+		shift
+		notify=1
+		continue
+		;;
 	\? | -h | --help)
+		shift
 		_help
 		exit 0
 		;;
@@ -102,7 +134,7 @@ for arg in "${@}"; do
 
 done
 
-[[ $clearscr -eq 1 && ! $interactive -eq 0 ]] && clear
+CLEAR
 
 UPDATE "flatpak" "flatpak update --assumeyes"
 UPDATE "snap" "sudo snap refresh"
@@ -114,5 +146,6 @@ UPDATE "pacman" "sudo pacman -Syu --noconfirm"
 UPDATE "yay" "yay -Sua --noconfirm"
 UPDATE "paru" "paru -Sua --noconfirm"
 
-[[ $clearscr -eq 1 && ! $interactive -eq 0 ]] && clear
-PRINT "\n\nFinished updates!"
+CLEAR
+
+PRINT "Finished updates!"
