@@ -20,10 +20,7 @@ REQUIRE_CMD "grep" "sed" "uname" "cat" || exit 1
 
 ####################################
 
-CLEAR=0
-NEOFETCH=0
-
-function aboutpc.fetch() {
+function _fetch_sysinfo() {
 	# Operating System Information
 	OS="$(grep '^NAME=' /etc/os-release | sed 's/NAME=//;s/"//g')"
 	OS="${OS} $(grep '^VERSION=' /etc/os-release | sed 's/VERSION=//;s/"//g')"
@@ -56,10 +53,10 @@ function aboutpc.fetch() {
 	CMD_EXISTS "xrandr" && RESOLUTION="$(xrandr -q | grep current | sed -e 's|.*current\s||g' -e 's|,.*||g')"
 }
 
-function aboutpc.zenity() {
+function _zenity() {
 	REQUIRE_CMD "zenity" || return 1
 
-	aboutpc.fetch
+	_fetch_sysinfo
 
 	zenity --title "About PC" --height 500 --width 450 --list \
 		--column "Category" --column "Information" \
@@ -72,12 +69,13 @@ function aboutpc.zenity() {
 		"Processor" "${CPUNAME}" \
 		"Cores" "${CORES}" \
 		"Display Server" "${XDG_SESSION_TYPE}" \
-		"Memory" "${MEMORY}" &
+		"Memory" "${MEMORY}" \
+		"Time" "$(TIMESTAMP)" &
 	return 0
 }
 
-function aboutpc.neofetch() {
-	aboutpc.fetch
+function _neofetch() {
+	_fetch_sysinfo
 
 	# Header
 	PRINT "\n${USER}@${HOST}"
@@ -92,13 +90,14 @@ function aboutpc.neofetch() {
 		PRINT " Display Server|${XDG_SESSION_TYPE}"
 		PRINT " Memory|${MEMORY}"
 		[[ -n "${TERMINAL}" ]] && PRINT " Terminal|${TERMINAL}"
+		PRINT " Time|$(TIMESTAMP)"
 	} | column -t -s'|'
 
 	PRINT
 }
 
-function aboutpc.normal() {
-	aboutpc.fetch
+function _default() {
+	_fetch_sysinfo
 
 	# Header
 	PRINT " ---------------------------------------------------------"
@@ -118,6 +117,7 @@ function aboutpc.normal() {
 		PRINT " Display Server|${XDG_SESSION_TYPE}"
 		PRINT " Memory|${MEMORY}"
 		[[ -n "${TERMINAL}" ]] && PRINT " Terminal|${TERMINAL}"
+		PRINT " Time|$(TIMESTAMP)"
 	} | column -t -s "|"
 
 	PRINT
@@ -135,9 +135,9 @@ function _help() {
 		PRINT "Flag|Args|Description"
 		PRINT "-------------|------|---------------------"
 		PRINT "||"
-		PRINT "--clear|n/a|Clear the screen"
-		PRINT "--neofetch|n/a|Show a neofetch-esque output"
-		PRINT "--zenity|n/a|Print information to a graphical window"
+		PRINT "-d, --default|n/a|Show the default output"
+		PRINT "-n, --neofetch|n/a|Show a neofetch-esque output"
+		PRINT "-z, --zenity|n/a|Print information to a graphical window"
 		PRINT "||"
 		PRINT "-h, --help|n/a|Show this prompt"
 	} | column -t -s'|'
@@ -147,18 +147,17 @@ function _help() {
 while [[ $# -gt 0 ]]; do
 
 	case "$(LOWERCASE "${1}")" in
-
-	--clear)
+	-d | --default)
 		shift
-		CLEAR=1
+		_default && exit 0
 		;;
-	--neofetch)
+	-n | --neofetch)
 		shift
-		NEOFETCH=1
+		_neofetch && exit 0
 		;;
-	--zenity)
+	-z | --zenity)
 		shift
-		aboutpc.zenity && exit $?
+		_zenity && exit 0
 		;;
 
 	\? | -h | --help)
@@ -167,13 +166,12 @@ while [[ $# -gt 0 ]]; do
 		exit 0
 		;;
 
-	*) INVALID_CMD "${1}" && exit 1 ;;
+	*)
+		INVALID_CMD "${1}" && exit 1
+		;;
 
 	esac
 
 done
 
-[[ $CLEAR -eq 1 ]] && clear
-[[ $NEOFETCH -eq 1 ]] && aboutpc.neofetch && exit 0
-
-aboutpc.normal
+_default
