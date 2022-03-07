@@ -258,3 +258,15 @@ function READ_CONF() {
 
     done <"${file}"
 }
+
+# Description: Print current time & date
+# Usage: TIMESTAMP [-m/--multiline]?
+# Returns: string
+function TIMESTAMP() {
+	local timestamp="$(date +"%I:%M%P %m/%d/%Y")"
+
+	# Multi-line timestamp flag
+	[[ "${1}" == "-m" || "${1}" == "--multiline" ]] && timestamp="$(date +"%I:%M%P")\n$(date +"%m/%d/%Y")"
+
+	PRINT "${timestamp}"
+}
