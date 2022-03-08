@@ -11,14 +11,17 @@
 #       This generates a random password
 ##############################################
 
+##############################################
+# PRE-PROCESSING
+
 # shellcheck disable=SC1091
 source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
 
-# Preprocessing flags
 DISABLE_ROOT || exit 1
 REQUIRE_CMD "tr" "fold" "head" || exit 1
 
-####################################
+##############################################
+# MAIN LOGIC
 
 chars="16"
 [[ -n "${1}" ]] && chars="${1}"

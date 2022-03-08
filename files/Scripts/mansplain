@@ -11,14 +11,17 @@
 #		Use dmenu to view manpages in PDF format
 ##############################################
 
+##############################################
+# PRE-PROCESSING
+
 # shellcheck disable=SC1091
 source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
 
-# Preprocessor flags
 DISABLE_ROOT || exit 1
 REQUIRE_CMD "rofi" "zathura" "ps2pdf" || exit 1
 
-####################################
+##############################################
+# MAIN LOGIC
 
 function menu() {
 	rofi -dmenu -columns 3 -disable-history -p "Manpage" -mesg "Pick the manpage you want to view in Zathura."

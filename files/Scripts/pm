@@ -11,38 +11,38 @@
 #		Package manager wrapper for multiple distros
 ##############################################
 
+##############################################
+# PRE-PROCESSING
+
 # shellcheck disable=SC1091
 source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
 
-# Preprocessing flags
 DISABLE_ROOT || exit 1
 
-####################################
+##############################################
+# HELP MENU BUILDER
 
-function _help() {
-	PRINT "$(SCRIPTNAME) - Package manager wrapper for multiple distros"
-	PRINT
-	PRINT "Usage:\t\t$(SCRIPTNAME) [FLAGS] [ARGS?] ..."
-	PRINT "Example:\t$(SCRIPTNAME) --help"
-	PRINT
-	{
-		PRINT "-------------|------|---------------------"
-		PRINT "Flag|Args|Description"
-		PRINT "-------------|------|---------------------"
-		PRINT "||"
-		PRINT "install|<packages[]>|Install packages"
-		PRINT "uninstall|<packages[]>|Uninstall packages"
-		PRINT "update||Update all packages"
-		PRINT "check-update||Check for updates"
-		PRINT "search|<name>|Search for a package"
-		PRINT "list||List installed packages"
-		PRINT "||"
-		PRINT "-s, --supported||Print list of supported package managers"
-		PRINT "-h, --help||Show this prompt"
-	} | column -t -s'|'
-}
+SCRIPT_VERSION="1.5"
+SCRIPT_DESCRIPTION="Package manager wrapper for multiple distros"
+SCRIPT_USAGE="[FLAGS] [ARGS?] ..."
 
-function _supported() {
+# Examples
+EXAMPLE "--install htop firefox"
+
+# Flags
+FLAG "install" "[PACAKGES] ..." "Install packages"
+FLAG "uninstall" "[PACKAGES] ..." "Uninstall packages"
+FLAG "update" "" "Update all packages"
+FLAG "check-update" "" "Check for updates"
+FLAG "search" "[NAME]" "Search for a package"
+FLAG "list" "" "List all installed packages"
+FLAG "" "" ""
+FLAG "-s, --supported" "" "Print list of supported package managers"
+
+##############################################
+# MAIN LOGIC
+
+function pm.supported() {
 	PRINT
 	PRINT "- apt"
 	PRINT "- dnf"
@@ -54,7 +54,7 @@ function _supported() {
 	return 0
 }
 
-function _install() {
+function pm.install() {
 	local packages="${@}"
 
 	CMD_EXISTS "apt" && {
@@ -75,7 +75,7 @@ function _install() {
 	}
 }
 
-function _uninstall() {
+function pm.uninstall() {
 	local packages="${@}"
 
 	CMD_EXISTS "apt" && {
@@ -96,7 +96,7 @@ function _uninstall() {
 	}
 }
 
-function _update() {
+function pm.update() {
 	CMD_EXISTS "apt" && {
 		sudo apt update && sudo apt upgrade
 		return $?
@@ -115,7 +115,7 @@ function _update() {
 	}
 }
 
-function _check-update() {
+function pm.check-update() {
 	CMD_EXISTS "apt" && {
 		sudo apt update
 		return $?
@@ -134,7 +134,7 @@ function _check-update() {
 	}
 }
 
-function _search() {
+function pm.search() {
 	local query="${@}"
 
 	CMD_EXISTS "apt" && {
@@ -155,7 +155,7 @@ function _search() {
 	}
 }
 
-function _list() {
+function pm.list() {
 	CMD_EXISTS "apt" && {
 		apt list --installed
 		return $?
@@ -175,7 +175,7 @@ function _list() {
 }
 
 # If no arguments are give, just show help prompt.
-[[ $# -eq 0 ]] && _help && exit 0
+[[ $# -eq 0 ]] && HELP
 
 # Iterate over all arguments and evaluate them
 while [[ $# -gt 0 ]]; do
@@ -184,50 +184,49 @@ while [[ $# -gt 0 ]]; do
 
 	install)
 		shift
-		_install "${@}"
+		pm.install "${@}"
 		exit $?
 		;;
 
 	uninstall)
 		shift
-		_uninstall "${@}"
+		pm.uninstall "${@}"
 		exit $?
 		;;
 
 	update)
 		shift
-		_update
+		pm.update
 		exit $?
 		;;
 
 	check-update)
 		shift
-		_check-update
+		pm.check-update
 		exit $?
 		;;
 
 	search)
 		shift
-		_search "${@}"
+		pm.search "${@}"
 		exit $?
 		;;
 
 	list)
 		shift
-		_list
+		pm.list
 		exit $?
 		;;
 
 	-s | --supported)
 		shift
-		_supported
+		pm.supported
 		exit $?
 		;;
 
 	\? | -h | --help)
 		shift
-		_help
-		exit $?
+		HELP
 		;;
 
 	*) INVALID_CMD "${1}" && exit 1 ;;

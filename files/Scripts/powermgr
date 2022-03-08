@@ -11,13 +11,36 @@
 #	Shutdown, reboot, logout, lock, etc.
 ##############################################
 
+##############################################
+# PRE-PROCESSING
+
 # shellcheck disable=SC1091
 source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
 
-# Preprocessor flags
 DISABLE_ROOT || exit 1
 
-####################################
+##############################################
+# HELP MENU BUILDER
+
+SCRIPT_VERSION="1.5"
+SCRIPT_DESCRIPTION="Manage the state of your PC or account"
+SCRIPT_USAGE="[FLAG]..."
+
+# Examples
+EXAMPLE "--shutdown" "Shutdown PC"
+EXAMPLE "--gui" "Show gui"
+
+# Flags
+FLAG "--shutdown" "" "Power off computer"
+FLAG "--reboot" "" "Restart computer"
+FLAG "--logout" "" "Log out of account"
+FLAG "--lock" "" "Lock user account"
+FLAG "--unlock" "" "Unlock the user acount (CLI only)"
+FLAG "" "" ""
+FLAG "--gui" "" "Show the GUI version of this script."
+
+##############################################
+# MAIN LOGIC
 
 # Rofi power menu
 function powermgr.gui() {
@@ -79,30 +102,7 @@ function powermgr.unlock() {
 	loginctl unlock-session "${SESSIONS[@]}"
 }
 
-function powermgr.help() {
-	PRINT "$(SCRIPTNAME) - Manage the state of your PC or account"
-	PRINT
-	PRINT "Usage:\t\t$(SCRIPTNAME) [FLAGS] [ARGS?] ..."
-	PRINT "Example:\t$(SCRIPTNAME) --help"
-	PRINT
-	{
-		PRINT "-------------|------|---------------------"
-		PRINT "Flag|Args|Description"
-		PRINT "-------------|------|---------------------"
-		PRINT "||"
-		PRINT "--shutdown||Power off computer"
-		PRINT "--reboot||Restart computer"
-		PRINT "--logout||Log out of account"
-		PRINT "--lock||Lock user account"
-		PRINT "--unlock||Unlock user account (CLI only)"
-		PRINT "||"
-		PRINT "--gui||Show the interactive prompt"
-		PRINT "||"
-		PRINT "-h, --help|n/a|Show this prompt"
-	} | column -t -s'|'
-}
-
-[[ $# -eq 0 ]] && powermgr.help && exit 0
+[[ $# -eq 0 ]] && HELP
 [[ "${1}" == "gui" ]] &&
 	powermgr.gui ||
 	cmd="$(LOWERCASE "${1}")"
@@ -114,8 +114,8 @@ case "${cmd}" in
 --logout) powermgr.logout ;;
 --lock) powermgr.lock ;;
 --unlock) powermgr.unlock ;;
---help) powermgr.help ;;
---helpgui) zenity --info --height=800 --width=800 --text="$(powermgr.help)" ;;
+\? | -h | --help) HELP ;;
+--helpgui) zenity --info --height=800 --width=800 --text="$(HELP)" ;;
 --cancel) zenity --info --text="Cancelled." && exit 1 ;;
 *) zenity --warning --text="Invalid command '${cmd}'." && exit 1 ;;
 esac

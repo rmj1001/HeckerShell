@@ -11,39 +11,38 @@
 #	linux PC.
 ##############################################
 
+##############################################
+# PRE-PROCESSING
+
 # shellcheck disable=SC1091
 source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
 
-# Preprocessor flags
 DISABLE_ROOT || exit 1
 TITLE "Updater"
 
-####################################
+##############################################
+# HELP MENU BUILDER
+
+SCRIPT_VERSION="1.5"
+SCRIPT_DESCRIPTION="Update system applications in batches."
+SCRIPT_USAGE="[FLAGS]"
+
+# Examples
+EXAMPLE "-a -l" "Update all software & create logs"
+
+# Flags
+FLAG "-a, --all" "" "Update all software"
+FLAG "-l, --log" "" "Create logs for updates"
+FLAG "-c, --clear" "" "Clear the screen after each update"
+FLAG "-n, --notify" "" "Send system notifications after each update"
+
+##############################################
+# MAIN LOGIC
 
 all=0
 log=0
 clearscr=0
 notify=0
-
-function _help() {
-	PRINT "$(SCRIPTNAME) - Update system applications in batches."
-	PRINT
-	PRINT "Usage:\t\t$(SCRIPTNAME) [FLAGS] [ARGS?] ..."
-	PRINT "Example:\t$(SCRIPTNAME) --help"
-	PRINT
-	{
-		PRINT "-------------|------|---------------------"
-		PRINT "Flag|Args|Description"
-		PRINT "-------------|------|---------------------"
-		PRINT "||"
-		PRINT "-a, --all||Update all software"
-		PRINT "-l, --log||Create logs for updates"
-		PRINT "-c, --clear||Clear the screen after each update"
-		PRINT "-n, --notify||Send notifications for each update"
-		PRINT "||"
-		PRINT "-h, --help|n/a|Show this prompt"
-	} | column -t -s'|'
-}
 
 function LOG() {
 	local folder
@@ -69,7 +68,7 @@ function UPDATE() {
 	# If cmd does not exist, return error.
 	CMD_EXISTS "${req}" || return 1
 
-	function _logic() {
+	function update.logic() {
 		PRINT "Updating ${req}..."
 		PRINT
 
@@ -87,7 +86,7 @@ function UPDATE() {
 	}
 
 	[[ $all -eq 1 ]] && {
-		_logic
+		update.logic
 		return 0
 	}
 
@@ -127,8 +126,7 @@ while [[ $# -gt 0 ]]; do
 		;;
 	\? | -h | --help)
 		shift
-		_help
-		exit 0
+		HELP
 		;;
 	esac
 

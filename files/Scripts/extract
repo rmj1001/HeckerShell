@@ -11,18 +11,21 @@
 #		Extract any archive file
 ##############################################
 
+##############################################
+# PRE-PROCESSING
+
 # shellcheck disable=SC1091
 source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
 
-# Preprocessor flags
 DISABLE_ROOT || exit 1
 
-####################################
+##############################################
+# MAIN LOGIC
 
 function extract.help() {
-	PRINT "extract - Extract various archive files"
+	PRINT "$(SCRIPTNAME) - Extract various archive files"
 	PRINT
-	PRINT "Usage: extract <archive1> <archive2> ..."
+	PRINT "Usage: $(SCRIPTNAME) <archive1> <archive2> ..."
 	PRINT
 	PRINT "Supported file types:"
 	PRINT "- tar.bz2"

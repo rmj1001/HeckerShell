@@ -11,36 +11,37 @@
 #		Manage user scripts
 ##############################################
 
+##############################################
+# PRE-PROCESSING
+
 # shellcheck disable=SC1091
 source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
 
-# Preprocessor flags
 DISABLE_ROOT || exit 1
 
-####################################
+##############################################
+# HELP MENU BUILDER
+
+SCRIPT_VERSION="1.5"
+SCRIPT_DESCRIPTION="Manage user scripts"
+SCRIPT_USAGE="[FLAGS] [ARGS?] ..."
+SCRIPT_EXAMPLE="--edit $(SCRIPTNAME)"
+
+# Examples
+EXAMPLE "--edit $(SCRIPTNAME)"
+
+# Flags
+FLAG "-l, --list" "" "List all user scripts"
+FLAG "-c, --create" "[NAME]" "Create a new script"
+FLAG "-e, --edit" "[NAME]" "Edit an existing script"
+FLAG "-r, --delete" "[NAME]" "Delete a script"
+
+##############################################
+# MAIN LOGIC
 
 SCRIPTS="${SCRIPTS:=$HOME/.local/bin}"
 
-function _help() {
-	PRINT "$(SCRIPTNAME) - Manage user scripts"
-	PRINT
-	PRINT "Usage:\t\t$(SCRIPTNAME) [FLAGS] [ARGS?] ..."
-	PRINT "Example:\t$(SCRIPTNAME) --list"
-	PRINT
-	{
-		PRINT "-------------|------|---------------------|"
-		PRINT "Flag|Args|Description"
-		PRINT "-------------|------|---------------------|"
-		PRINT "-l, --list|n/a|List all user scripts"
-		PRINT "-c, --create|<name>|Create a new script"
-		PRINT "-e, --edit|<name>|Edit an existing script"
-		PRINT "-r, --delete|<name>|Delete a script"
-		PRINT "|||"
-		PRINT "-h, --help|n/a|Show this prompt"
-	} | column -t -s'|'
-}
-
-function _ls() {
+function scriptctl.ls() {
 	for script in "${SCRIPTS}"/*; do
 		# Script must not be directory or symlink, and must be executable
 		[[ -d "${script}" || -L "${script}" || ! -x "${script}" ]] &&
@@ -50,7 +51,7 @@ function _ls() {
 	done
 }
 
-function _mk() {
+function scriptctl.mk() {
 	# Check to see if script name is provided and script exists
 	[[ -z "${1}" ]] && PRINT "You must specify a script name!" && return 1
 	[[ -f "${SCRIPTS}"/"${1}" ]] && PRINT "Script '${1}' exists!" && return 1
@@ -73,7 +74,7 @@ function _mk() {
 		return 1
 }
 
-function _ed() {
+function scriptctl.ed() {
 	# Check to see if script name is provided and script exists
 	[[ -z "${1}" ]] && PRINT "You must specify a script name!" && return 1
 	[[ ! -f "${SCRIPTS}"/"${1}" ]] &&
@@ -88,7 +89,7 @@ function _ed() {
 		return 1
 }
 
-function _rm() {
+function scriptctl.rm() {
 	# Check to see if script name is provided and script exists
 	[[ -z "${1}" ]] && PRINT "You must specify a script name!" && return 1
 	[[ ! -f "${SCRIPTS}"/"${1}" ]] &&
@@ -109,7 +110,7 @@ function _rm() {
 }
 
 # If no arguments are given, just show help prompt.
-[[ $# -eq 0 ]] && _help && exit 0
+[[ $# -eq 0 ]] && HELP
 
 # Iterate over all arguments and evaluate them
 while [[ $# -gt 0 ]]; do
@@ -118,31 +119,30 @@ while [[ $# -gt 0 ]]; do
 
 	\? | -h | --help)
 		shift
-		_help
-		exit $?
+		HELP
 		;;
 
 	-l | --list)
 		shift
-		_ls
+		scriptctl.ls
 		exit $?
 		;;
 
 	-c | --create)
 		shift
-		_mk "$@"
+		scriptctl.mk "$@"
 		exit $?
 		;;
 
 	-e | --edit)
 		shift
-		_ed "$@"
+		scriptctl.ed "$@"
 		exit $?
 		;;
 
 	-r | --delete)
 		shift
-		_rm "$@"
+		scriptctl.rm "$@"
 		exit $?
 		;;
 

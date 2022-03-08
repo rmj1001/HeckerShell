@@ -11,49 +11,49 @@
 #		Control your system's volume
 ##############################################
 
+##############################################
+# PRE-PROCESSING
+
 # shellcheck disable=SC1091
 source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
 
-# Preprocessing flags
 DISABLE_ROOT || exit 1
 
-####################################
+##############################################
+# HELP MENU BUILDER
 
-function _help() {
-	PRINT "$(SCRIPTNAME) - description"
-	PRINT
-	PRINT "Usage:\t\t$(SCRIPTNAME) [FLAGS] [ARGS?] ..."
-	PRINT "Example:\t$(SCRIPTNAME) --help"
-	PRINT
-	{
-		PRINT "-------------|------|---------------------|"
-		PRINT "Flag|Args|Description"
-		PRINT "-------------|------|---------------------|"
-		PRINT "|||"
-		PRINT "-u, --up|%|Turn up volume"
-		PRINT "-d, --down|%|Turn down volume|"
-		PRINT "-m, --mute|n/a|Turn off volume|"
-		PRINT "-v, --view|n/a|View current volume|"
-		PRINT "|||"
-		PRINT "-h, --help|n/a|Show this prompt"
-	} | column -t -s'|'
-}
+SCRIPT_VERSION="1.5"
+SCRIPT_DESCRIPTION="Manage volume via CLI."
+SCRIPT_USAGE="[FLAGS] [ARGS?] ..."
+SCRIPT_EXAMPLE="--mute"
 
-function _up() {
+# Examples
+EXAMPLE "--mute"
+
+# Flags
+FLAG "-u, --up" "%" "Turn up volume %"
+FLAG "-d, --down" "%" "Turn down volume %"
+FLAG "-m, --mute" "" "Turn off volume"
+FLAG "-v, --view" "" "Print current volume %"
+
+##############################################
+# MAIN LOGIC
+
+function volume.up() {
 	percent=${1:-15}
 	SILENTRUN amixer sset Master "${percent}%+"
 }
 
-function _down() {
+function volume.down() {
 	percent=${1:-15}
 	SILENTRUN amixer sset Master "${percent}%-"
 }
 
-function _mute() {
+function volume.mute() {
 	SILENTRUN amixer sset Master toggle
 }
 
-function _view() {
+function volume.view() {
 	local volume
 
 	volume="$(amixer sget Master | grep 'Front Left' | grep '%' | sed -e 's|.* Playback [0-9]* ||g' -e 's|\[on\]||g' -re 's|[^0-9]||g')%"
@@ -62,7 +62,7 @@ function _view() {
 }
 
 # If no arguments are give, just show help prompt.
-[[ $# -eq 0 ]] && _help && exit 0
+[[ $# -eq 0 ]] && HELP
 
 # Iterate over all arguments and evaluate them
 while [[ $# -gt 0 ]]; do
@@ -71,30 +71,29 @@ while [[ $# -gt 0 ]]; do
 
 	-u | --up)
 		shift
-		_up "${1}"
+		volume.up "${1}"
 		shift
 		;;
 
 	-d | --down)
 		shift
-		_down "${1}"
+		volume.down "${1}"
 		shift
 		;;
 
 	-m | --mute)
 		shift
-		_mute
+		volume.mute
 		;;
 
 	-v | --view)
 		shift
-		_view
+		volume.view
 		;;
 
 	\? | -h | --help)
 		shift
-		_help
-		exit 0
+		HELP
 		;;
 
 	*) INVALID_CMD "${1}" && exit 1 ;;

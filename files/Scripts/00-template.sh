@@ -11,32 +11,34 @@
 #
 ##############################################
 
+##############################################
+# PRE-PROCESSING
+
 # shellcheck disable=SC1091
 source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
 
-# Preprocessing flags
 DISABLE_ROOT || exit 1
 REQUIRE_CMD "" || exit 1
 
-####################################
+##############################################
+# HELP MENU BUILDER
 
-function _help() {
-	PRINT "$(SCRIPTNAME) - description"
-	PRINT
-	PRINT "Usage:\t\t$(SCRIPTNAME) [FLAGS] [ARGS?] ..."
-	PRINT "Example:\t$(SCRIPTNAME) --help"
-	PRINT
-	{
-		PRINT "-------------|------|---------------------"
-		PRINT "Flag|Args|Description"
-		PRINT "-------------|------|---------------------"
-		PRINT "||"
-		PRINT "-h, --help|n/a|Show this prompt"
-	} | column -t -s'|'
-}
+SCRIPT_VERSION="1.0"
+SCRIPT_DESCRIPTION="description"
+SCRIPT_USAGE="[FLAGS] [ARGS?] ..."
+
+# Examples
+EXAMPLE "--help" "Shows the help prompt"
+
+# Flags
+FLAG "-f, --flag" "<arg>" "Description"
+FLAG "" "" "" # Leave all spaces empty to give space between groups of flags
+
+##############################################
+# MAIN LOGIC
 
 # If no arguments are give, just show help prompt.
-[[ $# -eq 0 ]] && _help && exit 0
+[[ $# -eq 0 ]] && HELP && exit 0
 
 # Iterate over all arguments and evaluate them
 while [[ $# -gt 0 ]]; do
@@ -45,7 +47,7 @@ while [[ $# -gt 0 ]]; do
 
 	\? | -h | --help)
 		shift
-		_help
+		HELP
 		exit 0
 		;;
 

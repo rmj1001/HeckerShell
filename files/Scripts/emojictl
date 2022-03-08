@@ -11,14 +11,28 @@
 #		Install/uninstall Noto Color Emoji on Linux
 ##############################################
 
+##############################################
+# PRE-PROCESSING
+
 # shellcheck disable=SC1091
 source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
 
-# Preprocessor flags
 DISABLE_ROOT || exit 1
 REQUIRE_CMD "wget" "unzip" "fc-cache" || exit 1
 
-####################################
+##############################################
+# HELP MENU BUILDER
+
+SCRIPT_VERSION="1.5"
+SCRIPT_DESCRIPTION="Manage system emojis"
+SCRIPT_USAGE="[FLAG]"
+
+# Flags
+FLAG "-i, --install" "" "Install emojis"
+FLAG "-u, --uninstall" "" "Uninstall emojis"
+
+##############################################
+# MAIN LOGIC
 
 # Noto Emoji package link
 EMOJIPKG="https://noto-website-2.storage.googleapis.com/pkgs/NotoColorEmoji-unhinted.zip"
@@ -129,7 +143,7 @@ function emojictl.help() {
 }
 
 # If no arguments are give, just show help prompt.
-[[ $# -eq 0 ]] && emojictl.help && exit 0
+[[ $# -eq 0 ]] && HELP
 
 # Iterate over all arguments and evaluate them
 while [[ $# -gt 0 ]]; do
@@ -148,8 +162,7 @@ while [[ $# -gt 0 ]]; do
 		;;
 	\? | -h | --help)
 		shift
-		emojictl.help
-		exit 0
+		HELP
 		;;
 	*)
 		shift

@@ -11,35 +11,54 @@
 #		Generate random number(s)
 ##############################################
 
+##############################################
+# PRE-PROCESSING
+
 # shellcheck disable=SC1091
 source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
 
-# Preprocessor flags
 DISABLE_ROOT || exit 1
 
-####################################
+##############################################
+# HELP MENU BUILDER
+
+SCRIPT_VERSION="1.5"
+SCRIPT_DESCRIPTION="Roll one or more random numbers and format the output"
+SCRIPT_USAGE="[FLAGS] [NUMBERS] ..."
+SCRIPT_EXAMPLE="50 100 500"
+
+# Examples
+EXAMPLE "50 100" "Roll dice from 1-50 and 1-100"
+EXAMPLE "-r 50" "Don't print 'd#:' in front of result"
+
+# Flags
+FLAG "-r, --raw" "" "Print only the numbers"
+FLAG "-o, --one-line" "" "Print all the numbers on one line"
+
+##############################################
+# MAIN LOGIC
 
 RAW=1
 ONELINE=1
 NUMBERS=()
 RESULTS=()
 
-[[ $# -eq 0 ]] && {
-	PRINT "$(SCRIPTNAME): You must provide numbers to roll!"
-	PRINT "e.g. $(SCRIPTNAME) 50 25 100"
-	exit 1
-}
+[[ $# -eq 0 ]] && HELP
 
 while [[ $# -gt 0 ]]; do
 	case "$(LOWERCASE "${1}")" in
 
-	--raw)
+	-r | --raw)
 		shift
 		RAW=0
 		;;
-	--oneline)
+	-o | --one-line)
 		shift
 		ONELINE=0
+		;;
+	\? | -h | --help)
+		shift
+		HELP
 		;;
 	*)
 		IS_NUMBER "${1}" || { shift && continue; }

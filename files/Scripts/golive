@@ -13,14 +13,17 @@
 #		golive feature
 ##############################################
 
+##############################################
+# PRE-PROCESSING
+
 # shellcheck disable=SC1091
 source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
 
-# Preprocessor flags
 DISABLE_ROOT || exit 1
-REQUIRE_CMD "pactl" || exit 1
+REQUIRE_CMD "pactl" || exit
 
-####################################
+##############################################
+# MAIN LOGIC
 
 function golive.setup() {
 	pactl list short modules | grep -q 'Virtual_Sink' && return

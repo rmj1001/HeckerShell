@@ -11,14 +11,32 @@
 #	Manage minecraft installations
 ##############################################
 
+##############################################
+# PRE-PROCESSING
+
 # shellcheck disable=SC1091
 source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
 
-# Preprocessor flags
 DISABLE_ROOT || exit 1
 REQUIRE_CMD "wget" "tar" "ar" || exit 1
 
-####################################
+##############################################
+# HELP MENU BUILDER
+
+SCRIPT_VERSION="1.5"
+SCRIPT_DESCRIPTION="Manage your minecraft installation"
+SCRIPT_USAGE="[FLAGS] [ARGS?] ..."
+
+# Examples
+EXAMPLE "--install"
+
+# Flags
+FLAG "-i, --install" "" "Install Minecraft"
+FLAG "-r, --remove" "" "Uninstall Minecraft"
+FLAG "-u, --update" "" "Update Minecraft"
+
+##############################################
+# MAIN LOGIC
 
 desktopEntry="/usr/share/applications/minecraft-launcher.desktop"
 downloadLink="https://launcher.mojang.com/download/Minecraft.deb"
@@ -84,26 +102,7 @@ function minecraftctl.remove() {
 	clear
 }
 
-function minecraftctl.help() {
-	PRINT "$(SCRIPTNAME) - Manage your minecraft installation"
-	PRINT
-	PRINT "Usage:\t\t$(SCRIPTNAME) [FLAGS] [ARGS?] ..."
-	PRINT "Example:\t$(SCRIPTNAME) --help"
-	PRINT
-	{
-		PRINT "-------------|------|---------------------"
-		PRINT "Flag|Args|Description"
-		PRINT "-------------|------|---------------------"
-		PRINT "||"
-		PRINT "-i, --install||Install minecraft"
-		PRINT "-r, --remove||Uninstall minecraft"
-		PRINT "-u, --update||Update minecraft"
-		PRINT "||"
-		PRINT "-h, --help|n/a|Show this prompt"
-	} | column -t -s'|'
-}
-
-[[ $# -eq 0 ]] && minecraftctl.help && exit 0
+[[ $# -eq 0 ]] && HELP
 
 case "$(LOWERCASE "${1}")" in
 -i | --install)
@@ -116,7 +115,7 @@ case "$(LOWERCASE "${1}")" in
 	minecraftctl.remove && minecraftctl.install
 	;;
 \? | -h | --help)
-	minecraftctl.help
+	HELP
 	;;
 *)
 	INVALID_CMD "${1}" && exit 1

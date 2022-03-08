@@ -11,15 +11,34 @@
 #	Browse installed pacman packages
 ##############################################
 
+##############################################
+# PRE-PROCESSING
+
 # shellcheck disable=SC1091
 source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
 
-# Preprocessor flags
 DISABLE_ROOT || exit 1
 
-####################################
+##############################################
+# HELP MENU BUILDER
 
-function _browse() {
+SCRIPT_VERSION="1.0"
+SCRIPT_DESCRIPTION="description"
+SCRIPT_USAGE="[FLAG]"
+
+# Examples
+EXAMPLE "--remove-orphans" "Remove orphaned packages"
+
+# Flags
+FLAG "-b, --browse" "" "Browse/search for pacman packages"
+FLAG "-u, --update-mirrors" "" "Update mirrors to fastest available"
+FLAG "-l, --list-orphans" "" "List orphaned packages (former dependencies)"
+FLAG "-r, --remove-orphans" "" "Remove orphaned packages"
+
+##############################################
+# MAIN LOGIC
+
+function pactools.browse() {
 	trap 'exit 0' SIGINT SIGHUP
 
 	REQUIRE_CMD "pacman" || return 1
@@ -27,54 +46,36 @@ function _browse() {
 	pacman -Qq | fzf --preview 'pacman -Qil {}' --layout=reverse --bind 'enter:execute(pacman -Qil {} | less)'
 }
 
-function _refresh_mirrors() {
+function pactools.refresh_mirrors() {
 	REQUIRE_CMD "reflector" || return 1
 
 	sudo reflector --latest 100 --protocol https --sort rate --verbose --save /etc/pacman.d/mirrorlist
 }
 
-function _list_orphans() {
+function pactools.list_orphans() {
+	REQUIRE_CMD "pacman" || return 1
 	pacman -Qtdq
 }
 
-function _remove_orphans() {
+function pactools.remove_orphans() {
+	REQUIRE_CMD "pacman" || return 1
 	pacman -Qtdq | sudo pacman -Rns -
-}
-
-function _help() {
-	PRINT "$(SCRIPTNAME) - Various pacman tools"
-	PRINT
-	PRINT "Usage:\t\t$(SCRIPTNAME) [FLAGS] [ARGS?] ..."
-	PRINT "Example:\t$(SCRIPTNAME) --help"
-	PRINT
-	{
-		PRINT "-------------|------|---------------------"
-		PRINT "Flag|Args|Description"
-		PRINT "-------------|------|---------------------"
-		PRINT "||"
-		PRINT "-b, --browse||Browse pacman packages"
-		PRINT "-u, --update-mirrors||Update mirrors to fastest available"
-		PRINT "-l, --list-orphans||List orphaned packages (former dependencies)"
-		PRINT "-r, --remove-orphans||Remove orphaned packages"
-		PRINT "||"
-		PRINT "-h, --help|n/a|Show this prompt"
-	} | column -t -s'|'
 }
 
 case "$(LOWERCASE "$1")" in
 
--b | --browse) _browse ;;
+-b | --browse) pactools.browse ;;
 
--u | --update-mirrors) _refresh_mirrors ;;
+-u | --update-mirrors) pactools.refresh_mirrors ;;
 
--l | --list-orphans) _list_orphans ;;
+-l | --list-orphans) pactools.list_orphans ;;
 
--r | --remove-orphans) _remove_orphans ;;
+-r | --remove-orphans) pactools.remove_orphans ;;
 
-\? | -h | --help) _help ;;
+\? | -h | --help) HELP ;;
 
 *)
-	[[ -z "$1" ]] && _help && exit 0
+	[[ -z "$1" ]] && HELP
 	INVALID_CMD "${1}" && exit 1
 	;;
 

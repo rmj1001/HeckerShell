@@ -12,53 +12,52 @@
 #		ISO file
 ##############################################
 
+##############################################
+# PRE-PROCESSING
+
 # shellcheck disable=SC1091
 source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
 
-# Preprocessor flags
 DISABLE_ROOT || exit 1
-REQUIRE_CMD "pv" || exit 1
 
-####################################
+##############################################
+# HELP MENU BUILDER
+
+SCRIPT_VERSION="1.5"
+SCRIPT_DESCRIPTION="Create a bootable USB drive"
+SCRIPT_USAGE="[FLAG] [ARGS]? ..."
+
+# Examples
+EXAMPLE "--iso <iso path> --drive <drive path>"
+
+# Flags
+FLAG "-f, --format" "" "Format the drive as FAT32"
+FLAG "-i, --iso" "<iso path>" "The ISO to burn (required)"
+FLAG "-d, --disk" "<disk path>" "The USB to make bootable (required)"
+
+##############################################
+# MAIN LOGIC
 
 FORMAT=0
 
-function _format() {
+function bootableusb.format() {
 	sudo dd if=/dev/zero of="${DISK}" bs=512 count=1
 	sync
 }
 
-function _write() {
+function bootableusb.write() {
+	REQUIRE_CMD "pv" || exit 1
 	sudo -- bash -c "cat ${ISO} | pv > ${DISK}"
 	sync
 }
 
-function _help() {
-	PRINT "$(SCRIPTNAME) - Create a bootable USB drive"
-	PRINT
-	PRINT "Usage:\t\t$(SCRIPTNAME) [FLAGS] [ARGS?] ..."
-	PRINT "Example:\t\t$(SCRIPTNAME) --iso <iso> --drive <drive>"
-	PRINT "Example:\t\t$(SCRIPTNAME) -i ubuntu.iso -i /dev/sdb"
-	PRINT
-	{
-		PRINT "-------------|------|---------------------"
-		PRINT "Flag|Args|Description"
-		PRINT "-------------|------|---------------------"
-		PRINT "||"
-		PRINT "-f, --format|n/a|Format the drive as FAT32"
-		PRINT "-i, --iso|<iso file>|The ISO to burn (required)"
-		PRINT "-d, --disk|<usb>|The usb to make bootable (required)"
-		PRINT "||"
-		PRINT "-h, --help|n/a|Show this prompt"
-	} | column -t -s'|'
-}
+[[ $# -eq 0 ]] && HELP
 
 while [[ $# -gt 0 ]]; do
 	case "$1" in
 	-h | --help | \?)
 		shift
-		_help
-		shift
+		HELP
 		;;
 	-i | --iso)
 		shift
@@ -100,5 +99,5 @@ done
 
 # Unmount, format (if specified), write
 sudo umount -R "${DISK}"
-[[ $FORMAT -eq 1 ]] && _format
-_write
+[[ $FORMAT -eq 1 ]] && bootableusb.format
+bootableusb.write

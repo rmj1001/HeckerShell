@@ -11,13 +11,36 @@
 #		Backup files
 ##############################################
 
+##############################################
+# PRE-PROCESSING
+
 # shellcheck disable=SC1091
 source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
 
-# Preprocessor flags
 DISABLE_ROOT || exit 1
 
-####################################
+##############################################
+# HELP MENU BUILDER
+
+SCRIPT_VERSION="1.5"
+SCRIPT_DESCRIPTION="Create/Restore Backups of your HOME directory"
+SCRIPT_USAGE="[FLAG] [ARGS]? ..."
+
+# Examples
+EXAMPLE "--tar -c /mnt/drive" "Create a tarball backup of HOME in /mnt/drive"
+EXAMPLE "--exclusions"
+
+# Flags
+FLAG "--tar" "" "(Default) Uses tar to backup your files"
+FLAG "--rsync" "" "Uses rsync to backup your files"
+FLAG "--cp" "" "Uses cp to backup your files (no exclusions)"
+FLAG "" "" ""
+FLAG "-c, --create" "<target>" "Create a new backup in <target> folder"
+FLAG "-r, --restore" "<target>" "Restore a backup from <target> archive/folder"
+FLAG "-e, --exclusions" "" "Create/edit list of files to exclude from backups"
+
+##############################################
+# MAIN LOGIC
 
 ### Variables ###
 exclusions="${HOME}/.backup_exclusions"
@@ -145,33 +168,6 @@ function backup.exclusions() {
 	${EDITOR:-nano} "${exclusions}"
 }
 
-function backup.help() {
-	PRINT "$(SCRIPTNAME) - Create/restore backups of your HOME directory"
-	PRINT
-	PRINT "Usage:\t\t$(SCRIPTNAME) <flag/command> <args?>"
-	PRINT "Example:\t$(SCRIPTNAME) --help"
-	PRINT
-	{
-		PRINT "-------------|------|---------------------"
-		PRINT "Flag|Args|Description"
-		PRINT "-------------|------|---------------------"
-		PRINT "||"
-		PRINT "--tar||(Default) Uses tar to backup your files"
-		PRINT "--rsync||Uses rsync to backup your files"
-		PRINT "--cp||Uses cp to backup your files (no exclusions)"
-		PRINT "||"
-		PRINT "-------------|------|---------------------"
-		PRINT "Commands|Args|Description"
-		PRINT "-------------|------|---------------------"
-		PRINT "||"
-		PRINT "-c, --create|<destination>|Create a new backup"
-		PRINT "-r, --restore|<target>|Restore a backup"
-		PRINT "-e, --exclusions||Create/edit a file specifying exclusions from backups"
-		PRINT "||"
-		PRINT "-h, --help|n/a|Show this prompt"
-	} | column -t -s'|'
-}
-
 ### Flags ###
 for arg in "$@"; do
 	case "$(LOWERCASE "$arg")" in
@@ -193,9 +189,8 @@ for arg in "$@"; do
 done
 
 ### Argument Handling ###
-cmd="$(LOWERCASE "${ARGS[0]}")"
 
-case "${cmd}" in
+case "$(LOWERCASE ${ARGS[0]})" in
 
 -c | --create)
 
@@ -213,12 +208,14 @@ case "${cmd}" in
 	;;
 
 \? | -h | --help)
-	backup.help
+	HELP
 	exit 0
 	;;
 
 *)
 
-	[[ $# -eq 0 ]] && backup.help || { INVALID_CMD "${cmd}" && exit 1; }
+	[[ $# -eq 0 ]] && HELP || {
+		INVALID_CMD "$(LOWERCASE ${ARGS[0]})" && exit 1
+	}
 	;;
 esac

@@ -11,16 +11,34 @@
 #		Retrieve system information for use in screenshots
 ##############################################
 
+##############################################
+# PRE-PROCESSING
+
 # shellcheck disable=SC1091
 source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
 
-# Preprocessor flags
 DISABLE_ROOT || exit 1
 REQUIRE_CMD "grep" "sed" "uname" "cat" || exit 1
 
-####################################
+##############################################
+# HELP MENU BUILDER
 
-function _fetch_sysinfo() {
+SCRIPT_VERSION="1.5"
+SCRIPT_DESCRIPTION="Show information about your system."
+SCRIPT_USAGE="[FLAG]?"
+
+# Examples
+EXAMPLE "--default" "Show default layout"
+
+# Flags
+FLAG "-d, --default" "" "Print default layout to CLI"
+FLAG "-n, --neofetch" "" "Print neofetch-like layout to CLI"
+FLAG "-z, --zenity" "" "Output information to GUI instead"
+
+##############################################
+# MAIN LOGIC
+
+function aboutpc.fetchInfo() {
 	# Operating System Information
 	OS="$(grep '^NAME=' /etc/os-release | sed 's/NAME=//;s/"//g')"
 	OS="${OS} $(grep '^VERSION=' /etc/os-release | sed 's/VERSION=//;s/"//g')"
@@ -53,10 +71,10 @@ function _fetch_sysinfo() {
 	CMD_EXISTS "xrandr" && RESOLUTION="$(xrandr -q | grep current | sed -e 's|.*current\s||g' -e 's|,.*||g')"
 }
 
-function _zenity() {
+function aboutpc.zenity() {
 	REQUIRE_CMD "zenity" || return 1
 
-	_fetch_sysinfo
+	aboutpc.fetchInfo
 
 	zenity --title "About PC" --height 500 --width 450 --list \
 		--column "Category" --column "Information" \
@@ -74,8 +92,8 @@ function _zenity() {
 	return 0
 }
 
-function _neofetch() {
-	_fetch_sysinfo
+function aboutpc.neofetch() {
+	aboutpc.fetchInfo
 
 	# Header
 	PRINT "\n${USER}@${HOST}"
@@ -96,8 +114,8 @@ function _neofetch() {
 	PRINT
 }
 
-function _default() {
-	_fetch_sysinfo
+function aboutpc.default() {
+	aboutpc.fetchInfo
 
 	# Header
 	PRINT " ---------------------------------------------------------"
@@ -123,46 +141,26 @@ function _default() {
 	PRINT
 }
 
-function _help() {
-	PRINT "$(SCRIPTNAME) - Show system information for screenshots :)"
-	PRINT
-	PRINT "Usage:\t\t$(SCRIPTNAME) [FLAGS] [ARGS?] ..."
-	PRINT "Example:\t$(SCRIPTNAME)\t\t\t\t# Default $(SCRIPTNAME) output"
-	PRINT "Example:\t$(SCRIPTNAME) --clear --neofetch\t# Clear screen, show neofetch-esque output"
-	PRINT
-	{
-		PRINT "-------------|------|---------------------"
-		PRINT "Flag|Args|Description"
-		PRINT "-------------|------|---------------------"
-		PRINT "||"
-		PRINT "-d, --default|n/a|Show the default output"
-		PRINT "-n, --neofetch|n/a|Show a neofetch-esque output"
-		PRINT "-z, --zenity|n/a|Print information to a graphical window"
-		PRINT "||"
-		PRINT "-h, --help|n/a|Show this prompt"
-	} | column -t -s'|'
-}
-
 # Iterate over all arguments and evaluate them
 while [[ $# -gt 0 ]]; do
 
 	case "$(LOWERCASE "${1}")" in
 	-d | --default)
 		shift
-		_default && exit 0
+		aboutpc.default && exit 0
 		;;
 	-n | --neofetch)
 		shift
-		_neofetch && exit 0
+		aboutpc.neofetch && exit 0
 		;;
 	-z | --zenity)
 		shift
-		_zenity && exit 0
+		aboutpc.zenity && exit 0
 		;;
 
 	\? | -h | --help)
 		shift
-		_help
+		HELP
 		exit 0
 		;;
 
@@ -174,4 +172,4 @@ while [[ $# -gt 0 ]]; do
 
 done
 
-_default
+aboutpc.default

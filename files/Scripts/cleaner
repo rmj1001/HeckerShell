@@ -11,53 +11,52 @@
 #		System cleaner script
 ##############################################
 
+##############################################
+# PRE-PROCESSING
+
 # shellcheck disable=SC1091
 source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
 
-# Preprocessing flags
 DISABLE_ROOT || exit 1
 
-####################################
+##############################################
+# HELP MENU BUILDER
+
+SCRIPT_VERSION="1.5"
+SCRIPT_DESCRIPTION="System cleaner script"
+SCRIPT_USAGE="[FLAGS] [ARGS?] ..."
+
+# Examples
+EXAMPLE "--all"
+
+# Flags
+FLAG "-w, --wine" "" "Uninstall WINE and remove its files"
+FLAG "-t, --empty-trash" "" "Empty the trash bin"
+FLAG "-a, --all" "" "Run all cleaning modules"
+
+##############################################
+# MAIN LOGIC
 
 GUI=0
 
-function _help() {
-	PRINT "$(SCRIPTNAME) - System cleaner script"
-	PRINT
-	PRINT "Usage:\t\t$(SCRIPTNAME) [FLAGS] [ARGS?] ..."
-	PRINT "Example:\t$(SCRIPTNAME) --help"
-	PRINT
-	{
-		PRINT "-------------|------|---------------------"
-		PRINT "Flag|Args|Description"
-		PRINT "-------------|------|---------------------"
-		PRINT "||"
-		PRINT "-w, --wine|n/a|Uninstall WINE and remove its files"
-		PRINT "-t, --empty-trash|n/a|Empty the trash bin"
-		PRINT "-a, --all|n/a|Run all cleaning modules"
-		PRINT "||"
-		PRINT "-h, --help|n/a|Show this prompt"
-	} | column -t -s'|'
-}
-
-function _wine() {
+function cleaner.wine() {
 	MSG="WINE removed."
 
-	function _wine.error() {
+	function cleaner.wine.error() {
 		{ ((GUI == 0)) && PRINT "$(SCRIPTNAME): WINE could not be removed." && return 1; } ||
 			{ zenity --info --title "$(SCRIPTNAME)" --width 100 --height 100 --text "WINE could not be removed." && return 1; }
 	}
 
-	REQUIRE_CMD "wine" || _wine.error
+	REQUIRE_CMD "wine" || cleaner.wine.error
 
 	(
 		CMD_EXISTS "dnf" && sudo dnf remove wine -y ||
 			CMD_EXISTS "pacman" && sudo pacman -Rnsv wine wine-gecko wine-mono winetricks wine-staging ||
 			CMD_EXISTS "apt" && sudo apt remove wine-stable-amd wine-stable-i386 wine-stable
-	) || _wine.error
+	) || cleaner.wine.error
 
 	# Removes all leftover wine applications
-	[[ ! -d "${HOME}/.wine" ]] && _wine.error
+	[[ ! -d "${HOME}/.wine" ]] && cleaner.wine.error
 	[[ -d "${HOME}/.wine" ]] && rm -rf "${HOME}/.wine"
 
 	# The lines below will remove all entries for any windows software
@@ -68,7 +67,7 @@ function _wine() {
 		rm -rf "$HOME"/.local/share/applications/wine &&
 		rm -f "$HOME"/.local/share/desktop-directories/wine* &&
 		rm -f "$HOME"/.local/share/icons/????_*.{xpm,png} &&
-		rm -f "$HOME"/.local/share/icons/*-x-wine-*.{xpm,png}; } || _wine.error
+		rm -f "$HOME"/.local/share/icons/*-x-wine-*.{xpm,png}; } || cleaner.wine.error
 
 	((GUI == 0)) && PRINT "$(SCRIPTNAME): Removed WINE." && return 0
 
@@ -79,7 +78,7 @@ function _wine() {
 		--text "Removed WINE."
 }
 
-function _trash() {
+function cleaner.trash() {
 	TRASHF="${HOME}/.local/share/Trash"
 	MSG="Trash emptied successfully."
 
@@ -97,7 +96,7 @@ function _trash() {
 		--text "${MSG}."
 }
 
-function _gui() {
+function cleaner.gui() {
 	# If zenity or rofi are missing then disallow GUI use.
 	REQUIRE_CMD "zenity" || return 1
 
@@ -129,8 +128,8 @@ function _gui() {
 
 	# 	case ${cmd} in
 
-	# 		wine ) _wine ;;
-	# 		trash ) _trash ;;
+	# 		wine ) cleaner.wine ;;
+	# 		trash ) cleaner.trash ;;
 
 	# 	esac
 
@@ -138,7 +137,7 @@ function _gui() {
 }
 
 # If no arguments are give, just show help prompt.
-[[ $# -eq 0 ]] && _gui && exit 0
+[[ $# -eq 0 ]] && HELP
 
 # Iterate over all arguments and evaluate them
 while [[ $# -gt 0 ]]; do
@@ -147,23 +146,22 @@ while [[ $# -gt 0 ]]; do
 
 	-w | --wine)
 		shift
-		_wine
+		cleaner.wine
 		;;
 
 	-t | --empty-trash)
 		shift
-		_trash
+		cleaner.trash
 		;;
 
 	-g | --gui)
 		shift
-		_gui
+		cleaner.gui
 		;;
 
 	\? | -h | --help)
 		shift
-		_help
-		exit 0
+		HELP
 		;;
 
 	*) INVALID_CMD "${1}" && exit 1 ;;
