@@ -38,7 +38,7 @@ FLAG "" "" "" # Leave all spaces empty to give space between groups of flags
 # MAIN LOGIC
 
 # If no arguments are give, just show help prompt.
-[[ $# -eq 0 ]] && HELP && exit 0
+[[ $# -eq 0 ]] && HELP
 
 # Iterate over all arguments and evaluate them
 while [[ $# -gt 0 ]]; do
@@ -48,7 +48,6 @@ while [[ $# -gt 0 ]]; do
 	\? | -h | --help)
 		shift
 		HELP
-		exit 0
 		;;
 
 	*) INVALID_CMD "${1}" && exit 1 ;;
