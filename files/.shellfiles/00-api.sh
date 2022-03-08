@@ -84,6 +84,12 @@ function SCRIPTNAME() {
     NPRINT "$(basename "$(readlink -nf "$0")")"
 }
 
+################################################################################
+# Script Processing
+
+# Description: Prints "<script>: Invalid command 'command'"
+# Usage: INVALID_CMD "<cmd>"
+# Returns: string
 function INVALID_CMD() {
     PRINT "$(SCRIPTNAME): Invalid command '${1}'."
 }
@@ -114,16 +120,19 @@ function ASYNC() {
 # Usage:  REQUIRE_CMD "7z" "tar" || exit 1
 # Returns: string
 function REQUIRE_CMD() {
-    NEEDED=()
+    local NEEDED=()
 
-    for arg in "${@}"; do
-        SILENTRUN WHICH "${arg}" || NEEDED+=("${arg}")
+    while [[ $# -gt 0 ]]; do
+        [[ -z "$1" ]] && shift
+        SILENTRUN WHICH "${1}" || NEEDED+=("${1}")
+        shift
     done
 
-    [[ "${#NEEDED[@]}" == "0" ]] && return 0
+    [[ ${#NEEDED[@]} -eq 0 ]] && return 0
 
-    PRINT "The following programs are required to run this program:"
-    PRINT "${NEEDED[@]}"
+    NPRINT "Missing Commands: "
+    NPRINT "${NEEDED[@]}" | sed -r "s|[[:blank:]]|,[[:blank:]]|g"
+    PRINT
     return 1
 }
 
@@ -263,10 +272,82 @@ function READ_CONF() {
 # Usage: TIMESTAMP [-m/--multiline]?
 # Returns: string
 function TIMESTAMP() {
-	local timestamp="$(date +"%I:%M%P %m/%d/%Y")"
+    local timestamp="$(date +"%I:%M%P %m/%d/%Y")"
 
-	# Multi-line timestamp flag
-	[[ "${1}" == "-m" || "${1}" == "--multiline" ]] && timestamp="$(date +"%I:%M%P")\n$(date +"%m/%d/%Y")"
+    # Multi-line timestamp flag
+    [[ "${1}" == "-m" || "${1}" == "--multiline" ]] && timestamp="$(date +"%I:%M%P")\n$(date +"%m/%d/%Y")"
 
-	PRINT "${timestamp}"
+    PRINT "${timestamp}"
+}
+
+################################################################################
+# HELP MENU HELPER
+#
+
+# Description: Add an example entry for the help menu
+# Usage: EXAMPLE "[args]" "[comment]?"
+# Returns: void
+function EXAMPLE() {
+    local args="$1"
+    local comment="$2"
+
+    [[ -n "$comment" ]] &&
+        SCRIPT_EXAMPLES+=("$(SCRIPTNAME) ${args}\t# ${comment}") &&
+        return 0
+
+    SCRIPT_EXAMPLES+=("$(SCRIPTNAME) ${args}")
+}
+
+# Description: Add a flag/command entry for the help menu
+# Usage: FLAG "[flag]" "[args]" "[description]"
+# Example: FLAG "-n" "[NUMBER]" "Prints 'no' [NUMER] times"
+# Returns: void
+function FLAG() {
+    local flag="$1"
+    local args="$2"
+    local description="$3"
+
+    SCRIPT_FLAGS+=("${flag}|${args}|${description}")
+}
+
+# Description: Prints a pre-designed help menu based on a few
+#   environment variables defined in each HeckerShell script
+#
+# Usage: HELP
+# Returns: string
+function HELP() {
+
+    PRINT_EXAMPLES() {
+        [[ "${#SCRIPT_EXAMPLES[@]}" == "0" ]] &&
+            PRINT "Example(s):\tNone provided." &&
+            return 0
+
+        PRINT "Example(s):"
+        for example in "${SCRIPT_EXAMPLES[@]}"; do
+            PRINT "\t\t${example}"
+        done
+    }
+
+    PRINT "$(SCRIPTNAME) v${SCRIPT_VERSION:=1.0}"
+    PRINT "Copyright $(date +"%Y") HeckerShell Project"
+    PRINT
+    PRINT "Description:\t${SCRIPT_DESCRIPTION:=A random description}"
+    PRINT "Usage:\t\t$(SCRIPTNAME) ${SCRIPT_USAGE:=[FLAG] [ARGS?]...}"
+
+    PRINT_EXAMPLES
+
+    PRINT
+    {
+        PRINT "-------------|------|---------------------"
+        PRINT "Flag|Args|Description"
+        PRINT "-------------|------|---------------------"
+        PRINT "||"
+        for flag in "${SCRIPT_FLAGS[@]}"; do
+            PRINT "${flag}"
+        done
+        PRINT "||"
+        PRINT "-h, --help||Show this prompt"
+    } | column -t -s'|'
+
+    exit 0
 }
