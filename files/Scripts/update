@@ -33,6 +33,7 @@ EXAMPLE "-a -l" "Update all software & create logs"
 # Flags
 FLAG "-a, --all" "" "Update all software"
 FLAG "-l, --log" "" "Create logs for updates"
+FLAG "-p, --disable-pause" "" "Disables pausing after each update"
 FLAG "-c, --clear" "" "Clear the screen after each update"
 FLAG "-n, --notify" "" "Send system notifications after each update"
 
@@ -41,6 +42,7 @@ FLAG "-n, --notify" "" "Send system notifications after each update"
 
 all=0
 log=0
+pauseafter=0
 clearscr=0
 notify=0
 
@@ -80,7 +82,7 @@ function UPDATE() {
 
 		PRINT "Updated '${req}'."
 
-		PAUSE
+		[[ ${pauseafter} -eq 0 ]] && PAUSE
 
 		CLEAR
 	}
@@ -96,7 +98,7 @@ function UPDATE() {
 	}
 
 	PRINT "Skipped updating \"${req}\"."
-	PAUSE
+	[[ ${pauseafter} -eq 0 ]] && PAUSE
 	CLEAR
 	return 1
 }
@@ -117,6 +119,11 @@ while [[ $# -gt 0 ]]; do
 	-c | --clear)
 		shift
 		clearscr=1
+		continue
+		;;
+	-p | --disable-pause)
+		shift
+		pauseafter=1
 		continue
 		;;
 	-n | --notify)
