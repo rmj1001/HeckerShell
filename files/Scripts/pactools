@@ -62,21 +62,52 @@ function pactools.remove_orphans() {
 	pacman -Qtdq | sudo pacman -Rns -
 }
 
-case "$(LOWERCASE "$1")" in
+[[ $# -eq 0 ]] && {
+	HELP
+	exit 0
+}
 
--b | --browse) pactools.browse ;;
+while [[ $# -gt 0 ]]; do
+	case "$(LOWERCASE "$1")" in
 
--u | --update-mirrors) pactools.refresh_mirrors ;;
+	-b | --browse)
+		shift
+		pactools.browse
+		PAUSE
+		clear
+		;;
 
--l | --list-orphans) pactools.list_orphans ;;
+	-u | --update-mirrors)
+		shift
+		pactools.refresh_mirrors
+		PAUSE
+		clear
+		;;
 
--r | --remove-orphans) pactools.remove_orphans ;;
+	-l | --list-orphans)
+		shift
+		pactools.list_orphans
+		PAUSE
+		clear
+		;;
 
-\? | -h | --help) HELP ;;
+	-r | --remove-orphans)
+		shift
+		pactools.remove_orphans
+		PAUSE
+		clear
+		;;
 
-*)
-	[[ -z "$1" ]] && HELP
-	INVALID_CMD "${1}" && exit 1
-	;;
+	\? | -h | --help)
+		shift
+		HELP
+		exit 0
+		;;
 
-esac
+	*)
+		INVALID_CMD "${1}"
+		exit 1
+		;;
+
+	esac
+done

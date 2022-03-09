@@ -43,7 +43,10 @@ ONELINE=1
 NUMBERS=()
 RESULTS=()
 
-[[ $# -eq 0 ]] && HELP
+[[ $# -eq 0 ]] && {
+	HELP
+	exit 0
+}
 
 while [[ $# -gt 0 ]]; do
 	case "$(LOWERCASE "${1}")" in
@@ -59,6 +62,7 @@ while [[ $# -gt 0 ]]; do
 	\? | -h | --help)
 		shift
 		HELP
+		exit 0
 		;;
 	*)
 		IS_NUMBER "${1}" || { shift && continue; }

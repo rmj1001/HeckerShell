@@ -349,5 +349,5 @@ function HELP() {
         PRINT "-h, --help||Show this prompt"
     } | column -t -s'|'
 
-    exit 0
+    return 0
 }

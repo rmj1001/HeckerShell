@@ -168,6 +168,11 @@ function backup.exclusions() {
 	${EDITOR:-nano} "${exclusions}"
 }
 
+[[ $# -eq 0 ]] && {
+	HELP
+	exit 0
+}
+
 ### Flags ###
 for arg in "$@"; do
 	case "$(LOWERCASE "$arg")" in
@@ -190,32 +195,36 @@ done
 
 ### Argument Handling ###
 
-case "$(LOWERCASE ${ARGS[0]})" in
+for arg in "${ARGS[@]}"; do
+	case "$(LOWERCASE "${arg}")" in
 
--c | --create)
+	-c | --create)
 
-	backup.create "${ARGS[1]}" && exit 0 || exit 1
-	;;
+		backup.create "${ARGS[1]}" && exit 0
+		exit 1
+		;;
 
--r | --restore)
+	-r | --restore)
 
-	backup.restore "${ARGS[1]}" && exit 0 || exit 1
-	;;
+		backup.restore "${ARGS[1]}" && exit 0
+		exit 1
+		;;
 
--e | --exclusions)
+	-e | --exclusions)
 
-	backup.exclusions && exit 0 || exit 1
-	;;
+		backup.exclusions && exit 0
+		exit 1
+		;;
 
-\? | -h | --help)
-	HELP
-	exit 0
-	;;
+	\? | -h | --help)
+		HELP
+		exit 0
+		;;
 
-*)
+	*)
+		INVALID_CMD "$(LOWERCASE ${ARGS[0]})"
+		exit 1
+		;;
 
-	[[ $# -eq 0 ]] && HELP || {
-		INVALID_CMD "$(LOWERCASE ${ARGS[0]})" && exit 1
-	}
-	;;
-esac
+	esac
+done

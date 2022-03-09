@@ -146,27 +146,45 @@ function trash.files.information() {
   return 0
 }
 
-case "$(LOWERCASE ${1})" in
--a | --add)
-  trash.files.add "${2}"
-  ;;
--r | --restore)
-  trash.files.restore "${2}"
-  ;;
--e | --empty)
-  trash.files.empty
-  ;;
--l | --list)
-  ls --color=auto -AlvhF --group-directories-first "${TRASH}"
-  exit 0
-  ;;
--i | --info)
-  trash.files.information "${2}"
-  ;;
-\? | h | help)
+[[ $# -eq 0 ]] && {
   HELP
-  ;;
-*)
-  [[ -z "${1}" ]] && HELP || { INVALID_CMD "${1}" && exit 1; }
-  ;;
-esac
+  exit 0
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$(LOWERCASE "${1}")" in
+
+  -a | --add)
+    shift
+    trash.files.add "${@}"
+    exit 0
+    ;;
+  -r | --restore)
+    shift
+    trash.files.restore "${@}"
+    exit 0
+    ;;
+  -e | --empty)
+    shift
+    trash.files.empty
+    ;;
+  -l | --list)
+    shift
+    ls --color=auto -AlvhF --group-directories-first "${TRASH}"
+    ;;
+  -i | --info)
+    shift
+    trash.files.information "${2}"
+    ;;
+  \? | h | help)
+    shift
+    HELP
+    exit 0
+    ;;
+  *)
+    INVALID_CMD "${1}"
+    exit 1
+    ;;
+
+  esac
+done

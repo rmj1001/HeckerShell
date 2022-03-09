@@ -134,6 +134,7 @@ while [[ $# -gt 0 ]]; do
 	\? | -h | --help)
 		shift
 		HELP
+		exit 0
 		;;
 	esac
 

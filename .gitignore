@@ -1,5 +1,6 @@
 files/.shellfiles/.syntaxhighlighting
 files/.shelfiles/.shellfiles
 files/Scripts/*.py
+files/.noMOTD
 
 *.vscode

@@ -51,13 +51,17 @@ function bootableusb.write() {
 	sync
 }
 
-[[ $# -eq 0 ]] && HELP
+[[ $# -eq 0 ]] && {
+	HELP
+	exit 0
+}
 
 while [[ $# -gt 0 ]]; do
 	case "$1" in
 	-h | --help | \?)
 		shift
 		HELP
+		exit 0
 		;;
 	-i | --iso)
 		shift
@@ -80,7 +84,7 @@ while [[ $# -gt 0 ]]; do
 		FORMAT=1
 		;;
 	*)
-		PRINT "$(SCRIPTNAME): '$1' is not a recognized flag!"
+		INVALID_CMD "${1}"
 		exit 1
 		;;
 	esac

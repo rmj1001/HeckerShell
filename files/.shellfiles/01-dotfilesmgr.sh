@@ -45,7 +45,7 @@ function write_lines() {
 function freshscreen() {
     [[ "$(LOWERCASE "${1}")" == "--no-clear" ]] || clear
 
-    motd
+    [[ ! -f "${HECKERSHELL}/files/.noMOTD" ]] && motd
 
     [[ "${SHELL}" == "/bin/zsh" ]] && PRINT ""
 }

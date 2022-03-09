@@ -110,5 +110,13 @@ for folder in "${HECKERSHELL}"/.config/*; do
 
 done
 
+# Ask if they wish to print the MOTD
+read -r -p "Use default MOTD? (y/N) " confirm
+
+[[ ! "${confirm}" =~ ^[yY][eE]?[sS]?$ ]] && {
+	PRINT "Disabling default motd."
+	touch "${HECKERSHELL}/.noMOTD"
+}
+
 # Finish
 PRINT "HeckerShell installed to '${HECKERSHELL_DIR}'."

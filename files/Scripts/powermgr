@@ -55,7 +55,7 @@ function powermgr.gui() {
 	GUI=1
 
 	# Receive command from rofi
-	cmd="$(LOWERCASE "$(PRINT 'Shutdown\nReboot\nLock\nLogout\nCancel' | rofi -dmenu -i -window-title "Power Manager" -prompt "Option: ")")"
+	cmd="$(PRINT 'Shutdown\nReboot\nLock\nLogout\nCancel' | rofi -dmenu -i -window-title "Power Manager" -prompt "Option: ")"
 
 	# Show message 'cancelled' if cmd is empty (exit from rofi)
 	[[ -z "${cmd}" ]] && zenity --info --text="Cancelled." && return 1
@@ -102,20 +102,43 @@ function powermgr.unlock() {
 	loginctl unlock-session "${SESSIONS[@]}"
 }
 
-[[ $# -eq 0 ]] && HELP
-[[ "${1}" == "gui" ]] &&
-	powermgr.gui ||
-	cmd="$(LOWERCASE "${1}")"
+[[ $# -eq 0 ]] && {
+	HELP
+	exit 0
+}
+
+cmd="${1}"
+
+[[ "${1}" == "gui" ]] && powermgr.gui
 
 # Evaluate commands
-case "${cmd}" in
---shutdown) powermgr.shutoff ;;
---reboot) powermgr.restart ;;
---logout) powermgr.logout ;;
---lock) powermgr.lock ;;
---unlock) powermgr.unlock ;;
-\? | -h | --help) HELP ;;
---helpgui) zenity --info --height=800 --width=800 --text="$(HELP)" ;;
---cancel) zenity --info --text="Cancelled." && exit 1 ;;
-*) zenity --warning --text="Invalid command '${cmd}'." && exit 1 ;;
+case "$(LOWERCASE "${cmd}")" in
+--shutdown)
+	powermgr.shutoff
+	;;
+--reboot)
+	powermgr.restart
+	;;
+--logout)
+	powermgr.logout
+	;;
+--lock)
+	powermgr.lock
+	;;
+--unlock)
+	powermgr.unlock
+	;;
+\? | -h | --help)
+	HELP
+	exit 0
+	;;
+--helpgui)
+	zenity --info --height=800 --width=800 --text="$(HELP)"
+	;;
+--cancel)
+	zenity --info --text="Cancelled." && exit 1
+	;;
+*)
+	zenity --warning --text="Invalid command '${cmd}'." && exit 1
+	;;
 esac
