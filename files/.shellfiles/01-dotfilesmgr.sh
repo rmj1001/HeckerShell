@@ -15,21 +15,57 @@
 ### Print custom MOTD to terminal
 # Usage: motd
 function motd() {
-    PRINT "########################################################"
-    PRINT "#"
-    PRINT "# Roy Conn"
-    PRINT "#"
-    PRINT "# HeckerOS 1.0"
-    PRINT "# HeckerShell 1.0"
-    PRINT "#"
-    PRINT "# Reddit \t u/rmj1001"
-    PRINT "# Twitter \t @RoyConn10"
-    PRINT "# Matrix \t @rmj1001:matrix.org"
-    PRINT "# Mastodon \t @Hydra_Slash_Linux@foostodon.org"
-    PRINT "# YouTube \t https://bit.ly/3qGsGSJ"
-    PRINT "# Github \t https://github.com/rmj"
-    PRINT "#"
-    PRINT "########################################################"
+    local disableMotdFile="${HECKERSHELL}/files/.noMOTD"
+
+    printMotd() {
+        PRINT "########################################################"
+        PRINT "#"
+        PRINT "# Roy Conn"
+        PRINT "#"
+        PRINT "# HeckerOS 1.0"
+        PRINT "# HeckerShell 1.0"
+        PRINT "#"
+        PRINT "# Reddit \t u/rmj1001"
+        PRINT "# Twitter \t @RoyConn10"
+        PRINT "# Matrix \t @rmj1001:matrix.org"
+        PRINT "# Mastodon \t @Hydra_Slash_Linux@foostodon.org"
+        PRINT "# YouTube \t https://bit.ly/3qGsGSJ"
+        PRINT "# Github \t https://github.com/rmj"
+        PRINT "#"
+        PRINT "########################################################"
+    }
+
+    case "$(LOWERCASE "${1}")" in
+    -d | --disable)
+        [[ ! -f "${disableMotdFile}" ]] && touch "${disableMotdFile}" &&
+            PRINT "Disabled MOTD." && return 0
+
+        PRINT "MOTD is already disabled."
+        return 1
+        ;;
+    -e | --enable)
+        [[ -f "${disableMotdFile}" ]] && rm -f "${disableMotdFile}" &&
+            PRINT "Enabled MOTD." && return 0
+
+        PRINT "MOTD is already enabled."
+        return 1
+        ;;
+    -p | --force-print)
+        printMotd
+        ;;
+    \? | -h | --help)
+        PRINT "motd help\n---------"
+        PRINT
+        PRINT "-d, --disable\t\t# Disables the MOTD"
+        PRINT "-e, --enable\t\t# Enables the MOTD"
+        PRINT "-p, --force-print\t# Prints the MOTD even if its disabled."
+        PRINT "\t\t\t# Leave blank to just print the MOTD if its enabled."
+        ;;
+    *)
+        [[ -f "${disableMotdFile}" ]] && return 0
+        printMotd
+        ;;
+    esac
 }
 
 ### Write a line who's length is equal to the length of the terminal's columns
@@ -45,7 +81,7 @@ function write_lines() {
 function freshscreen() {
     [[ "$(LOWERCASE "${1}")" == "--no-clear" ]] || clear
 
-    [[ ! -f "${HECKERSHELL}/files/.noMOTD" ]] && motd
+    motd
 
     [[ "${SHELL}" == "/bin/zsh" ]] && PRINT ""
 }
