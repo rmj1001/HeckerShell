@@ -23,9 +23,13 @@ REQUIRE_CMD "" || exit 1
 ##############################################
 # HELP MENU BUILDER
 
-SCRIPT_VERSION="1.0"
-SCRIPT_DESCRIPTION="description"
-SCRIPT_USAGE="[FLAGS] [ARGS?] ..."
+# Script Metadata (all are optional, but you really should customize these.)
+# Just uncomment them and customize the value.
+
+#SCRIPT_AUTHOR="HeckerShell Project"
+#SCRIPT_VERSION="1.0"
+#SCRIPT_DESCRIPTION="description"
+#SCRIPT_USAGE="[FLAGS] [ARGS?] ..."
 
 # Examples
 EXAMPLE "--help" "Shows the help prompt"

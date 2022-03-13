@@ -329,7 +329,7 @@ function HELP() {
     }
 
     PRINT "$(SCRIPTNAME) v${SCRIPT_VERSION:=1.0}"
-    PRINT "Copyright $(date +"%Y") HeckerShell Project"
+    PRINT "Copyright $(date +"%Y") ${SCRIPT_AUTHOR:=HeckerShell Project}"
     PRINT
     PRINT "Description:\t${SCRIPT_DESCRIPTION:=A random description}"
     PRINT "Usage:\t\t$(SCRIPTNAME) ${SCRIPT_USAGE:=[FLAG] [ARGS?]...}"
