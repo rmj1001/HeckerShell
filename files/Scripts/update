@@ -93,7 +93,7 @@ function UPDATE() {
 	}
 
 	PROMPT_YES "Update \"${req}\"" && {
-		_logic
+		update.logic
 		return 0
 	}
 
