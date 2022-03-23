@@ -12,90 +12,156 @@
 #
 ##############################################
 
-### Print custom MOTD to terminal
-# Usage: motd
-function motd() {
-    local disableMotdFile="${HECKERSHELL}/files/.noMOTD"
+function shell() {
+    ### Show the help menu for the shell management program.
+    # Usage: shell help
+    function shell.help() {
 
-    printMotd() {
-        PRINT "########################################################"
-        PRINT "#"
-        PRINT "# Roy Conn"
-        PRINT "#"
-        PRINT "# HeckerOS 1.0"
-        PRINT "# HeckerShell 1.0"
-        PRINT "#"
-        PRINT "# Reddit \t u/rmj1001"
-        PRINT "# Twitter \t @RoyConn10"
-        PRINT "# Matrix \t @rmj1001:matrix.org"
-        PRINT "# Mastodon \t @Hydra_Slash_Linux@foostodon.org"
-        PRINT "# YouTube \t https://bit.ly/3qGsGSJ"
-        PRINT "# Github \t https://github.com/rmj"
-        PRINT "#"
-        PRINT "########################################################"
+        PRINT "'shell' help\n---------"
+        PRINT
+        PRINT "reload\t\t# Reload shell configs"
+        PRINT "fresh-screen\t# Clear screen and print MOTD"
+        PRINT "lines\t\t# Print a width-covering line to the screen"
+        PRINT "motd\t\t# Print or manage MOTD. See 'shell motd --help'."
+        PRINT ""
+        PRINT "help\t\t# See this help menu."
     }
+
+    ### Reload shell files and present fresh screen.
+    # Usage: shell reload
+    function shell.reload() {
+        exec "$(basename "${SHELL}")"
+    }
+
+    ### Write lines to terminal (full width of screen)
+    # Usage: shell lines
+    function shell.lines() {
+        for ((i = 0; i < COLUMNS; ++i)); do printf -; done
+        PRINT ""
+    }
+
+    ### Print custom MOTD to terminal
+    # Usage: shell motd
+    function shell.motd() {
+        local DISABLE_MOTD="${HECKERSHELL}/files/.noMOTD"
+        local CUSTOM_MOTD="${HECKERSHELL}/files/.customMOTD"
+
+        printMotd() {
+            PRINT "########################################################"
+            PRINT "#"
+            PRINT "# Roy Conn"
+            PRINT "#"
+            PRINT "# HeckerOS 1.0"
+            PRINT "# HeckerShell 1.0"
+            PRINT "#"
+            PRINT "# Reddit \t u/rmj1001"
+            PRINT "# Twitter \t @RoyConn10"
+            PRINT "# Matrix \t @rmj1001:matrix.org"
+            PRINT "# Mastodon \t @Hydra_Slash_Linux@foostodon.org"
+            PRINT "# YouTube \t https://bit.ly/3qGsGSJ"
+            PRINT "# Github \t https://github.com/rmj"
+            PRINT "#"
+            PRINT "########################################################"
+        }
+
+        printCustomMOTD() {
+            [[ -f "${CUSTOM_MOTD}" ]] && cat "${CUSTOM_MOTD}" && return 0
+            return 1
+        }
+
+        case "$(LOWERCASE "${1}")" in
+        -d | --disable)
+            [[ ! -f "${DISABLE_MOTD}" ]] && touch "${DISABLE_MOTD}" &&
+                PRINT "Disabled MOTD." && return 0
+
+            PRINT "MOTD is already disabled."
+            return 1
+            ;;
+        -e | --enable)
+            [[ -f "${DISABLE_MOTD}" ]] && rm -f "${DISABLE_MOTD}" &&
+                PRINT "Enabled MOTD." && return 0
+
+            PRINT "MOTD is already enabled."
+            return 1
+            ;;
+        -c | --custom)
+            [[ -f "${CUSTOM_MOTD}" ]] &&
+                edit "${CUSTOM_MOTD}" &&
+                PRINT "Edited custom MOTD." &&
+                return 0
+
+            PRINT "Creating custom MOTD..." && sleep 1
+            edit "${CUSTOM_MOTD}"
+            PRINT "Created custom MOTD!"
+            return 0
+            ;;
+        -r | --delete-custom)
+            [[ -f "${CUSTOM_MOTD}" ]] &&
+                rm -f "${CUSTOM_MOTD}" &&
+                PRINT "Deleted custom MOTD." &&
+                return 0
+
+            PRINT "Custom MOTD doesn't exist!"
+            return 1
+            ;;
+        -p | --force-print)
+            printCustomMOTD && return 0
+            printMotd
+            return 0
+            ;;
+        \? | -h | --help)
+            PRINT "motd help\n---------"
+            PRINT
+            PRINT "-d, --disable\t\t# Disables the MOTD (default only)"
+            PRINT "-e, --enable\t\t# Enables the MOTD (default only)"
+            PRINT "-c, --custom\t\t# Create/edit a custom MOTD."
+            PRINT "-r, --delete-custom\t# Delete custom MOTD."
+            PRINT "-p, --force-print\t# Prints the MOTD even if its disabled."
+            PRINT "\t\t\t# Leave blank to just print the MOTD if its enabled."
+            ;;
+        *)
+            [[ -f "${DISABLE_MOTD}" ]] && return 0
+            printCustomMOTD && return 0
+            printMotd && return 0
+            ;;
+        esac
+    }
+
+    ### Clear screen and print motd
+    # Usage: shell freshscreen
+    function shell.fresh-screen() {
+        clear
+        shell.motd
+        [[ "${SHELL}" == "/bin/zsh" ]] && PRINT ""
+    }
+
+    [[ $# -eq 0 ]] && shell.help && return 0
 
     case "$(LOWERCASE "${1}")" in
-    -d | --disable)
-        [[ ! -f "${disableMotdFile}" ]] && touch "${disableMotdFile}" &&
-            PRINT "Disabled MOTD." && return 0
-
-        PRINT "MOTD is already disabled."
-        return 1
+    help)
+        shell.help
+        return 0
         ;;
-    -e | --enable)
-        [[ -f "${disableMotdFile}" ]] && rm -f "${disableMotdFile}" &&
-            PRINT "Enabled MOTD." && return 0
-
-        PRINT "MOTD is already enabled."
-        return 1
+    reload)
+        shell.reload
+        return 0
         ;;
-    -p | --force-print)
-        printMotd
+    fresh-screen)
+        shell.fresh-screen
+        return 0
         ;;
-    \? | -h | --help)
-        PRINT "motd help\n---------"
-        PRINT
-        PRINT "-d, --disable\t\t# Disables the MOTD"
-        PRINT "-e, --enable\t\t# Enables the MOTD"
-        PRINT "-p, --force-print\t# Prints the MOTD even if its disabled."
-        PRINT "\t\t\t# Leave blank to just print the MOTD if its enabled."
+    lines)
+        shell.lines
+        return 0
+        ;;
+    motd)
+        shift
+        shell.motd "${@}"
+        return 0
         ;;
     *)
-        [[ -f "${disableMotdFile}" ]] && return 0
-        printMotd
+        shell.help
+        return 1
         ;;
     esac
-}
-
-### Write a line who's length is equal to the length of the terminal's columns
-# Usage: write_lines
-function write_lines() {
-    for ((i = 0; i < COLUMNS; ++i)); do printf -; done
-    PRINT ""
-}
-
-### Clear screen and print MOTD
-## [flag] --no-clear: do not clear screen when printing
-# Usage: freshscreen <flag?>
-function freshscreen() {
-    [[ "$(LOWERCASE "${1}")" == "--no-clear" ]] || clear
-
-    motd
-
-    [[ "${SHELL}" == "/bin/zsh" ]] && PRINT ""
-}
-
-### Reload shell
-## [flag] --clean: Restart shell completely, not just reload HeckerShell
-# Usage: reload <flag>
-function reload() {
-    # If clean flag isn't used then just reload sourced files
-    [[ "$(LOWERCASE "${1}")" == "--clean" ]] || {
-        shell.load
-        return 0
-    }
-
-    # If clean flag is used then exec/restart the shell
-    exec "$(basename "${SHELL}")"
 }

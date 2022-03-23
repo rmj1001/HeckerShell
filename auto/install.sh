@@ -120,3 +120,8 @@ read -r -p "Use default MOTD? (y/N) " confirm
 
 # Finish
 PRINT "HeckerShell installed to '${HECKERSHELL_DIR}'."
+
+PRINT "Tips:"
+PRINT "- Use 'shell motd ?' to enable/disable/customize your MOTD."
+PRINT "- Use 'shell fresh-screen' to clear the screen and print the MOTD."
+PRINT "- Use 'shell reload' to reload the shell configuration."

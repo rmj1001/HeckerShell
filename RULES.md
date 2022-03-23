@@ -38,7 +38,7 @@ For some tips on developing scripts/plugins, see [here](script-tricks.md).
 8. Optional or shell-specific functionality must be developed as a plugin.
 9. When hacking on HeckerShell, make use of these commands. NOTE: Use `command ?` to see their help menu.
    1. `heckershell` - Update/clean/uninstall HeckerShell
-   2. `reload` - Reload shell configs (use `--clean` flag if hacking on `<shell>rc` files.).
+   2. `shell reload` - Reload shell configs (use `--clean` flag if hacking on `<shell>rc` files.).
    3. `scriptctl` - Create/manage script files
 
 ## Script Guidelines

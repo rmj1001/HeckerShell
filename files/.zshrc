@@ -92,7 +92,7 @@ shell.load() {
 
 	done
 
-	freshscreen --no-clear
+	shell fresh-screen
 
 	function precmd() {
 		TITLE "${SHELL_TITLE}"

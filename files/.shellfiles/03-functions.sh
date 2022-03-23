@@ -199,7 +199,7 @@ function browser() { ${BROWSER} "${@}"; }
 function auth() { ${AUTH} "${@}"; }
 
 # Clear screen
-function cls() { freshscreen; }
+function cls() { shell fresh-screen; }
 
 # Meme Functions
 function @echo { [[ "$1" == "off" ]] && PRINT "This isn't batch nerd"; }
