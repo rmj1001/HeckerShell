@@ -206,3 +206,7 @@ function @echo { [[ "$1" == "off" ]] && PRINT "This isn't batch nerd"; }
 function man-meme() {
     printf "%b\n" "Based sigma grindset gender, not woman"
 }
+
+# Java
+function runjar() { java -jar "${@}"; }
+function silentrunjar() { ASYNC java -jar "${@}"; }
