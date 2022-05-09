@@ -34,6 +34,7 @@ EXAMPLE "--exclusions"
 FLAG "--tar" "" "(Default) Uses tar to backup your files"
 FLAG "--rsync" "" "Uses rsync to backup your files"
 FLAG "--cp" "" "Uses cp to backup your files (no exclusions)"
+FLAG "-b, --background" "" "Run backup in the background, freeing your terminal for other tasks."
 FLAG "" "" ""
 FLAG "-c, --create" "<target>" "Create a new backup in <target> folder"
 FLAG "-r, --restore" "<target>" "Restore a backup from <target> archive/folder"
@@ -45,6 +46,7 @@ FLAG "-e, --exclusions" "" "Create/edit list of files to exclude from backups"
 ### Variables ###
 exclusions="${HOME}/.backup_exclusions"
 method="tar"
+background=0
 ARGS=()
 
 function backup.create() {
@@ -187,6 +189,9 @@ for arg in "$@"; do
 	--cp)
 		method="cp"
 		;;
+	-b | --background)
+		background=1
+		;;
 	*)
 		ARGS+=("$arg")
 		;;
@@ -199,26 +204,26 @@ for arg in "${ARGS[@]}"; do
 	case "$(LOWERCASE "${arg}")" in
 
 	-c | --create)
-
-		backup.create "${ARGS[1]}" && exit 0
-		exit 1
+		[[ $background -eq 1 ]] && ASYNC backup.create "${ARGS[1]}"
+		backup.create "${ARGS[1]}"
+		break
 		;;
 
 	-r | --restore)
-
-		backup.restore "${ARGS[1]}" && exit 0
-		exit 1
+		[[ $background -eq 1 ]] && ASYNC backup.restore "${ARGS[1]}"
+		backup.restore "${ARGS[1]}"
+		break
 		;;
 
 	-e | --exclusions)
-
-		backup.exclusions && exit 0
-		exit 1
+		[[ $background -eq 1 ]] && PRINT "Can't edit exclusions in the background."
+		backup.exclusions
+		break
 		;;
 
 	\? | -h | --help)
 		HELP
-		exit 0
+		break
 		;;
 
 	*)
