@@ -210,3 +210,10 @@ function man-meme() {
 # Java
 function runjar() { java -jar "${@}"; }
 function silentrunjar() { ASYNC java -jar "${@}"; }
+
+# Run text file as bash
+function runInBash() {
+    local file="$1"
+
+    bash <(cat $1)
+}
