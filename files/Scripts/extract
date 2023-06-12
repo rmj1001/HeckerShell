@@ -62,7 +62,7 @@ for arg in "$@"; do
 
 	case "${arg}" in
 
-	\? | -h | --help) extract.help && exit 0 ;;
+	\? | -h | --help) extract.help ;;
 
 	esac
 

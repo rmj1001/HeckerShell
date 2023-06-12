@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+directory="${PWD}"
+[[ -n "${1}" ]] && [[ -d "${1}" ]] && directory="${1}"
+
+find "${directory}" -type d -iname "*.epub" -print |
+    while read -r folderPath; do
+        echo "CONVERTING: '${folderPath##*/}'"
+
+        zip -r "${folderPath}.zip" "${folderPath}"
+
+        # Renames back to *.epub
+        mv "${folderPath}.zip" "${folderPath}"
+    done

@@ -105,7 +105,7 @@ function UPDATE() {
 
 while [[ $# -gt 0 ]]; do
 
-	case "$(LOWERCASE ${1})" in
+	case "$(LOWERCASE "${1}")" in
 	-a | --all)
 		shift
 		all=1

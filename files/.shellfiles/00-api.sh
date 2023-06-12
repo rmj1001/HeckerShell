@@ -12,7 +12,7 @@
 ##############################################
 
 # Description: Replacement for 'echo'
-# Usage:  PRINT "text"
+# Usage:  printf "%b\n" "text"
 # Returns: string
 function PRINT() {
     printf "%b\n" "${@}"
@@ -29,7 +29,7 @@ function NPRINT() {
 # Usage:  PAUSE
 # Returns: int
 function PAUSE() {
-    NPRINT "Press <ENTER> to continue..."
+    printf "%b" "Press <ENTER> to continue..."
     read -r
 }
 
@@ -37,7 +37,7 @@ function PAUSE() {
 # Usage:  TITLE "test"
 # Returns: void
 function TITLE() {
-    NPRINT "\033]2;${1}\a"
+    printf "%b" "\033]2;${1}\a"
 }
 
 # Description: Generate a random number from 1 to the specified maximum
@@ -51,14 +51,14 @@ function RANDOM_NUM() {
 # Usage:  name="$(LOWERCASE $name)"
 # Returns: string
 function LOWERCASE() {
-    NPRINT "${1}" | tr "[:upper:]" "[:lower:]"
+    printf "%b" "${1}" | tr "[:upper:]" "[:lower:]"
 }
 
 # Description: Converts a string to all UPPERCASE characters
 # Usage:  name="$(UPPERCASE $name)"
 # Returns: string
 function UPPERCASE() {
-    NPRINT "${1}" | tr "[:lower:]" "[:upper:]"
+    printf "%b" "${1}" | tr "[:lower:]" "[:upper:]"
 }
 
 # Description: Trim all leading/trailing whitespace from a string
@@ -81,7 +81,8 @@ function TRIM() {
 # Usage:  SCRIPTNAME
 # Returns: string
 function SCRIPTNAME() {
-    NPRINT "$(basename "$(readlink -nf "$0")")"
+    printf "%b" "${0##*/}"
+    #printf "%b" "$(basename "$(readlink -nf "$0")")"
 }
 
 ################################################################################
@@ -91,7 +92,7 @@ function SCRIPTNAME() {
 # Usage: INVALID_CMD "<cmd>"
 # Returns: string
 function INVALID_CMD() {
-    PRINT "$(SCRIPTNAME): Invalid command '${1}'."
+    printf "%b\n" "${0##*/}: Invalid command '${1}'."
 }
 
 # Description: Find the path for a command
@@ -121,18 +122,24 @@ function ASYNC() {
 # Returns: string
 function REQUIRE_CMD() {
     local NEEDED=()
+    local NEEDEDSTR=""
 
     while [[ $# -gt 0 ]]; do
         [[ -z "$1" ]] && shift
-        SILENTRUN WHICH "${1}" || NEEDED+=("${1}")
+        command -v "${1}" >/dev/null 2>&1 || NEEDED+=("${1}")
         shift
     done
 
     [[ ${#NEEDED[@]} -eq 0 ]] && return 0
 
-    NPRINT "Missing Commands: "
-    NPRINT "${NEEDED[@]}" | sed -r "s|[[:blank:]]|,[[:blank:]]|g"
-    PRINT
+    printf "%b" "Missing Commands: "
+
+    for cmd in "${NEEDED[@]}"; do
+        NEEDEDSTR="${cmd}, ${NEEDEDSTR}"
+    done
+
+    printf "%b" "${NEEDEDSTR:0:-1}"
+
     return 1
 }
 
@@ -143,7 +150,7 @@ function REQUIRE_ROOT() {
     # shellcheck disable=SC2046
     [[ "$(id -u)" == "0" ]] && return 0
 
-    PRINT "'$(SCRIPTNAME)' must be run as root"
+    printf "%b\n" "'${0##*/}' must be run as root"
     return 1
 }
 
@@ -154,7 +161,7 @@ function DISABLE_ROOT() {
     # shellcheck disable=SC2046
     [[ "$(id -u)" == "0" ]] || return 0
 
-    PRINT "'$(SCRIPTNAME)' should not be run as root. Please try again as a normal user."
+    printf "%b\n" "'${0##*/}' should not be run as root. Please try again as a normal user."
     return 1
 }
 
@@ -162,7 +169,7 @@ function DISABLE_ROOT() {
 # Usage:  CMD_EXISTS <command>
 # Returns: return code
 function CMD_EXISTS() {
-    WHICH "${1}" >/dev/null 2>&1
+    command -v "${1}" >/dev/null 2>&1
 }
 
 # Description: Check to see if input is 'yes' or empty
@@ -191,10 +198,10 @@ function CHECK_NO() {
 function PROMPT() {
     local confirm
 
-    NPRINT "${1}"
+    printf "%b" "${1}"
     read -r confirm
 
-    NPRINT "${confirm}"
+    printf "%b" "${confirm}"
 }
 
 # Description: Prompt with message, check if input is 'yes' or empty
@@ -203,7 +210,7 @@ function PROMPT() {
 function PROMPT_YES() {
     local confirm
 
-    NPRINT "${1}? (Y/n) "
+    printf "%b" "${1}? (Y/n) "
     read -r confirm
 
     CHECK_YES "${confirm}"
@@ -215,7 +222,7 @@ function PROMPT_YES() {
 function PROMPT_NO() {
     local confirm
 
-    NPRINT "${1}? (y/N) "
+    printf "%b" "${1}? (y/N) "
     read -r confirm
 
     CHECK_NO "${confirm}"
@@ -239,25 +246,29 @@ function READ_CONF() {
     local val=""
 
     # If file doesn't exist, return with error.
-    [[ ! -f "${file}" ]] && PRINT "$(SCRIPTNAME): Invalid file ${file}." && return 1
+    [[ ! -f "${file}" ]] && printf "%b\n" "${0##*/}: Invalid file ${file}." && return 1
 
     # Read file line-by-line
     while read -r line; do
 
-        line="$(TRIM "${line}")"
+        # remove leading whitespace characters
+        line="${line##*( )}"
+
+        # remove trailing whitespace characters
+        line="${line%%*( )}"
 
         # Continue to next line if commented
         [[ "${line}" =~ ^\#\.* ]] && continue
 
         # If line is a section, set `$section` variable and continue to next line
-        [[ "${line}" =~ ^\[[a-z]+\]$ ]] && section="$(NPRINT "${line}" | sed -e 's|\[\([a-z]\+\)\]|\1|')" && continue
+        [[ "${line}" =~ ^\[[a-z]+\]$ ]] && section="$(printf "%b" "${line}" | sed -e 's|\[\([a-z]\+\)\]|\1|')" && continue
 
         # If line is a key=value pair, then set `var` and `val` accordingly, else continue to next line.
         [[ "${line}" =~ ^[a-z]+\=\"?\'?.*\"?\'?$ ]] || continue
 
         [[ "${line}" =~ ^[a-z]+\=\"?\'?.*\"?\'?$ ]] &&
-            var="$(NPRINT "${line}" | sed 's|\([a-z]\+\)\=.*|\1|')" &&
-            val="$(NPRINT "${line}" | sed 's|.*\=||g' | cut -d\" -f2 | cut -d\' -f2)"
+            var="$(printf "%b" "${line}" | sed 's|\([a-z]\+\)\=.*|\1|')" &&
+            val="$(printf "%b" "${line}" | sed 's|.*\=||g' | cut -d\" -f2 | cut -d\' -f2)"
 
         # If no section, import as `var="val"`
         [[ -z "${section}" ]] && eval "${var}=\"${val}\"" && continue
@@ -272,12 +283,13 @@ function READ_CONF() {
 # Usage: TIMESTAMP [-m/--multiline]?
 # Returns: string
 function TIMESTAMP() {
-    local timestamp="$(date +"%I:%M%P %m/%d/%Y")"
+    local timestamp
+    timestamp="$(date +"%I:%M%P %m/%d/%Y")"
 
     # Multi-line timestamp flag
     [[ "${1}" == "-m" || "${1}" == "--multiline" ]] && timestamp="$(date +"%I:%M%P")\n$(date +"%m/%d/%Y")"
 
-    PRINT "${timestamp}"
+    printf "%b\n" "${timestamp}"
 }
 
 ################################################################################
@@ -292,10 +304,10 @@ function EXAMPLE() {
     local comment="$2"
 
     [[ -n "$comment" ]] &&
-        SCRIPT_EXAMPLES+=("$(SCRIPTNAME) ${args}\t# ${comment}") &&
+        SCRIPT_EXAMPLES+=("${0##*/} ${args}\t# ${comment}") &&
         return 0
 
-    SCRIPT_EXAMPLES+=("$(SCRIPTNAME) ${args}")
+    SCRIPT_EXAMPLES+=("${0##*/} ${args}")
 }
 
 # Description: Add a flag/command entry for the help menu
@@ -319,34 +331,34 @@ function HELP() {
 
     PRINT_EXAMPLES() {
         [[ "${#SCRIPT_EXAMPLES[@]}" == "0" ]] &&
-            PRINT "Example(s):\tNone provided." &&
+            printf "%b\n" "Example(s):\tNone provided." &&
             return 0
 
-        PRINT "Example(s):"
+        printf "%b\n" "Example(s):"
         for example in "${SCRIPT_EXAMPLES[@]}"; do
-            PRINT "\t\t${example}"
+            printf "%b\n" "\t\t${example}"
         done
     }
 
-    PRINT "$(SCRIPTNAME) v${SCRIPT_VERSION:=1.0}"
-    PRINT "Copyright $(date +"%Y") ${SCRIPT_AUTHOR:=HeckerShell Project}"
-    PRINT
-    PRINT "Description:\t${SCRIPT_DESCRIPTION:=A random description}"
-    PRINT "Usage:\t\t$(SCRIPTNAME) ${SCRIPT_USAGE:=[FLAG] [ARGS?]...}"
+    printf "%b\n" "${0##*/} v${SCRIPT_VERSION:=1.0}"
+    printf "%b\n" "Copyright $(date +"%Y") ${SCRIPT_AUTHOR:=HeckerShell Project}"
+    printf "%b\n" ""
+    printf "%b\n" "Description:\t${SCRIPT_DESCRIPTION:=A random description}"
+    printf "%b\n" "Usage:\t\t${0##*/} ${SCRIPT_USAGE:=[FLAG] [ARGS?]...}"
 
     PRINT_EXAMPLES
 
-    PRINT
+    printf "%b\n" ""
     {
-        PRINT "-------------|------|---------------------"
-        PRINT "Flag|Args|Description"
-        PRINT "-------------|------|---------------------"
-        PRINT "||"
+        printf "%b\n" "-------------|------|---------------------"
+        printf "%b\n" "Flag|Args|Description"
+        printf "%b\n" "-------------|------|---------------------"
+        printf "%b\n" "||"
         for flag in "${SCRIPT_FLAGS[@]}"; do
-            PRINT "${flag}"
+            printf "%b\n" "${flag}"
         done
-        PRINT "||"
-        PRINT "-h, --help||Show this prompt"
+        printf "%b\n" "||"
+        printf "%b\n" "-h, --help||Show this prompt"
     } | column -t -s'|'
 
     return 0

@@ -26,19 +26,20 @@ function downloadYTVideo() {
     PRINT "This function does not currently work for yt-dlp."
     return 1
 
-    # Preparations
-    DIR=$HOME/Downloads/VideoDownloader
-    [[ -d "$DIR" ]] ||
-        mkdir "$DIR"
-    cd "$DIR" || return 1
+    # # Preparations
+    # DIR="$HOME/Downloads/VideoDownloader"
 
-    CMD_EXISTS "yt-dlp" && {
-        # yt-dlp "${@}"
-        PRINT "This function does not currently work for yt-dlp."
-        return 0
-    }
+    # [[ -d "$DIR" ]] ||
+    #     mkdir "$DIR"
+    # cd "$DIR" || return 1
 
-    youtube-dl --format mp4 -o "%(title)s.%(ext)s" "${@}"
+    # CMD_EXISTS "yt-dlp" && {
+    #     # yt-dlp "${@}"
+    #     PRINT "This function does not currently work for yt-dlp."
+    #     return 0
+    # }
+
+    # youtube-dl --format mp4 -o "%(title)s.%(ext)s" "${@}"
 }
 
 ### Download youtube videos as MP3 sound files (yt-dlp & youtube-dl)
@@ -48,20 +49,20 @@ function mp3dl() {
     PRINT "This function does not currently work for yt-dlp."
     return 1
 
-    # Preparations
-    DIR=$HOME/Downloads/Music
-    [[ -d "$DIR" ]] || mkdir "$DIR"
-    cd "$DIR" || return 1
+    # # Preparations
+    # DIR=$HOME/Downloads/Music
+    # [[ -d "$DIR" ]] || mkdir "$DIR"
+    # cd "$DIR" || return 1
 
-    CMD_EXISTS "yt-dlp" && {
-        # yt-dlp "${@}"
-        PRINT "This function does not currently work for yt-dlp."
-        return 0
-    }
+    # CMD_EXISTS "yt-dlp" && {
+    #     # yt-dlp "${@}"
+    #     PRINT "This function does not currently work for yt-dlp."
+    #     return 0
+    # }
 
-    # Download
-    youtube-dl --prefer-ffmpeg --add-metadata --output '%(title)s.%(ext)s' \
-        --extract-audio --audio-format mp3 "${@}"
+    # # Download
+    # youtube-dl --prefer-ffmpeg --add-metadata --output '%(title)s.%(ext)s' \
+    #     --extract-audio --audio-format mp3 "${@}"
 }
 
 ### Add sound clips to soundfx folder (yt-dlp & youtube-dl)
@@ -71,20 +72,20 @@ function soundfx() {
     PRINT "This function does not currently work for yt-dlp."
     return 1
 
-    # Preparations
-    DIR=$HOME/Music/SoundFX
-    [[ -d "$DIR" ]] || mkdir "$DIR"
-    cd "$DIR" || return 1
+    # # Preparations
+    # DIR=$HOME/Music/SoundFX
+    # [[ -d "$DIR" ]] || mkdir "$DIR"
+    # cd "$DIR" || return 1
 
-    CMD_EXISTS "yt-dlp" && {
-        # yt-dlp "${@}"
-        PRINT "This function does not currently work for yt-dlp."
-        return 0
-    }
+    # CMD_EXISTS "yt-dlp" && {
+    #     # yt-dlp "${@}"
+    #     PRINT "This function does not currently work for yt-dlp."
+    #     return 0
+    # }
 
-    # Download
-    youtube-dl --prefer-ffmpeg --add-metadata --output '%(title)s.%(ext)s' \
-        --extract-audio --audio-format mp3 "${@}"
+    # # Download
+    # youtube-dl --prefer-ffmpeg --add-metadata --output '%(title)s.%(ext)s' \
+    #     --extract-audio --audio-format mp3 "${@}"
 }
 
 # If neofetch doesn't exist, use `aboutpc` script
@@ -102,13 +103,13 @@ function copy() { xclip -sel clip "${@}"; }
 
 # Colorized grep
 SILENTRUN unalias grep
-function grep() { $(WHICH grep) --color=auto "${@}"; }
+function grep() { $(command -v grep) --color=auto "${@}"; }
 
 # Cat a file w/ line numbers
 function readfile() { /bin/cat -n "${@}"; }
 
 # Replace 'which'
-function which() { WHICH "${@}"; }
+function which() { command -v "${@}"; }
 
 # If bat/batcat exists, create opposite alias to replace cat
 [[ -x /bin/bat ]] && function bat() { /bin/bat -P "${@}"; }
@@ -119,13 +120,13 @@ SILENTRUN unalias ls
 SILENTRUN unalias ll
 SILENTRUN unalias la
 function ls() {
-    /usr/bin/env ls --color=auto --group-directories-first "${@}"
+    $(command -v ls) --color=auto --group-directories-first "${@}"
 }
 function ll() { ls -AlvhF "${@}"; }
 function la() { ls -A "${@}"; }
 
 # Directory manipulation
-function mkdir() { /usr/bin/env mkdir -p "${@}"; }
+function mkdir() { $(command -v mkdir) -p "${@}"; }
 function md() { mkdir "${@}"; }
 function mf() { touch "${@}"; }
 function rd() { rm -rf "${@}"; }
@@ -213,7 +214,5 @@ function silentrunjar() { ASYNC java -jar "${@}"; }
 
 # Run text file as bash
 function runInBash() {
-    local file="$1"
-
-    bash <(cat $1)
+    bash <(cat "$1")
 }

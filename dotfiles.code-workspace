@@ -1,10 +1,10 @@
 {
 	"folders": [
 		{
-			"path": "."
+			"path": "../Post-Installers"
 		},
 		{
-			"path": "../Post-Installers"
+			"path": "../../.shellfiles"
 		}
 	],
 	"settings": {
