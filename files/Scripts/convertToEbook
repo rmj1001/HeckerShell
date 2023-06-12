@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+parentDirectory="${PWD}"
+
+case "${1}" in
+-d | --debug)
+    shift
+    set -x
+    ;;
+*) [[ -n "${1}" ]] && parentDirectory="${1}" ;;
+esac
+
+[[ -d "${parentDirectory}" ]] || {
+    echo -e "'${parentDirectory}' is not a directory."
+    exit 1
+}
+
+epubOutput="${parentDirectory}/Converter Output/epubs"
+ibooksOutput="${parentDirectory}/Converter Output/ibooks"
+
+mkdir -p "${epubOutput}"
+mkdir -p "${ibooksOutput}"
+
+find "${parentDirectory}" -type d -iname "*.epub" -print |
+    while read -r folderPath; do
+        folderName="${folderPath##*/}"
+
+        echo "CONVERTING: '${folderPath##*/}'"
+
+        zip -r "${folderName}.zip" "${folderPath}" >/dev/null 2>&1 || {
+            echo -e "CONVERT FAILED: ${folderName}"
+            continue
+        }
+
+        mv "${folderName}.zip" "${epubOutput}/${folderName}" >/dev/null 2>&1
+    done
+
+find "${parentDirectory}" -type d -iname "*.ibooks" -print |
+    while read -r folderPath; do
+        folderName="${folderPath##*/}"
+
+        echo "CONVERTING: '${folderPath##*/}'"
+
+        zip -r "${folderName}.zip" "${folderPath}" >/dev/null 2>&1 || {
+            echo -e "CONVERT FAILED: ${folderName}"
+            continue
+        }
+
+        mv "${folderName}.zip" "${ibooksOutput}/${folderName}" >/dev/null 2>&1
+    done
