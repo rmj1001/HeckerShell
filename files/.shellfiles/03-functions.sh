@@ -103,7 +103,7 @@ function copy() { xclip -sel clip "${@}"; }
 
 # Colorized grep
 SILENTRUN unalias grep
-function grep() { $(command -v grep) --color=auto "${@}"; }
+function grep() { /usr/bin/grep --color=auto "${@}"; }
 
 # Cat a file w/ line numbers
 function readfile() { /bin/cat -n "${@}"; }
@@ -120,13 +120,13 @@ SILENTRUN unalias ls
 SILENTRUN unalias ll
 SILENTRUN unalias la
 function ls() {
-    $(command -v ls) --color=auto --group-directories-first "${@}"
+    /usr/bin/ls --color=auto --group-directories-first "${@}"
 }
 function ll() { ls -AlvhF "${@}"; }
 function la() { ls -A "${@}"; }
 
 # Directory manipulation
-function mkdir() { $(command -v mkdir) -p "${@}"; }
+function mkdir() { /usr/bin/mkdir -p "${@}"; }
 function md() { mkdir "${@}"; }
 function mf() { touch "${@}"; }
 function rd() { rm -rf "${@}"; }
