@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+#######################################################################
+# This script converts all folders
+# in the specified or current
+# directory into the specified ebook format
+# according to their extension (only .epub and .ibooks are supported)
+#######################################################################
+
 parentDirectory="${PWD}"
 
 case "${1}" in
