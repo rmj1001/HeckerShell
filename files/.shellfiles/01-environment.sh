@@ -1,15 +1,12 @@
 #!/usr/bin/env bash
 
-##############################################
-#   Author(s): RMCJ <rmichael1001@gmail.com>
-#   Project: HeckerShell
-#   Version: 1.0
+#  ██╗  ██╗███████╗ ██████╗██╗  ██╗███████╗██████╗ ███████╗██╗  ██╗███████╗██╗     ██╗
+#  ██║  ██║██╔════╝██╔════╝██║ ██╔╝██╔════╝██╔══██╗██╔════╝██║  ██║██╔════╝██║     ██║
+#  ███████║█████╗  ██║     █████╔╝ █████╗  ██████╔╝███████╗███████║█████╗  ██║     ██║
+#  ██╔══██║██╔══╝  ██║     ██╔═██╗ ██╔══╝  ██╔══██╗╚════██║██╔══██║██╔══╝  ██║     ██║
+#  ██║  ██║███████╗╚██████╗██║  ██╗███████╗██║  ██║███████║██║  ██║███████╗███████╗███████╗
+#  ╚═╝  ╚═╝╚══════╝ ╚═════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝
 #
-#   Usage: n/a
-#
-#   Description: HeckerShell environment variables
-#
-##############################################
 
 ################################## ENVIRONMENT #################################
 
@@ -86,7 +83,7 @@ export HECKERSHELL="${XDG_DATA_HOME}/HeckerShell"
 export SHELL_TITLE="HeckerShell"
 
 # Add heckershell scripts recursively to PATH
-PATH="${PATH}:$(find "${SCRIPTS}"/* -maxdepth 1 -type d -printf ":%p")"
+PATH="${SCRIPTS}:${PATH}:$(find "${SCRIPTS}"/* -maxdepth 1 -type d -printf ":%p")"
 
 # Update PATH with AppImages
 PATH="${PATH}:${BIN}:${APPIMAGES}"

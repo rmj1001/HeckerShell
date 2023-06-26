@@ -1,15 +1,12 @@
 #!/usr/bin/env bash
 
-##############################################
-#	Author(s): RMCJ <rmichael1001@gmail.com>
-#	Project: HeckerShell
-#	Version: 1.0
+#  ██╗  ██╗███████╗ ██████╗██╗  ██╗███████╗██████╗ ███████╗██╗  ██╗███████╗██╗     ██╗
+#  ██║  ██║██╔════╝██╔════╝██║ ██╔╝██╔════╝██╔══██╗██╔════╝██║  ██║██╔════╝██║     ██║
+#  ███████║█████╗  ██║     █████╔╝ █████╗  ██████╔╝███████╗███████║█████╗  ██║     ██║
+#  ██╔══██║██╔══╝  ██║     ██╔═██╗ ██╔══╝  ██╔══██╗╚════██║██╔══██║██╔══╝  ██║     ██║
+#  ██║  ██║███████╗╚██████╗██║  ██╗███████╗██║  ██║███████║██║  ██║███████╗███████╗███████╗
+#  ╚═╝  ╚═╝╚══════╝ ╚═════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝
 #
-# 	Description:
-#   	This file provides common bash functions
-#		that I use in all my bash scripts. Feel free
-#		to use these functions in your own scripts.
-##############################################
 
 # Description: Replacement for 'echo'
 # Usage:  printf "%b\n" "text"
@@ -323,19 +320,19 @@ function FLAG() {
 }
 
 function AUTHOR() {
-  SCRIPT_AUTHOR="$@"
+    SCRIPT_AUTHOR="$@"
 }
 
 function VERSION() {
-  SCRIPT_VERSION="$@"
+    SCRIPT_VERSION="$@"
 }
 
 function DESCRIPTION() {
-  SCRIPT_DESCRIPTION="$@"
+    SCRIPT_DESCRIPTION="$@"
 }
 
 function USAGE() {
-  SCRIPT_USAGE="$@"
+    SCRIPT_USAGE="$@"
 }
 
 # Description: Prints a pre-designed help menu based on a few

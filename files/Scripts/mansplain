@@ -1,15 +1,12 @@
 #!/usr/bin/env bash
 
-##############################################
-#	Author: RMCJ <rmichael1001@gmail.com>
-#	Project: mansplain
-#	Version: 1.0
+#  ██╗  ██╗███████╗ ██████╗██╗  ██╗███████╗██████╗ ███████╗██╗  ██╗███████╗██╗     ██╗
+#  ██║  ██║██╔════╝██╔════╝██║ ██╔╝██╔════╝██╔══██╗██╔════╝██║  ██║██╔════╝██║     ██║
+#  ███████║█████╗  ██║     █████╔╝ █████╗  ██████╔╝███████╗███████║█████╗  ██║     ██║
+#  ██╔══██║██╔══╝  ██║     ██╔═██╗ ██╔══╝  ██╔══██╗╚════██║██╔══██║██╔══╝  ██║     ██║
+#  ██║  ██║███████╗╚██████╗██║  ██╗███████╗██║  ██║███████║██║  ██║███████╗███████╗███████╗
+#  ╚═╝  ╚═╝╚══════╝ ╚═════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝
 #
-#	Usage: mansplain [command] [args]
-#
-#	Description:
-#		Use dmenu to view manpages in PDF format
-##############################################
 
 ##############################################
 # PRE-PROCESSING
@@ -31,24 +28,24 @@ ZATHURA=0
 }
 
 rofi_man() {
-    REQUIRE_CMD "rofi" || exit 1
+  REQUIRE_CMD "rofi" || exit 1
 
-    function menu() {
-	    rofi -dmenu -columns 3 -disable-history -p "Manpage" -mesg "Pick the manpage you want to view in Zathura."
-    }
+  function menu() {
+    rofi -dmenu -columns 3 -disable-history -p "Manpage" -mesg "Pick the manpage you want to view in Zathura."
+  }
 
-    name="$(man -k . | awk '{print $1}' | menu)"
+  name="$(man -k . | awk '{print $1}' | menu)"
 
-    [[ -z "${name}" ]] && FAIL "You didn't specify a name."
+  [[ -z "${name}" ]] && FAIL "You didn't specify a name."
 
-    man -t "${name}" | ps2pdf - "${name}.pdf"
+  man -t "${name}" | ps2pdf - "${name}.pdf"
 
-    [[ -f "${name}.pdf" ]] || FAIL "I couldn't generate the PDF for that manpage..."
+  [[ -f "${name}.pdf" ]] || FAIL "I couldn't generate the PDF for that manpage..."
 
-    zathura "${name}.pdf"
-    rm -rf "${name}.pdf"
+  zathura "${name}.pdf"
+  rm -rf "${name}.pdf"
 
-    exit 0
+  exit 0
 }
 
 fzf_man() {
@@ -63,23 +60,23 @@ fzf_man() {
 
 for flag in $#; do
   case "$flag" in
-    -z|--zathura)
-      REQUIRE_CMD "zathura" || exit 1
-      ZATHURA=1
-      ;;
+  -z | --zathura)
+    REQUIRE_CMD "zathura" || exit 1
+    ZATHURA=1
+    ;;
   esac
 done
 
 for flag in $#; do
   case "$flag" in
-    -r | --rofi)
-      rofi_man
-      ;;
-    -f | --fzf)
-      fzf_man
-      ;;
-    *)
-      fzf_man
-      ;;
+  -r | --rofi)
+    rofi_man
+    ;;
+  -f | --fzf)
+    fzf_man
+    ;;
+  *)
+    fzf_man
+    ;;
   esac
 done

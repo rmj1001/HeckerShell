@@ -1,15 +1,12 @@
 #!/usr/bin/env zsh
 
-##############################################
-#   Author(s): RMCJ <rmichael1001@gmail.com>
-#   Project: HeckerShell
-#   Version: 1.0
+#  ██╗  ██╗███████╗ ██████╗██╗  ██╗███████╗██████╗ ███████╗██╗  ██╗███████╗██╗     ██╗
+#  ██║  ██║██╔════╝██╔════╝██║ ██╔╝██╔════╝██╔══██╗██╔════╝██║  ██║██╔════╝██║     ██║
+#  ███████║█████╗  ██║     █████╔╝ █████╗  ██████╔╝███████╗███████║█████╗  ██║     ██║
+#  ██╔══██║██╔══╝  ██║     ██╔═██╗ ██╔══╝  ██╔══██╗╚════██║██╔══██║██╔══╝  ██║     ██║
+#  ██║  ██║███████╗╚██████╗██║  ██╗███████╗██║  ██║███████║██║  ██║███████╗███████╗███████╗
+#  ╚═╝  ╚═╝╚══════╝ ╚═════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝
 #
-#   Usage: n/a
-#
-#   Description: Z Shell config file
-#
-##############################################
 
 export SHELLFILES="${HOME}/.shellfiles"
 
@@ -68,22 +65,9 @@ zstyle ':completion:*' menu select
 fpath=("$HOME"/.local/share/zsh-completions/src $fpath)
 autoload -U compinit && compinit
 
-# Plugins
-export plugins=(
-	sudo
-)
-
 ############################################################################
 
-# Load plugins described in ${plugins} array.
-for plug in "${plugins[@]}"; do
-
-	plugin="${SHELLFILES}/plugins/${plug}.sh"
-
-	[[ -f "${plugin}" ]] && source ${plugin} ||
-		PRINT "zsh: Plugin '${plug}' does not exist."
-
-done
+"${SHELLFILES}"/00-plugin-loader.sh
 
 shell fresh-screen
 

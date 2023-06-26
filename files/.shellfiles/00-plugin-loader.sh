@@ -8,28 +8,17 @@
 #  ╚═╝  ╚═╝╚══════╝ ╚═════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝
 #
 
-# TODO: Finish Scripts/shellmgr and remove 01-dotfilesmgr.sh
+# Plugins
+export plugins=(
 
-# shellcheck disable=SC1091 # Source global definitions
-[[ -f /etc/bashrc ]] && source /etc/bashrc
+)
 
-# Uncomment the following line if you don't like systemctl's auto-paging feature:
-# export SYSTEMD_PAGER=""
+for plug in "${plugins[@]}"; do
 
-# Source shellrc (common settings between bash and zsh)
-export SHELLFILES="${HOME}/.shellfiles"
-for config in "${SHELLFILES}"/*.sh; do
+    plugin="${SHELLFILES}/plugins/${plug}.sh"
 
-	# shellcheck disable=SC1090
-	source "${config}"
+    # shellcheck disable=SC1090
+    [[ -f "${plugin}" ]] && source "${plugin}"
+    [[ ! -f "${plugin}" ]] && PRINT "bash: Plugin '${plug}' does not exist."
 
 done
-
-# export PS1='\n$(shell lines)\n$(printf "%${COLUMNS}s\n" "$(date -u +"%m-%d-%Y %H:%M:%S")")[ ${USER}@${HOSTNAME} $(basename $(dirs +0)) ]$ '
-export PS1='\n$(TITLE "${SHELL_TITLE}")$(shell lines)\n$(printf "%${COLUMNS}s\n" "${PWD}")[ ${USER}@${HOSTNAME} "$(basename "$(dirs +0)")" ]$ '
-
-# Run the plugin loader
-"${SHELLFILES}"/00-plugin-loader.sh
-
-shell fresh-screen
-TITLE "HeckerShell"

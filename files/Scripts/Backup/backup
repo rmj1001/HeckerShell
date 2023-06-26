@@ -1,14 +1,12 @@
 #!/usr/bin/env bash
 
-##############################################
-#   Author: RMCJ <rmichael1001@gmail.com>
-#   Project: backup
-#   Version: 1.0
+#  ██╗  ██╗███████╗ ██████╗██╗  ██╗███████╗██████╗ ███████╗██╗  ██╗███████╗██╗     ██╗
+#  ██║  ██║██╔════╝██╔════╝██║ ██╔╝██╔════╝██╔══██╗██╔════╝██║  ██║██╔════╝██║     ██║
+#  ███████║█████╗  ██║     █████╔╝ █████╗  ██████╔╝███████╗███████║█████╗  ██║     ██║
+#  ██╔══██║██╔══╝  ██║     ██╔═██╗ ██╔══╝  ██╔══██╗╚════██║██╔══██║██╔══╝  ██║     ██║
+#  ██║  ██║███████╗╚██████╗██║  ██╗███████╗██║  ██║███████║██║  ██║███████╗███████╗███████╗
+#  ╚═╝  ╚═╝╚══════╝ ╚═════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝
 #
-#   Usage:
-#
-#   Description:
-#		Backup files
 ##############################################
 
 ##############################################
@@ -50,29 +48,28 @@ ARGS=("$@")
 }
 
 ### Flags ###
-for (( i=0; i<${#ARGS[@]}; i++ ));
-do
-  arg="${ARGS[i]}"
+for ((i = 0; i < ${#ARGS[@]}; i++)); do
+	arg="${ARGS[i]}"
 
-  case "$(LOWERCASE "$arg")" in
-	  -r)
-		  method="rsync"
-		  unset 'ARGS[i]'
-		  ;;
+	case "$(LOWERCASE "$arg")" in
+	-r)
+		method="rsync"
+		unset 'ARGS[i]'
+		;;
 
-	  -t)
-		  method="tar"
-		  unset 'ARGS[i]'
-		  ;;
+	-t)
+		method="tar"
+		unset 'ARGS[i]'
+		;;
 
-	  -c)
-		  method="cp"
-		  unset 'ARGS[i]'
-		  ;;
-    \? | -h | --help)
-      HELP
-      exit 0
-		  ;;
+	-c)
+		method="cp"
+		unset 'ARGS[i]'
+		;;
+	\? | -h | --help)
+		HELP
+		exit 0
+		;;
 	esac
 done
 
@@ -90,82 +87,81 @@ trap 'clear; PRINT "Backup Terminated."; PAUSE; clear; exit 0' SIGTERM SIGINT
 
 # If the directory doesn't exist, throw an error and exit
 [[ ! -d "${dir}" ]] && {
-  PRINT "Invalid destination directory!\n"
-  PAUSE
-  exit 1
+	PRINT "Invalid destination directory!\n"
+	PAUSE
+	exit 1
 }
 
 # Set default target path (tar adds another string to the end later)
 target="${dir}/${USER}_$(date +m%m-d%d-y%y)"
 
 case "${method}" in
-  tar)
-	  target="${target}.tar.gz"
+tar)
+	target="${target}.tar.gz"
 
-	  # Check if tar exists
-	  REQUIRE_CMD "tar" || return 1
+	# Check if tar exists
+	REQUIRE_CMD "tar" || return 1
 
-	  # Remove duplicate backup
-	  [[ -f "${target}" ]] && PRINT "Removing duplicate backup..." && rm -rf "${target}"
+	# Remove duplicate backup
+	[[ -f "${target}" ]] && PRINT "Removing duplicate backup..." && rm -rf "${target}"
 
-	  # Confirmation
-	  PRINT "Backing up with tar..."
+	# Confirmation
+	PRINT "Backing up with tar..."
 
-	  # Backups files with exclusions
-	  [[ -f "${exclusions}" ]] && tar -zcvpf "${target}" -X "${exclusions}" "${HOME}" && \
-	    PRINT "\n\nBackup succeeded!" && exit 0
+	# Backups files with exclusions
+	[[ -f "${exclusions}" ]] && tar -zcvpf "${target}" -X "${exclusions}" "${HOME}" &&
+		PRINT "\n\nBackup succeeded!" && exit 0
 
-	  # Backups files without exclusions
-	  [[ ! -f "${exclusions}" ]] && tar -zcvpf "${target}" "${HOME}" && \
-	    PRINT "\n\nBackup succeeded!" && exit 0
+	# Backups files without exclusions
+	[[ ! -f "${exclusions}" ]] && tar -zcvpf "${target}" "${HOME}" &&
+		PRINT "\n\nBackup succeeded!" && exit 0
 
-    PRINT "\n\nBackup failed."
-    exit 1
-	  ;;
+	PRINT "\n\nBackup failed."
+	exit 1
+	;;
 
-  rsync)
-	  # Check if rsync exists
-	  REQUIRE_CMD "rsync"
+rsync)
+	# Check if rsync exists
+	REQUIRE_CMD "rsync"
 
-	  # Remove duplicate backup
-	  [[ -d "${target}" ]] && PRINT "Removing duplicate backup..." && rm -rf "${target}"
+	# Remove duplicate backup
+	[[ -d "${target}" ]] && PRINT "Removing duplicate backup..." && rm -rf "${target}"
 
-	  # Confirmation
-	  PRINT "Backing up with rsync..."
+	# Confirmation
+	PRINT "Backing up with rsync..."
 
-	  # Backup files with exclusions
-	  [[ -f "${exclusions}" ]] && rsync -arzvhP --exclude-from="${exclusions}" "${HOME}/" "${target}" && \
-	    PRINT "\n\nBackup succeeded!" && exit 0
+	# Backup files with exclusions
+	[[ -f "${exclusions}" ]] && rsync -arzvhP --exclude-from="${exclusions}" "${HOME}/" "${target}" &&
+		PRINT "\n\nBackup succeeded!" && exit 0
 
-	  # Backup files without exclusions
-	  [[ ! -f "${exclusions}" ]] && rsync -arzvhP "${HOME}/" "${target}" && \
-	    PRINT "\n\nBackup succeeded!" && exit 0
+	# Backup files without exclusions
+	[[ ! -f "${exclusions}" ]] && rsync -arzvhP "${HOME}/" "${target}" &&
+		PRINT "\n\nBackup succeeded!" && exit 0
 
-    PRINT "\n\nBackup failed."
-    exit 1
-	  ;;
+	PRINT "\n\nBackup failed."
+	exit 1
+	;;
 
-  cp)
-	  # Check if rsync exists
-	  REQUIRE_CMD "cp"
+cp)
+	# Check if rsync exists
+	REQUIRE_CMD "cp"
 
-	  # Remove duplicate backup
-	  [[ -d "${target}" ]] && PRINT "Removing duplicate backup..." && rm -rf "${target}"
+	# Remove duplicate backup
+	[[ -d "${target}" ]] && PRINT "Removing duplicate backup..." && rm -rf "${target}"
 
-	  # Confirmation
-	  PRINT "Backing up with cp..."
+	# Confirmation
+	PRINT "Backing up with cp..."
 
-	  # Backup all files
-	  cp -vR "${HOME}" "${target}" && \
-	    PRINT "\n\nBackup succeeded!" && exit 0
+	# Backup all files
+	cp -vR "${HOME}" "${target}" &&
+		PRINT "\n\nBackup succeeded!" && exit 0
 
-    PRINT "\n\nBackup failed."
-    exit 1
-	  ;;
+	PRINT "\n\nBackup failed."
+	exit 1
+	;;
 
-  *)
-    PRINT "Invalid method '${method}'."
-    exit 1
-    ;;
+*)
+	PRINT "Invalid method '${method}'."
+	exit 1
+	;;
 esac
-
