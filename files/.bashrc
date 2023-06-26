@@ -11,9 +11,7 @@
 #
 ##############################################
 
-shell.load() {
-	clear
-
+shell_load() {
 	# shellcheck disable=SC1091 # Source global definitions
 	[[ -f /etc/bashrc ]] && source /etc/bashrc
 
@@ -37,9 +35,6 @@ shell.load() {
 
 	# Plugins
 	export plugins=(
-		backstreet
-		curlapps
-		heckershell
 	)
 
 	############################################################################
@@ -60,4 +55,4 @@ shell.load() {
 	TITLE "HeckerShell"
 }
 
-shell.load
+shell_load

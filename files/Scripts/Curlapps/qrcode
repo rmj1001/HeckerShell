@@ -1,13 +1,15 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 ##############################################
-#   Author(s): name <email@domain.com>
+#   Author(s): RMCJ <rmichael1001@gmail.com>
 #   Project: HeckerShell
-#   Plugin:
 #   Version: 1.0
 #
-#   Usage:
+#   Usage: qrcode [url]
 #
 #   Description:
+#       Generate a QR Code for a url
 #
 ##############################################
+
+curl "qrenco.de/${1}"

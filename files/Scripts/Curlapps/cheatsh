@@ -1,0 +1,15 @@
+#!/usr/bin/env sh
+
+##############################################
+#   Author(s): RMCJ <rmichael1001@gmail.com>
+#   Project: HeckerShell
+#   Version: 1.0
+#
+#   Usage: cheatsh [query]
+#
+#   Description:
+#       Retrieve cheat pages for common programs
+#
+##############################################
+
+curl "cheat.sh/${1}"

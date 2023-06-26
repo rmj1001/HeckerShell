@@ -1,0 +1,15 @@
+#!/usr/bin/env sh
+
+##############################################
+#   Author(s): RMCJ <rmichael1001@gmail.com>
+#   Project: HeckerShell
+#   Version: 1.0
+#
+#   Usage: dictionary [query]
+#
+#   Description:
+#       Get a dictionary entry for a query
+#
+##############################################
+
+curl "dict://dict.org/d:${1}"

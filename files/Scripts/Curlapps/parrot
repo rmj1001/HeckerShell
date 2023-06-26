@@ -1,0 +1,17 @@
+#!/usr/bin/env sh
+
+##############################################
+#   Author(s): RMCJ <rmichael1001@gmail.com>
+#   Project: HeckerShell
+#   Version: 1.0
+#
+#   Usage: parrot
+#
+#   Description: See an animated parrot in your terminal
+#
+##############################################
+
+trap 'clear' INT
+
+curl parrot.live
+clear

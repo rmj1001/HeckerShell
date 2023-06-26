@@ -11,9 +11,7 @@
 #
 ##############################################
 
-shell.load() {
-	clear
-
+shell_load() {
 	export SHELLFILES="${HOME}/.shellfiles"
 
 	# Source shellrc (common settings between bash and zsh)
@@ -73,10 +71,6 @@ shell.load() {
 
 	# Plugins
 	export plugins=(
-		backstreet
-		curlapps
-		heckershell
-		russian-roulette
 		sudo
 	)
 
@@ -104,4 +98,4 @@ shell.load() {
 	}
 }
 
-shell.load
+shell_load

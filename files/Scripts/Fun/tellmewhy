@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+##############################################
+#   Author(s): RMCJ <rmichael1001@gmail.com>
+#   Project: HeckerShell
+#   Plugin: backstreet
+#   Version: 1.0
+#
+#   Usage: tellmewhy
+#
+#   Description: Ain't nothin but a heartache
+#
+##############################################
+
+echo "Ain't nothin but a heartache"
+sleep 1
+
+echo "Ain't nothin but a mistake"
+sleep 1
+
+echo "Now numbah 5"
+sleep 1
+
+echo "I never wanna hear you say"
+sleep 1
+
+echo "WOOOOOO"
+sleep 1
+
+echo "*I want it that way*"
+sleep 1

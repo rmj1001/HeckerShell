@@ -1,0 +1,15 @@
+#!/usr/bin/env sh
+
+##############################################
+#   Author(s): RMCJ <rmichael1001@gmail.com>
+#   Project: HeckerShell
+#   Version: 1.0
+#
+#   Usage: weather
+#
+#   Description:
+#       Generate a weather report
+#
+##############################################
+
+curl wttr.in
