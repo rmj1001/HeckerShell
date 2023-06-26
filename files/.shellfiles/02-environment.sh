@@ -86,7 +86,7 @@ export HECKERSHELL="${XDG_DATA_HOME}/HeckerShell"
 export SHELL_TITLE="HeckerShell"
 
 # Add heckershell scripts recursively to PATH
-PATH="${PATH}:$(find $SCRIPTS -type d -printf ":%p")"
+PATH="${PATH}:$(find "${SCRIPTS}"/* -maxdepth 1 -type d -printf ":%p")"
 
 # Update PATH with AppImages
 PATH="${PATH}:${BIN}:${APPIMAGES}"
