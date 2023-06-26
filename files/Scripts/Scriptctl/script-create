@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+
+##############################################
+#   Author: RMCJ <rmichael1001@gmail.com>
+#   Project: scriptctl
+#   Version: 1.0
+#
+#   Usage:
+#
+#   Description:
+#		Manage user scripts
+##############################################
+
+##############################################
+# PRE-PROCESSING
+
+# shellcheck disable=SC1091
+source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
+
+DISABLE_ROOT || exit 1
+
+##############################################
+# HELP MENU BUILDER
+
+VERSION "1.5"
+DESCRIPTION "Create user scripts"
+USAGE "[script name]"
+##############################################
+# FLAG HANDLING
+ARGS=("$@")
+
+for ((i = 0; i < ${#ARGS[@]}; i++)); do
+	arg="${ARGS[i]}"
+
+	case "$arg" in
+	\? | -h | --help)
+		HELP
+		unset 'ARGS[i]'
+		exit 0
+		;;
+	esac
+done
+
+##############################################
+# MAIN LOGIC
+
+SCRIPTS="${SCRIPTS:=$HOME/.local/bin}"
+script="${ARGS[0]}"
+scriptPath="${SCRIPTS}/${script}"
+
+# Check to see if script name is provided and script exists
+[[ -z "${script}" ]] && PRINT "You must specify a script name!" && exit 1
+[[ -f "${scriptPath}" ]] && PRINT "Script '${script}' exists!" && exit 1
+
+cp "${SCRIPTS}"/00-template.sh "${scriptPath}".sh &&
+	mv "${scriptPath}.sh" "${scriptPath}" &&
+	chmod +x "${scriptPath}" &&
+	PRINT "$(SCRIPTNAME): Created '${script}'." &&
+	{
+		askedit=""
+		read -rp "Edit script? (y/N) " askedit
+		CHECK_NO "${askedit}" || ${EDITOR:=nano} "${scriptPath}"
+	} && exit 0
+
+PRINT "Failed to create '${script}'."
+exit 1

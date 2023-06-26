@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+
+##############################################
+#   Author: RMCJ <rmichael1001@gmail.com>
+#   Project: scriptctl
+#   Version: 1.0
+#
+#   Usage:
+#
+#   Description:
+#		Manage user scripts
+##############################################
+
+##############################################
+# PRE-PROCESSING
+
+# shellcheck disable=SC1091
+source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
+
+DISABLE_ROOT || exit 1
+
+##############################################
+# HELP MENU BUILDER
+
+VERSION "1.5"
+DESCRIPTION "Create user scripts"
+USAGE "[script name]"
+##############################################
+# FLAG HANDLING
+ARGS=("$@")
+
+for ((i = 0; i < ${#ARGS[@]}; i++)); do
+	arg="${ARGS[i]}"
+
+	case "$arg" in
+	\? | -h | --help)
+		HELP
+		unset 'ARGS[i]'
+		exit 0
+		;;
+	esac
+done
+
+##############################################
+# MAIN LOGIC
+
+SCRIPTS="${SCRIPTS:=$HOME/.local/bin}"
+script="${ARGS[0]}"
+scriptPath="${SCRIPTS}/${script}"
+
+# Check to see if script name is provided and script exists
+[[ -z "${script}" ]] && PRINT "You must specify a script name!" && exit 1
+
+# Check if script exists
+[[ ! -f "${scriptPath}" ]] &&
+	PRINT "Script '${script}' doesn't exist!" && return 1
+
+# Confirm whether to delete script
+PROMPT_NO "Delete '${script}'" || {
+	rm -f "${scriptPath}" &&
+		PRINT "$(SCRIPTNAME): Removed '${script}'." &&
+		return 0
+
+	PRINT "Failed to delete '${script}'." &&
+		return 1
+}
+
+PRINT "Cancelled."
+return 1

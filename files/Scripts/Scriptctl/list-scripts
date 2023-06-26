@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+##############################################
+#   Author: RMCJ <rmichael1001@gmail.com>
+#   Project: list-scripts
+#   Version: 1.0
+#
+#   Usage:
+#
+#   Description:
+#		List all user scripts
+##############################################
+
+##############################################
+# MAIN LOGIC
+
+find "${SCRIPTS:=$HOME/.local/bin}"/* -printf "%p\n" | while read -r script; do
+	# Script must not be directory or symlink, and must be executable
+	[[ -d "${script}" || -L "${script}" || ! -x "${script}" ]] &&
+		continue
+
+	printf "%b\n" "- ${script##*/}"
+done
