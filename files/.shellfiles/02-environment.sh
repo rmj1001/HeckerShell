@@ -85,8 +85,11 @@ export SCRIPTS="${HOME}/Scripts"
 export HECKERSHELL="${XDG_DATA_HOME}/HeckerShell"
 export SHELL_TITLE="HeckerShell"
 
-# Update PATH with script paths and AppImages
-PATH="${PATH}:${Scripts}:${BIN}:${APPIMAGES}"
+# Add heckershell scripts recursively to PATH
+PATH="${PATH}:$(find $SCRIPTS -type d -printf ":%p")"
+
+# Update PATH with AppImages
+PATH="${PATH}:${BIN}:${APPIMAGES}"
 
 # Developer Language Paths
 export GOPATH="${XDG_DATA_HOME}/go:${HOME}/Bin/projects/golang"

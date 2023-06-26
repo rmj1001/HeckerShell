@@ -15,16 +15,17 @@
 # PRE-PROCESSING
 
 # shellcheck disable=SC1091
-source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
+[[ -f "./00-api.sh" ]] || source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
+source ./00-api.sh
 
 DISABLE_ROOT || exit 1
 
 ##############################################
 # HELP MENU BUILDER
 
-SCRIPT_VERSION="1.5"
-SCRIPT_DESCRIPTION="Restore Backups of your HOME directory"
-SCRIPT_USAGE="[FLAG] [ARGS]? ..."
+VERSION "1.5"
+DESCRIPTION "Restore Backups of your HOME directory"
+USAGE "[FLAG] [directory]? ..."
 
 # Examples
 EXAMPLE "--tar /mnt/drive" "Create a tarball backup of HOME in /mnt/drive"

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 ##############################################
-#   Author(s): name <email@domain.com>
-#   Project:
+#   Author: author <author@domain.com>
+#   Project: Heckershell
 #   Version: 1.0
 #
 #   Usage:
@@ -15,54 +15,54 @@
 # PRE-PROCESSING
 
 # shellcheck disable=SC1091
-source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
+[[ -f "./00-api.sh" ]] || source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
+source ./00-api.sh
 
 DISABLE_ROOT || exit 1
-REQUIRE_CMD "" || exit 1
 
 ##############################################
 # HELP MENU BUILDER
 
-# Script Metadata (all are optional, but you really should customize these.)
-# Just uncomment them and customize the value.
-
-#SCRIPT_AUTHOR="HeckerShell Project"
-#SCRIPT_VERSION="1.0"
-#SCRIPT_DESCRIPTION="description"
-#SCRIPT_USAGE="[FLAGS] [ARGS?] ..."
+VERSION "1.0"
+DESCRIPTION "Insert description here"
+USAGE "[FLAG] [ARGS]? ..."
 
 # Examples
-EXAMPLE "--help" "Shows the help prompt"
+EXAMPLE "--flag arg1 arg2" "Description of example command"
 
 # Flags
-FLAG "-f, --flag" "<arg>" "Description"
-FLAG "" "" "" # Leave all spaces empty to give space between groups of flags
+FLAG "-t" "[arg]" "example flag description"
+FLAG "-r" "" "example flag description 2"
+FLAG "-c, --complete" "" "example flag description 3"
 
 ##############################################
 # MAIN LOGIC
 
-# If no arguments are give, just show help prompt.
+### Variables ###
+ARGS=("$@")
+
 [[ $# -eq 0 ]] && {
 	HELP
 	exit 0
 }
 
-# Iterate over all arguments and evaluate them
-while [[ $# -gt 0 ]]; do
+### Flags ###
+for (( i=0; i<${#ARGS[@]}; i++ ));
+do
+  arg="${ARGS[i]}"
 
-	case "$(LOWERCASE "${1}")" in
-
-	\? | -h | --help)
-		shift
-		HELP
-		exit 0
-		;;
-
-	*)
-		INVALID_CMD "${1}"
-		exit 1
-		;;
-
+  case "$(LOWERCASE "$arg")" in
+    \? | -h | --help)
+      HELP
+		  unset 'ARGS[i]'
+      exit 0
+		  ;;
 	esac
-
 done
+
+################################################################################
+# CODE LOGIC
+################################################################################
+
+exit 0
+

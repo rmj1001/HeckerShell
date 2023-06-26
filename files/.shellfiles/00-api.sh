@@ -322,6 +322,22 @@ function FLAG() {
     SCRIPT_FLAGS+=("${flag}|${args}|${description}")
 }
 
+function AUTHOR() {
+  SCRIPT_AUTHOR="$@"
+}
+
+function VERSION() {
+  SCRIPT_VERSION="$@"
+}
+
+function DESCRIPTION() {
+  SCRIPT_DESCRIPTION="$@"
+}
+
+function USAGE() {
+  SCRIPT_USAGE="$@"
+}
+
 # Description: Prints a pre-designed help menu based on a few
 #   environment variables defined in each HeckerShell script
 #
