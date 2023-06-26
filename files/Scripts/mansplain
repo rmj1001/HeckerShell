@@ -18,22 +18,68 @@
 source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
 
 DISABLE_ROOT || exit 1
-REQUIRE_CMD "rofi" "zathura" "ps2pdf" || exit 1
 
 ##############################################
 # MAIN LOGIC
+##############################################
 
-function menu() {
-	rofi -dmenu -columns 3 -disable-history -p "Manpage" -mesg "Pick the manpage you want to view in Zathura."
+ZATHURA=0
+
+[ "$1" = "-z" ] && {
+  REQUIRE_CMD "zathura" || exit 1
+  ZATHURA=1
 }
 
-name="$(man -k . | awk '{print $1}' | menu)"
+rofi_man() {
+    REQUIRE_CMD "rofi" || exit 1
 
-[[ -z "${name}" ]] && FAIL "You didn't specify a name."
+    function menu() {
+	    rofi -dmenu -columns 3 -disable-history -p "Manpage" -mesg "Pick the manpage you want to view in Zathura."
+    }
 
-man -t "${name}" | ps2pdf - "${name}.pdf"
+    name="$(man -k . | awk '{print $1}' | menu)"
 
-[[ -f "${name}.pdf" ]] || FAIL "I couldn't generate the PDF for that manpage..."
+    [[ -z "${name}" ]] && FAIL "You didn't specify a name."
 
-zathura "${name}.pdf"
-rm -rf "${name}.pdf"
+    man -t "${name}" | ps2pdf - "${name}.pdf"
+
+    [[ -f "${name}.pdf" ]] || FAIL "I couldn't generate the PDF for that manpage..."
+
+    zathura "${name}.pdf"
+    rm -rf "${name}.pdf"
+
+    exit 0
+}
+
+fzf_man() {
+  REQUIRE_CMD "fzf" || exit 1
+
+  [ $ZATHURA -eq 1 ] && man -k . | awk '{print $1}' | fzf | xargs -r man -Tpdf | zathura
+
+  man -k . | awk '{print $1}' | fzf | xargs -r man
+
+  exit 0
+}
+
+for flag in $#; do
+  case "$flag" in
+    -z|--zathura)
+      REQUIRE_CMD "zathura" || exit 1
+      ZATHURA=1
+      ;;
+  esac
+done
+
+for flag in $#; do
+  case "$flag" in
+    -r | --rofi)
+      rofi_man
+      ;;
+    -f | --fzf)
+      fzf_man
+      ;;
+    *)
+      fzf_man
+      ;;
+  esac
+done

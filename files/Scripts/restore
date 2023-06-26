@@ -1,0 +1,143 @@
+#!/usr/bin/env bash
+
+##############################################
+#   Author: RMCJ <rmichael1001@gmail.com>
+#   Project: restore
+#   Version: 1.0
+#
+#   Usage:
+#
+#   Description:
+#		Restore from backups made by my script
+##############################################
+
+##############################################
+# PRE-PROCESSING
+
+# shellcheck disable=SC1091
+source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
+
+DISABLE_ROOT || exit 1
+
+##############################################
+# HELP MENU BUILDER
+
+SCRIPT_VERSION="1.5"
+SCRIPT_DESCRIPTION="Restore Backups of your HOME directory"
+SCRIPT_USAGE="[FLAG] [ARGS]? ..."
+
+# Examples
+EXAMPLE "--tar /mnt/drive" "Create a tarball backup of HOME in /mnt/drive"
+
+# Flags
+FLAG "-t" "" "(Default) Uses tar to backup your files"
+FLAG "-r" "" "Uses rsync to backup your files"
+FLAG "-c" "" "Uses cp to backup your files (no exclusions)"
+FLAG "" "" ""
+
+##############################################
+# MAIN LOGIC
+
+### Variables ###
+method="tar"
+ARGS=("$@")
+
+[[ $# -eq 0 ]] && {
+	HELP
+	exit 0
+}
+
+### Flags ###
+for (( i=0; i<${#ARGS[@]}; i++ ));
+do
+  arg="${ARGS[i]}"
+
+  case "$(LOWERCASE "$arg")" in
+	  -r)
+		  method="rsync"
+		  unset 'ARGS[i]'
+		  ;;
+
+	  -t)
+		  method="tar"
+		  unset 'ARGS[i]'
+		  ;;
+
+	  -c)
+		  method="cp"
+		  unset 'ARGS[i]'
+		  ;;
+    \? | -h | --help)
+      HELP
+      exit 0
+		  ;;
+	esac
+done
+
+################################################################################
+# RESTORE CODE LOGIC
+################################################################################
+
+clear
+
+# Cleanly exit backup process
+trap 'clear; PRINT "Backup Terminated."; PAUSE; clear; exit 0' SIGTERM SIGINT
+
+target="${1}"
+
+# If target isn't a file/tarball, or it's not a directory, print error and exit
+[[ ! -f "${target}" && ! "${target}" =~ ^*.tar.gz$ && ! -d "${target}" ]] &&
+	PRINT "Invalid backup target!" && exit 1
+
+case "$method" in
+  tar)
+    [[ -f "${target}" && "${target}" =~ ^*.tar.gz$ ]] || {
+      PRINT "Invalid target."
+      exit 1
+    }
+
+    REQUIRE_CMD "tar" || exit 1
+
+    PRINT "Restoring tarball..."
+
+    tar -xvf "$target" -C "$HOME" && PRINT "\n\nRestore Finished.\n" && exit 0
+
+    PRINT "Restore failed."
+    exit 1
+    ;;
+  cp)
+    [[ -d "$target" ]] || {
+      PRINT "Invalid target: must be a directory."
+      exit 1
+    }
+
+    REQUIRE_CMD "cp" || exit 1
+
+    PRINT "Restoring backup '${target}'..."
+
+    cp -vR "$target" "$HOME" && PRINT "\n\nRestore Finished.\n" && exit 0
+
+    PRINT "Restore failed."
+    exit 1
+    ;;
+  rsync)
+    [[ -d "$target" ]] || {
+      PRINT "Invalid target: must be a directory."
+      exit 1
+    }
+
+    REQUIRE_CMD "rsync" || exit 1
+
+    PRINT "Restoring backup '${target}'..."
+
+    rsync -auv "${target}" "${HOME}" && PRINT "\n\nRestore Finished.\n" && exit 0
+
+    PRINT "Restore failed."
+    exit 1
+    ;;
+  *)
+    PRINT "Invalid backup method."
+    exit 1
+    ;;
+esac
+

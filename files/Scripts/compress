@@ -1,0 +1,142 @@
+#!/usr/bin/env bash
+
+##############################################
+#	Author: RMCJ <rmichael1001@gmail.com>
+#	Project: compress
+#	Version: 1.0
+#
+#	Usage: compress [command] [args]
+#
+#	Description:
+#		Compresses an archive file
+##############################################
+
+##############################################
+# PRE-PROCESSING
+
+# shellcheck disable=SC1091
+source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
+
+DISABLE_ROOT || exit 1
+
+##############################################
+# MAIN LOGIC
+
+function compress.help() {
+    PRINT "$(SCRIPTNAME) - Compress to various archive files"
+    PRINT
+    PRINT "Usage: $(SCRIPTNAME) <archive1> <archive2> ..."
+    PRINT
+    PRINT "Supported file types:"
+    PRINT "- tar.bz2"
+    PRINT "- tar.gz"
+    PRINT "- bz2"
+    PRINT "- rar"
+    PRINT "- gz"
+    PRINT "- tar"
+    PRINT "- tbz2"
+    PRINT "- tgz"
+    PRINT "- zip"
+    PRINT "- Z"
+    PRINT "- 7z"
+    PRINT "- deb"
+    PRINT "- tar.xz"
+    PRINT "- tar.zst"
+    PRINT
+    exit 0
+}
+
+# Determine if an argument is a file (not symlink, folder, etc.)
+function compress.isFile() {
+    [[ ! -f "${1}" ]] && PRINT "'${1}' is not a file." && return 1
+
+    [[ -f "${1}" ]] && return 0
+
+    PRINT "Unknown error" && return 1
+}
+
+# Show help prompt and exit script if no args are given or '?', '-h', or '--help' are present anywhere in arguments.
+[[ $# -eq 0 ]] && compress.help && exit 0
+
+# TODO: Re-work so that it takes 2+ arguments: [destination] [source1] [source2]...
+# Detect the compression format via the extension of the destination argument
+
+for arg in "$@"; do
+
+    case "${arg}" in
+
+    \? | -h | --help) compress.help ;;
+
+    esac
+
+done
+
+# For every argument, determine if argument is file, and compress if it is.
+# If an argument isn't a file or doesn't match an extension, throw an error.
+while [[ $# -gt 0 ]]; do
+
+    case "${1}" in
+    *.tar.bz2)
+        REQUIRE_CMD "tar"
+        compress.isFile "${1}" && tar xjf "${1}"
+        ;;
+    *.tar.gz)
+        REQUIRE_CMD "tar"
+        compress.isFile "${1}" && tar xzf "${1}"
+        ;;
+    *.bz2)
+        REQUIRE_CMD "bunzip"
+        compress.isFile "${1}" && bunzip "${1}"
+        ;;
+    *.rar)
+        REQUIRE_CMD "unrar"
+        compress.isFile "${1}" && unrar x "${1}"
+        ;;
+    *.gz)
+        REQUIRE_CMD "gunzip"
+        compress.isFile "${1}" && gunzip "${1}"
+        ;;
+    *.tar)
+        REQUIRE_CMD "tar"
+        compress.isFile "${1}" && tar xf "${1}"
+        ;;
+    *.tbz2)
+        REQUIRE_CMD "tar"
+        compress.isFile "${1}" && tar xjf "${1}"
+        ;;
+    *.tgz)
+        REQUIRE_CMD "tar"
+        compress.isFile "${1}" && tar xzf "${1}"
+        ;;
+    *.zip)
+        REQUIRE_CMD "unzip"
+        compress.isFile "${1}" && unzip "${1}"
+        ;;
+    *.Z)
+        REQUIRE_CMD "uncompress"
+        compress.isFile "${1}" && uncompress "${1}"
+        ;;
+    *.7z)
+        REQUIRE_CMD "7z"
+        compress.isFile "${1}" && 7z x "${1}"
+        ;;
+    *.deb)
+        REQUIRE_CMD "ar"
+        compress.isFile "${1}" && ar x "${1}"
+        ;;
+    *.tar.xz)
+        REQUIRE_CMD "tar"
+        compress.isFile "${1}" && tar xf "${1}"
+        ;;
+    *.tar.zst)
+        REQUIRE_CMD "unzstd"
+        compress.isFile "${1}" && unzstd "${1}"
+        ;;
+    *)
+        PRINT "'${1}' cannot be extracted." && exit 1
+        ;;
+    esac
+
+    shift
+
+done

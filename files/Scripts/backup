@@ -23,22 +23,16 @@ DISABLE_ROOT || exit 1
 # HELP MENU BUILDER
 
 SCRIPT_VERSION="1.5"
-SCRIPT_DESCRIPTION="Create/Restore Backups of your HOME directory"
-SCRIPT_USAGE="[FLAG] [ARGS]? ..."
+SCRIPT_DESCRIPTION="Create Backups of your HOME directory"
+SCRIPT_USAGE="[FLAG] [directory]? ..."
 
 # Examples
-EXAMPLE "--tar -c /mnt/drive" "Create a tarball backup of HOME in /mnt/drive"
-EXAMPLE "--exclusions"
+EXAMPLE "-t /mnt/drive" "Create a tarball backup of HOME in /mnt/drive"
 
 # Flags
-FLAG "--tar" "" "(Default) Uses tar to backup your files"
-FLAG "--rsync" "" "Uses rsync to backup your files"
-FLAG "--cp" "" "Uses cp to backup your files (no exclusions)"
-FLAG "-b, --background" "" "Run backup in the background, freeing your terminal for other tasks."
-FLAG "" "" ""
-FLAG "-c, --create" "<target>" "Create a new backup in <target> folder"
-FLAG "-r, --restore" "<target>" "Restore a backup from <target> archive/folder"
-FLAG "-e, --exclusions" "" "Create/edit list of files to exclude from backups"
+FLAG "-t" "" "(Default) Uses tar to backup your files"
+FLAG "-r" "" "Uses rsync to backup your files"
+FLAG "-c" "" "Uses cp to backup your files (no exclusions)"
 
 ##############################################
 # MAIN LOGIC
@@ -46,129 +40,8 @@ FLAG "-e, --exclusions" "" "Create/edit list of files to exclude from backups"
 ### Variables ###
 exclusions="${HOME}/.backup_exclusions"
 method="tar"
-background=0
-ARGS=()
-
-function backup.create() {
-	clear
-
-	# If the directory doesn't exist, throw an error and exit
-	[[ ! -d "${1}" ]] && PRINT "Invalid destination directory!\n" && PAUSE && clear && exit 1
-
-	# Cleanly exit backup process
-	trap 'clear; PRINT "Backup Terminated."; PAUSE; clear; exit 0' SIGTERM SIGINT
-
-	local target
-
-	case "${method}" in
-	tar)
-		target="${1}/${USER}_$(date +m%m-d%d-y%y).tar.gz"
-
-		# Check if tar exists
-		REQUIRE_CMD "tar" || return 1
-
-		# Remove duplicate backup
-		[[ -f "${target}" ]] && PRINT "Removing duplicate backup..." && rm -rf "${target}"
-
-		# Confirmation
-		PRINT "Backing up with tar..."
-
-		# Backups up files, with exclusions if file exists, or without exclusions if no file exists.
-		[[ -f "${exclusions}" ]] && tar -zcvpf "${target}" -X "${exclusions}" "${HOME}"
-		[[ ! -f "${exclusions}" ]] && tar -zcvpf "${target}" "${HOME}"
-
-		;;
-	rsync)
-		target="${1}/${USER}_$(date +m%m-d%d-y%y)"
-
-		# Check if rsync exists
-		REQUIRE_CMD "rsync"
-
-		# Remove duplicate backup
-		[[ -d "${target}" ]] && PRINT "Removing duplicate backup..." && rm -rf "${target}"
-
-		# Confirmation
-		PRINT "Backing up with rsync..."
-
-		# Backup all files
-		[[ -f "${exclusions}" ]] && rsync -arzvhP --exclude-from="${exclusions}" "${HOME}/" "${target}"
-		[[ ! -f "${exclusions}" ]] && rsync -arzvhP "${HOME}/" "${target}"
-
-		;;
-	cp)
-		target="${1}/${USER}_$(date +m%m-d%d-y%y)"
-
-		# Check if rsync exists
-		REQUIRE_CMD "cp"
-
-		# Remove duplicate backup
-		[[ -d "${target}" ]] && PRINT "Removing duplicate backup..." && rm -rf "${target}"
-
-		# Confirmation
-		PRINT "Backing up with cp..."
-
-		# Backup all files
-		cp -vR "${HOME}" "${target}"
-
-		;;
-	esac
-
-	# Confirmation
-	PRINT "\n\nBackup finished."
-	PAUSE
-	clear
-}
-
-function backup.restore() {
-	clear
-
-	# Cleanly exit backup process
-	trap 'clear; PRINT "Backup Terminated."; PAUSE; clear; exit 0' SIGTERM SIGINT
-
-	# If target isn't a file/tarball, or it's not a directory, print error and exit
-	[[ ! -f "${target}" && ! "${target}" =~ ^*.tar.gz$ && ! -d "${target}" ]] &&
-		PRINT "Invalid backup target!" && return 1
-
-	# Tarball
-	[[ -f "${target}" && "${target}" =~ ^*.tar.gz$ ]] && PRINT "Restoring tarball..." &&
-		tar -xvf "${target}" -C "${HOME}" && PRINT "\n\nRestore Finished.\n" && return 0 ||
-		return 1
-
-	# Directory, use rsync if exists
-	[[ -d "${target}" ]] && REQUIRE_CMD "rsync" >/dev/null 2>&1 && PRINT "Restoring backup" &&
-		rsync -auv "${target}" "${HOME}" && PRINT "\n\nRestore Finished.\n" && return 0 ||
-		return 1
-
-	# Directory, use cp if rsync is missing
-	[[ -d "${target}" ]] && REQUIRE_CMD "cp" >/dev/null 2>&1 && PRINT "Restoring backup..." &&
-		cp -vR "${target}" "${HOME}" && PRINT "\n\nRestore Finished.\n" && return 0 ||
-		return 1
-
-	PRINT "Error restoring backup..." && return 1
-}
-
-# Create/edit the exclusions file
-function backup.exclusions() {
-
-	local name
-
-	if [[ ! -f "${exclusions}" ]]; then
-
-		touch "${exclusions}"
-
-		for f in "${HOME}"/{.,}*; do
-
-			name="$(basename "$f")"
-
-			if [[ "${name}" != "." ]] && [[ "${name}" != ".." ]]; then
-				PRINT "${name}" >>"${exclusions}"
-			fi
-
-		done
-	fi
-
-	${EDITOR:-nano} "${exclusions}"
-}
+dir="$PWD"
+ARGS=("$@")
 
 [[ $# -eq 0 ]] && {
 	HELP
@@ -176,60 +49,105 @@ function backup.exclusions() {
 }
 
 ### Flags ###
-for arg in "$@"; do
-	case "$(LOWERCASE "$arg")" in
-	--rsync)
-		method="rsync"
-		;;
+for (( i=0; i<${#ARGS[@]}; i++ ));
+do
+  arg="${ARGS[i]}"
 
-	--tar)
-		method="tar"
-		;;
+  case "$(LOWERCASE "$arg")" in
+	  -r)
+		  method="rsync"
+		  unset 'ARGS[i]'
+		  ;;
 
-	--cp)
-		method="cp"
-		;;
-	-b | --background)
-		background=1
-		;;
-	*)
-		ARGS+=("$arg")
-		;;
+	  -t)
+		  method="tar"
+		  unset 'ARGS[i]'
+		  ;;
+
+	  -c)
+		  method="cp"
+		  unset 'ARGS[i]'
+		  ;;
+    \? | -h | --help)
+      HELP
+      exit 0
+		  ;;
 	esac
 done
 
-### Argument Handling ###
+################################################################################
+# RESTORE CODE LOGIC
+################################################################################
 
-for arg in "${ARGS[@]}"; do
-	case "$(LOWERCASE "${arg}")" in
+clear
 
-	-c | --create)
-		[[ $background -eq 1 ]] && ASYNC backup.create "${ARGS[1]}"
-		backup.create "${ARGS[1]}"
-		break
-		;;
+# If a directory argument was passed, use it in config.
+[[ -n "$1" ]] && dir="$1"
 
-	-r | --restore)
-		[[ $background -eq 1 ]] && ASYNC backup.restore "${ARGS[1]}"
-		backup.restore "${ARGS[1]}"
-		break
-		;;
+# If the directory doesn't exist, throw an error and exit
+[[ ! -d "${dir}" ]] && PRINT "Invalid destination directory!\n" && PAUSE && clear && exit 1
 
-	-e | --exclusions)
-		[[ $background -eq 1 ]] && PRINT "Can't edit exclusions in the background."
-		backup.exclusions
-		break
-		;;
+# Cleanly exit backup process
+trap 'clear; PRINT "Backup Terminated."; PAUSE; clear; exit 0' SIGTERM SIGINT
 
-	\? | -h | --help)
-		HELP
-		break
-		;;
+case "${method}" in
+  tar)
+	  target="${dir}/${USER}_$(date +m%m-d%d-y%y).tar.gz"
 
-	*)
-		INVALID_CMD "$(LOWERCASE ${ARGS[0]})"
-		exit 1
-		;;
+	  # Check if tar exists
+	  REQUIRE_CMD "tar" || return 1
 
-	esac
-done
+	  # Remove duplicate backup
+	  [[ -f "${target}" ]] && PRINT "Removing duplicate backup..." && rm -rf "${target}"
+
+	  # Confirmation
+	  PRINT "Backing up with tar..."
+
+	  # Backups up files, with exclusions if file exists, or without exclusions if no file exists.
+	  [[ -f "${exclusions}" ]] && tar -zcvpf "${target}" -X "${exclusions}" "${HOME}"
+	  [[ ! -f "${exclusions}" ]] && tar -zcvpf "${target}" "${HOME}"
+
+	  ;;
+  rsync)
+	  target="${dir}/${USER}_$(date +m%m-d%d-y%y)"
+
+	  # Check if rsync exists
+	  REQUIRE_CMD "rsync"
+
+	  # Remove duplicate backup
+	  [[ -d "${target}" ]] && PRINT "Removing duplicate backup..." && rm -rf "${target}"
+
+	  # Confirmation
+	  PRINT "Backing up with rsync..."
+
+	  # Backup all files
+	  [[ -f "${exclusions}" ]] && rsync -arzvhP --exclude-from="${exclusions}" "${HOME}/" "${target}"
+	  [[ ! -f "${exclusions}" ]] && rsync -arzvhP "${HOME}/" "${target}"
+
+	  ;;
+  cp)
+	  target="${dir}/${USER}_$(date +m%m-d%d-y%y)"
+
+	  # Check if rsync exists
+	  REQUIRE_CMD "cp"
+
+	  # Remove duplicate backup
+	  [[ -d "${target}" ]] && PRINT "Removing duplicate backup..." && rm -rf "${target}"
+
+	  # Confirmation
+	  PRINT "Backing up with cp..."
+
+	  # Backup all files
+	  cp -vR "${HOME}" "${target}"
+
+	  ;;
+  *)
+    PRINT "Invalid method '${method}'."
+    exit 1
+    ;;
+esac
+
+# Confirmation
+PRINT "\n\nBackup finished."
+PAUSE
+clear

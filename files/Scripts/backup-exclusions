@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+
+##############################################
+#   Author: RMCJ <rmichael1001@gmail.com>
+#   Project: backup-exclusions
+#   Version: 1.0
+#
+#   Usage:
+#
+#   Description:
+#  		Configure which files in $HOME to exclude
+#     from backups
+##############################################
+
+##############################################
+# PRE-PROCESSING
+
+# shellcheck disable=SC1091
+source "${SCRIPTS:=$HOME/.local/bin}"/00-api.sh
+
+DISABLE_ROOT || exit 1
+
+##############################################
+# HELP MENU BUILDER
+
+SCRIPT_VERSION="1.5"
+SCRIPT_DESCRIPTION="Configure files to exclude from backups"
+SCRIPT_USAGE="[FLAG] [ARGS]? ..."
+
+##############################################
+# MAIN LOGIC
+
+### Variables ###
+exclusions="${HOME}/.backup_exclusions"
+name=""
+ARGS=("$@")
+
+### Flags ###
+for (( i=0; i<${#ARGS[@]}; i++ ));
+do
+  arg="${ARGS[i]}"
+
+  case "$arg" in
+    \? | -h | --help)
+      HELP
+      exit 0
+		  ;;
+	esac
+done
+
+# Create/edit the exclusions file
+[ -f "${exclusions}" ] || {
+  touch "${exclusions}"
+
+	for f in "${HOME}"/{.,}*; do
+
+		name="$(basename "$f")"
+
+		if [[ "${name}" != "." ]] && [[ "${name}" != ".." ]]; then
+			PRINT "${name}" >>"${exclusions}"
+		fi
+
+	done
+}
+
+${EDITOR:-nano} "${exclusions}"
+
