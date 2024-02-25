@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 #  ██╗  ██╗███████╗ ██████╗██╗  ██╗███████╗██████╗ ███████╗██╗  ██╗███████╗██╗     ██╗
 #  ██║  ██║██╔════╝██╔════╝██║ ██╔╝██╔════╝██╔══██╗██╔════╝██║  ██║██╔════╝██║     ██║
@@ -320,18 +320,22 @@ function FLAG() {
 }
 
 function AUTHOR() {
+    # shellcheck disable=SC2124
     SCRIPT_AUTHOR="$@"
 }
 
 function VERSION() {
+    # shellcheck disable=SC2124
     SCRIPT_VERSION="$@"
 }
 
 function DESCRIPTION() {
+    # shellcheck disable=SC2124
     SCRIPT_DESCRIPTION="$@"
 }
 
 function USAGE() {
+    # shellcheck disable=SC2124
     SCRIPT_USAGE="$@"
 }
 

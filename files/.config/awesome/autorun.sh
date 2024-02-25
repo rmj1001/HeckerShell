@@ -1,9 +1,8 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
-function run () {
-    if ! pgrep -f $1 ;
-    then
-        $@&
+function run() {
+    if ! pgrep -f $1; then
+        "$@" &
     fi
 }
 

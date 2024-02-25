@@ -25,7 +25,7 @@ should be familiar with case statements & for loops.
 ### Subcommands
 
 ```bash
-#!/usr/bin/env bash
+#!/bin/bash
 
 # Command evaluation
 case "${1}" in
@@ -43,7 +43,7 @@ esac
 ### Flags
 
 ```bash
-#!/usr/bin/env bash
+#!/bin/bash
 
 # Flag evaluation
 # Shift once for every flag, shift again for each argument for that flag.
@@ -69,7 +69,7 @@ done
 ### Formatted Help Menu
 
 ```bash
-#!/usr/bin/env bash
+#!/bin/bash
 
 # Creating and formatting a help menu
 #
