@@ -11,7 +11,7 @@
 ##############################################
 # MAIN LOGIC
 
-find "${SCRIPTS:=$HOME/.local/bin}"/* -printf "%p\n" | while read -r script; do
+find "${SCRIPTS:=$HOME/.local/bin}"/* -exec printf "%p\n" + | while read -r script; do
 	# Script must not be directory or symlink, and must be executable
 	[[ -d "${script}" || -L "${script}" || ! -x "${script}" ]] &&
 		continue

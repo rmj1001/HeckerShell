@@ -33,3 +33,4 @@ export PS1='\n$(TITLE "${SHELL_TITLE}")$(shell lines)\n$(printf "%${COLUMNS}s\n"
 
 shell fresh-screen
 TITLE "HeckerShell"
+. "/Users/roy/.local/share/cargo/env"

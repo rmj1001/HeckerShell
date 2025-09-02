@@ -83,7 +83,7 @@ export HECKERSHELL="${XDG_DATA_HOME}/HeckerShell"
 export SHELL_TITLE="HeckerShell"
 
 # Add heckershell scripts recursively to PATH
-PATH="${SCRIPTS}:${PATH}:$(find "${SCRIPTS}"/* -maxdepth 1 -type d -printf ":%p")"
+PATH="${SCRIPTS}:${PATH}:$(find "${SCRIPTS}"/* -maxdepth 1 -type d -exec printf ":%p" +)"
 
 # Update PATH with AppImages
 PATH="${PATH}:${BIN}:${APPIMAGES}"
@@ -115,6 +115,13 @@ export FNM_ARCH="x64"
 
 export PATH
 
+PLATFORM="linux"
+
 if [[ `uname` == "Darwin" ]]; then
+    PLATFORM="mac"
 	touch "${HOME}/.hushlogin"
+
+    brew install coreutils
 fi
+
+export PLATFORM

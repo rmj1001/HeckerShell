@@ -116,9 +116,8 @@ function which() { command -v "${@}"; }
 SILENTRUN unalias ls
 SILENTRUN unalias ll
 SILENTRUN unalias la
-function ls() {
-    /usr/bin/ls --color=auto --group-directories-first "${@}"
-}
+[[ "$PLATFORM" == "linux" ]] && alias ls="ls --color=auto --group-directories-first"
+[[ "$PLATFORM" == "mac" ]] && alias ls="gls --color=auto --group-directories-first"
 function ll() { ls -AlvhF "${@}"; }
 function la() { ls -A "${@}"; }
 

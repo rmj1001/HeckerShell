@@ -118,6 +118,14 @@ read -r -p "Use default MOTD? (y/N) " confirm
 	touch "${HECKERSHELL}/.noMOTD"
 }
 
+# Ask to install homebrew
+read -r -p "Install homebrew? (y/N) " confirm
+
+[[ ! "${confirm}" =~ ^[yY][eE]?[sS]?$ ]] || {
+	PRINT "Installing homebrew..."
+	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+}
+
 # Finish
 PRINT "HeckerShell installed to '${HECKERSHELL_DIR}'."
 
