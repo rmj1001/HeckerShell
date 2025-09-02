@@ -114,3 +114,7 @@ export FNM_ARCH="x64"
 [[ -z "${FNM_MULTISHELL_PATH}" ]] || PATH="${PATH}:${FNM_MULTISHELL_PATH}/bin"
 
 export PATH
+
+if [[ `uname` == "Darwin" ]]; then
+	touch "${HOME}/.hushlogin"
+fi
