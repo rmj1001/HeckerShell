@@ -19,3 +19,6 @@ export ZSHRC="${HOME}/.zshrc"
 export BASHRC="${HOME}/.bashrc"
 export SHELLFILES="${HOME}/.shellfiles"
 export SCRIPTS="${HOME}/Scripts"
+
+function PRINT() { printf '%b\n' "${@}"; }
+function SYM() { ln -s "${@}"; }

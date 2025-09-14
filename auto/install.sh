@@ -17,9 +17,6 @@
 
 source <(wget -qO- https://raw.githubusercontent.com/rmj1001/HeckerShell/refs/heads/main/auto/variables.sh)
 
-function PRINT() { printf '%b\n' "${@}"; }
-function SYM() { ln -s "${@}"; }
-
 ################################# LOGIC ########################################
 
 # Check if Git is installed.

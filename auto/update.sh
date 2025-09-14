@@ -15,8 +15,6 @@
 
 source <(wget -qO- https://raw.githubusercontent.com/rmj1001/HeckerShell/refs/heads/main/auto/variables.sh)
 
-function PRINT() { printf '%b\n' "${@}"; }
-
 ################################# LOGIC ########################################
 
 [[ -x "$(command -v git)" ]] || { PRINT "" \
