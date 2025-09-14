@@ -59,6 +59,31 @@ CMD_EXISTS pipe3 && function update-gaming() {
 # Home
 function home() { cd "${HOME}" || return 1; }
 
+# Default apps
+function terminal() { ${TERMINAL} "${@}"; }
+function browser() { ${BROWSER} "${@}"; }
+function auth() { ${AUTH} "${@}"; }
+
+# Clear screen
+function cls() { shell fresh-screen; }
+
+# Meme Functions
+function @echo { [[ "$1" == "off" ]] && PRINT "This isn't batch nerd"; }
+function man-meme() {
+    printf "%b\n" "Based sigma grindset gender, not woman"
+}
+
+# Java
+function runjar() { java -jar "${@}"; }
+function silentrunjar() { ASYNC java -jar "${@}"; }
+
+# Run text file as bash
+function runInBash() {
+    bash <(cat "$1")
+}
+
+############################ PLATFORM FUNCTIONS ###################################
+
 # Linux-specific functions
 if [[ "$(uname -s)" == "Linux" ]]; then
     # Audio
@@ -82,26 +107,3 @@ if [[ "$(uname -s)" == "Linux" ]]; then
         flatpak list --columns=application "${@}" | tail -n +1
     }
 fi
-
-# Default apps
-function terminal() { ${TERMINAL} "${@}"; }
-function browser() { ${BROWSER} "${@}"; }
-function auth() { ${AUTH} "${@}"; }
-
-# Clear screen
-function cls() { shell fresh-screen; }
-
-# Meme Functions
-function @echo { [[ "$1" == "off" ]] && PRINT "This isn't batch nerd"; }
-function man-meme() {
-    printf "%b\n" "Based sigma grindset gender, not woman"
-}
-
-# Java
-function runjar() { java -jar "${@}"; }
-function silentrunjar() { ASYNC java -jar "${@}"; }
-
-# Run text file as bash
-function runInBash() {
-    bash <(cat "$1")
-}
