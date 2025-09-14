@@ -8,6 +8,13 @@
 #  ╚═╝  ╚═╝╚══════╝ ╚═════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝
 #
 
+# Description: Silently removes a function name from PATH
+# Usage: UNALIAS <program>
+# Returns: int
+function UNALIAS() {
+    SILENTRUN unalias "${@}"
+}
+
 # Description: Replacement for 'echo'
 # Usage:  printf "%b\n" "text"
 # Returns: string
@@ -103,7 +110,7 @@ function WHICH() {
 # Usage:  SILENTRUN <command>
 # Returns: return exit code
 function SILENTRUN() {
-    "$@" >/dev/null 2>&1
+    "${@}" >/dev/null 2>&1
 }
 
 # Description: Run code silently and disown it
