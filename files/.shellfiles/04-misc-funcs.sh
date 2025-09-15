@@ -17,7 +17,7 @@ CMD_EXISTS "yt-dlp" && function youtube-dl() {
 }
 
 # If neofetch doesn't exist, use `aboutpc` script
-function neofetch() {
+function fetch() {
     CMD_EXISTS "neofetch" && neofetch "${@}" && return 0
     aboutpc --neofetch "${@}"
 }
