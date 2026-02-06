@@ -14,20 +14,20 @@ function check_homebrew() {
     brew list | grep "${@}"
 }
 
-# Install Rust Coreutils if not installed
+function DEPENDENCY() {
+    if ! SILENTRUN check_homebrew ${1}; then
+        brew install ${1}
+    fi
+}
 
-if ! SILENTRUN check_homebrew uutils; then
-    brew install uutils-coreutils uutils-findutils uutils-diffutils
-fi
-
-if ! SILENTRUN check_homebrew ugrep; then
-    brew install ugrep
-fi
+# Rust Coreutils
+DEPENDENCY uutils-coreutils
+DEPENDENCY uutils-findutils
+DEPENDENCY uutils-diffutils
+DEPENDENCY ugrep
 
 # Cat alternative
-if ! SILENTRUN check_homebrew bat; then
-    brew install bat
-fi
+DEPENDENCY bat
 
 ################################################################################
 
