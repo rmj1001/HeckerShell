@@ -60,7 +60,7 @@ export SCRIPTS="${HOME}/Scripts"
 
 # Checks to see an input matches case-insensitive 'yes'
 isYes() {
-  echo "$1" | grep '^[yY][eE]?[sS]?$' && return 0
+  echo "$1" | grep -i '^y$' && return 0
   return 1
 }
 
