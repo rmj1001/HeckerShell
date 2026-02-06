@@ -34,7 +34,7 @@ DEPENDENCY bat
 function REPLACE() {
     if CMD_EXISTS $1; then
         UNALIAS $1
-        eval "function ${1} { ${2} \"${@}\" }"
+        eval "function ${1}() { ${2} \"${@}\" }"
     fi
 }
 
