@@ -20,6 +20,10 @@ if ! SILENTRUN check_homebrew uutils; then
     brew install uutils-coreutils uutils-findutils uutils-diffutils
 fi
 
+if ! SILENTRUN check_homebrew ugrep; then
+    brew install ugrep
+fi
+
 # Cat alternative
 if ! SILENTRUN check_homebrew bat; then
     brew install bat
@@ -28,8 +32,10 @@ fi
 ################################################################################
 
 # Colorized grep
-UNALIAS grep
-function grep() { ugrep --color=auto "${@}"; }
+if CMD_EXISTS ugrep; then
+    UNALIAS grep
+    function grep() { ugrep --color=auto "${@}"; }
+fi
 
 # Replace 'which'
 UNALIAS which && function which() { command -v "${@}"; }
@@ -37,16 +43,20 @@ UNALIAS which && function which() { command -v "${@}"; }
 # If bat/batcat exists, create opposite alias to replace cat
 CMD_EXISTS batcat && function bat() { batcat -P "${@}"; }
 
-UNALIAS cat
+
 if CMD_EXISTS bat; then
+    UNALIAS cat
     function cat() { bat "${@}"; }
-else
+elif CMD_EXISTS ucat; then
+    UNALIAS cat
     function cat() { ucat "${@}"; }
 fi
 
 # File Management & Permissions
-UNALIAS ls
-function ls() { uls --color=auto --group-directories-first "${@}"; }
+if CMD_EXISTS uls; then
+    UNALIAS ls
+    function ls() { uls --color=auto --group-directories-first "${@}"; }
+fi
 
 UNALIAS ll
 function ll() { ls -AlvhF "${@}"; }
@@ -54,51 +64,65 @@ function ll() { ls -AlvhF "${@}"; }
 UNALIAS la
 function la() { ls -A "${@}"; }
 
-UNALIAS touch
-function touch() { utouch "${@}"; }
-function mf() { utouch "${@}"; }
+if CMD_EXISTS utouch; then
+    UNALIAS touch
+    function touch() { utouch "${@}"; }
+    function mf() { utouch "${@}"; }
+fi
 
-UNALIAS rm
-function rm() { urm "${@}"; }
-function rd() { urm -rf "${@}"; }
-function rf() { urm -f "${@}"; }
-function rmcd() {
-    dir="${PWD}"
-    cd .. || return 1
-    urm -rf "${dir}"
-}
+if CMD_EXISTS urm; then
+    UNALIAS rm
+    function rm() { urm "${@}"; }
+    function rd() { urm -rf "${@}"; }
+    function rf() { urm -f "${@}"; }
+    function rmcd() {
+        dir="${PWD}"
+        cd .. || return 1
+        urm -rf "${dir}"
+    }
+fi
 
-UNALIAS mkdir
-function mkdir() { mkdir -p "${@}"; }
-function md() { umkdir "${@}"; }
-function mkcd() { umkdir "${1}" && cd "${1}" || return 1; }
+if CMD_EXISTS umkdir; then
+    UNALIAS mkdir
+    function md() { umkdir "${@}"; }
+    function mkcd() { umkdir "${1}" && cd "${1}" || return 1; }
+fi
 
-UNALIAS mv
-function mv() { ummv "${@}"; }
+if CMD_EXISTS ummv; then
+    UNALIAS mv
+    function mv() { ummv "${@}"; }
+fi
 
-UNALIAS cp
-function cp() { ucp "${@}"; }
+if CMD_EXISTS ucp; then
+    UNALIAS cp
+    function cp() { ucp "${@}"; }
+fi
 
-UNALIAS chown
-function chown() {
-        uchown "${@}"
-}
+if CMD_EXISTS uchown; then
+    UNALIAS chown
+    function chown() {
+            uchown "${@}"
+    }
+fi
 
-UNALIAS chgrp
-function chgrp() {
-        uchgrp "${@}"
-}
+if CMD_EXISTS uchgrp; then
+    UNALIAS chgrp
+    function chgrp() {
+            uchgrp "${@}"
+    }
+fi
 
-UNALIAS chmod
-UNALIAS chown 
-function chmod() {
-    uchmod "${@}"
-}
+if CMD_EXISTS uchmod; then
+    UNALIAS chmod
+    function chmod() {
+        uchmod "${@}"
+    }
+fi
 
-function mke() { uchmod +x "${@}"; }
-function rme() { uchmod 644 "${@}"; }
+function mke() { chmod +x "${@}"; }
+function rme() { chmod 644 "${@}"; }
 function correctGPGperms() {
-    uchown -R "$(whoami)" ~/.gnupg/
-    uchmod 600 ~/.gnupg/*
-    uchmod 700 ~/.gnupg
+    chown -R "$(whoami)" ~/.gnupg/
+    chmod 600 ~/.gnupg/*
+    chmod 700 ~/.gnupg
 }
