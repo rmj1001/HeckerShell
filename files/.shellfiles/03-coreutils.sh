@@ -31,6 +31,13 @@ DEPENDENCY bat
 
 ################################################################################
 
+function REPLACE() {
+    if CMD_EXISTS $1; then
+        UNALIAS $1
+        eval "function ${1} { ${2} \"${@}\" }"
+    fi
+}
+
 # Colorized grep
 if CMD_EXISTS ugrep; then
     UNALIAS grep
@@ -38,7 +45,8 @@ if CMD_EXISTS ugrep; then
 fi
 
 # Replace 'which'
-UNALIAS which && function which() { command -v "${@}"; }
+# UNALIAS which && function which() { command -v "${@}"; }
+REPLACE which 'command -v'
 
 # If bat/batcat exists, create opposite alias to replace cat
 CMD_EXISTS batcat && function bat() { batcat -P "${@}"; }
