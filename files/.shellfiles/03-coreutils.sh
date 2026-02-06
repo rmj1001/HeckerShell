@@ -45,8 +45,8 @@ if CMD_EXISTS ugrep; then
 fi
 
 # Replace 'which'
-# UNALIAS which && function which() { command -v "${@}"; }
-REPLACE which 'command -v'
+UNALIAS which && function which() { command -v "${@}"; }
+#REPLACE which 'command -v'
 
 # If bat/batcat exists, create opposite alias to replace cat
 CMD_EXISTS batcat && function bat() { batcat -P "${@}"; }
