@@ -107,11 +107,13 @@ shell_uninstall() {
 
 shell_update() {
   bash <(wget -qO- https://raw.githubusercontent.com/rmj1001/HeckerShell/main/auto/update.sh)
+  shell_reload
 }
 
 shell_cleanupdate() {
   shell_uninstall
   shell_install
+  shell_reload
 }
 
 [ $# -eq 0 ] && HELP && exit 0
