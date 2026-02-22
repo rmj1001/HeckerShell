@@ -21,21 +21,24 @@ fi
 
 ################################# LOGIC ########################################
 
+# Checks to see an input matches case-insensitive 'yes'
+isYes() {
+    echo "n" | grep -iE '^(y|yes)$' - && return 0
+    return 1
+}
+
+ask() {
+    read -r -p "${@} (y/N)" confirm
+    isYes "${confirm}"
+    return $?
+}
+
 [[ -x "$(command -v git)" ]] || { PRINT "" \
     'git must be installed.' && exit 1; }
 
 cd "${HECKERSHELL_DIR}" || { PRINT 'HeckerShell does not exist.' && exit 1; }
 
-# Confirm uninstallation
-read -r -p \
-    "Are you sure you want to update? Changes you made will be lost. (y/N) " \
-    confirm
+# Confirm update
+ask "Are you sure you want to update? Changes you made will be lost." && { git pull; exit 0; }
 
-PRINT ""
-
-if [[ ! ${confirm,,} =~ ^(y|n|yes|no)$ ]]; then
-    PRINT "Cancelling."
-    exit 1
-else
-    git pull
-fi
+PRINT "Cancelling."; exit 1
