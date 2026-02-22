@@ -13,42 +13,41 @@
 
 ################################# CONSTANTS ####################################
 
-# Get variables
-
-source <(wget -qO- https://raw.githubusercontent.com/rmj1001/HeckerShell/refs/heads/main/auto/variables.sh)
+# Get variables and functions
+GITHUB_URL="https://raw.githubusercontent.com/rmj1001/HeckerShell/refs/heads/main"
+source <(wget -qO- $GITHUB_URL/auto/variables.sh)
+source <(wget -qO- $GITHUB_URL/files/.shellfiles/00-api.sh)
 
 ################################# LOGIC ########################################
 
 # Check if Git is installed.
-[[ ! -x "$(command -v git)" ]] &&
-	PRINT "Git is not installed." && {
+if ! CMD_EXISTS git; then
+	PRINT "Git is not installed."
 	sleep 0.5
 	exit 1
-}
+fi
 
-# Confirm installation
-read -r -p "Are you sure you want to install this? (y/N) " confirm
-
-[[ ! "${confirm}" =~ ^[yY][eE]?[sS]?$ ]] && {
-	PRINT "Cancelling."
-
-	sleep 0.5
-	exit 1
-}
+if ! ASK "Do you want to install HeckerShell?"; then
+    PRINT "Cancelling."
+    sleep 0.5
+    exit 1
+fi
 
 # Check if HeckerShell exist
-[[ -d "${HECKERSHELL_DIR}" ]] && {
+if test -d "${HECKERSHELL_DIR}"; then
 	PRINT "HeckerShell directory exists. Try using the update script."
 	PRINT "Exiting..."
 
 	sleep 0.5
 	exit 1
-}
+fi
 
 # If user wishes to contribute, use SSH
 sleep 0.5
-read -r -p "Will you be contributing to HeckerShell? (y/N) " contrib
-[[ "${contrib}" =~ ^[yY][eE]?[sS]?$ ]] && HECKERSHELL_SITE="${HECKERSHELL_SITE_SSH}"
+
+if ASK "Contribute to HeckerShell?"; then
+    HECKERSHELL_SITE="${HECKERSHELL_SITE_SSH}"
+fi
 
 # Download HeckerShell
 sleep 0.5
@@ -90,20 +89,16 @@ for folder in "${HECKERSHELL}"/.config/*; do
 done
 
 # Ask if they wish to print the MOTD
-read -r -p "Use default MOTD? (y/N) " confirm
-
-[[ ! "${confirm}" =~ ^[yY][eE]?[sS]?$ ]] && {
-	PRINT "Disabling default motd."
+if ASK "Use default MOTD?"; then
+    PRINT "Disabling default motd."
 	touch "${HECKERSHELL}/.noMOTD"
-}
+fi
 
 # Ask to install homebrew
-read -r -p "Install homebrew? (y/N) " confirm
-
-[[ ! "${confirm}" =~ ^[yY][eE]?[sS]?$ ]] || {
-	PRINT "Installing homebrew..."
-	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-}
+if test ! -d /home/linuxbrew && ASK "Install homebrew?"; then
+    PRINT "Installing homebrew..."
+   	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+fi
 
 # Finish
 PRINT "HeckerShell installed to '${HECKERSHELL_DIR}'."

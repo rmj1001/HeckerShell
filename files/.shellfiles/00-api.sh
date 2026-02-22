@@ -196,6 +196,17 @@ function CHECK_NO() {
     return 1
 }
 
+# Checks to see an input matches case-insensitive 'yes'
+function ASK() {
+    read -r -p "${@} (y/N) " confirm
+
+    if echo "${confirm}" | grep -iE '^(y|yes)$' -; then
+        return 0
+    else
+        return 1
+    fi
+}
+
 # Description: Prompt with message, prints answer to prompt
 # Usage:  PROMPT "prompt text"
 # Returns: string (answer to prompt)
