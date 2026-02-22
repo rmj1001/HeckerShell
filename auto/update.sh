@@ -14,7 +14,7 @@
 ################################# CONSTANTS ####################################
 
 if [[ -d "${HECKERSHELL}" ]]; then
-    source "${HECKERSHELL}/auto/variables.sh"
+    source "${HECKERSHELL}/../auto/variables.sh"
 else
     source <(wget -qO- https://raw.githubusercontent.com/rmj1001/HeckerShell/refs/heads/main/auto/variables.sh)
 fi
