@@ -13,9 +13,9 @@
 
 ################################# CONSTANTS ####################################
 
-if [[ -d "${HECKERSHELL}" ]]; then
-    source "${HECKERSHELL}/auto/variables.sh"
-    source "${HECKERSHELL}/files/.shellfiles/00-api.sh"
+if [[ -d "${HECKERSHELL_DIR}" ]]; then
+    source "${HECKERSHELL_DIR}/auto/variables.sh"
+    source "${HECKERSHELL_DIR}/files/.shellfiles/00-api.sh"
 else
     GITHUB_URL="https://raw.githubusercontent.com/rmj1001/HeckerShell/refs/heads/main"
     source <(wget -qO- $GITHUB_URL/auto/variables.sh)
@@ -30,7 +30,7 @@ if ! CMD_EXISTS git; then
     exit 1
 fi
 
-cd "${HECKERSHELL}" || { PRINT 'HeckerShell does not exist.' && exit 1; }
+cd "${HECKERSHELL_DIR}" || { PRINT 'HeckerShell does not exist.' && exit 1; }
 
 # Confirm update
 if ASK "Changes you made will be lost. Continue update?"; then
