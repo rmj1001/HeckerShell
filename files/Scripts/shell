@@ -58,12 +58,6 @@ export BASHRC="${HOME}/.bashrc"
 export SHELLFILES="${HOME}/.shellfiles"
 export SCRIPTS="${HOME}/Scripts"
 
-# Checks to see an input matches case-insensitive 'yes'
-isYes() {
-  echo "$1" | grep -i '^y$' && return 0
-  return 1
-}
-
 ### Reload shell files and present fresh screen.
 # Usage: shell reload
 shell_reload() {
