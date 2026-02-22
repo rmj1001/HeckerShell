@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+codesnap -f $1 -o clipboard --has-line-number --has-breadcrumbs true --config ~/.config/codesnap/remote_themes/vercel.json
