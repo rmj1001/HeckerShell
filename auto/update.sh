@@ -14,30 +14,29 @@
 ################################# CONSTANTS ####################################
 
 if [[ -d "${HECKERSHELL}" ]]; then
-    source "${HECKERSHELL}/../auto/variables.sh"
+    source "${HECKERSHELL}/auto/variables.sh"
+    source "${HECKERSHELL}/files/.shellfiles/00-api.sh"
 else
-    source <(wget -qO- https://raw.githubusercontent.com/rmj1001/HeckerShell/refs/heads/main/auto/variables.sh)
+    GITHUB_URL="https://raw.githubusercontent.com/rmj1001/HeckerShell/refs/heads/main"
+    source <(wget -qO- $GITHUB_URL/auto/variables.sh)
+    source <(wget -qO- $GITHUB_URL/files/.shellfiles/00-api.sh)
 fi
 
 ################################# LOGIC ########################################
 
-# Checks to see an input matches case-insensitive 'yes'
-ask() {
-    read -r -p "${@} (y/N) " confirm
+if ! CMD_EXISTS git; then
+    PRINT "Git is not installed."
+    sleep 0.5
+    exit 1
+fi
 
-    if echo "${confirm}" | grep -iE '^(y|yes)$' -; then
-        return 0
-    else
-        return 1
-    fi
-}
-
-[[ -x "$(command -v git)" ]] || { PRINT "" \
-    'git must be installed.' && exit 1; }
-
-cd "${HECKERSHELL_DIR}" || { PRINT 'HeckerShell does not exist.' && exit 1; }
+cd "${HECKERSHELL}" || { PRINT 'HeckerShell does not exist.' && exit 1; }
 
 # Confirm update
-ask "Changes you made will be lost. Continue update?" && git pull && exit 0
-
-PRINT "Cancelling."; exit 1
+if ASK "Changes you made will be lost. Continue update?"; then
+    git pull
+    exit 0
+else
+    PRINT "Cancelling."
+    exit 1
+fi
