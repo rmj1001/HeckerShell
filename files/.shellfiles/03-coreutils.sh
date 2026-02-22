@@ -30,9 +30,15 @@ DEPENDENCY bat
 ################################################################################
 # Override builtin commands with uutils for interactive shell if uutils exists
 HB_OPT="${HOMEBREW_PREFIX}/opt"
-[[ -d "${HB_OPT}/uutils-coreutils" ]] && PATH="${HB_OPT}/uutils-coreutils/libexec/uubin:$PATH"
-[[ -d "${HB_OPT}/uutils-diffutils" ]] && PATH="${HB_OPT}/uutils-diffutils/libexec/uubin:$PATH"
-[[ -d "${HB_OPT}/uutils-findutils" ]] && PATH="${HB_OPT}/uutils-findutils/libexec/uubin:$PATH"
+
+# experimental
+[[ -d ${HB_OPT}/uutils-{coreutils,diffutils,findutils} ]] && \
+    PATH = ${HB_OPT}/uutils-{coreutils,diffutils,findutils}/libexec/uubin:$PATH
+
+# uncomment below if the above parameter expansion line does not work
+#[[ -d "${HB_OPT}/uutils-coreutils" ]] && PATH="${HB_OPT}/uutils-coreutils/libexec/uubin:$PATH"
+#[[ -d "${HB_OPT}/uutils-diffutils" ]] && PATH="${HB_OPT}/uutils-diffutils/libexec/uubin:$PATH"
+#[[ -d "${HB_OPT}/uutils-findutils" ]] && PATH="${HB_OPT}/uutils-findutils/libexec/uubin:$PATH"
 
 # Colorized grep
 CMD_EXISTS ugrep && UNALIAS grep && grep() { ugrep --color=auto "${@}"; }
