@@ -31,13 +31,6 @@ DEPENDENCY bat
 
 ################################################################################
 
-function REPLACE() {
-    if CMD_EXISTS $1; then
-        UNALIAS $1
-        eval "function ${1}() { ${@:2} \"${@}\"; }"
-    fi
-}
-
 # Colorized grep
 if CMD_EXISTS ugrep; then
     UNALIAS grep
@@ -60,77 +53,83 @@ elif CMD_EXISTS ucat; then
     function cat() { ucat "${@}"; }
 fi
 
-# File Management & Permissions
-if CMD_EXISTS uu-ls; then
-    UNALIAS ls
-    function ls() { uu-ls --color=auto --group-directories-first "${@}"; }
-fi
 
-UNALIAS ll
-function ll() { ls -AlvhF "${@}"; }
+# Override builtin commands with uutils for interactive shell
+PATH="$HOMEBREW_PREFIX/opt/uutils-coreutils/libexec/uubin:$PATH"
+PATH="$HOMEBREW_PREFIX/opt/uutils-diffutils/libexec/uubin:$PATH"
+PATH="$HOMEBREW_PREFIX/opt/uutils-findutils/libexec/uubin:$PATH"
 
-UNALIAS la
-function la() { ls -A "${@}"; }
+# # File Management & Permissions
+# if CMD_EXISTS uu-ls; then
+#     UNALIAS ls
+#     function ls() { uu-ls --color=auto --group-directories-first "${@}"; }
+# fi
 
-if CMD_EXISTS utouch; then
-    UNALIAS touch
-    function touch() { uu-touch "${@}"; }
-    function mf() { uu-touch "${@}"; }
-fi
+# UNALIAS ll
+# function ll() { ls -AlvhF "${@}"; }
 
-if CMD_EXISTS uu-rm; then
-    UNALIAS rm
-    function rm() { uu-rm "${@}"; }
-    function rd() { uu-rm -rf "${@}"; }
-    function rf() { uu-rm -f "${@}"; }
-    function rmcd() {
-        dir="${PWD}"
-        cd .. || return 1
-        uu-rm -rf "${dir}"
-    }
-fi
+# UNALIAS la
+# function la() { ls -A "${@}"; }
 
-if CMD_EXISTS uu-mkdir; then
-    UNALIAS mkdir
-    function md() { uu-mkdir "${@}"; }
-    function mkcd() { uu-mkdir "${1}" && cd "${1}" || return 1; }
-fi
+# if CMD_EXISTS utouch; then
+#     UNALIAS touch
+#     function touch() { uu-touch "${@}"; }
+#     function mf() { uu-touch "${@}"; }
+# fi
 
-if CMD_EXISTS uu-mv; then
-    UNALIAS mv
-    function mv() { uu-mv "${@}"; }
-fi
+# if CMD_EXISTS uu-rm; then
+#     UNALIAS rm
+#     function rm() { uu-rm "${@}"; }
+#     function rd() { uu-rm -rf "${@}"; }
+#     function rf() { uu-rm -f "${@}"; }
+#     function rmcd() {
+#         dir="${PWD}"
+#         cd .. || return 1
+#         uu-rm -rf "${dir}"
+#     }
+# fi
 
-if CMD_EXISTS uu-cp; then
-    UNALIAS cp
-    function cp() { uu-cp "${@}"; }
-fi
+# if CMD_EXISTS uu-mkdir; then
+#     UNALIAS mkdir
+#     function md() { uu-mkdir "${@}"; }
+#     function mkcd() { uu-mkdir "${1}" && cd "${1}" || return 1; }
+# fi
 
-if CMD_EXISTS uu-chown; then
-    UNALIAS chown
-    function chown() {
-            uu-chown "${@}"
-    }
-fi
+# if CMD_EXISTS uu-mv; then
+#     UNALIAS mv
+#     function mv() { uu-mv "${@}"; }
+# fi
 
-if CMD_EXISTS uu-chgrp; then
-    UNALIAS chgrp
-    function chgrp() {
-            uu-chgrp "${@}"
-    }
-fi
+# if CMD_EXISTS uu-cp; then
+#     UNALIAS cp
+#     function cp() { uu-cp "${@}"; }
+# fi
 
-if CMD_EXISTS uu-chmod; then
-    UNALIAS chmod
-    function chmod() {
-        uu-chmod "${@}"
-    }
-fi
+# if CMD_EXISTS uu-chown; then
+#     UNALIAS chown
+#     function chown() {
+#             uu-chown "${@}"
+#     }
+# fi
 
-function mke() { uu-chmod +x "${@}"; }
-function rme() { uu-chmod 644 "${@}"; }
-function correctGPGperms() {
-    uu-chown -R "$(whoami)" ~/.gnupg/
-    uu-chmod 600 ~/.gnupg/*
-    uu-chmod 700 ~/.gnupg
-}
+# if CMD_EXISTS uu-chgrp; then
+#     UNALIAS chgrp
+#     function chgrp() {
+#             uu-chgrp "${@}"
+#     }
+# fi
+
+# if CMD_EXISTS uu-chmod; then
+#     UNALIAS chmod
+#     function chmod() {
+#         uu-chmod "${@}"
+#     }
+# fi
+
+# function mke() { uu-chmod +x "${@}"; }
+# function rme() { uu-chmod 644 "${@}"; }
+# function correctGPGperms() {
+#     uu-chown -R "$(whoami)" ~/.gnupg/
+#     uu-chmod 600 ~/.gnupg/*
+#     uu-chmod 700 ~/.gnupg
+# }
