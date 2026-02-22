@@ -13,23 +13,26 @@
 
 ################################# CONSTANTS ####################################
 
-source <(wget -qO- https://raw.githubusercontent.com/rmj1001/HeckerShell/refs/heads/main/auto/variables.sh)
+# Get variables and functions
+GITHUB_URL="https://raw.githubusercontent.com/rmj1001/HeckerShell/refs/heads/main"
+source <(wget -qO- $GITHUB_URL/auto/variables.sh)
+source <(wget -qO- $GITHUB_URL/files/.shellfiles/00-api.sh)
 
 ################################# LOGIC ########################################
 
 # Check if Git is installed.
-[[ ! -x "$(command -v git)" ]] &&
-    PRINT "Git is not installed." && exit 1
+if ! CMD_EXISTS git; then
+	PRINT "Git is not installed."
+	sleep 0.5
+	exit 1
+fi
 
 # Confirm uninstallation
-read -r -p "Are you sure you want to uninstall this? (y/N) " confirm
-
-PRINT ""
-
-[[ ! "${confirm}" =~ ^[yY][eE]?[sS]?$ ]] && {
+if ! ASK "Do you want to uninstall HeckerShell?"; then
     PRINT "Cancelling."
+    sleep 0.5
     exit 1
-}
+fi
 
 # Uninstall scripts
 PRINT "Uninstalling scripts..."
