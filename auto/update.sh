@@ -34,7 +34,7 @@ cd "${HECKERSHELL_DIR}" || { PRINT 'HeckerShell does not exist.' && exit 1; }
 
 # Confirm update
 if ASK "Changes you made will be lost. Continue update?"; then
-    git pull
+    git pull --rebase --autostash
     exit 0
 else
     PRINT "Cancelling."
