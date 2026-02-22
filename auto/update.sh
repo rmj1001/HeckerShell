@@ -13,7 +13,11 @@
 
 ################################# CONSTANTS ####################################
 
-source <(wget -qO- https://raw.githubusercontent.com/rmj1001/HeckerShell/refs/heads/main/auto/variables.sh)
+if [[ -d "${HECKERSHELL}" ]]; then
+    source "${HECKERSHELL}/auto/variables.sh"
+else
+    source <(wget -qO- https://raw.githubusercontent.com/rmj1001/HeckerShell/refs/heads/main/auto/variables.sh)
+fi
 
 ################################# LOGIC ########################################
 
@@ -29,9 +33,9 @@ read -r -p \
 
 PRINT ""
 
-[[ ! "${confirm}" =~ ^[yY][eE]?[sS]?$ ]] && {
+if [[ ! ${confirm,,} =~ ^(y|n|yes|no)$ ]]; then
     PRINT "Cancelling."
     exit 1
-}
-
-git pull
+else
+    git pull
+fi
