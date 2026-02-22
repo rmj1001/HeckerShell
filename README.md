@@ -25,9 +25,9 @@ a reloadable config for those settings that cannot be used for both.
 
 ## Docs
 
-- [Install](INSTALL.md)
-- [Guidelines](RULES.md)
-- [Tips & Tricks](TIPS.md)
+- [Install](docs/INSTALL.md)
+- [Guidelines](docs/RULES.md)
+- [Tips & Tricks](docs/TIPS.md)
 - [Distro Post-Install Scripts](files/Postinstallers/)
 
 ## Warranty
