@@ -180,31 +180,28 @@ function CMD_EXISTS() {
 # Usage:  CHECK_YES <var>
 # Returns: return code (0 for yes/empty, 1 for no)
 function CHECK_YES() {
-    [[ "$1" =~ [yY][eE]?[sS]? ]] && return 0
-    [[ -z "$1" ]] && return 0
-
-    return 1
+    if echo "${confirm}" | grep -iE '^(y|yes)$' -; then
+        return 0
+    else
+        return 1
+    fi
 }
 
 # Description: Check to see if input is 'no' or empty
 # Usage:  CHECK_NO <var>
 # Returns: return code (0 for no/empty, 1 for yes)
 function CHECK_NO() {
-    [[ "$1" =~ [nN][oO]? ]] && return 0
-    [[ -n "${1}" ]] && return 0
-
-    return 1
+    if echo "${confirm}" | grep -iE '^(n|no)$' -; then
+        return 0
+    else
+        return 1
+    fi
 }
 
 # Checks to see an input matches case-insensitive 'yes'
 function ASK() {
     read -r -p "${@} (y/N) " confirm
-
-    if echo "${confirm}" | grep -iE '^(y|yes)$' -; then
-        return 0
-    else
-        return 1
-    fi
+    CHECK_YES "${confirm}"
 }
 
 # Description: Prompt with message, prints answer to prompt
