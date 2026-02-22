@@ -23,9 +23,13 @@ fi
 
 # Checks to see an input matches case-insensitive 'yes'
 ask() {
-    read -r -p "${@} (y/N)" confirm
-    echo "${confirm}" | grep -iE '^(y|yes)$' - && return 0
-    return 1
+    read -r -p "${@} (y/N) " confirm
+
+    if echo "${confirm}" | grep -iE '^(y|yes)$' -; then
+        return 0
+    else
+        return 1
+    fi
 }
 
 [[ -x "$(command -v git)" ]] || { PRINT "" \
@@ -34,6 +38,6 @@ ask() {
 cd "${HECKERSHELL_DIR}" || { PRINT 'HeckerShell does not exist.' && exit 1; }
 
 # Confirm update
-ask "Are you sure you want to update? Changes you made will be lost." && { git pull; exit 0; }
+ask "Changes you made will be lost. Continue update?" && git pull && exit 0
 
 PRINT "Cancelling."; exit 1
