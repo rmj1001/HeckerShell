@@ -54,38 +54,8 @@ elif CMD_EXISTS ucat; then
 fi
 
 
-# Override builtin commands with uutils for interactive shell
-PATH="$HOMEBREW_PREFIX/opt/uutils-coreutils/libexec/uubin:$PATH"
-PATH="$HOMEBREW_PREFIX/opt/uutils-diffutils/libexec/uubin:$PATH"
-PATH="$HOMEBREW_PREFIX/opt/uutils-findutils/libexec/uubin:$PATH"
-
-# File listing
-UNALIAS ll
-function ll() { ls -AlvhF "${@}"; }
-
-UNALIAS la
-function la() { ls -A "${@}"; }
-
-# File Management
-function mf() { touch "${@}"; }
-
-# Directory Management
-function rd() { rm -rf "${@}"; }
-function rf() { rm -f "${@}"; }
-function rmcd() {
-    dir="${PWD}"
-    cd .. || return 1;
-    rd "${dir}"
-}
-
-function md() { mkdir "${@}"; }
-function mkcd() { mkdir "${1}" && cd "${1}" || return 1; }
-
-# Permissions Editing
-function mke() { chmod +x "${@}"; }
-function rme() { chmod 644 "${@}"; }
-function correctGPGperms() {
-    chown -R "$(whoami)" ~/.gnupg/
-    chmod 600 ~/.gnupg/*
-    chmod 700 ~/.gnupg
-}
+# Override builtin commands with uutils for interactive shell if uutils exists
+HB_OPT="${HOMEBREW_PREFIX}/opt"
+[[ -d "${HB_OPT}/uutils-coreutils" ]] && PATH="${HB_OPT}/uutils-coreutils/libexec/uubin:$PATH"
+[[ -d "${HB_OPT}/uutils-diffutils" ]] && PATH="${HB_OPT}/uutils-diffutils/libexec/uubin:$PATH"
+[[ -d "${HB_OPT}/uutils-findutils" ]] && PATH="${HB_OPT}/uutils-findutils/libexec/uubin:$PATH"
