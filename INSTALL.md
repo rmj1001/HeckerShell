@@ -15,17 +15,17 @@ management functionality may come to this script in the future. Use
 ## **Install**
 
 ```bash
-bash <(wget -qO- https://raw.githubusercontent.com/rmj1001/HeckerShell/main/auto/install.sh)
+bash <(wget -qO- https://raw.githubusercontent.com/rmj1001/HeckerShell/refs/heads/main/auto/install.sh)
 ```
 
 ## **Uninstall**
 
 ```bash
-bash <(wget -qO- https://raw.githubusercontent.com/rmj1001/HeckerShell/main/auto/uninstall.sh)
+bash <(wget -qO- https://raw.githubusercontent.com/rmj1001/HeckerShell/refs/heads/main/auto/uninstall.sh)
 ```
 
 ## **Update**
 
 ```bash
-bash <(wget -qO- https://raw.githubusercontent.com/rmj1001/HeckerShell/main/auto/update.sh) && shell reload
+bash <(wget -qO- https://raw.githubusercontent.com/rmj1001/HeckerShell/refs/heads/main/auto/update.sh) && shell reload
 ```
