@@ -61,9 +61,9 @@ elif CMD_EXISTS ucat; then
 fi
 
 # File Management & Permissions
-if CMD_EXISTS uls; then
+if CMD_EXISTS uu-ls; then
     UNALIAS ls
-    function ls() { uls --color=auto --group-directories-first "${@}"; }
+    function ls() { uu-ls --color=auto --group-directories-first "${@}"; }
 fi
 
 UNALIAS ll
@@ -74,63 +74,63 @@ function la() { ls -A "${@}"; }
 
 if CMD_EXISTS utouch; then
     UNALIAS touch
-    function touch() { utouch "${@}"; }
-    function mf() { utouch "${@}"; }
+    function touch() { uu-touch "${@}"; }
+    function mf() { uu-touch "${@}"; }
 fi
 
-if CMD_EXISTS urm; then
+if CMD_EXISTS uu-rm; then
     UNALIAS rm
-    function rm() { urm "${@}"; }
-    function rd() { urm -rf "${@}"; }
-    function rf() { urm -f "${@}"; }
+    function rm() { uu-rm "${@}"; }
+    function rd() { uu-rm -rf "${@}"; }
+    function rf() { uu-rm -f "${@}"; }
     function rmcd() {
         dir="${PWD}"
         cd .. || return 1
-        urm -rf "${dir}"
+        uu-rm -rf "${dir}"
     }
 fi
 
-if CMD_EXISTS umkdir; then
+if CMD_EXISTS uu-mkdir; then
     UNALIAS mkdir
-    function md() { umkdir "${@}"; }
-    function mkcd() { umkdir "${1}" && cd "${1}" || return 1; }
+    function md() { uu-mkdir "${@}"; }
+    function mkcd() { uu-mkdir "${1}" && cd "${1}" || return 1; }
 fi
 
-if CMD_EXISTS ummv; then
+if CMD_EXISTS uu-mv; then
     UNALIAS mv
-    function mv() { ummv "${@}"; }
+    function mv() { uu-mv "${@}"; }
 fi
 
-if CMD_EXISTS ucp; then
+if CMD_EXISTS uu-cp; then
     UNALIAS cp
-    function cp() { ucp "${@}"; }
+    function cp() { uu-cp "${@}"; }
 fi
 
-if CMD_EXISTS uchown; then
+if CMD_EXISTS uu-chown; then
     UNALIAS chown
     function chown() {
-            uchown "${@}"
+            uu-chown "${@}"
     }
 fi
 
-if CMD_EXISTS uchgrp; then
+if CMD_EXISTS uu-chgrp; then
     UNALIAS chgrp
     function chgrp() {
-            uchgrp "${@}"
+            uu-chgrp "${@}"
     }
 fi
 
-if CMD_EXISTS uchmod; then
+if CMD_EXISTS uu-chmod; then
     UNALIAS chmod
     function chmod() {
-        uchmod "${@}"
+        uu-chmod "${@}"
     }
 fi
 
-function mke() { chmod +x "${@}"; }
-function rme() { chmod 644 "${@}"; }
+function mke() { uu-chmod +x "${@}"; }
+function rme() { uu-chmod 644 "${@}"; }
 function correctGPGperms() {
-    chown -R "$(whoami)" ~/.gnupg/
-    chmod 600 ~/.gnupg/*
-    chmod 700 ~/.gnupg
+    uu-chown -R "$(whoami)" ~/.gnupg/
+    uu-chmod 600 ~/.gnupg/*
+    uu-chmod 700 ~/.gnupg
 }
