@@ -22,15 +22,10 @@ fi
 ################################# LOGIC ########################################
 
 # Checks to see an input matches case-insensitive 'yes'
-isYes() {
-    echo "n" | grep -iE '^(y|yes)$' - && return 0
-    return 1
-}
-
 ask() {
     read -r -p "${@} (y/N)" confirm
-    isYes "${confirm}"
-    return $?
+    echo "${confirm}" | grep -iE '^(y|yes)$' - && return 0
+    return 1
 }
 
 [[ -x "$(command -v git)" ]] || { PRINT "" \
