@@ -34,7 +34,7 @@ if ! ASK "Do you want to install HeckerShell?"; then
 fi
 
 # Check if HeckerShell exist
-if test -d "${HECKERSHELL_DIR}"; then
+if test -d "${HECKERSHELL}"; then
 	PRINT "HeckerShell directory exists. Try using the update script."
 	PRINT "Exiting..."
 
@@ -52,7 +52,7 @@ fi
 # Download HeckerShell
 sleep 0.5
 PRINT "Downloading HeckerShell..."
-cd "${HECKERSHELL_DOWN_DIR}" || exit 1
+cd "${HECKERSHELL_PARENT}" || exit 1
 git clone "${HECKERSHELL_SITE}"
 
 # Install scripts
@@ -76,7 +76,7 @@ PRINT "Removing rogue symlinks..."
 sleep 0.5
 PRINT "Installing miscellaneous configs..."
 
-for folder in "${HECKERSHELL}"/.config/*; do
+for folder in "${HECKERSHELL_FS}"/.config/*; do
 	name="$(basename "${folder}")"
 	sym="${HOME}/.config/${name}"
 
@@ -91,7 +91,7 @@ done
 # Ask if they wish to print the MOTD
 if ASK "Use default MOTD?"; then
     PRINT "Disabling default motd."
-	touch "${HECKERSHELL}/.noMOTD"
+	touch "${HECKERSHELL_FS}/.noMOTD"
 fi
 
 # Ask to install homebrew
@@ -101,7 +101,7 @@ if test ! -d /home/linuxbrew && ASK "Install homebrew?"; then
 fi
 
 # Finish
-PRINT "HeckerShell installed to '${HECKERSHELL_DIR}'."
+PRINT "HeckerShell installed to '${HECKERSHELL}'."
 
 PRINT "Tips:"
 PRINT "- Use 'shell motd ?' to enable/disable/customize your MOTD."

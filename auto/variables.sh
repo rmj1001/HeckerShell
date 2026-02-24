@@ -4,9 +4,9 @@ export HECKERSHELL_SITE_SSH="git@github.com:rmj1001/HeckerShell.git"
 export HECKERSHELL_SITE="${HECKERSHELL_SITE_HTTPS}"
 
 # HeckerShell directories
-export HECKERSHELL_DOWN_DIR="${HOME}/.local/share"
-export HECKERSHELL_DIR="${HECKERSHELL_DOWN_DIR}/HeckerShell"
-export HECKERSHELL="${HECKERSHELL_DIR}/files"
+export HECKERSHELL_PARENT="${HOME}/.local/share"
+export HECKERSHELL="${HECKERSHELL_PARENT}/HeckerShell"
+export HECKERSHELL_FS="${HECKERSHELL}/files"
 
 # OG Paths
 export SYM_ZSHRC="${HECKERSHELL}/.zshrc"

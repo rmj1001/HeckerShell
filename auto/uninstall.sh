@@ -47,7 +47,7 @@ PRINT "Uninstalling shell configs..."
 # Uninstall miscellany configs
 PRINT "Uninstalling miscellaneous configs..."
 
-for folder in "${HECKERSHELL}"/.config/*; do
+for folder in "${HECKERSHELL_FS}"/.config/*; do
     linkRef="${folder##*/}"
     sym="${HOME}/.config/${linkRef}"
 
@@ -58,7 +58,7 @@ done
 
 # Delete HeckerShell
 PRINT "Deleting HeckerShell..."
-rm -rf "${HECKERSHELL_DIR}"
+rm -rf "${HECKERSHELL}"
 
 # Finish
 PRINT "Done."
