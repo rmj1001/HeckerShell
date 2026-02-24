@@ -4,3 +4,4 @@ files/Scripts/*.py
 files/.noMOTD
 
 *.vscode
+*.DS_Store
